@@ -1,0 +1,24 @@
+[book]
+title = "ALUX programming guidelines"
+authors = ["Tomislav Grospic <grospic@gmail.com>"]
+language = "en"
+multilingual = false
+src = "src"
+
+[preprocessor.admonish]
+command = "mdbook-admonish"
+assets_version = "3.0.3" # do not edit: managed by `mdbook-admonish install`
+
+[preprocessor.katex]
+renderers = ["html"]
+
+[output]
+
+[output.linkcheck]
+
+# [output.katex]
+
+[output.html]
+additional-css = ["theme/index.css", "theme/mdbook-admonish.css"]
+no-section-label = true
+# fold.enable = false
