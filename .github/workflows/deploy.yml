@@ -1,0 +1,47 @@
+name: Deploy mdBook to GitHub Pages
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup Rust
+      uses: ./.github/actions/setup-rust
+
+    - name: Install mdBook and plugins
+      run: |
+        cargo install mdbook || true
+        cargo install mdbook-admonish || true
+        cargo install mdbook-katex || true
+        cargo install mdbook-linkcheck || true
+
+    - name: Build
+      run: mdbook build
+
+    - name: Publish to github-pages branch
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_branch: github-pages
+        publish_dir: book/html
+        force_orphan: true
+        commit_message: "Publish book from ${GITHUB_SHA}"

@@ -1,0 +1,23 @@
+name: Setup Rust
+
+runs:
+  using: composite
+
+  steps:
+    - name: Install sccache
+      uses: mozilla-actions/sccache-action@v0.0.9
+
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Install Rust cache
+      uses: Swatinem/rust-cache@v2
+      with:
+        cache-targets: false
+
+    - name: Install Just
+      run: cargo install just
+      shell: bash
+
+    - name: Install Nextest
+      uses: taiki-e/install-action@nextest
