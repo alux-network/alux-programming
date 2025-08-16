@@ -5,9 +5,9 @@
 # Concepts
 
 - [Free Monad](concepts/free_monad.md)
-- [Dependent types](concepts/dependent_types.md)
 - [Continuation-Passing Style](concepts/cps.md)
 - [Defunctionalization](concepts/defunctionalization.md)
+- [Dependent types](concepts/dependent_types.md)
 
 # Insights
 
