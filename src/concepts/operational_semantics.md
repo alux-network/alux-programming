@@ -17,7 +17,7 @@ Computation is broken into atomic transitions:
 
 ```hs
 (2 + 3) → 5
-(2 + 3) \* 4 → 5 \* 4 → 20
+(2 + 3) * 4 → 5 * 4 → 20
 ```
 
 Useful for modeling concurrency, interleaving, and partial execution.
@@ -26,7 +26,7 @@ Useful for modeling concurrency, interleaving, and partial execution.
 Describes evaluation in terms of final results:
 
 ```hs
-(2 + 3) \* 4 ⇓ 20
+(2 + 3) * 4 ⇓ 20
 ```
 
 Often clearer for reasoning about terminating programs.
