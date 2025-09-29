@@ -1,4 +1,4 @@
-# ALUX programming guidelines
+# <img src="src/assets/alux-logo.png" style="margin-right: 10px; width: 60px;"> ALUX programming guidelines
 
 ## Compile the book
 

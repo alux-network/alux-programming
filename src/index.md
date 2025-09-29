@@ -2,7 +2,7 @@
 This book is in an early stage.
 ```
 
-# <img src="assets/alux-logo.png" style="margin-right: 10px; border-radius: 50%; background: white;"> ALUX Programming Guidelines
+# <img src="assets/alux-logo.png" style="margin-right: 10px; width: 60px;"> ALUX Programming Guidelines
 
 ```admonish note
 This book is a guide to writing programs by defining their meaning first and their mechanics second.
