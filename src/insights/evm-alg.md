@@ -1,7 +1,7 @@
 # **EVM as a Virtual Machine**
 
 ~~~admonish tip title="Related"
-Concepts: [Free Monad](../concepts/free_monad.md), [CPS](../concepts/cps.md), [Defunctionalization](../concepts/defunctionalization.md)
+Concepts: [Operational Semantics](../concepts/operational_semantics.md), [Free Monad](../concepts/free_monad.md), [CPS](../concepts/cps.md), [Defunctionalization](../concepts/defunctionalization.md)
 ~~~
 
 The **Ethereum Virtual Machine (EVM)** is a stack-based virtual CPU that executes **Ethereum bytecode**. This bytecode is the compiled form of Ethereum smart contracts, usually written in Solidity, Vyper, or another EVM-compatible language.

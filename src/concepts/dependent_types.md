@@ -1,6 +1,7 @@
 # Dependent Types
 
 ```admonish tip title="Related"
+Concepts: [Free Monad](../concepts/free_monad.md)  
 Insights: [Free Monad (dependently)](../insights/free-monad-dependent.md)
 ```
 
