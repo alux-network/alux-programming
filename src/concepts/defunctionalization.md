@@ -65,3 +65,10 @@ In CPS (continuation-passing style), continuations are higher-order functions. D
 ## Relation to Free Monads
 
 A free monad can be seen as the result of defunctionalizing the continuations in a CPS-transformed program. The resulting data structure is the free monad's AST, and the apply function is the interpreter.
+
+## References
+
+- Reynolds, J. C. (1972). *Definitional Interpreters for Higher-Order Programming Languages*.  
+  [https://dl.acm.org/doi/epdf/10.1145/800194.805852](https://dl.acm.org/doi/epdf/10.1145/800194.805852)
+- Yallop, J., and White, L. (2014). *Lightweight Higher-Kinded Polymorphism* (uses defunctionalization to encode type-level application).  
+  [https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf](https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf)
