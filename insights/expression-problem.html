@@ -1,0 +1,407 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Expression Problem Reloaded - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ALUX programming guidelines</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming/edit/master/src/insights/expression-problem.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="expression-problem-reloaded"><a class="header" href="#expression-problem-reloaded">Expression Problem Reloaded</a></h1>
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-related"></a>
+</div>
+<div>
+<p>Concepts: <a href="../concepts/expression-problem.html">Expression Problem</a></p>
+</div>
+</div>
+<p>This page presents a practical trait-based solution to the <em>Expression Problem</em>: how to add new expression forms and new operations without repeatedly rewriting existing code.
+The solution is <strong>Conal-style in design</strong> and <strong>tagless-final/object-algebra in encoding</strong>. Concretely: we specify compositional meaning first (small capability interfaces and extension-level program specs), and only then provide concrete interpreters. The concrete encoding is in the same family as Oleg Kiselyov’s <strong>tagless-final</strong> style and <strong>Object Algebras</strong>: constructor interfaces (<code>LitAlg</code>, <code>AddAlg</code>, <code>MulAlg</code>) define the language signature, programs are written polymorphically against those interfaces, and concrete implementations (like <code>Eval</code> or <code>Pretty</code>) provide interpretations. This avoids committing to one closed AST while preserving static typing and extensibility in both dimensions.</p>
+<p>Oleg’s approach is explicitly denotational: assign compositional meaning first, then realize effects/interpreters as modular semantic layers. For the Expression Problem, this is exactly why the alignment with Denotational Design is expected rather than accidental. Conal’s Denotational Design formulation states the same priority directly: specify meaning compositionally first, and treat concrete execution strategies as secondary and replaceable.</p>
+<p>For the expression problem, this design means:</p>
+<ul>
+<li><strong>Syntax</strong> is modeled as tiny, independent capability traits.</li>
+<li><strong>Semantics</strong> are implementations of those traits.</li>
+<li>New syntax adds a new trait, leaving old code untouched.</li>
+<li>New semantics adds a new interpreter type, leaving old code untouched.</li>
+</ul>
+<h2 id="specify-tiny-syntax-capabilities"><a class="header" href="#specify-tiny-syntax-capabilities">Specify Tiny Syntax Capabilities</a></h2>
+<p>Each constructor becomes a small trait. This is the <strong>specification (spec)</strong>.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait LitAlg {
+    type Expr;
+
+    fn lit(&amp;self, n: i64) -&gt; Self::Expr;
+}
+
+trait AddAlg {
+    type Expr;
+
+    fn add(&amp;self, a: Self::Expr, b: Self::Expr) -&gt; Self::Expr;
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Programs are written as <strong>extensions</strong> over the alg traits; these extensions are also part of the specification and serve to compose smaller specs into reusable program-level specs:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[ext(name = ExprPrograms)]
+impl&lt;This&gt; This
+where
+    This: LitAlg + AddAlg,
+{
+    fn expr_basic(&amp;self) -&gt; This::Expr {
+        self.add(self.lit(2), self.lit(3))
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<p><code>#[ext(...)]</code> is a macro from the <a href="https://docs.rs/extend/latest/extend/"><code>extend</code> crate</a> used to reduce boilerplate by generating extension methods from an <code>impl</code> block; it is not a new Rust language feature.</p>
+<h2 id="add-new-semantics-new-interpreter"><a class="header" href="#add-new-semantics-new-interpreter">Add New Semantics (New Interpreter)</a></h2>
+<p>Interpreters implement the spec. No syntax changes needed.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Eval;
+
+impl LitAlg for Eval {
+    type Expr = i64;
+
+    fn lit(&amp;self, n: i64) -&gt; i64 { n }
+}
+
+impl AddAlg for Eval {
+    type Expr = i64;
+
+    fn add(&amp;self, a: i64, b: i64) -&gt; i64 { a + b }
+}
+
+struct Pretty;
+
+impl LitAlg for Pretty {
+    type Expr = String;
+
+    fn lit(&amp;self, n: i64) -&gt; String { n.to_string() }
+}
+
+impl AddAlg for Pretty {
+    type Expr = String;
+
+    fn add(&amp;self, a: String, b: String) -&gt; String {
+        format!("({a} + {b})")
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Now the same expression can be interpreted differently:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let eval = Eval;
+let pretty = Pretty;
+
+let v: i64 = eval.expr_basic();        // 5
+let s: String = pretty.expr_basic();   // "(2 + 3)"
+<span class="boring">}</span></code></pre></pre>
+<h2 id="add-new-syntax-new-capability-trait"><a class="header" href="#add-new-syntax-new-capability-trait">Add New Syntax (New Capability Trait)</a></h2>
+<p>To add <code>Mul</code>, define a new trait. Existing code stays untouched.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait MulAlg {
+    type Expr;
+
+    fn mul(&amp;self, a: Self::Expr, b: Self::Expr) -&gt; Self::Expr;
+}
+
+#[ext(name = ExprProgramsMul)]
+impl&lt;This&gt; This
+where
+    This: LitAlg + AddAlg + MulAlg,
+{
+    fn expr_with_mul(&amp;self) -&gt; This::Expr {
+        self.mul(self.add(self.lit(2), self.lit(3)), self.lit(4))
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Existing interpreters still work for old expressions.<br />
+If they want the new syntax, they implement the new trait:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl MulAlg for Eval {
+    type Expr = i64;
+
+    fn mul(&amp;self, a: i64, b: i64) -&gt; i64 { a * b }
+}
+
+impl MulAlg for Pretty {
+    type Expr = String;
+
+    fn mul(&amp;self, a: String, b: String) -&gt; String {
+        format!("({a} * {b})")
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<h2 id="why-this-solves-the-expression-problem"><a class="header" href="#why-this-solves-the-expression-problem">Why This Solves the Expression Problem</a></h2>
+<ul>
+<li><strong>Add new operations</strong>: define a new interpreter type implementing the same specs.</li>
+<li><strong>Add new variants</strong>: define a new capability trait and use it only where needed.</li>
+<li><strong>No edits</strong> to existing expressions or interpreters unless they opt into new syntax.</li>
+</ul>
+<p>This keeps the design modular: simple specs, extension by composition, and thin concrete implementations.</p>
+<h2 id="final-insight-wadler-vs-denotational-design"><a class="header" href="#final-insight-wadler-vs-denotational-design">Final Insight: Wadler vs Denotational Design</a></h2>
+<p>Wadler diagnosed the Expression Problem correctly at the level of language mechanisms: rows vs columns under static typing and modular extension. But that framing starts after the key mistake is already made: treating concrete representation as the model.</p>
+<p>Denotational Design moves the diagnosis upstream. The core failure is representation-first programming: encoding machine structure (ADT, class graph, memory layout) before specifying meaning. Once that commitment is made, extensibility tradeoffs appear as “deep problems.”</p>
+<p>From a meaning-first view, many of these tensions are self-inflicted. Define compositional meaning first, then choose encodings. The Expression Problem becomes an engineering choice among encodings, not a conceptual deadlock.</p>
+<p><strong>Meaning of a language should be independent of the idea of a machine.</strong></p>
+<iframe width="100%" height="315" src="https://www.youtube.com/embed/n2CBSNAVHVg?si=n-f84RYWjGtKkcVj&amp;clip=Ugkx52hOOFjiK-KEPMRhuB8vT6i4WUaav11c&amp;clipt=EKWcxgIYjoTIAg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>
+<p>Elliott, C. <em>Denotational design with type class morphisms</em>.<br />
+<a href="http://conal.net/papers/type-class-morphisms/">http://conal.net/papers/type-class-morphisms/</a></p>
+</li>
+<li>
+<p>Elliott, C. <em>Compiling to categories</em>.<br />
+<a href="http://conal.net/papers/compiling-to-categories/">http://conal.net/papers/compiling-to-categories/</a></p>
+</li>
+<li>
+<p>Kiselyov, O. <em>Tagless-final style</em> (overview, tutorials, and papers on final encodings and extensible typed interpreters).<br />
+<a href="https://okmij.org/ftp/tagless-final/">https://okmij.org/ftp/tagless-final/</a></p>
+</li>
+<li>
+<p>Kiselyov, O. <em>Having an Effect</em> (definitional/denotational framing of effects and extensible interpreters).<br />
+<a href="https://okmij.org/ftp/Computation/having-effect.html#defint">https://okmij.org/ftp/Computation/having-effect.html#defint</a></p>
+</li>
+<li>
+<p>Oliveira, B. C. d. S., and Cook, W. R. (2012). <em>Extensibility for the Masses: Practical Extensibility with Object Algebras</em>.<br />
+<a href="https://www.cs.utexas.edu/~wcook/Drafts/2012/ecoop2012.pdf">https://www.cs.utexas.edu/~wcook/Drafts/2012/ecoop2012.pdf</a></p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../insights/operational_semantics.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../insights/referential-transparency.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../insights/operational_semantics.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../insights/referential-transparency.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

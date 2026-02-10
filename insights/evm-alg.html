@@ -1,0 +1,548 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Mini EVM - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ALUX programming guidelines</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming/edit/master/src/insights/evm-alg.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="evm-as-a-virtual-machine"><a class="header" href="#evm-as-a-virtual-machine"><strong>EVM as a Virtual Machine</strong></a></h1>
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-related"></a>
+</div>
+<div>
+<p>Concepts: <a href="../concepts/operational_semantics.html">Operational Semantics</a>, <a href="../concepts/free_monad.html">Free Monad</a>, <a href="../concepts/cps.html">CPS</a>, <a href="../concepts/defunctionalization.html">Defunctionalization</a></p>
+</div>
+</div>
+<p>The <strong>Ethereum Virtual Machine (EVM)</strong> is a stack-based virtual CPU that executes <strong>Ethereum bytecode</strong>. This bytecode is the compiled form of Ethereum smart contracts, usually written in Solidity, Vyper, or another EVM-compatible language.</p>
+<p>At the lowest level:</p>
+<ul>
+<li>
+<p>The EVM processes <strong>opcodes</strong> (ADD, PUSH, JUMP, SSTORE, etc.).</p>
+</li>
+<li>
+<p>Execution state includes:</p>
+<ul>
+<li><strong>Stack</strong>: LIFO data stack for operand storage.</li>
+<li><strong>Memory</strong>: transient byte array for temporary values.</li>
+<li><strong>Storage</strong>: persistent key-value store for each contract.</li>
+<li><strong>Program counter</strong>: points to the next opcode.</li>
+<li><strong>Gas</strong>: metering system that charges for execution steps.</li>
+</ul>
+</li>
+</ul>
+<h2 id="evm-as-an-interpreter-pattern"><a class="header" href="#evm-as-an-interpreter-pattern"><strong>EVM as an Interpreter Pattern</strong></a></h2>
+<p>From the free monad and GoF design patterns perspective:</p>
+<ul>
+<li><strong>Instruction Set</strong> = EVM opcodes (similar to your <code>enum Console</code>).</li>
+<li><strong>Program AST</strong> = Actually, EVM code is <em>already compiled</em>, so it’s a flat sequence of instructions, not a rich high-level AST.
+High-level languages like Solidity first have a compiler that builds an AST, optimizes it, and then emits EVM bytecode.</li>
+<li><strong>Interpreter</strong> = The EVM specification defines how each opcode changes the machine state.</li>
+<li><strong>Multiple interpreters</strong> = While the EVM spec is fixed, different clients (Geth, Nethermind, Besu, Erigon) are alternative implementations of the same interpreter.</li>
+</ul>
+<p>In GoF terms:</p>
+<ul>
+<li>The EVM is an <strong>Interpreter</strong> over an instruction language (bytecode).</li>
+<li>Opcodes are <strong>Command objects</strong> executed in sequence.</li>
+<li>The program state (stack, memory, storage) acts like the context in Interpreter pattern.</li>
+</ul>
+<h2 id="evm-and-free-monad-analogy"><a class="header" href="#evm-and-free-monad-analogy"><strong>EVM and Free Monad Analogy</strong></a></h2>
+<p>If we model the EVM in a free monad style:</p>
+<ol>
+<li>
+<p><strong>Syntax</strong>: Enum of opcodes with parameters, e.g.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>enum EvmInstr&lt;A&gt; {
+    Add(A),
+    Push(U256, A),
+    SStore(U256, U256, A),
+    // ...
+}
+<span class="boring">}</span></code></pre></pre>
+</li>
+<li>
+<p><strong>Program</strong>: <code>Free&lt;EvmInstr, ()&gt;</code> would represent an abstract Ethereum program before compilation.</p>
+</li>
+<li>
+<p><strong>Semantics</strong>: Interpreter function that executes these instructions against the EVM state.</p>
+</li>
+</ol>
+<p>The difference:</p>
+<ul>
+<li>The real EVM executes a <strong>linear bytecode sequence</strong> (already defunctionalized into an array of low-level instructions).</li>
+<li>A free monad version would allow you to build programs algebraically, chain them with <code>flat_map</code>, and then interpret or compile them into EVM bytecode.</li>
+</ul>
+<h2 id="evm-and-cps--defunctionalization"><a class="header" href="#evm-and-cps--defunctionalization"><strong>EVM and CPS / Defunctionalization</strong></a></h2>
+<p>The EVM’s real execution loop is <strong>very similar to a defunctionalized CPS interpreter</strong>:</p>
+<ul>
+<li>In CPS: “do instruction, then call continuation”.</li>
+<li>In EVM: “execute opcode, then increment program counter” is equivalent to applying the continuation for that instruction.</li>
+<li>Defunctionalization: The “continuations” are already turned into a <strong>position in bytecode</strong> (program counter). This is the tag identifying the next action.</li>
+<li>The interpreter (<code>switch</code> or <code>match</code> on opcode) is the <code>apply</code> function of the defunctionalized continuations.</li>
+</ul>
+<p>So:</p>
+<ul>
+<li><strong>CPS form</strong>: Smart contract execution as “do opcode → continuation”.</li>
+<li><strong>Defunctionalized form</strong>: Replace continuations with <code>pc</code> + bytecode array.</li>
+<li><strong>Free monad form</strong>: Build higher-level EVM programs before compiling them into the defunctionalized form.</li>
+</ul>
+<h2 id="key-insight"><a class="header" href="#key-insight"><strong>Key Insight</strong></a></h2>
+<p>EVM execution = <strong>defunctionalized CPS interpreter</strong> for Ethereum bytecode.</p>
+<div class="table-wrapper"><table><thead><tr><th>Concept</th><th>Free Monad World</th><th>EVM Reality</th></tr></thead><tbody>
+<tr><td>Instruction type</td><td>Enum of opcodes</td><td>Fixed EVM opcodes</td></tr>
+<tr><td>Program representation</td><td>AST built from <code>Free&lt;F, A&gt;</code></td><td>Linear bytecode array</td></tr>
+<tr><td>Continuation</td><td>Closure in <code>FlatMap</code></td><td>Program counter (PC)</td></tr>
+<tr><td>Interpreter</td><td>Pattern match on instruction enum</td><td>Switch on opcode, mutate VM state</td></tr>
+<tr><td>Multiple interpreters</td><td>Different interpreters for same AST</td><td>Multiple Ethereum client implementations</td></tr>
+</tbody></table>
+</div>
+<h1 id="mini-evm"><a class="header" href="#mini-evm">Mini EVM</a></h1>
+<p>Here’s a <strong>mini-EVM in Rust</strong> using the same free monad style from the <code>Console</code> example, so you can clearly see the mapping to Ethereum’s real EVM execution model.</p>
+<h2 id="instruction-set-evm-subset"><a class="header" href="#instruction-set-evm-subset">Instruction Set (EVM subset)</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Clone)]
+enum EvmInstr&lt;A&gt; {
+    Push(u64, A),              // Push constant to stack
+    Add(A),                    // Pop two, push sum
+    SStore(u64, u64, A),       // Store key-value
+    SLoad(u64, fn(u64) -&gt; A),  // Load value from storage
+}
+<span class="boring">}</span></code></pre></pre>
+<h2 id="free-monad-core"><a class="header" href="#free-monad-core">Free Monad Core</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Clone)]
+enum Free&lt;F, A&gt; {
+    Pure(A),
+    Suspend(F),
+    FlatMap(Box&lt;Free&lt;F, A&gt;&gt;, Box&lt;dyn Fn(A) -&gt; Free&lt;F, A&gt;&gt;),
+}
+
+impl&lt;F: Clone + 'static, A: 'static&gt; Free&lt;F, A&gt; {
+    fn pure(a: A) -&gt; Self {
+        Free::Pure(a)
+    }
+    fn flat_map&lt;B: 'static, G&gt;(self, f: G) -&gt; Free&lt;F, B&gt;
+    where
+        G: Fn(A) -&gt; Free&lt;F, B&gt; + 'static,
+    {
+        match self {
+            Free::Pure(a) =&gt; f(a),
+            other =&gt; Free::FlatMap(Box::new(other), Box::new(f)),
+        }
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<h2 id="smart-constructors"><a class="header" href="#smart-constructors">Smart Constructors</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn push(val: u64) -&gt; Free&lt;EvmInstr&lt;()&gt;, ()&gt; {
+    Free::Suspend(EvmInstr::Push(val, ()))
+}
+
+fn add() -&gt; Free&lt;EvmInstr&lt;()&gt;, ()&gt; {
+    Free::Suspend(EvmInstr::Add(()))
+}
+
+fn sstore(key: u64, value: u64) -&gt; Free&lt;EvmInstr&lt;()&gt;, ()&gt; {
+    Free::Suspend(EvmInstr::SStore(key, value, ()))
+}
+
+fn sload(key: u64) -&gt; Free&lt;EvmInstr&lt;u64&gt;, u64&gt; {
+    Free::Suspend(EvmInstr::SLoad(key, Free::pure))
+}
+<span class="boring">}</span></code></pre></pre>
+<h2 id="evm-state"><a class="header" href="#evm-state">EVM State</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::HashMap;
+
+struct EvmState {
+    stack: Vec&lt;u64&gt;,
+    storage: HashMap&lt;u64, u64&gt;,
+}
+<span class="boring">}</span></code></pre></pre>
+<h2 id="interpreter"><a class="header" href="#interpreter">Interpreter</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn run_evm&lt;A&gt;(mut prog: Free&lt;EvmInstr&lt;A&gt;, A&gt;, state: &amp;mut EvmState) -&gt; A {
+    loop {
+        match prog {
+            Free::Pure(a) =&gt; return a,
+            Free::Suspend(EvmInstr::Push(v, next)) =&gt; {
+                state.stack.push(v);
+                prog = Free::Pure(next);
+            }
+            Free::Suspend(EvmInstr::Add(next)) =&gt; {
+                let b = state.stack.pop().unwrap();
+                let a = state.stack.pop().unwrap();
+                state.stack.push(a + b);
+                prog = Free::Pure(next);
+            }
+            Free::Suspend(EvmInstr::SStore(k, v, next)) =&gt; {
+                state.storage.insert(k, v);
+                prog = Free::Pure(next);
+            }
+            Free::Suspend(EvmInstr::SLoad(k, cont)) =&gt; {
+                let val = *state.storage.get(&amp;k).unwrap_or(&amp;0);
+                prog = cont(val);
+            }
+            Free::FlatMap(inner, cont) =&gt; match *inner {
+                Free::Pure(a) =&gt; prog = cont(a),
+                Free::Suspend(op) =&gt; prog = Free::Suspend(op),
+                _ =&gt; unreachable!(),
+            },
+        }
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<h2 id="example-program"><a class="header" href="#example-program">Example Program</a></h2>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let program = push(2)
+        .flat_map(|_| push(3))
+        .flat_map(|_| add())
+        .flat_map(|_| sstore(1, 5))
+        .flat_map(|_| sload(1))
+        .flat_map(|val| push(val));
+
+    let mut state = EvmState {
+        stack: vec![],
+        storage: HashMap::new(),
+    };
+
+    run_evm(program, &amp;mut state);
+
+    println!("Final stack: {:?}", state.stack);
+    println!("Storage: {:?}", state.storage);
+}</code></pre></pre>
+<h2 id="how-this-maps-to-the-real-evm"><a class="header" href="#how-this-maps-to-the-real-evm">How This Maps to the Real EVM</a></h2>
+<ul>
+<li><strong><code>EvmInstr</code> enum</strong> = EVM opcode set (syntax).</li>
+<li><strong><code>Free&lt;EvmInstr, A&gt;</code></strong> = Abstract EVM program before compilation.</li>
+<li><strong><code>run_evm</code></strong> = Interpreter (like Geth, Besu, Nethermind).</li>
+<li><strong><code>EvmState</code></strong> = EVM stack, memory, and storage.</li>
+<li>The <code>FlatMap</code> continuations here are <strong>exactly what the real EVM defunctionalizes</strong> into a program counter and bytecode array.</li>
+</ul>
+<p>Here is the defunctionalized mini-EVM: continuations are replaced by a program counter.</p>
+<h2 id="core-idea"><a class="header" href="#core-idea">Core idea</a></h2>
+<ul>
+<li>Continuation in Free <code>FlatMap</code> becomes an integer <code>pc</code>.</li>
+<li>Program is a flat <code>Vec&lt;Op&gt;</code>.</li>
+<li>The interpreter is a loop that reads <code>code[pc]</code>, mutates state, then updates <code>pc</code>.</li>
+</ul>
+<h2 id="rust-code"><a class="header" href="#rust-code">Rust code</a></h2>
+<pre><pre class="playground"><code class="language-rust">use std::collections::HashMap
+
+#[derive(Clone, Debug)]
+enum Op {
+    Push(u64),
+    Add,
+    SStore(u64, u64),
+    SLoad(u64),       // pushes value at key
+    Halt,
+}
+
+#[derive(Default)]
+struct VM {
+    pc: usize,
+    stack: Vec&lt;u64&gt;,
+    storage: HashMap&lt;u64, u64&gt;,
+    code: Vec&lt;Op&gt;,
+}
+
+impl VM {
+    fn new(code: Vec&lt;Op&gt;) -&gt; Self {
+        VM { code, ..Default::default() }
+    }
+
+    fn step(&amp;mut self) -&gt; bool {
+        match self.code.get(self.pc).cloned().unwrap_or(Op::Halt) {
+            Op::Push(v) =&gt; {
+                self.stack.push(v);
+                self.pc += 1;
+            }
+            Op::Add =&gt; {
+                let b = self.stack.pop().expect("stack underflow")
+                let a = self.stack.pop().expect("stack underflow")
+                self.stack.push(a + b);
+                self.pc += 1;
+            }
+            Op::SStore(k, v) =&gt; {
+                self.storage.insert(k, v);
+                self.pc += 1;
+            }
+            Op::SLoad(k) =&gt; {
+                let v = *self.storage.get(&amp;k).unwrap_or(&amp;0);
+                self.stack.push(v);
+                self.pc += 1;
+            }
+            Op::Halt =&gt; return false,
+        }
+        true
+    }
+
+    fn run(&amp;mut self) {
+        while self.step() {}
+    }
+}
+
+fn main() {
+    // Program: push 2; push 3; add; sstore 1,5; sload 1; halt
+    let code = vec![
+        Op::Push(2),
+        Op::Push(3),
+        Op::Add,
+        Op::SStore(1, 5),
+        Op::SLoad(1),
+        Op::Halt,
+    ]
+
+    let mut vm = VM::new(code)
+    vm.run()
+
+    println!("Final stack: {:?}", vm.stack)
+    println!("Storage: {:?}", vm.storage)
+}</code></pre></pre>
+<h2 id="mapping-to-free-and-cps"><a class="header" href="#mapping-to-free-and-cps">Mapping to Free and CPS</a></h2>
+<ul>
+<li>Free continuation <code>Fn(A) -&gt; Free</code> is now the integer <code>pc</code>.</li>
+<li><code>match</code> on <code>Op</code> is the defunctionalized apply function.</li>
+<li><code>Vec&lt;Op&gt;</code> is the defunctionalized program - a linear bytecode.</li>
+<li>The loop <code>while self.step()</code> is the CPS trampoline without closures.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../insights/referential-transparency.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../insights/free-monad-dependent.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../insights/referential-transparency.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../insights/free-monad-dependent.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

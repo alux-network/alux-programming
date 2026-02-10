@@ -1,0 +1,460 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Free Monad - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ALUX programming guidelines</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming/edit/master/src/concepts/free_monad.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="free-monad"><a class="header" href="#free-monad">Free Monad</a></h1>
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-related"></a>
+</div>
+<div>
+<p>Concepts: <a href="../concepts/dependent_types.html">Dependent types</a>, <a href="../concepts/cps.html">CPS</a>, <a href="../concepts/defunctionalization.html">Defunctionalization</a><br />
+Insights: <a href="../insights/evm-alg.html">Mini EVM</a>, <a href="../insights/free-monad-dependent.html">Free Monad (dependently)</a></p>
+</div>
+</div>
+<h2 id="what-is-a-free-monad-rust-version"><a class="header" href="#what-is-a-free-monad-rust-version"><strong>What is a Free Monad (Rust version)</strong></a></h2>
+<p>A <strong>free monad</strong> lets you:</p>
+<ul>
+<li><strong>Describe</strong> a program as <em>data</em> - not by running it right away.</li>
+<li><strong>Interpret</strong> that program later in one or more ways.</li>
+</ul>
+<p>Think of it as:</p>
+<blockquote>
+<p>An AST of effectful operations + <code>bind</code>/<code>flat_map</code> to chain them.</p>
+</blockquote>
+<p>You split:</p>
+<ul>
+<li><strong>Syntax</strong> → enum of instructions.</li>
+<li><strong>Semantics</strong> → interpreter function.</li>
+</ul>
+<p>“Free” means you can build a monad <strong>from any functor</strong> (<code>F</code>) without committing to meaning.</p>
+<h2 id="rust-implementation"><a class="header" href="#rust-implementation"><strong>Rust Implementation</strong></a></h2>
+<h3 id="free-monad-type"><a class="header" href="#free-monad-type">Free Monad type</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Clone)]
+enum Free&lt;F, A&gt; {
+    Pure(A),
+    Suspend(F),
+    FlatMap(Box&lt;Free&lt;F, A&gt;&gt;, Box&lt;dyn Fn(A) -&gt; Free&lt;F, A&gt;&gt;),
+}
+
+impl&lt;F: Clone + 'static, A: 'static&gt; Free&lt;F, A&gt; {
+    fn pure(a: A) -&gt; Self {
+        Free::Pure(a)
+    }
+
+    fn flat_map&lt;B: 'static, G&gt;(self, f: G) -&gt; Free&lt;F, B&gt;
+    where
+        G: Fn(A) -&gt; Free&lt;F, B&gt; + 'static,
+        F: 'static,
+    {
+        match self {
+            Free::Pure(a) =&gt; f(a),
+            Free::Suspend(op) =&gt; {
+                Free::FlatMap(Box::new(Free::Suspend(op)), Box::new(f))
+            }
+            Free::FlatMap(inner, g) =&gt; {
+                Free::FlatMap(inner, Box::new(move |x| g(x).flat_map(f.clone())))
+            }
+        }
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="dsl-console-operations"><a class="header" href="#dsl-console-operations">DSL: Console operations</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Clone)]
+enum Console&lt;A&gt; {
+    Print(String, A),
+    ReadLine(fn(String) -&gt; A),
+}
+
+// Smart constructors
+fn print_line(s: &amp;str) -&gt; Free&lt;Console&lt;()&gt;, ()&gt; {
+    Free::Suspend(Console::Print(s.to_string(), ()))
+}
+
+fn read_line() -&gt; Free&lt;Console&lt;String&gt;, String&gt; {
+    Free::Suspend(Console::ReadLine(|input| Free::Pure(input)))
+}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="interpreter"><a class="header" href="#interpreter">Interpreter</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn run_console&lt;A&gt;(mut prog: Free&lt;Console&lt;A&gt;, A&gt;) -&gt; A {
+    loop {
+        match prog {
+            Free::Pure(a) =&gt; return a,
+            Free::Suspend(Console::Print(s, next)) =&gt; {
+                println!("{}", s);
+                prog = Free::Pure(next);
+            }
+            Free::Suspend(Console::ReadLine(f)) =&gt; {
+                let mut buf = String::new();
+                std::io::stdin().read_line(&amp;mut buf).unwrap();
+                prog = f(buf.trim().to_string());
+            }
+            Free::FlatMap(inner, cont) =&gt; match *inner {
+                Free::Pure(a) =&gt; prog = cont(a),
+                Free::Suspend(op) =&gt; prog = Free::Suspend(op), // minimal handling
+                _ =&gt; unimplemented!(),
+            },
+        }
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="usage"><a class="header" href="#usage">Usage</a></h3>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let program =
+        print_line("What is your name?")
+        .flat_map(|_| read_line())
+        .flat_map(|name| print_line(&amp;format!("Hello, {name}!")));
+
+    run_console(program);
+}</code></pre></pre>
+<h2 id="takeaway"><a class="header" href="#takeaway"><strong>Takeaway</strong></a></h2>
+<ul>
+<li><strong>Syntax</strong> = <code>enum Console</code> (possible instructions)</li>
+<li><strong>Program</strong> = <code>Free&lt;Console, A&gt;</code> (data describing steps)</li>
+<li><strong>Semantics</strong> = <code>run_console</code> (interpreter)</li>
+<li>Benefit: You can write multiple interpreters for the same program — e.g., run in real IO, log to a file, or compile to another language.</li>
+</ul>
+<h2 id="correlation-to-continuations-and-cps"><a class="header" href="#correlation-to-continuations-and-cps"><strong>Correlation to Continuations and CPS</strong></a></h2>
+<p><strong>Continuation-Passing Style (CPS)</strong> is a way of writing programs where functions never return values directly but instead pass results to another function (the <em>continuation</em>) that represents “the rest of the program.”</p>
+<p>A <strong>free monad</strong> is basically a <strong>program as a sequence of steps</strong>, where each step says:</p>
+<blockquote>
+<p>"Do this, then continue with the rest."</p>
+</blockquote>
+<p>That “rest of the program” is exactly a <strong>continuation</strong> — a function from the current result to the next step.</p>
+<ul>
+<li>
+<p>In our Rust free monad:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>Free::FlatMap(Box&lt;Free&lt;F, A&gt;&gt;, Box&lt;dyn Fn(A) -&gt; Free&lt;F, A&gt;&gt;)
+<span class="boring">}</span></code></pre></pre>
+<p>the <code>Box&lt;dyn Fn(A) -&gt; Free&lt;F, A&gt;&gt;</code> <strong>is the continuation</strong>.</p>
+</li>
+<li>
+<p>When you interpret a free monad, you are <strong>running in CPS</strong>:</p>
+<ul>
+<li>Instead of returning values directly, you pass them into the next continuation.</li>
+<li>You end up in a loop of:
+<code>current_instruction -&gt; feed result into continuation -&gt; next instruction</code></li>
+</ul>
+</li>
+<li>
+<p><strong>CPS relation</strong>:</p>
+<ul>
+<li>Free monads <em>encode CPS in a data structure</em>.</li>
+<li>CPS <em>is the runtime control flow representation</em> of the same idea.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Quick mapping</strong>:</p>
+<div class="table-wrapper"><table><thead><tr><th>Concept</th><th>In CPS</th><th>In Free Monad AST</th></tr></thead><tbody>
+<tr><td>Step result</td><td>Argument to continuation</td><td><code>A</code> in <code>Fn(A) -&gt; Free</code></td></tr>
+<tr><td>Continuation</td><td>Function <code>(A) -&gt; R</code></td><td><code>Box&lt;dyn Fn(A) -&gt; Free&gt;</code></td></tr>
+<tr><td>Program</td><td>Nested continuations</td><td>Nested <code>FlatMap</code> variants</td></tr>
+<tr><td>Execution</td><td>Calling functions</td><td>Pattern matching + calling</td></tr>
+</tbody></table>
+</div>
+<h2 id="gof-design-patterns-mapping"><a class="header" href="#gof-design-patterns-mapping"><strong>GoF Design Patterns Mapping</strong></a></h2>
+<p>Free monads are <strong>not</strong> in GoF because they’re from functional programming theory, but they <strong>subsume</strong> or <strong>emulate</strong> several patterns:</p>
+<div class="table-wrapper"><table><thead><tr><th>GoF Pattern</th><th>How Free Monad Relates</th></tr></thead><tbody>
+<tr><td><strong>Interpreter</strong></td><td>The whole “AST + run” is literally Interpreter pattern — free monads just give you the AST + combinators for free.</td></tr>
+<tr><td><strong>Command</strong></td><td>Each <code>enum</code> variant in the DSL is a Command object. The free monad chains them like a macro-command.</td></tr>
+<tr><td><strong>Composite</strong></td><td>The AST structure (nested instructions) is a Composite of commands.</td></tr>
+<tr><td><strong>Builder</strong></td><td>The <code>.flat_map</code> chain is a fluent builder for programs.</td></tr>
+<tr><td><strong>Visitor</strong></td><td>The interpreter is essentially a visitor over the instruction set.</td></tr>
+</tbody></table>
+</div>
+<h2 id="why-free-monad--these-patterns"><a class="header" href="#why-free-monad--these-patterns"><strong>Why Free Monad &gt; These Patterns</strong></a></h2>
+<ul>
+<li>
+<p>GoF patterns are <strong>manual OOP work</strong> - you define interfaces, classes, and compose them.</p>
+</li>
+<li>
+<p>Free monads are <strong>algebraic</strong> - you define <em>data</em> for instructions and <em>functions</em> to interpret them.</p>
+</li>
+<li>
+<p>You automatically get:</p>
+<ul>
+<li>Sequencing (<code>flat_map</code>)</li>
+<li>Composition</li>
+<li>Multiple interpreters without touching core logic</li>
+</ul>
+</li>
+</ul>
+<p><strong>Summary Table</strong>:</p>
+<div class="table-wrapper"><table><thead><tr><th>Free Monad FP concept</th><th>Equivalent GoF/OOP pattern</th></tr></thead><tbody>
+<tr><td>Instruction enum</td><td>Command</td></tr>
+<tr><td>Program AST</td><td>Composite</td></tr>
+<tr><td><code>flat_map</code> builder</td><td>Builder</td></tr>
+<tr><td>Interpreter fn</td><td>Interpreter / Visitor</td></tr>
+<tr><td>Multiple interpreters</td><td>Strategy</td></tr>
+</tbody></table>
+</div>
+<h2 id="relation-to-defunctionalization"><a class="header" href="#relation-to-defunctionalization"><strong>Relation to Defunctionalization</strong></a></h2>
+<p><strong>Defunctionalization</strong> is a program transformation that replaces higher-order functions with a first-order data structure that represents the possible functions, plus an interpreter that applies them.</p>
+<p>In CPS, continuations are higher-order functions. Defunctionalizing a CPS program replaces those continuations with an enum of continuation cases and an <code>apply</code> function to run them.</p>
+<p>A free monad can be seen as the result of defunctionalizing the continuations inside a CPS-transformed program:</p>
+<ol>
+<li>Start with a CPS version of your program. The "rest of the program" is carried in continuation functions.</li>
+<li>Defunctionalize those continuation functions into a finite set of cases in a data type.</li>
+<li>The resulting data type, together with the initial instruction set, is exactly the AST of a free monad.</li>
+</ol>
+<p><strong>Key similarities</strong></p>
+<ul>
+<li>Both free monads and defunctionalization produce a data representation of computation and require an interpreter to give meaning to that data.</li>
+<li>The <code>FlatMap</code> case in a free monad holds the continuation; defunctionalization replaces that closure with a case in a data type.</li>
+</ul>
+<p><strong>Key differences</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>Aspect</th><th>Defunctionalization</th><th>Free Monad</th></tr></thead><tbody>
+<tr><td>Purpose</td><td>Mechanical compiler technique to remove higher-order functions</td><td>Algebraic construction to separate syntax from semantics</td></tr>
+<tr><td>Input</td><td>Any higher-order program, often in CPS form</td><td>A functor F describing possible instructions</td></tr>
+<tr><td>Output</td><td>Enum of function cases plus apply function</td><td><code>Free&lt;F, A&gt;</code> AST plus interpreters</td></tr>
+<tr><td>Monad?</td><td>Not necessarily</td><td>Always a monad by construction</td></tr>
+<tr><td>Scope</td><td>General transformation</td><td>Specific functional programming pattern</td></tr>
+</tbody></table>
+</div>
+<p><strong>Summary</strong>
+Defunctionalization is a transformation technique. Free monads are a reusable design pattern. The free monad structure is what you get when you defunctionalize the continuations in a CPS program built from a functor F.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../concepts/referential_transparency.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../concepts/cps.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../concepts/referential_transparency.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../concepts/cps.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

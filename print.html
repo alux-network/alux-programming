@@ -1,0 +1,2011 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>ALUX programming guidelines</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/index.css">
+        <link rel="stylesheet" href="theme/mdbook-admonish.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ALUX programming guidelines</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<div id="admonition-warning" class="admonition admonish-warning" role="note" aria-labelledby="admonition-warning-title">
+<div class="admonition-title">
+<div id="admonition-warning-title">
+<p>Warning</p>
+</div>
+<a class="admonition-anchor-link" href="index.html#admonition-warning"></a>
+</div>
+<div>
+<p>This book is in an early stage.</p>
+</div>
+</div>
+<h1 id="alux-programming-guidelines"><a class="header" href="#alux-programming-guidelines"><img src="assets/alux-logo.png" style="margin-right: 10px; width: 60px;"> ALUX Programming Guidelines</a></h1>
+<div id="admonition-note" class="admonition admonish-note" role="note" aria-labelledby="admonition-note-title">
+<div class="admonition-title">
+<div id="admonition-note-title">
+<p>Note</p>
+</div>
+<a class="admonition-anchor-link" href="index.html#admonition-note"></a>
+</div>
+<div>
+<p>This book is a guide to writing programs by defining their meaning first and their mechanics second.</p>
+<p>Inspired by Conal Elliott’s Denotational Design, it treats computation as a clear mathematical object rather than an opaque sequence of steps.</p>
+<p>Specifications are expressed as simple, compositional traits that describe <em>what</em> a program is. Implementations provide interchangeable ways to <em>realise</em> those meanings.</p>
+<p>The result is software that is easier to reason about, naturally composable, and correct by construction.</p>
+</div>
+</div>
+<h2 id="how-to-read-this-book"><a class="header" href="#how-to-read-this-book">How to Read This Book</a></h2>
+<p>This book blends theory and practice. You will see each concept from <strong>two perspectives</strong>:</p>
+<ul>
+<li><strong>Concepts</strong> — core ideas expressed clearly and precisely, independent of language or framework.</li>
+<li><strong>Insights</strong> — deeper connections between concepts, with examples, design patterns, and transformations.</li>
+</ul>
+<p>The examples are often in Rust but the principles are language-agnostic.</p>
+<h2 id="who-this-book-is-for"><a class="header" href="#who-this-book-is-for">Who This Book Is For</a></h2>
+<ul>
+<li>Programmers who want to <strong>design for meaning</strong> rather than just mechanics.</li>
+<li>Developers seeking to <strong>connect category theory, type systems, and program design</strong>.</li>
+<li>Readers curious about how ideas like <strong>Free Monads</strong>, <strong>CPS</strong>, <strong>Defunctionalization</strong>, and <strong>Dependent Types</strong> fit together.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="operational-semantics"><a class="header" href="#operational-semantics">Operational Semantics</a></h1>
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="concepts/operational_semantics.html#admonition-related"></a>
+</div>
+<div>
+<p>Concepts: <a href="concepts/../concepts/free_monad.html">Free Monad</a>, <a href="concepts/../concepts/cps.html">CPS</a>, <a href="concepts/../concepts/defunctionalization.html">Defunctionalization</a><br />
+Insights: <a href="concepts/../insights/operational_semantics.html">Operational Semantics in Context</a></p>
+</div>
+</div>
+<h2 id="definition"><a class="header" href="#definition">Definition</a></h2>
+<p><strong>Operational semantics</strong> defines the meaning of programs by specifying <em>how they execute step by step</em>. It models program execution as transitions between <strong>configurations</strong> - abstract states containing program fragments, environments, or memory.</p>
+<h2 id="styles-of-operational-semantics"><a class="header" href="#styles-of-operational-semantics">Styles of Operational Semantics</a></h2>
+<h3 id="small-step-structural-operational-semantics"><a class="header" href="#small-step-structural-operational-semantics">Small-step (Structural Operational Semantics)</a></h3>
+<p>Computation is broken into atomic transitions:</p>
+<pre><code class="language-hs">(2 + 3) → 5
+(2 + 3) * 4 → 5 * 4 → 20
+</code></pre>
+<p>Useful for modeling concurrency, interleaving, and partial execution.</p>
+<h3 id="big-step-natural-semantics"><a class="header" href="#big-step-natural-semantics">Big-step (Natural Semantics)</a></h3>
+<p>Describes evaluation in terms of final results:</p>
+<pre><code class="language-hs">(2 + 3) * 4 ⇓ 20
+</code></pre>
+<p>Often clearer for reasoning about terminating programs.</p>
+<h2 id="formal-rules"><a class="header" href="#formal-rules">Formal Rules</a></h2>
+<p>Operational semantics is typically given with <strong>inference rules</strong>.<br />
+For a simple arithmetic language:</p>
+<pre><code class="language-hs">Expr ::= n | Expr + Expr
+</code></pre>
+<p>We can write:</p>
+<pre><code>n1 + n2 → n3      (where n3 = n1 + n2)
+</code></pre>
+<p>Evaluation trace:</p>
+<pre><code class="language-hs">(1 + 2) + 3 → 3 + 3 → 6
+</code></pre>
+<h2 id="why-it-matters"><a class="header" href="#why-it-matters">Why It Matters</a></h2>
+<ul>
+<li>Provides a <strong>precise machine-like model</strong> of execution.</li>
+<li>Foundation for interpreters and virtual machines.</li>
+<li>Supports reasoning about correctness, resource use, and safety.</li>
+</ul>
+<h2 id="relation-to-other-concepts"><a class="header" href="#relation-to-other-concepts">Relation to Other Concepts</a></h2>
+<ul>
+<li><strong>Free Monad</strong>: Encodes operational rules as an AST of instructions.</li>
+<li><strong>CPS</strong>: Makes control flow explicit by turning "rest of the program" into a continuation.</li>
+<li><strong>Defunctionalization</strong>: Turns continuations into explicit state transitions, directly resembling operational semantics.</li>
+<li><strong>Dependent Types</strong>: Can enrich operational rules with proofs (e.g., stack safety, gas bounds).</li>
+</ul>
+<h2 id="in-practice"><a class="header" href="#in-practice">In Practice</a></h2>
+<p>Operational semantics is how interpreters are built:</p>
+<ul>
+<li>The <strong>EVM</strong> can be viewed as a large-step state transition system.</li>
+<li>Small-step rules directly resemble <code>match</code> arms in a Rust interpreter.</li>
+</ul>
+<pre><code>(n1 + n2) → n3
+</code></pre>
+<p>can be read as Rust code:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>match expr {
+    Add(Box::new(Num(n1)), Box::new(Num(n2))) =&gt; Num(n1 + n2),
+    _ =&gt; expr,
+}
+<span class="boring">}</span></code></pre></pre>
+<h2 id="to-think-about"><a class="header" href="#to-think-about">To think about</a></h2>
+<p>Thinking about programming in operational ways or using an imperative style—even with a proof—does not enable us to gain deep insights</p>
+<iframe width="100%" height="315" src="https://www.youtube.com/embed/n2CBSNAVHVg?si=jx2yItB8ZvudwCr1&amp;clip=UgkxKN5lzq4a3MYoVuIS777H2gAV9GZt7wRz&amp;clipt=EMjRxAUYh-jHBQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<p>Operational thinking (implementation first) prevent us to express and improve ideas</p>
+<iframe width="100%" height="315" src="https://www.youtube.com/embed/n2CBSNAVHVg?si=8imhBQPvY7AS-Nld&amp;clip=UgkxNwvDlj5QXGj_A9GAyZm4hQsq9cXeiOqe&amp;clipt=EL3qrwMYmuSxAw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="expression-problem"><a class="header" href="#expression-problem">Expression Problem</a></h1>
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="concepts/expression-problem.html#admonition-related"></a>
+</div>
+<div>
+<p>Insights: <a href="concepts/../insights/expression-problem.html">Expression Problem Reloaded</a></p>
+</div>
+</div>
+<p>Phil Wadler’s expression problem is about <strong>simultaneously</strong> extending a language in two dimensions without modifying existing code:</p>
+<ul>
+<li><strong>Add new data variants</strong> (new expression forms, aka “syntax”).</li>
+<li><strong>Add new operations</strong> (new interpretations, aka “semantics”).</li>
+</ul>
+<p>The core tension:</p>
+<ul>
+<li>In <strong>functional/ADT</strong> style, adding new operations is easy, but adding new variants is invasive.</li>
+<li>In <strong>object-oriented</strong> style, adding new variants is easy, but adding new operations is invasive.</li>
+</ul>
+<p>This section shows both sides with small Haskell and Java examples.</p>
+<h2 id="haskell-functional--adt"><a class="header" href="#haskell-functional--adt">Haskell (Functional / ADT)</a></h2>
+<p>We start with a classic ADT for expressions and two operations.</p>
+<pre><code class="language-haskell">data Expr
+  = Lit Int
+  | Add Expr Expr
+  | Mul Expr Expr  -- ✏️ UPDATE: new variant forces edits below
+
+eval :: Expr -&gt; Int
+eval (Lit n)     = n
+eval (Add a b)   = eval a + eval b
+
+pretty :: Expr -&gt; String
+pretty (Lit n)   = show n
+pretty (Add a b) = "(" ++ pretty a ++ " + " ++ pretty b ++ ")"
+</code></pre>
+<p>Now <strong>adding a new operation</strong> is easy:</p>
+<pre><code class="language-haskell">size :: Expr -&gt; Int
+size (Lit _)   = 1
+size (Add a b) = 1 + size a + size b
+</code></pre>
+<p>But <strong>adding a new variant</strong> (e.g. <code>Mul</code>) forces edits in every function:</p>
+<pre><code class="language-haskell">data Expr
+  = Lit Int
+  | Add Expr Expr
+  | Mul Expr Expr
+
+eval :: Expr -&gt; Int
+eval (Lit n)     = n
+eval (Add a b)   = eval a + eval b
+eval (Mul a b)   = eval a * eval b  -- ✏️ UPDATE: new case
+
+pretty :: Expr -&gt; String
+pretty (Lit n)   = show n
+pretty (Add a b) = "(" ++ pretty a ++ " + " ++ pretty b ++ ")"
+pretty (Mul a b) = "(" ++ pretty a ++ " * " ++ pretty b ++ ")"  -- ✏️ UPDATE: new case
+
+size :: Expr -&gt; Int
+size (Lit _)   = 1
+size (Add a b) = 1 + size a + size b
+size (Mul a b) = 1 + size a + size b  -- ✏️ UPDATE: new case
+</code></pre>
+<p>In Wadler’s terms, <strong>data extension is not modular</strong> in the ADT approach.</p>
+<h2 id="java-object-oriented"><a class="header" href="#java-object-oriented">Java (Object-Oriented)</a></h2>
+<p>We start with an interface and concrete classes for each variant.</p>
+<pre><code class="language-java">// Expression variants
+interface Expr {
+    int eval();
+    String pretty();
+}
+
+final class Lit implements Expr {
+    private final int n;
+
+    Lit(int n) {
+        this.n = n;
+    }
+
+    public int eval() {
+        return n;
+    }
+
+    public String pretty() {
+        return Integer.toString(n);
+    }
+}
+
+final class Add implements Expr {
+    private final Expr a;
+    private final Expr b;
+
+    Add(Expr a, Expr b) {
+        this.a = a;
+        this.b = b;
+    }
+
+    public int eval() {
+        return a.eval() + b.eval();
+    }
+
+    public String pretty() {
+        return "(" + a.pretty() + " + " + b.pretty() + ")";
+    }
+}
+</code></pre>
+<p>Now <strong>adding a new variant</strong> is easy:</p>
+<pre><code class="language-java">final class Mul implements Expr {
+    private final Expr a;
+    private final Expr b;
+
+    Mul(Expr a, Expr b) {
+        this.a = a;
+        this.b = b;
+    }
+
+    public int eval() {
+        return a.eval() * b.eval();
+    }
+
+    public String pretty() {
+        return "(" + a.pretty() + " * " + b.pretty() + ")";
+    }
+}
+</code></pre>
+<p>But <strong>adding a new operation</strong> (e.g. <code>size</code>) is invasive. You must edit the interface and every class:</p>
+<pre><code class="language-java">interface Expr {
+    int eval();
+    String pretty();
+    int size(); // ✏️ UPDATE: new operation added here
+}
+
+final class Lit implements Expr {
+    private final int n;
+
+    Lit(int n) { this.n = n; }
+
+    public int eval() { return n; }
+    public String pretty() { return Integer.toString(n); }
+    public int size() { return 1; } // ✏️ UPDATE: new method in every class
+}
+
+final class Add implements Expr {
+    private final Expr a;
+    private final Expr b;
+
+    Add(Expr a, Expr b) { this.a = a; this.b = b; }
+
+    public int eval() { return a.eval() + b.eval(); }
+    public String pretty() { return "(" + a.pretty() + " + " + b.pretty() + ")"; }
+    public int size() { return 1 + a.size() + b.size(); } // ✏️ UPDATE: new method in every class
+}
+
+final class Mul implements Expr {
+    private final Expr a;
+    private final Expr b;
+
+    Mul(Expr a, Expr b) { this.a = a; this.b = b; }
+
+    public int eval() { return a.eval() * b.eval(); }
+    public String pretty() { return "(" + a.pretty() + " * " + b.pretty() + ")"; }
+    public int size() { return 1 + a.size() + b.size(); } // ✏️ UPDATE: new method in every class
+}
+</code></pre>
+<p>In Wadler’s terms, <strong>operation extension is not modular</strong> in the OO approach.</p>
+<h2 id="summary-wadlers-point"><a class="header" href="#summary-wadlers-point">Summary (Wadler’s Point)</a></h2>
+<ul>
+<li>Functional/ADT style favors <strong>new operations</strong> but resists <strong>new variants</strong>.</li>
+<li>OO style favors <strong>new variants</strong> but resists <strong>new operations</strong>.</li>
+<li>The expression problem asks for a design where <strong>both</strong> dimensions are extensible without modifying existing code.</li>
+</ul>
+<h2 id="wadlers-explanation-and-solution-landscape-1998"><a class="header" href="#wadlers-explanation-and-solution-landscape-1998">Wadler’s Explanation and Solution Landscape (1998)</a></h2>
+<p>Wadler frames the problem as: extend a datatype <strong>by cases</strong> (new variants) and extend <strong>functions over that datatype</strong> (new operations), <em>without recompiling existing code</em> and while preserving <strong>static type safety</strong> (no casts).</p>
+<p>He uses a “table” metaphor:</p>
+<ul>
+<li><strong>Rows</strong> = cases (variants / constructors)</li>
+<li><strong>Columns</strong> = functions (operations / interpretations)</li>
+</ul>
+<p>In <strong>functional/ADT</strong> settings, rows are fixed and columns are easy to add.<br />
+In <strong>OO</strong> settings, columns are fixed and rows are easy to add.<br />
+The challenge is to make <strong>both directions</strong> extensible.</p>
+<h2 id="wadlers-proposed-solution-gj--virtual-types"><a class="header" href="#wadlers-proposed-solution-gj--virtual-types">Wadler’s Proposed Solution (GJ + Virtual Types)</a></h2>
+<p>Wadler presents a solution in GJ (Generic Java) using:</p>
+<ul>
+<li>A <code>This</code>-bounded parameter (<code>This extends LangF&lt;This&gt;</code>) to simulate <strong>ThisType</strong>.</li>
+<li><strong>Inner classes and interfaces</strong> indexed by <code>This</code> (virtual types).</li>
+<li>A visitor-based structure that allows:
+<ul>
+<li>New cases (e.g., <code>Plus</code>) by subclassing the “language family”</li>
+<li>New operations (e.g., <code>Show</code>) by adding new visitors</li>
+</ul>
+</li>
+</ul>
+<p>The trick is to refer to <code>This.Exp</code> and <code>This.Visitor</code> so that each extension phase remains type-safe and independently compilable.</p>
+<h3 id="caveat-java-inner-interfaces"><a class="header" href="#caveat-java-inner-interfaces">Caveat (Java inner interfaces)</a></h3>
+<p>Wadler notes that Java treats inner interfaces as <strong>static</strong>, which breaks the indexing trick.<br />
+He suggests that loosening this restriction would make the solution viable; this has still not changed in modern Java (nested interfaces remain implicitly static).</p>
+<h2 id="other-solution-directions-mentioned"><a class="header" href="#other-solution-directions-mentioned">Other Solution Directions Mentioned</a></h2>
+<ol>
+<li>
+<p>Corky Cartwright’s approach
+Requires <strong>contravariant extension</strong>: allow a base expression type to stand in for an extended one.
+This explains why fixpoints are used: the extended language family is <em>not</em> a subtype of the original.</p>
+</li>
+<li>
+<p>Kim Bruce’s approach
+Requires <strong>higher‑order type constructors</strong> (parameterizing a type over a type constructor).
+GJ does not support this directly, but Wadler argues virtual types can simulate it.</p>
+</li>
+<li>
+<p>Krishnamurthi et al. (Extended Visitor pattern)
+Works via an extended visitor design.
+<strong>Not statically typed</strong> in their setting (Pizza), so dynamic casts are required.</p>
+</li>
+<li>
+<p>Special‑purpose language extensions
+Wadler cites two solutions that rely on language features designed specifically for the problem.
+These are less general than the virtual‑type approach.</p>
+</li>
+</ol>
+<h2 id="wadlers-two-points"><a class="header" href="#wadlers-two-points">Wadler’s Two Points</a></h2>
+<p>Wadler’s email makes two points clear:</p>
+<ol>
+<li>The Expression Problem is a <strong>structural tension</strong> between data extension and operation extension.</li>
+<li>Solutions are possible, but they tend to require either:
+<ul>
+<li>Type system features that simulate <strong>virtual types</strong>, or</li>
+<li>Special-purpose language extensions, or</li>
+<li>A compromise on static type safety or independent compilation.</li>
+</ul>
+</li>
+</ol>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>Wadler, P. (1998). <em>The Expression Problem</em>. Java-Genericity mailing list note.<br />
+<a href="https://homepages.inf.ed.ac.uk/wadler/papers/expression/expression.txt">https://homepages.inf.ed.ac.uk/wadler/papers/expression/expression.txt</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="referential-transparency"><a class="header" href="#referential-transparency">Referential Transparency</a></h1>
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="concepts/referential_transparency.html#admonition-related"></a>
+</div>
+<div>
+<p>Concepts: <a href="concepts/../concepts/expression-problem.html">Expression Problem</a><br />
+Insights: <a href="concepts/../insights/referential-transparency.html">Referential Transparency Reloaded</a></p>
+</div>
+</div>
+<p>Referential transparency (RT) is the substitution property of expressions:
+an expression can be replaced by its denotation without changing program meaning.</p>
+<p>Today, this is how RT is used in practice: as the basis for equational reasoning, safe refactoring, and law-driven API design.</p>
+<h2 id="core-meaning"><a class="header" href="#core-meaning">Core Meaning</a></h2>
+<p>RT says:</p>
+<ul>
+<li>if <code>e</code> denotes <code>v</code></li>
+<li>then using <code>v</code> instead of <code>e</code> preserves meaning</li>
+</ul>
+<p>This is a semantic claim, not a coding-style slogan.</p>
+<h3 id="purity"><a class="header" href="#purity">Purity</a></h3>
+<p>A pure function returns the same output for the same inputs and has no observable side effects.
+RT is the substitution law for expressions: replacing an expression with its denotation must preserve meaning.
+So purity is one common way to obtain RT in practice, while RT is the broader semantic criterion.
+See <a href="concepts/../insights/referential-transparency.html">Referential Transparency Reloaded</a> for the DD purity-vs-RT distinction.</p>
+<h2 id="historical-context"><a class="header" href="#historical-context">Historical Context</a></h2>
+<p>In programming-language semantics, RT is strongly associated with Christopher Strachey's framing.
+His treatment separates value reasoning from update-heavy behavior:</p>
+<ul>
+<li><strong>R-values</strong>: expression values.</li>
+<li><strong>L-values</strong>: locations that can be assigned.</li>
+</ul>
+<p>The key point is that expression-level substitution is stable when we stay in value reasoning.
+Assignment introduces updates to locations and makes substitution reasoning harder or invalid in the naive form.</p>
+<h2 id="what-assignment-and-side-effects-mean-here"><a class="header" href="#what-assignment-and-side-effects-mean-here">What Assignment And Side Effects Mean Here</a></h2>
+<p>In this context:</p>
+<ul>
+<li><strong>assignment</strong> is updating a location (for example, <code>x := x + 1</code>)</li>
+<li><strong>side effect</strong> is any observable change beyond returning a value</li>
+</ul>
+<p>Assignment is a specific kind of side effect.</p>
+<p>This is why RT fails in many imperative settings: evaluation can depend on or mutate observable context outside the expression's explicit value interface.</p>
+<h2 id="how-modern-languages-present-rt"><a class="header" href="#how-modern-languages-present-rt">How Modern Languages Present RT</a></h2>
+<h3 id="haskell"><a class="header" href="#haskell">Haskell</a></h3>
+<p>RT is taught as default reasoning for pure expressions.
+Effects are explicit in typed constructions (<code>IO</code>, state threading, and related abstractions), so substitution laws are central in daily use.</p>
+<h3 id="scala-cats--cats-effect"><a class="header" href="#scala-cats--cats-effect">Scala (Cats / Cats Effect)</a></h3>
+<p>In Scala FP practice, Cats Effect gives the most common RT framing:</p>
+<ul>
+<li><code>IO[A]</code> is a pure description of effectful work</li>
+<li>composition of <code>IO</code> values is RT</li>
+<li>execution is explicit at runtime boundaries (<code>unsafeRun*</code>)</li>
+</ul>
+<p>Cats Effect also contrasts this with eager <code>Future</code> evaluation, which is one reason RT discussions in Scala emphasize laziness and delayed execution.</p>
+<h2 id="rt-today"><a class="header" href="#rt-today">RT Today</a></h2>
+<p>Across modern ecosystems, RT is used as shorthand for substitution-safe behavior.
+In mixed-paradigm systems, teams usually apply RT claims to specific modules, APIs, or effect-typed regions rather than to all code globally.</p>
+<p>For the Denotational Design interpretation of RT, see <a href="concepts/../insights/referential-transparency.html">Referential Transparency Reloaded</a>.</p>
+<h2 id="references-1"><a class="header" href="#references-1">References</a></h2>
+<ul>
+<li>Strachey, C. <em>Fundamental Concepts in Programming Languages</em> (Oxford PRG lecture notes, 1967).<br />
+<a href="https://reed.cs.depaul.edu/jriely/447/assets/articles/strachey-fundamental-concepts-in-programming-languages.pdf">https://reed.cs.depaul.edu/jriely/447/assets/articles/strachey-fundamental-concepts-in-programming-languages.pdf</a></li>
+<li>Cats Effect docs: <code>IO</code> data type and RT/lazy evaluation notes.<br />
+<a href="https://typelevel.org/cats-effect/docs/datatypes/io">https://typelevel.org/cats-effect/docs/datatypes/io</a></li>
+<li>Typelevel blog: <em>An IO monad for cats</em> (Scala impurity vs RT motivation).<br />
+<a href="https://typelevel.org/blog/2017/05/02/io-monad-for-cats.html">https://typelevel.org/blog/2017/05/02/io-monad-for-cats.html</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="free-monad"><a class="header" href="#free-monad">Free Monad</a></h1>
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="concepts/free_monad.html#admonition-related"></a>
+</div>
+<div>
+<p>Concepts: <a href="concepts/../concepts/dependent_types.html">Dependent types</a>, <a href="concepts/../concepts/cps.html">CPS</a>, <a href="concepts/../concepts/defunctionalization.html">Defunctionalization</a><br />
+Insights: <a href="concepts/../insights/evm-alg.html">Mini EVM</a>, <a href="concepts/../insights/free-monad-dependent.html">Free Monad (dependently)</a></p>
+</div>
+</div>
+<h2 id="what-is-a-free-monad-rust-version"><a class="header" href="#what-is-a-free-monad-rust-version"><strong>What is a Free Monad (Rust version)</strong></a></h2>
+<p>A <strong>free monad</strong> lets you:</p>
+<ul>
+<li><strong>Describe</strong> a program as <em>data</em> - not by running it right away.</li>
+<li><strong>Interpret</strong> that program later in one or more ways.</li>
+</ul>
+<p>Think of it as:</p>
+<blockquote>
+<p>An AST of effectful operations + <code>bind</code>/<code>flat_map</code> to chain them.</p>
+</blockquote>
+<p>You split:</p>
+<ul>
+<li><strong>Syntax</strong> → enum of instructions.</li>
+<li><strong>Semantics</strong> → interpreter function.</li>
+</ul>
+<p>“Free” means you can build a monad <strong>from any functor</strong> (<code>F</code>) without committing to meaning.</p>
+<h2 id="rust-implementation"><a class="header" href="#rust-implementation"><strong>Rust Implementation</strong></a></h2>
+<h3 id="free-monad-type"><a class="header" href="#free-monad-type">Free Monad type</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Clone)]
+enum Free&lt;F, A&gt; {
+    Pure(A),
+    Suspend(F),
+    FlatMap(Box&lt;Free&lt;F, A&gt;&gt;, Box&lt;dyn Fn(A) -&gt; Free&lt;F, A&gt;&gt;),
+}
+
+impl&lt;F: Clone + 'static, A: 'static&gt; Free&lt;F, A&gt; {
+    fn pure(a: A) -&gt; Self {
+        Free::Pure(a)
+    }
+
+    fn flat_map&lt;B: 'static, G&gt;(self, f: G) -&gt; Free&lt;F, B&gt;
+    where
+        G: Fn(A) -&gt; Free&lt;F, B&gt; + 'static,
+        F: 'static,
+    {
+        match self {
+            Free::Pure(a) =&gt; f(a),
+            Free::Suspend(op) =&gt; {
+                Free::FlatMap(Box::new(Free::Suspend(op)), Box::new(f))
+            }
+            Free::FlatMap(inner, g) =&gt; {
+                Free::FlatMap(inner, Box::new(move |x| g(x).flat_map(f.clone())))
+            }
+        }
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="dsl-console-operations"><a class="header" href="#dsl-console-operations">DSL: Console operations</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Clone)]
+enum Console&lt;A&gt; {
+    Print(String, A),
+    ReadLine(fn(String) -&gt; A),
+}
+
+// Smart constructors
+fn print_line(s: &amp;str) -&gt; Free&lt;Console&lt;()&gt;, ()&gt; {
+    Free::Suspend(Console::Print(s.to_string(), ()))
+}
+
+fn read_line() -&gt; Free&lt;Console&lt;String&gt;, String&gt; {
+    Free::Suspend(Console::ReadLine(|input| Free::Pure(input)))
+}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="interpreter"><a class="header" href="#interpreter">Interpreter</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn run_console&lt;A&gt;(mut prog: Free&lt;Console&lt;A&gt;, A&gt;) -&gt; A {
+    loop {
+        match prog {
+            Free::Pure(a) =&gt; return a,
+            Free::Suspend(Console::Print(s, next)) =&gt; {
+                println!("{}", s);
+                prog = Free::Pure(next);
+            }
+            Free::Suspend(Console::ReadLine(f)) =&gt; {
+                let mut buf = String::new();
+                std::io::stdin().read_line(&amp;mut buf).unwrap();
+                prog = f(buf.trim().to_string());
+            }
+            Free::FlatMap(inner, cont) =&gt; match *inner {
+                Free::Pure(a) =&gt; prog = cont(a),
+                Free::Suspend(op) =&gt; prog = Free::Suspend(op), // minimal handling
+                _ =&gt; unimplemented!(),
+            },
+        }
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="usage"><a class="header" href="#usage">Usage</a></h3>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let program =
+        print_line("What is your name?")
+        .flat_map(|_| read_line())
+        .flat_map(|name| print_line(&amp;format!("Hello, {name}!")));
+
+    run_console(program);
+}</code></pre></pre>
+<h2 id="takeaway"><a class="header" href="#takeaway"><strong>Takeaway</strong></a></h2>
+<ul>
+<li><strong>Syntax</strong> = <code>enum Console</code> (possible instructions)</li>
+<li><strong>Program</strong> = <code>Free&lt;Console, A&gt;</code> (data describing steps)</li>
+<li><strong>Semantics</strong> = <code>run_console</code> (interpreter)</li>
+<li>Benefit: You can write multiple interpreters for the same program — e.g., run in real IO, log to a file, or compile to another language.</li>
+</ul>
+<h2 id="correlation-to-continuations-and-cps"><a class="header" href="#correlation-to-continuations-and-cps"><strong>Correlation to Continuations and CPS</strong></a></h2>
+<p><strong>Continuation-Passing Style (CPS)</strong> is a way of writing programs where functions never return values directly but instead pass results to another function (the <em>continuation</em>) that represents “the rest of the program.”</p>
+<p>A <strong>free monad</strong> is basically a <strong>program as a sequence of steps</strong>, where each step says:</p>
+<blockquote>
+<p>"Do this, then continue with the rest."</p>
+</blockquote>
+<p>That “rest of the program” is exactly a <strong>continuation</strong> — a function from the current result to the next step.</p>
+<ul>
+<li>
+<p>In our Rust free monad:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>Free::FlatMap(Box&lt;Free&lt;F, A&gt;&gt;, Box&lt;dyn Fn(A) -&gt; Free&lt;F, A&gt;&gt;)
+<span class="boring">}</span></code></pre></pre>
+<p>the <code>Box&lt;dyn Fn(A) -&gt; Free&lt;F, A&gt;&gt;</code> <strong>is the continuation</strong>.</p>
+</li>
+<li>
+<p>When you interpret a free monad, you are <strong>running in CPS</strong>:</p>
+<ul>
+<li>Instead of returning values directly, you pass them into the next continuation.</li>
+<li>You end up in a loop of:
+<code>current_instruction -&gt; feed result into continuation -&gt; next instruction</code></li>
+</ul>
+</li>
+<li>
+<p><strong>CPS relation</strong>:</p>
+<ul>
+<li>Free monads <em>encode CPS in a data structure</em>.</li>
+<li>CPS <em>is the runtime control flow representation</em> of the same idea.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Quick mapping</strong>:</p>
+<div class="table-wrapper"><table><thead><tr><th>Concept</th><th>In CPS</th><th>In Free Monad AST</th></tr></thead><tbody>
+<tr><td>Step result</td><td>Argument to continuation</td><td><code>A</code> in <code>Fn(A) -&gt; Free</code></td></tr>
+<tr><td>Continuation</td><td>Function <code>(A) -&gt; R</code></td><td><code>Box&lt;dyn Fn(A) -&gt; Free&gt;</code></td></tr>
+<tr><td>Program</td><td>Nested continuations</td><td>Nested <code>FlatMap</code> variants</td></tr>
+<tr><td>Execution</td><td>Calling functions</td><td>Pattern matching + calling</td></tr>
+</tbody></table>
+</div>
+<h2 id="gof-design-patterns-mapping"><a class="header" href="#gof-design-patterns-mapping"><strong>GoF Design Patterns Mapping</strong></a></h2>
+<p>Free monads are <strong>not</strong> in GoF because they’re from functional programming theory, but they <strong>subsume</strong> or <strong>emulate</strong> several patterns:</p>
+<div class="table-wrapper"><table><thead><tr><th>GoF Pattern</th><th>How Free Monad Relates</th></tr></thead><tbody>
+<tr><td><strong>Interpreter</strong></td><td>The whole “AST + run” is literally Interpreter pattern — free monads just give you the AST + combinators for free.</td></tr>
+<tr><td><strong>Command</strong></td><td>Each <code>enum</code> variant in the DSL is a Command object. The free monad chains them like a macro-command.</td></tr>
+<tr><td><strong>Composite</strong></td><td>The AST structure (nested instructions) is a Composite of commands.</td></tr>
+<tr><td><strong>Builder</strong></td><td>The <code>.flat_map</code> chain is a fluent builder for programs.</td></tr>
+<tr><td><strong>Visitor</strong></td><td>The interpreter is essentially a visitor over the instruction set.</td></tr>
+</tbody></table>
+</div>
+<h2 id="why-free-monad--these-patterns"><a class="header" href="#why-free-monad--these-patterns"><strong>Why Free Monad &gt; These Patterns</strong></a></h2>
+<ul>
+<li>
+<p>GoF patterns are <strong>manual OOP work</strong> - you define interfaces, classes, and compose them.</p>
+</li>
+<li>
+<p>Free monads are <strong>algebraic</strong> - you define <em>data</em> for instructions and <em>functions</em> to interpret them.</p>
+</li>
+<li>
+<p>You automatically get:</p>
+<ul>
+<li>Sequencing (<code>flat_map</code>)</li>
+<li>Composition</li>
+<li>Multiple interpreters without touching core logic</li>
+</ul>
+</li>
+</ul>
+<p><strong>Summary Table</strong>:</p>
+<div class="table-wrapper"><table><thead><tr><th>Free Monad FP concept</th><th>Equivalent GoF/OOP pattern</th></tr></thead><tbody>
+<tr><td>Instruction enum</td><td>Command</td></tr>
+<tr><td>Program AST</td><td>Composite</td></tr>
+<tr><td><code>flat_map</code> builder</td><td>Builder</td></tr>
+<tr><td>Interpreter fn</td><td>Interpreter / Visitor</td></tr>
+<tr><td>Multiple interpreters</td><td>Strategy</td></tr>
+</tbody></table>
+</div>
+<h2 id="relation-to-defunctionalization"><a class="header" href="#relation-to-defunctionalization"><strong>Relation to Defunctionalization</strong></a></h2>
+<p><strong>Defunctionalization</strong> is a program transformation that replaces higher-order functions with a first-order data structure that represents the possible functions, plus an interpreter that applies them.</p>
+<p>In CPS, continuations are higher-order functions. Defunctionalizing a CPS program replaces those continuations with an enum of continuation cases and an <code>apply</code> function to run them.</p>
+<p>A free monad can be seen as the result of defunctionalizing the continuations inside a CPS-transformed program:</p>
+<ol>
+<li>Start with a CPS version of your program. The "rest of the program" is carried in continuation functions.</li>
+<li>Defunctionalize those continuation functions into a finite set of cases in a data type.</li>
+<li>The resulting data type, together with the initial instruction set, is exactly the AST of a free monad.</li>
+</ol>
+<p><strong>Key similarities</strong></p>
+<ul>
+<li>Both free monads and defunctionalization produce a data representation of computation and require an interpreter to give meaning to that data.</li>
+<li>The <code>FlatMap</code> case in a free monad holds the continuation; defunctionalization replaces that closure with a case in a data type.</li>
+</ul>
+<p><strong>Key differences</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>Aspect</th><th>Defunctionalization</th><th>Free Monad</th></tr></thead><tbody>
+<tr><td>Purpose</td><td>Mechanical compiler technique to remove higher-order functions</td><td>Algebraic construction to separate syntax from semantics</td></tr>
+<tr><td>Input</td><td>Any higher-order program, often in CPS form</td><td>A functor F describing possible instructions</td></tr>
+<tr><td>Output</td><td>Enum of function cases plus apply function</td><td><code>Free&lt;F, A&gt;</code> AST plus interpreters</td></tr>
+<tr><td>Monad?</td><td>Not necessarily</td><td>Always a monad by construction</td></tr>
+<tr><td>Scope</td><td>General transformation</td><td>Specific functional programming pattern</td></tr>
+</tbody></table>
+</div>
+<p><strong>Summary</strong>
+Defunctionalization is a transformation technique. Free monads are a reusable design pattern. The free monad structure is what you get when you defunctionalize the continuations in a CPS program built from a functor F.</p>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="continuation-passing-style-cps"><a class="header" href="#continuation-passing-style-cps">Continuation-Passing Style (CPS)</a></h1>
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="concepts/cps.html#admonition-related"></a>
+</div>
+<div>
+<p>Concepts: <a href="concepts/../concepts/free_monad.html">Free Monad</a>, <a href="concepts/../concepts/defunctionalization.html">Defunctionalization</a><br />
+Insights: <a href="concepts/../insights/evm-alg.html">Mini EVM</a></p>
+</div>
+</div>
+<h2 id="definition-1"><a class="header" href="#definition-1">Definition</a></h2>
+<p>Continuation-Passing Style (CPS) is a way of writing programs where functions do not return values directly. Instead, they pass their result to another function called a <em>continuation</em>, which represents the rest of the program.</p>
+<h2 id="motivation"><a class="header" href="#motivation">Motivation</a></h2>
+<ul>
+<li>Makes control flow explicit and programmable.</li>
+<li>Enables advanced transformations such as non-blocking IO, early exits, coroutines, backtracking, and concurrency scheduling.</li>
+<li>Used in compiler intermediate representations to simplify optimization and analysis.</li>
+</ul>
+<h2 id="basic-form"><a class="header" href="#basic-form">Basic Form</a></h2>
+<p>In direct style:</p>
+<pre><pre class="playground"><code class="language-rust">fn add_one(x: i32) -&gt; i32 {
+    x + 1
+}
+
+fn main() {
+    let y = add_one(41);
+    println!("{}", y);
+}</code></pre></pre>
+<p>In CPS:</p>
+<pre><pre class="playground"><code class="language-rust">fn add_one_cps(x: i32, k: impl Fn(i32)) {
+    k(x + 1)
+}
+
+fn main() {
+    add_one_cps(41, |y| {
+        println!("{}", y);
+    });
+}</code></pre></pre>
+<p>Here, <code>k</code> is the continuation. Instead of returning <code>x + 1</code>, we call <code>k(x + 1)</code>.</p>
+<h2 id="key-properties"><a class="header" href="#key-properties">Key Properties</a></h2>
+<ul>
+<li>All function calls are <em>tail calls</em> to continuations.</li>
+<li>The current computation never "returns" to the caller; instead it jumps into the continuation.</li>
+<li>Control flow becomes explicit in the program.</li>
+</ul>
+<h2 id="relation-to-higher-order-functions"><a class="header" href="#relation-to-higher-order-functions">Relation to Higher-Order Functions</a></h2>
+<ul>
+<li>In CPS, continuations are just higher-order functions.</li>
+<li>Each step of the computation receives a continuation representing what to do next.</li>
+</ul>
+<h2 id="relation-to-defunctionalization-1"><a class="header" href="#relation-to-defunctionalization-1">Relation to Defunctionalization</a></h2>
+<ul>
+<li>In CPS, the continuation is an actual function value.</li>
+<li>Defunctionalization replaces the continuation function with a data structure (enum) that represents possible next steps, plus an <code>apply</code> function to interpret them.</li>
+</ul>
+<h2 id="relation-to-free-monads"><a class="header" href="#relation-to-free-monads">Relation to Free Monads</a></h2>
+<ul>
+<li>The <code>FlatMap</code> constructor in a free monad is exactly a stored continuation.</li>
+<li>Interpreting a free monad is like executing CPS code where the continuation is part of the program data.</li>
+<li>Free monads can be obtained by taking CPS code and defunctionalizing the continuations.</li>
+</ul>
+<h2 id="advantages"><a class="header" href="#advantages">Advantages</a></h2>
+<ul>
+<li>Flexible control flow representation.</li>
+<li>Easier to reason about evaluation order.</li>
+<li>Powerful for implementing interpreters, debuggers, optimizers, and async runtimes.</li>
+</ul>
+<h2 id="disadvantages"><a class="header" href="#disadvantages">Disadvantages</a></h2>
+<ul>
+<li>Verbose compared to direct style.</li>
+<li>Can be harder to read for humans.</li>
+<li>Requires tail call optimization for efficiency in languages without native support for it.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="defunctionalization"><a class="header" href="#defunctionalization">Defunctionalization</a></h1>
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="concepts/defunctionalization.html#admonition-related"></a>
+</div>
+<div>
+<p>Concepts: <a href="concepts/../concepts/free_monad.html">Free Monad</a>, <a href="concepts/../concepts/cps.html">CPS</a><br />
+Insights: <a href="concepts/../insights/evm-alg.html">Mini EVM</a></p>
+</div>
+</div>
+<h2 id="definition-2"><a class="header" href="#definition-2">Definition</a></h2>
+<p>Defunctionalization is a program transformation that replaces higher-order functions with a first-order data structure that represents the possible functions, plus an interpreter function that applies them.</p>
+<h2 id="motivation-1"><a class="header" href="#motivation-1">Motivation</a></h2>
+<p>Some languages, compilers, or runtimes cannot handle higher-order functions efficiently or at all. By defunctionalizing, you make the program purely first-order, which is easier to compile, analyze, serialize, or run in restricted environments.</p>
+<h2 id="the-process"><a class="header" href="#the-process">The Process</a></h2>
+<ol>
+<li>Identify all possible higher-order functions that may be created and passed around.</li>
+<li>Assign each such function a unique tag in an enum or sum type, along with any data it needs to operate.</li>
+<li>Replace function values with these tags.</li>
+<li>Define an <code>apply</code> function that takes a tag and the function arguments, then pattern matches on the tag to run the correct code.</li>
+</ol>
+<h2 id="example-in-rust"><a class="header" href="#example-in-rust">Example in Rust</a></h2>
+<p>Before: using a closure</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let k: Box&lt;dyn Fn(i32) -&gt; i32&gt; = Box::new(|x| x + 1);
+println!("{}", k(41));
+<span class="boring">}</span></code></pre></pre>
+<p>After: defunctionalized form</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>enum Cont {
+    Add1
+}
+
+fn apply(c: Cont, x: i32) -&gt; i32 {
+    match c {
+        Cont::Add1 =&gt; x + 1,
+    }
+}
+
+println!("{}", apply(Cont::Add1, 41));
+<span class="boring">}</span></code></pre></pre>
+<h2 id="properties"><a class="header" href="#properties">Properties</a></h2>
+<ul>
+<li>All functions are now represented by simple data.</li>
+<li>The program becomes purely first-order.</li>
+<li>The <code>apply</code> function replaces direct function calls.</li>
+</ul>
+<h2 id="applications"><a class="header" href="#applications">Applications</a></h2>
+<ul>
+<li>Compiler backend simplification: many compilers generate CPS code and then defunctionalize it.</li>
+<li>Serialization of functions: you can send the enum tag over a network or store it in a file.</li>
+<li>Static analysis: first-order code is easier to reason about.</li>
+<li>Derivation of interpreters: defunctionalization naturally leads to an interpreter pattern.</li>
+</ul>
+<h2 id="relation-to-cps"><a class="header" href="#relation-to-cps">Relation to CPS</a></h2>
+<p>In CPS (continuation-passing style), continuations are higher-order functions. Defunctionalizing CPS code turns these continuations into a finite set of cases in an enum plus an apply function.</p>
+<h2 id="relation-to-free-monads-1"><a class="header" href="#relation-to-free-monads-1">Relation to Free Monads</a></h2>
+<p>A free monad can be seen as the result of defunctionalizing the continuations in a CPS-transformed program. The resulting data structure is the free monad's AST, and the apply function is the interpreter.</p>
+<h2 id="references-2"><a class="header" href="#references-2">References</a></h2>
+<ul>
+<li>Reynolds, J. C. (1972). <em>Definitional Interpreters for Higher-Order Programming Languages</em>.<br />
+<a href="https://dl.acm.org/doi/epdf/10.1145/800194.805852">https://dl.acm.org/doi/epdf/10.1145/800194.805852</a></li>
+<li>Yallop, J., and White, L. (2014). <em>Lightweight Higher-Kinded Polymorphism</em> (uses defunctionalization to encode type-level application).<br />
+<a href="https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf">https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="dependent-types"><a class="header" href="#dependent-types">Dependent Types</a></h1>
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="concepts/dependent_types.html#admonition-related"></a>
+</div>
+<div>
+<p>Concepts: <a href="concepts/../concepts/free_monad.html">Free Monad</a><br />
+Insights: <a href="concepts/../insights/free-monad-dependent.html">Free Monad (dependently)</a></p>
+</div>
+</div>
+<h2 id="definition-3"><a class="header" href="#definition-3">Definition</a></h2>
+<p>A type system is called <em>dependent</em> when types can depend on values. This means that the shape, constraints, or meaning of a type may be parameterized by program values. With dependent types, you can express rich invariants and relationships directly in the type system.</p>
+<h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
+<ul>
+<li><code>Vec&lt;n, T&gt;</code> - a vector type indexed by its length <code>n</code></li>
+<li><code>Matrix&lt;rows, cols, T&gt;</code> - dimensions encoded in the type</li>
+<li><code>Proof&lt;p&gt;</code> - a type representing a proof of a proposition <code>p</code></li>
+</ul>
+<p>For instance, in a language with dependent types:</p>
+<pre><code class="language-hs">append : Vec&lt;n, T&gt; -&gt; Vec&lt;m, T&gt; -&gt; Vec&lt;n + m, T&gt;
+</code></pre>
+<p>The type says that appending two vectors produces a vector whose length is the sum of the lengths.</p>
+<h2 id="purpose"><a class="header" href="#purpose">Purpose</a></h2>
+<ul>
+<li>Capture <strong>invariants</strong> in the type system so they are checked at compile time</li>
+<li>Reduce or eliminate certain classes of runtime errors</li>
+<li>Allow programs to carry <strong>proofs</strong> of their own correctness</li>
+<li>Enable more expressive APIs where type signatures encode precise behavior</li>
+</ul>
+<h2 id="key-characteristics"><a class="header" href="#key-characteristics">Key Characteristics</a></h2>
+<ul>
+<li><strong>Types are computed</strong>: Types can be expressions evaluated from program values</li>
+<li><strong>Terms appear in types</strong>: No strict separation between values and types</li>
+<li><strong>Type checking may evaluate code</strong>: The compiler may need to run computations to verify type constraints</li>
+<li><strong>Expressiveness</strong>: Can model proofs, exact sizes, state transitions, or logical conditions</li>
+</ul>
+<h2 id="dependent-function-types"><a class="header" href="#dependent-function-types">Dependent Function Types</a></h2>
+<p>A dependent function type is written (in type theory notation) as:</p>
+<pre><code class="language-hs">Π x : A. B(x)
+</code></pre>
+<p>This means: for each value <code>x</code> of type <code>A</code>, the result type is <code>B(x)</code> which may depend on the value of <code>x</code>.</p>
+<p>In programming terms:</p>
+<ul>
+<li>
+<p>Non-dependent function:</p>
+<pre><code class="language-hs">f : A -&gt; B
+</code></pre>
+<p>The output type <code>B</code> is fixed regardless of the input value.</p>
+</li>
+<li>
+<p>Dependent function:</p>
+<pre><code class="language-hs">f : (x : A) -&gt; B(x)
+</code></pre>
+<p>The output type varies based on the actual input <code>x</code>.</p>
+</li>
+</ul>
+<h2 id="in-practice-1"><a class="header" href="#in-practice-1">In Practice</a></h2>
+<ul>
+<li>
+<p>Fully supported in <strong>Agda</strong>, <strong>Idris</strong>, <strong>Coq</strong>, <strong>Lean</strong></p>
+</li>
+<li>
+<p>Rust supports restricted forms via <strong>const generics</strong> and <strong>trait bounds</strong></p>
+</li>
+<li>
+<p>Commonly used for:</p>
+<ul>
+<li>Exact-size arrays and matrices</li>
+<li>State machines with type-level states</li>
+<li>Encoding logical proofs alongside code</li>
+</ul>
+</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="branching-and-confluence"><a class="header" href="#branching-and-confluence">Branching and Confluence</a></h1>
+<p>We encounter <strong>branching</strong> constantly in everyday life.
+Imagine:</p>
+<ul>
+<li>You wake up and decide: ☕ coffee <strong>or</strong> 🍵 tea.</li>
+<li>If coffee: sugar or no sugar?</li>
+<li>If tea: green or black?</li>
+</ul>
+<p>Each decision <strong>branches</strong> into alternatives, like a little decision tree.
+But in the end, you don’t live in two universes — you end up with <strong>one drink in your hand</strong>.
+That’s <strong>confluence</strong>: although choices branch, they merge back into one reality.</p>
+<h2 id="branching-in-rust-programs"><a class="header" href="#branching-in-rust-programs">Branching in Rust Programs</a></h2>
+<p>The same pattern appears in programs. A sequential program may branch internally, but execution always continues as a <strong>single flow</strong>.</p>
+<h3 id="if"><a class="header" href="#if"><code>if</code></a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn sign(x: i32) -&gt; i32 {
+    if x &gt; 0 {
+        1
+    } else if x &lt; 0 {
+        -1
+    } else {
+        0
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<ul>
+<li><strong>Branching:</strong> program splits into one of three paths.</li>
+<li><strong>Confluence:</strong> for a given input value, the same branch condition will always be chosen. Each input deterministically follows exactly one path, and evaluation of conditions happens in a fixed order (first check <code>x &gt; 0</code>, then <code>x &lt; 0</code>, else default). Regardless of which path is taken, the result is always determined from the input, and execution continues in a single, unified flow.</li>
+</ul>
+<h3 id="match"><a class="header" href="#match"><code>match</code></a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn day_type(day: &amp;str) -&gt; &amp;str {
+    match day {
+        "Saturday" | "Sunday" =&gt; "Weekend",
+        "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" =&gt; "Weekday",
+        _ =&gt; "Unknown",
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<ul>
+<li><strong>Branching:</strong> many alternatives.</li>
+<li><strong>Confluence:</strong> for a given input value, the program deterministically selects exactly one matching branch. The essential property is that the <em>trace</em> of evaluation is deterministic: the same input always leads down the same path. In this simple example each branch yields the same type (<code>&amp;str</code>), but even in settings with dependent types—where result types vary with input—the execution remains confluent because identical inputs always produce the same path and outcome.</li>
+</ul>
+<h3 id="loops-with-early-exit"><a class="header" href="#loops-with-early-exit">Loops with Early Exit</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn find_even(nums: &amp;[i32]) -&gt; Option&lt;i32&gt; {
+    for &amp;n in nums {
+        if n % 2 == 0 {
+            return Some(n); // branch: exit early
+        }
+    }
+    None // confluence: reached if loop completes
+}
+<span class="boring">}</span></code></pre></pre>
+<ul>
+<li><strong>Branching:</strong> may exit during iteration.</li>
+<li><strong>Confluence:</strong> one thread of control — either returns early or finishes and continues.</li>
+</ul>
+<h2 id="sequential-confluence-illustrated"><a class="header" href="#sequential-confluence-illustrated">Sequential Confluence Illustrated</a></h2>
+<pre><code>Start
+ ├─ branch A → ...
+ └─ branch B → ...
+           ↘
+            Confluence → continues as one flow
+</code></pre>
+<p>Just like your morning drink decision, a program doesn’t split into parallel worlds.
+Branches are <strong>local alternatives</strong>, but <strong>sequential confluence</strong> ensures only one actual path is taken, and execution rejoins into one future.</p>
+<p>⚡ <strong>Key idea:</strong>
+Branching explores alternatives, confluence merges them back.
+In sequential programs, <strong>confluence is guaranteed</strong>: there’s always one final thread of execution.</p>
+<h2 id="confluence-beyond-determinism"><a class="header" href="#confluence-beyond-determinism">Confluence Beyond Determinism</a></h2>
+<p>Confluence is often explained as the guarantee that the same input always produces the same output. But its essence is deeper: <strong>the trace of evaluation itself is deterministic</strong>. This means the path through the program is uniquely determined by the input, independent of external factors. In Rust, both <code>if</code> and <code>match</code> enforce deterministic traces. More broadly, confluence is what allows reasoning about programs algebraically, since the same input always reduces in a predictable way.</p>
+<h2 id="trace-equivalence"><a class="header" href="#trace-equivalence">Trace Equivalence</a></h2>
+<p><strong>Trace equivalence</strong> means that two programs, given the same input, follow evaluation paths that yield the <strong>same observable behavior</strong>: the same result and the same observable effects. In pure code (no effects), this reduces to producing the same result for all inputs. With side effects, equivalence also requires that the same conditions are evaluated in the same order.</p>
+<p><strong>Example of not trace‑equivalent (side effect changes trace):</strong></p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn is_admin() -&gt; bool {
+    println!("checked admin"); // side effect
+    true
+}
+fn is_user() -&gt; bool {
+    println!("checked user"); // side effect
+    true
+}
+
+fn classify_role(x: i32) -&gt; &amp;'static str {
+    if is_admin() {
+        "admin"
+    } else if is_user() {
+        "user"
+    } else {
+        "other"
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Here both <code>is_admin</code> and <code>is_user</code> return <code>true</code>, so the result is always <code>"admin"</code>. But the <strong>trace differs</strong>: if <code>is_admin</code> is checked first, only that prints; if conditions are reordered, <code>is_user</code> prints instead. The outcome is the same, but the traces differ, so the programs are <strong>not trace‑equivalent</strong>.</p>
+<p><strong>Trace‑equivalent reorder (pure, disjoint, total):</strong></p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn classify_a(x: i32) -&gt; &amp;'static str {
+    if x &lt; 0 { "neg" } else if x == 0 { "zero" } else { "pos" }
+}
+fn classify_b(x: i32) -&gt; &amp;'static str {
+    if x == 0 { "zero" } else if x &lt; 0 { "neg" } else { "pos" }
+}
+<span class="boring">}</span></code></pre></pre>
+<p>The predicates are disjoint and cover all integers; both versions return the same label for every input. With no side effects, these are <strong>trace‑equivalent</strong>.</p>
+<h2 id="bridge-to-trees"><a class="header" href="#bridge-to-trees">Bridge to Trees</a></h2>
+<p>Branching in programs naturally connects to tree structures. A sequence of decisions can be visualized as a decision tree: each internal node is a branching point, and each leaf is a possible outcome. Restricting to two alternatives at each branch gives <strong>binary trees</strong>, which are a cornerstone of computer science. This perspective shifts branching from a control-flow mechanism into a structural representation of possibilities.</p>
+<p>Conal Elliott has described memory addressing as a kind of <strong>perfect binary leaf trees</strong>, where each memory cell corresponds to a leaf reached by a sequence of left/right choices. This view links the abstract branching structure of programs to the very way data is organized and accessed.</p>
+<iframe width="100%" height="315" src="https://www.youtube.com/embed/oaIMMclGuog?si=qGfA1CWoDyXuInHA&amp;clip=Ugkx_TTQq7uzqaz9F1my5lozpOJ9cusgqSG3&amp;clipt=ELD_mwEY0LOeAQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<h2 id="bridge-to-semantics"><a class="header" href="#bridge-to-semantics">Bridge to Semantics</a></h2>
+<p>Confluence is also a fundamental property in programming language semantics. In lambda calculus, for example, the <strong>Church–Rosser theorem</strong> states that if an expression can be reduced in different ways, all reduction paths will converge to a common result. This reflects the same guarantee as sequential confluence in Rust: different branches don’t lead to diverging realities but ultimately rejoin into one meaning. This bridge from everyday branching to formal semantics helps build intuition for deeper topics in programming theory.</p>
+<h2 id="bridge-to-bisimulation"><a class="header" href="#bridge-to-bisimulation">Bridge to Bisimulation</a></h2>
+<p>Another important concept related to branching is <strong>bisimulation</strong>, used in process calculi and concurrency theory. Two systems are bisimilar if they can simulate each other’s steps: whenever one makes a move, the other can make a corresponding move, and the resulting states remain related. Unlike simple trace equivalence, bisimulation is sensitive to the structure of branching, not just final results. It ensures that two programs behave the same way under every possible interaction, making it a powerful tool for reasoning about equivalence in concurrent and interactive systems.</p>
+<p>There are different <strong>flavors</strong> of bisimulation:</p>
+<ul>
+<li><strong>Strong bisimulation</strong> – requires that every single step of one process can be matched by an identical step in the other, including internal or invisible actions.</li>
+<li><strong>Weak bisimulation</strong> – abstracts away from internal or silent actions (often denoted τ). Two systems can be weakly bisimilar if they match on observable behavior, even if one performs extra internal steps.</li>
+<li><strong>Branching bisimulation</strong> – a refinement of weak bisimulation that preserves the branching structure more carefully: even when ignoring internal actions, the branching points must align so that the choice structure is respected.</li>
+</ul>
+<p>These distinctions are crucial in concurrency theory: strong bisimulation is very strict, weak bisimulation allows flexibility with internal computation, and branching bisimulation balances the two by maintaining the essential shape of choices while abstracting from unobservable details.</p>
+<h2 id="confluence-and-bisimulation-compared"><a class="header" href="#confluence-and-bisimulation-compared">Confluence and Bisimulation Compared</a></h2>
+<p>Although confluence and bisimulation both deal with branching and outcomes, they apply in different contexts:</p>
+<ul>
+<li><strong>Confluence</strong> is about <strong>deterministic evaluation</strong>: for the same input, all reduction paths lead to the same result. It is mainly used in sequential semantics (e.g., lambda calculus) to prove consistency and simplify reasoning.</li>
+<li><strong>Bisimulation</strong> is about <strong>behavioral equivalence</strong> between two possibly concurrent systems: whenever one system can make a step, the other can match it. It is mainly used in process calculi and concurrency theory to establish that two processes behave the same under all possible interactions.</li>
+</ul>
+<p>In short:</p>
+<ul>
+<li>Confluence → guarantees <strong>one meaning</strong> for each program.</li>
+<li>Bisimulation → guarantees <strong>two programs mean the same</strong> in terms of behavior.</li>
+</ul>
+<p>These notions complement each other: confluence helps ensure determinism in sequential computation, while bisimulation provides a robust notion of equivalence in concurrent or interactive computation.</p>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="operational-semantics-in-context"><a class="header" href="#operational-semantics-in-context">Operational Semantics in Context</a></h1>
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="insights/operational_semantics.html#admonition-related"></a>
+</div>
+<div>
+<p>Concepts: <a href="insights/../concepts/operational_semantics.html">Operational Semantics</a>, <a href="insights/../concepts/free_monad.html">Free Monad</a>, <a href="insights/../concepts/cps.html">CPS</a>, <a href="insights/../concepts/defunctionalization.html">Defunctionalization</a></p>
+</div>
+</div>
+<h2 id="why-operational-semantics-matters"><a class="header" href="#why-operational-semantics-matters">Why Operational Semantics Matters</a></h2>
+<p>Operational semantics gives us the <strong>step-by-step execution model</strong> of a language.<br />
+In ALUX, this plays a central role: it is the bridge between <strong>abstract meaning</strong> and <strong>concrete mechanics</strong>.</p>
+<h2 id="connection-to-free-monads"><a class="header" href="#connection-to-free-monads">Connection to Free Monads</a></h2>
+<p>A free monad describes a program as an <strong>AST of instructions</strong>.<br />
+Interpreting this AST is essentially applying operational semantics:</p>
+<ul>
+<li><strong>Free monad</strong>: syntax of instructions + sequencing</li>
+<li><strong>Operational semantics</strong>: rules that define how each instruction steps</li>
+</ul>
+<p>Thus, an interpreter for a free monad is <em>exactly</em> an operational semantics defined as code.</p>
+<h2 id="connection-to-cps"><a class="header" href="#connection-to-cps">Connection to CPS</a></h2>
+<p>Continuation-Passing Style (CPS) makes the <strong>rest of the computation</strong> explicit.<br />
+Operational semantics can be expressed in CPS:</p>
+<ul>
+<li>Small-step rules correspond to continuations being applied after each instruction.</li>
+<li>The operational machine is just a CPS interpreter in which the continuation is made first-class.</li>
+</ul>
+<p>This shows how CPS makes operational semantics executable.</p>
+<h2 id="connection-to-defunctionalization"><a class="header" href="#connection-to-defunctionalization">Connection to Defunctionalization</a></h2>
+<p>Defunctionalization takes CPS continuations and replaces them with <strong>explicit state transitions</strong>.<br />
+This is precisely what operational semantics rules are:</p>
+<ul>
+<li>Continuation-as-function → State-transition-as-data</li>
+<li>Apply function → Pattern match on instruction + next state</li>
+</ul>
+<p>The result is a <strong>transition system</strong> that matches the structure of operational semantics directly.</p>
+<h2 id="real-example-the-evm"><a class="header" href="#real-example-the-evm">Real Example: The EVM</a></h2>
+<p>The Ethereum Virtual Machine (EVM) can be understood operationally:</p>
+<ul>
+<li><strong>State</strong>: program counter, stack, memory, storage, gas</li>
+<li><strong>Transition rules</strong>: one for each opcode (<code>ADD</code>, <code>PUSH</code>, <code>SSTORE</code>, etc.)</li>
+<li><strong>Execution</strong>: repeatedly apply small-step rules until halting</li>
+</ul>
+<p>In ALUX terms:</p>
+<ul>
+<li>The <strong>EVM bytecode</strong> is a defunctionalized free monad program.</li>
+<li>The <strong>EVM interpreter</strong> is its operational semantics.</li>
+</ul>
+<h2 id="dependent-types-as-enriched-semantics"><a class="header" href="#dependent-types-as-enriched-semantics">Dependent Types as Enriched Semantics</a></h2>
+<p>Dependent types can enrich operational semantics with proofs:</p>
+<ul>
+<li><strong>Stack safety</strong>: <code>pop</code> only valid if stack depth &gt; 0</li>
+<li><strong>Gas constraints</strong>: program type encodes available gas and its consumption</li>
+<li><strong>Resource invariants</strong>: state transitions guaranteed by types</li>
+</ul>
+<p>This turns operational semantics from <em>rules for execution</em> into <em>proofs of correctness</em>.</p>
+<h2 id="summary"><a class="header" href="#summary">Summary</a></h2>
+<ul>
+<li>Operational semantics is the <strong>execution model</strong> of programs.</li>
+<li>Free monads encode the same idea as syntax + sequencing.</li>
+<li>CPS and defunctionalization provide mechanical ways to express operational semantics.</li>
+<li>Real systems like the EVM are defunctionalized operational semantics in practice.</li>
+<li>Dependent types elevate semantics into <strong>proof-carrying computations</strong>.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="expression-problem-reloaded"><a class="header" href="#expression-problem-reloaded">Expression Problem Reloaded</a></h1>
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="insights/expression-problem.html#admonition-related"></a>
+</div>
+<div>
+<p>Concepts: <a href="insights/../concepts/expression-problem.html">Expression Problem</a></p>
+</div>
+</div>
+<p>This page presents a practical trait-based solution to the <em>Expression Problem</em>: how to add new expression forms and new operations without repeatedly rewriting existing code.
+The solution is <strong>Conal-style in design</strong> and <strong>tagless-final/object-algebra in encoding</strong>. Concretely: we specify compositional meaning first (small capability interfaces and extension-level program specs), and only then provide concrete interpreters. The concrete encoding is in the same family as Oleg Kiselyov’s <strong>tagless-final</strong> style and <strong>Object Algebras</strong>: constructor interfaces (<code>LitAlg</code>, <code>AddAlg</code>, <code>MulAlg</code>) define the language signature, programs are written polymorphically against those interfaces, and concrete implementations (like <code>Eval</code> or <code>Pretty</code>) provide interpretations. This avoids committing to one closed AST while preserving static typing and extensibility in both dimensions.</p>
+<p>Oleg’s approach is explicitly denotational: assign compositional meaning first, then realize effects/interpreters as modular semantic layers. For the Expression Problem, this is exactly why the alignment with Denotational Design is expected rather than accidental. Conal’s Denotational Design formulation states the same priority directly: specify meaning compositionally first, and treat concrete execution strategies as secondary and replaceable.</p>
+<p>For the expression problem, this design means:</p>
+<ul>
+<li><strong>Syntax</strong> is modeled as tiny, independent capability traits.</li>
+<li><strong>Semantics</strong> are implementations of those traits.</li>
+<li>New syntax adds a new trait, leaving old code untouched.</li>
+<li>New semantics adds a new interpreter type, leaving old code untouched.</li>
+</ul>
+<h2 id="specify-tiny-syntax-capabilities"><a class="header" href="#specify-tiny-syntax-capabilities">Specify Tiny Syntax Capabilities</a></h2>
+<p>Each constructor becomes a small trait. This is the <strong>specification (spec)</strong>.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait LitAlg {
+    type Expr;
+
+    fn lit(&amp;self, n: i64) -&gt; Self::Expr;
+}
+
+trait AddAlg {
+    type Expr;
+
+    fn add(&amp;self, a: Self::Expr, b: Self::Expr) -&gt; Self::Expr;
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Programs are written as <strong>extensions</strong> over the alg traits; these extensions are also part of the specification and serve to compose smaller specs into reusable program-level specs:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[ext(name = ExprPrograms)]
+impl&lt;This&gt; This
+where
+    This: LitAlg + AddAlg,
+{
+    fn expr_basic(&amp;self) -&gt; This::Expr {
+        self.add(self.lit(2), self.lit(3))
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<p><code>#[ext(...)]</code> is a macro from the <a href="https://docs.rs/extend/latest/extend/"><code>extend</code> crate</a> used to reduce boilerplate by generating extension methods from an <code>impl</code> block; it is not a new Rust language feature.</p>
+<h2 id="add-new-semantics-new-interpreter"><a class="header" href="#add-new-semantics-new-interpreter">Add New Semantics (New Interpreter)</a></h2>
+<p>Interpreters implement the spec. No syntax changes needed.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Eval;
+
+impl LitAlg for Eval {
+    type Expr = i64;
+
+    fn lit(&amp;self, n: i64) -&gt; i64 { n }
+}
+
+impl AddAlg for Eval {
+    type Expr = i64;
+
+    fn add(&amp;self, a: i64, b: i64) -&gt; i64 { a + b }
+}
+
+struct Pretty;
+
+impl LitAlg for Pretty {
+    type Expr = String;
+
+    fn lit(&amp;self, n: i64) -&gt; String { n.to_string() }
+}
+
+impl AddAlg for Pretty {
+    type Expr = String;
+
+    fn add(&amp;self, a: String, b: String) -&gt; String {
+        format!("({a} + {b})")
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Now the same expression can be interpreted differently:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let eval = Eval;
+let pretty = Pretty;
+
+let v: i64 = eval.expr_basic();        // 5
+let s: String = pretty.expr_basic();   // "(2 + 3)"
+<span class="boring">}</span></code></pre></pre>
+<h2 id="add-new-syntax-new-capability-trait"><a class="header" href="#add-new-syntax-new-capability-trait">Add New Syntax (New Capability Trait)</a></h2>
+<p>To add <code>Mul</code>, define a new trait. Existing code stays untouched.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait MulAlg {
+    type Expr;
+
+    fn mul(&amp;self, a: Self::Expr, b: Self::Expr) -&gt; Self::Expr;
+}
+
+#[ext(name = ExprProgramsMul)]
+impl&lt;This&gt; This
+where
+    This: LitAlg + AddAlg + MulAlg,
+{
+    fn expr_with_mul(&amp;self) -&gt; This::Expr {
+        self.mul(self.add(self.lit(2), self.lit(3)), self.lit(4))
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Existing interpreters still work for old expressions.<br />
+If they want the new syntax, they implement the new trait:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl MulAlg for Eval {
+    type Expr = i64;
+
+    fn mul(&amp;self, a: i64, b: i64) -&gt; i64 { a * b }
+}
+
+impl MulAlg for Pretty {
+    type Expr = String;
+
+    fn mul(&amp;self, a: String, b: String) -&gt; String {
+        format!("({a} * {b})")
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<h2 id="why-this-solves-the-expression-problem"><a class="header" href="#why-this-solves-the-expression-problem">Why This Solves the Expression Problem</a></h2>
+<ul>
+<li><strong>Add new operations</strong>: define a new interpreter type implementing the same specs.</li>
+<li><strong>Add new variants</strong>: define a new capability trait and use it only where needed.</li>
+<li><strong>No edits</strong> to existing expressions or interpreters unless they opt into new syntax.</li>
+</ul>
+<p>This keeps the design modular: simple specs, extension by composition, and thin concrete implementations.</p>
+<h2 id="final-insight-wadler-vs-denotational-design"><a class="header" href="#final-insight-wadler-vs-denotational-design">Final Insight: Wadler vs Denotational Design</a></h2>
+<p>Wadler diagnosed the Expression Problem correctly at the level of language mechanisms: rows vs columns under static typing and modular extension. But that framing starts after the key mistake is already made: treating concrete representation as the model.</p>
+<p>Denotational Design moves the diagnosis upstream. The core failure is representation-first programming: encoding machine structure (ADT, class graph, memory layout) before specifying meaning. Once that commitment is made, extensibility tradeoffs appear as “deep problems.”</p>
+<p>From a meaning-first view, many of these tensions are self-inflicted. Define compositional meaning first, then choose encodings. The Expression Problem becomes an engineering choice among encodings, not a conceptual deadlock.</p>
+<p><strong>Meaning of a language should be independent of the idea of a machine.</strong></p>
+<iframe width="100%" height="315" src="https://www.youtube.com/embed/n2CBSNAVHVg?si=n-f84RYWjGtKkcVj&amp;clip=Ugkx52hOOFjiK-KEPMRhuB8vT6i4WUaav11c&amp;clipt=EKWcxgIYjoTIAg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<h2 id="references-3"><a class="header" href="#references-3">References</a></h2>
+<ul>
+<li>
+<p>Elliott, C. <em>Denotational design with type class morphisms</em>.<br />
+<a href="http://conal.net/papers/type-class-morphisms/">http://conal.net/papers/type-class-morphisms/</a></p>
+</li>
+<li>
+<p>Elliott, C. <em>Compiling to categories</em>.<br />
+<a href="http://conal.net/papers/compiling-to-categories/">http://conal.net/papers/compiling-to-categories/</a></p>
+</li>
+<li>
+<p>Kiselyov, O. <em>Tagless-final style</em> (overview, tutorials, and papers on final encodings and extensible typed interpreters).<br />
+<a href="https://okmij.org/ftp/tagless-final/">https://okmij.org/ftp/tagless-final/</a></p>
+</li>
+<li>
+<p>Kiselyov, O. <em>Having an Effect</em> (definitional/denotational framing of effects and extensible interpreters).<br />
+<a href="https://okmij.org/ftp/Computation/having-effect.html#defint">https://okmij.org/ftp/Computation/having-effect.html#defint</a></p>
+</li>
+<li>
+<p>Oliveira, B. C. d. S., and Cook, W. R. (2012). <em>Extensibility for the Masses: Practical Extensibility with Object Algebras</em>.<br />
+<a href="https://www.cs.utexas.edu/~wcook/Drafts/2012/ecoop2012.pdf">https://www.cs.utexas.edu/~wcook/Drafts/2012/ecoop2012.pdf</a></p>
+</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="referential-transparency-reloaded"><a class="header" href="#referential-transparency-reloaded">Referential Transparency Reloaded</a></h1>
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="insights/referential-transparency.html#admonition-related"></a>
+</div>
+<div>
+<p>Concepts: <a href="insights/../concepts/referential_transparency.html">Referential Transparency</a>, <a href="insights/../concepts/expression-problem.html">Expression Problem</a></p>
+</div>
+</div>
+<p>This page gives the Denotational Design interpretation of <em>referential transparency</em>.
+The concept page covers history and mainstream language usage.
+Here we focus on what RT means as a design constraint.</p>
+<p>In DD, RT is not a purity label.
+It is a law on denotations: substitution must preserve specified meaning.</p>
+<h2 id="denotational-design-restatement-of-rt"><a class="header" href="#denotational-design-restatement-of-rt">Denotational Design Restatement of RT</a></h2>
+<p>Denotational Design restates RT as a requirement on specifications, not on implementation style.
+The specification must define compositional meaning first; execution strategy is chosen later.</p>
+<p>So RT is checked at the semantic boundary:</p>
+<ul>
+<li>same inputs</li>
+<li>same declared context</li>
+<li>same denotation</li>
+</ul>
+<p>If these hold, substitution is valid and equational reasoning is available.
+This remains true even when concrete interpreters perform I/O, concurrency, retries, or state transitions, because those details are delegated behind the specified capabilities.</p>
+<p>In other words, DD does not ask "is this implementation pure?"
+DD asks "are the denotational equalities explicit, and are interpreters preserving them?"</p>
+<h2 id="purity-and-rt"><a class="header" href="#purity-and-rt">Purity And RT</a></h2>
+<p>RT and purity are related, but not identical.</p>
+<ul>
+<li><strong>RT</strong> is a substitution law on meaning.</li>
+<li><strong>purity</strong> is an operational constraint: no hidden observable effects.</li>
+</ul>
+<p>Purity is a common way to obtain RT for expression-level code.
+But RT remains the semantic criterion: substitution must preserve specified denotation.</p>
+<p>So DD avoids turning RT into a style label like "pure code only".
+The requirement is explicit semantic equalities, with effects isolated behind capability boundaries.</p>
+<p>One minimal semantic reading is:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn f(a: A, io: Io) -&gt; (Result&lt;B, E&gt;, Io)
+<span class="boring">}</span></code></pre></pre>
+<p>For the same <code>a</code> and same <code>io</code> input, <code>f</code> yields the same <code>(result, io')</code>.
+This is the DD-style, context-indexed form of substitution reasoning.</p>
+<h2 id="why-this-clarifies-rt"><a class="header" href="#why-this-clarifies-rt">Why This Clarifies RT</a></h2>
+<p>Many RT debates blur a useful distinction:</p>
+<ul>
+<li>semantic transparency</li>
+<li>operational side effects</li>
+</ul>
+<p>DD separates these layers:</p>
+<ul>
+<li>semantic core states meaning</li>
+<li>interpreters realize execution strategy</li>
+</ul>
+<p>This separation allows practical effects without losing law-based reasoning.</p>
+<h2 id="representation-first-failure-mode"><a class="header" href="#representation-first-failure-mode">Representation-First Failure Mode</a></h2>
+<p>If you commit early to concrete representation, RT discussion drifts into style arguments:</p>
+<ul>
+<li>"this style is pure"</li>
+<li>"that style is impure"</li>
+<li>"IO wrappers fix it"</li>
+</ul>
+<p>These are mostly encoding debates.
+DD asks a simpler question:
+what equalities are valid in your specification?</p>
+<h2 id="practical-dd-pattern"><a class="header" href="#practical-dd-pattern">Practical DD Pattern</a></h2>
+<p>Define tiny capability traits and write program behavior as extensions over them.
+Then provide thin concrete interpreters.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>trait FileSystem {
+    type Error;
+
+    fn file_read(&amp;self, name: &amp;str) -&gt; Result&lt;String, Self::Error&gt;;
+}
+
+trait GithubPublish {
+    type Error;
+
+    fn github_publish(&amp;self, repo: &amp;str, files: Vec&lt;String&gt;) -&gt; Result&lt;(), Self::Error&gt;;
+}
+
+trait Concurrent {
+    fn map_concurrent&lt;A, B, E, F&gt;(&amp;self, xs: &amp;[A], f: F) -&gt; Result&lt;Vec&lt;B&gt;, E&gt;
+    where
+        A: Clone,
+        F: Fn(&amp;A) -&gt; Result&lt;B, E&gt;;
+}
+
+#[ext(name = PublishProjectExt)]
+impl&lt;This&gt; This
+where
+    This: FileSystem&lt;Error = String&gt; + GithubPublish&lt;Error = String&gt; + Concurrent,
+{
+    fn publish_project(&amp;self, files: &amp;[&amp;str], repo: &amp;str) -&gt; Result&lt;(), String&gt; {
+        let files = self.map_concurrent(files, |name| self.file_read(*name))?;
+        self.github_publish(repo, files)
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<p><code>#[ext(...)]</code> is a macro from the <a href="https://docs.rs/extend/latest/extend/"><code>extend</code> crate</a> used to reduce boilerplate by generating extension methods from an <code>impl</code> block; it is not a new Rust language feature.</p>
+<p>In Scala FP, RT is often presented through values of type <code>F[A]</code> (for example <code>IO[A]</code>, or <code>F[Either[E, A]]</code>).
+Here, RT is expressed one level up: as capability-bounded program meaning.
+So this Rust method is not an RT value container in the same encoding sense as <code>F[A]</code>; it is RT behavior specified over explicit capabilities, with concrete effects delegated to implementations.</p>
+<p>The extension states semantic behavior against capabilities.
+Concrete implementations decide execution strategy: batching, retries, transport, parallelism, and storage details.</p>
+<h2 id="final-insight"><a class="header" href="#final-insight">Final Insight</a></h2>
+<p>In Denotational Design, RT is a property of semantic specifications.
+Implementation choices are secondary as long as they preserve the stated denotational laws.</p>
+<p>Keep the law.
+Do not get stuck on the label.</p>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="evm-as-a-virtual-machine"><a class="header" href="#evm-as-a-virtual-machine"><strong>EVM as a Virtual Machine</strong></a></h1>
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="insights/evm-alg.html#admonition-related"></a>
+</div>
+<div>
+<p>Concepts: <a href="insights/../concepts/operational_semantics.html">Operational Semantics</a>, <a href="insights/../concepts/free_monad.html">Free Monad</a>, <a href="insights/../concepts/cps.html">CPS</a>, <a href="insights/../concepts/defunctionalization.html">Defunctionalization</a></p>
+</div>
+</div>
+<p>The <strong>Ethereum Virtual Machine (EVM)</strong> is a stack-based virtual CPU that executes <strong>Ethereum bytecode</strong>. This bytecode is the compiled form of Ethereum smart contracts, usually written in Solidity, Vyper, or another EVM-compatible language.</p>
+<p>At the lowest level:</p>
+<ul>
+<li>
+<p>The EVM processes <strong>opcodes</strong> (ADD, PUSH, JUMP, SSTORE, etc.).</p>
+</li>
+<li>
+<p>Execution state includes:</p>
+<ul>
+<li><strong>Stack</strong>: LIFO data stack for operand storage.</li>
+<li><strong>Memory</strong>: transient byte array for temporary values.</li>
+<li><strong>Storage</strong>: persistent key-value store for each contract.</li>
+<li><strong>Program counter</strong>: points to the next opcode.</li>
+<li><strong>Gas</strong>: metering system that charges for execution steps.</li>
+</ul>
+</li>
+</ul>
+<h2 id="evm-as-an-interpreter-pattern"><a class="header" href="#evm-as-an-interpreter-pattern"><strong>EVM as an Interpreter Pattern</strong></a></h2>
+<p>From the free monad and GoF design patterns perspective:</p>
+<ul>
+<li><strong>Instruction Set</strong> = EVM opcodes (similar to your <code>enum Console</code>).</li>
+<li><strong>Program AST</strong> = Actually, EVM code is <em>already compiled</em>, so it’s a flat sequence of instructions, not a rich high-level AST.
+High-level languages like Solidity first have a compiler that builds an AST, optimizes it, and then emits EVM bytecode.</li>
+<li><strong>Interpreter</strong> = The EVM specification defines how each opcode changes the machine state.</li>
+<li><strong>Multiple interpreters</strong> = While the EVM spec is fixed, different clients (Geth, Nethermind, Besu, Erigon) are alternative implementations of the same interpreter.</li>
+</ul>
+<p>In GoF terms:</p>
+<ul>
+<li>The EVM is an <strong>Interpreter</strong> over an instruction language (bytecode).</li>
+<li>Opcodes are <strong>Command objects</strong> executed in sequence.</li>
+<li>The program state (stack, memory, storage) acts like the context in Interpreter pattern.</li>
+</ul>
+<h2 id="evm-and-free-monad-analogy"><a class="header" href="#evm-and-free-monad-analogy"><strong>EVM and Free Monad Analogy</strong></a></h2>
+<p>If we model the EVM in a free monad style:</p>
+<ol>
+<li>
+<p><strong>Syntax</strong>: Enum of opcodes with parameters, e.g.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>enum EvmInstr&lt;A&gt; {
+    Add(A),
+    Push(U256, A),
+    SStore(U256, U256, A),
+    // ...
+}
+<span class="boring">}</span></code></pre></pre>
+</li>
+<li>
+<p><strong>Program</strong>: <code>Free&lt;EvmInstr, ()&gt;</code> would represent an abstract Ethereum program before compilation.</p>
+</li>
+<li>
+<p><strong>Semantics</strong>: Interpreter function that executes these instructions against the EVM state.</p>
+</li>
+</ol>
+<p>The difference:</p>
+<ul>
+<li>The real EVM executes a <strong>linear bytecode sequence</strong> (already defunctionalized into an array of low-level instructions).</li>
+<li>A free monad version would allow you to build programs algebraically, chain them with <code>flat_map</code>, and then interpret or compile them into EVM bytecode.</li>
+</ul>
+<h2 id="evm-and-cps--defunctionalization"><a class="header" href="#evm-and-cps--defunctionalization"><strong>EVM and CPS / Defunctionalization</strong></a></h2>
+<p>The EVM’s real execution loop is <strong>very similar to a defunctionalized CPS interpreter</strong>:</p>
+<ul>
+<li>In CPS: “do instruction, then call continuation”.</li>
+<li>In EVM: “execute opcode, then increment program counter” is equivalent to applying the continuation for that instruction.</li>
+<li>Defunctionalization: The “continuations” are already turned into a <strong>position in bytecode</strong> (program counter). This is the tag identifying the next action.</li>
+<li>The interpreter (<code>switch</code> or <code>match</code> on opcode) is the <code>apply</code> function of the defunctionalized continuations.</li>
+</ul>
+<p>So:</p>
+<ul>
+<li><strong>CPS form</strong>: Smart contract execution as “do opcode → continuation”.</li>
+<li><strong>Defunctionalized form</strong>: Replace continuations with <code>pc</code> + bytecode array.</li>
+<li><strong>Free monad form</strong>: Build higher-level EVM programs before compiling them into the defunctionalized form.</li>
+</ul>
+<h2 id="key-insight"><a class="header" href="#key-insight"><strong>Key Insight</strong></a></h2>
+<p>EVM execution = <strong>defunctionalized CPS interpreter</strong> for Ethereum bytecode.</p>
+<div class="table-wrapper"><table><thead><tr><th>Concept</th><th>Free Monad World</th><th>EVM Reality</th></tr></thead><tbody>
+<tr><td>Instruction type</td><td>Enum of opcodes</td><td>Fixed EVM opcodes</td></tr>
+<tr><td>Program representation</td><td>AST built from <code>Free&lt;F, A&gt;</code></td><td>Linear bytecode array</td></tr>
+<tr><td>Continuation</td><td>Closure in <code>FlatMap</code></td><td>Program counter (PC)</td></tr>
+<tr><td>Interpreter</td><td>Pattern match on instruction enum</td><td>Switch on opcode, mutate VM state</td></tr>
+<tr><td>Multiple interpreters</td><td>Different interpreters for same AST</td><td>Multiple Ethereum client implementations</td></tr>
+</tbody></table>
+</div>
+<h1 id="mini-evm"><a class="header" href="#mini-evm">Mini EVM</a></h1>
+<p>Here’s a <strong>mini-EVM in Rust</strong> using the same free monad style from the <code>Console</code> example, so you can clearly see the mapping to Ethereum’s real EVM execution model.</p>
+<h2 id="instruction-set-evm-subset"><a class="header" href="#instruction-set-evm-subset">Instruction Set (EVM subset)</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Clone)]
+enum EvmInstr&lt;A&gt; {
+    Push(u64, A),              // Push constant to stack
+    Add(A),                    // Pop two, push sum
+    SStore(u64, u64, A),       // Store key-value
+    SLoad(u64, fn(u64) -&gt; A),  // Load value from storage
+}
+<span class="boring">}</span></code></pre></pre>
+<h2 id="free-monad-core"><a class="header" href="#free-monad-core">Free Monad Core</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Clone)]
+enum Free&lt;F, A&gt; {
+    Pure(A),
+    Suspend(F),
+    FlatMap(Box&lt;Free&lt;F, A&gt;&gt;, Box&lt;dyn Fn(A) -&gt; Free&lt;F, A&gt;&gt;),
+}
+
+impl&lt;F: Clone + 'static, A: 'static&gt; Free&lt;F, A&gt; {
+    fn pure(a: A) -&gt; Self {
+        Free::Pure(a)
+    }
+    fn flat_map&lt;B: 'static, G&gt;(self, f: G) -&gt; Free&lt;F, B&gt;
+    where
+        G: Fn(A) -&gt; Free&lt;F, B&gt; + 'static,
+    {
+        match self {
+            Free::Pure(a) =&gt; f(a),
+            other =&gt; Free::FlatMap(Box::new(other), Box::new(f)),
+        }
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<h2 id="smart-constructors"><a class="header" href="#smart-constructors">Smart Constructors</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn push(val: u64) -&gt; Free&lt;EvmInstr&lt;()&gt;, ()&gt; {
+    Free::Suspend(EvmInstr::Push(val, ()))
+}
+
+fn add() -&gt; Free&lt;EvmInstr&lt;()&gt;, ()&gt; {
+    Free::Suspend(EvmInstr::Add(()))
+}
+
+fn sstore(key: u64, value: u64) -&gt; Free&lt;EvmInstr&lt;()&gt;, ()&gt; {
+    Free::Suspend(EvmInstr::SStore(key, value, ()))
+}
+
+fn sload(key: u64) -&gt; Free&lt;EvmInstr&lt;u64&gt;, u64&gt; {
+    Free::Suspend(EvmInstr::SLoad(key, Free::pure))
+}
+<span class="boring">}</span></code></pre></pre>
+<h2 id="evm-state"><a class="header" href="#evm-state">EVM State</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::HashMap;
+
+struct EvmState {
+    stack: Vec&lt;u64&gt;,
+    storage: HashMap&lt;u64, u64&gt;,
+}
+<span class="boring">}</span></code></pre></pre>
+<h2 id="interpreter-1"><a class="header" href="#interpreter-1">Interpreter</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn run_evm&lt;A&gt;(mut prog: Free&lt;EvmInstr&lt;A&gt;, A&gt;, state: &amp;mut EvmState) -&gt; A {
+    loop {
+        match prog {
+            Free::Pure(a) =&gt; return a,
+            Free::Suspend(EvmInstr::Push(v, next)) =&gt; {
+                state.stack.push(v);
+                prog = Free::Pure(next);
+            }
+            Free::Suspend(EvmInstr::Add(next)) =&gt; {
+                let b = state.stack.pop().unwrap();
+                let a = state.stack.pop().unwrap();
+                state.stack.push(a + b);
+                prog = Free::Pure(next);
+            }
+            Free::Suspend(EvmInstr::SStore(k, v, next)) =&gt; {
+                state.storage.insert(k, v);
+                prog = Free::Pure(next);
+            }
+            Free::Suspend(EvmInstr::SLoad(k, cont)) =&gt; {
+                let val = *state.storage.get(&amp;k).unwrap_or(&amp;0);
+                prog = cont(val);
+            }
+            Free::FlatMap(inner, cont) =&gt; match *inner {
+                Free::Pure(a) =&gt; prog = cont(a),
+                Free::Suspend(op) =&gt; prog = Free::Suspend(op),
+                _ =&gt; unreachable!(),
+            },
+        }
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<h2 id="example-program"><a class="header" href="#example-program">Example Program</a></h2>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let program = push(2)
+        .flat_map(|_| push(3))
+        .flat_map(|_| add())
+        .flat_map(|_| sstore(1, 5))
+        .flat_map(|_| sload(1))
+        .flat_map(|val| push(val));
+
+    let mut state = EvmState {
+        stack: vec![],
+        storage: HashMap::new(),
+    };
+
+    run_evm(program, &amp;mut state);
+
+    println!("Final stack: {:?}", state.stack);
+    println!("Storage: {:?}", state.storage);
+}</code></pre></pre>
+<h2 id="how-this-maps-to-the-real-evm"><a class="header" href="#how-this-maps-to-the-real-evm">How This Maps to the Real EVM</a></h2>
+<ul>
+<li><strong><code>EvmInstr</code> enum</strong> = EVM opcode set (syntax).</li>
+<li><strong><code>Free&lt;EvmInstr, A&gt;</code></strong> = Abstract EVM program before compilation.</li>
+<li><strong><code>run_evm</code></strong> = Interpreter (like Geth, Besu, Nethermind).</li>
+<li><strong><code>EvmState</code></strong> = EVM stack, memory, and storage.</li>
+<li>The <code>FlatMap</code> continuations here are <strong>exactly what the real EVM defunctionalizes</strong> into a program counter and bytecode array.</li>
+</ul>
+<p>Here is the defunctionalized mini-EVM: continuations are replaced by a program counter.</p>
+<h2 id="core-idea"><a class="header" href="#core-idea">Core idea</a></h2>
+<ul>
+<li>Continuation in Free <code>FlatMap</code> becomes an integer <code>pc</code>.</li>
+<li>Program is a flat <code>Vec&lt;Op&gt;</code>.</li>
+<li>The interpreter is a loop that reads <code>code[pc]</code>, mutates state, then updates <code>pc</code>.</li>
+</ul>
+<h2 id="rust-code"><a class="header" href="#rust-code">Rust code</a></h2>
+<pre><pre class="playground"><code class="language-rust">use std::collections::HashMap
+
+#[derive(Clone, Debug)]
+enum Op {
+    Push(u64),
+    Add,
+    SStore(u64, u64),
+    SLoad(u64),       // pushes value at key
+    Halt,
+}
+
+#[derive(Default)]
+struct VM {
+    pc: usize,
+    stack: Vec&lt;u64&gt;,
+    storage: HashMap&lt;u64, u64&gt;,
+    code: Vec&lt;Op&gt;,
+}
+
+impl VM {
+    fn new(code: Vec&lt;Op&gt;) -&gt; Self {
+        VM { code, ..Default::default() }
+    }
+
+    fn step(&amp;mut self) -&gt; bool {
+        match self.code.get(self.pc).cloned().unwrap_or(Op::Halt) {
+            Op::Push(v) =&gt; {
+                self.stack.push(v);
+                self.pc += 1;
+            }
+            Op::Add =&gt; {
+                let b = self.stack.pop().expect("stack underflow")
+                let a = self.stack.pop().expect("stack underflow")
+                self.stack.push(a + b);
+                self.pc += 1;
+            }
+            Op::SStore(k, v) =&gt; {
+                self.storage.insert(k, v);
+                self.pc += 1;
+            }
+            Op::SLoad(k) =&gt; {
+                let v = *self.storage.get(&amp;k).unwrap_or(&amp;0);
+                self.stack.push(v);
+                self.pc += 1;
+            }
+            Op::Halt =&gt; return false,
+        }
+        true
+    }
+
+    fn run(&amp;mut self) {
+        while self.step() {}
+    }
+}
+
+fn main() {
+    // Program: push 2; push 3; add; sstore 1,5; sload 1; halt
+    let code = vec![
+        Op::Push(2),
+        Op::Push(3),
+        Op::Add,
+        Op::SStore(1, 5),
+        Op::SLoad(1),
+        Op::Halt,
+    ]
+
+    let mut vm = VM::new(code)
+    vm.run()
+
+    println!("Final stack: {:?}", vm.stack)
+    println!("Storage: {:?}", vm.storage)
+}</code></pre></pre>
+<h2 id="mapping-to-free-and-cps"><a class="header" href="#mapping-to-free-and-cps">Mapping to Free and CPS</a></h2>
+<ul>
+<li>Free continuation <code>Fn(A) -&gt; Free</code> is now the integer <code>pc</code>.</li>
+<li><code>match</code> on <code>Op</code> is the defunctionalized apply function.</li>
+<li><code>Vec&lt;Op&gt;</code> is the defunctionalized program - a linear bytecode.</li>
+<li>The loop <code>while self.step()</code> is the CPS trampoline without closures.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="free-monads-with-dependent-types"><a class="header" href="#free-monads-with-dependent-types">Free Monads with Dependent Types</a></h1>
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="insights/free-monad-dependent.html#admonition-related"></a>
+</div>
+<div>
+<p>Concepts: <a href="insights/../concepts/free_monad.html">Free Monad</a>, <a href="insights/../concepts/dependent_types.html">Dependent Types</a></p>
+</div>
+</div>
+<h2 id="dependent-types-as-a-natural-fit"><a class="header" href="#dependent-types-as-a-natural-fit">Dependent Types as a Natural Fit</a></h2>
+<p>Free monads describe computations as <strong>data</strong>.
+Dependent types allow us to express <strong>properties of these computations in their types</strong>.
+By combining the two, we can write programs that are:</p>
+<ul>
+<li><strong>Easier to compose</strong> because type constraints guide construction</li>
+<li><strong>Safer</strong> because invalid programs cannot type-check</li>
+<li><strong>Self-documenting</strong> because the type itself encodes a specification</li>
+<li><strong>Proof-carrying</strong> because the type may serve as a logical statement and the program as its proof</li>
+</ul>
+<h2 id="making-composition-easier"><a class="header" href="#making-composition-easier">Making Composition Easier</a></h2>
+<p>In a non-dependent setting, a free monad type might look like:</p>
+<pre><code class="language-hs">Free&lt;F, A&gt;
+</code></pre>
+<p>where <code>F</code> is the instruction set and <code>A</code> is the return value type.</p>
+<p>With dependent types, we can enrich this to:</p>
+<pre><code class="language-hs">Free&lt;F, A, P&gt;
+</code></pre>
+<p>where <code>P</code> is a <strong>predicate or property</strong> about the program.
+The type system can ensure that when two programs are composed with <code>flat_map</code>, the resulting program's property is automatically derived from the inputs.</p>
+<p>Example:</p>
+<pre><code class="language-hs">Free&lt;EvmInstr, A, GasUsed &lt;= Limit&gt;
+</code></pre>
+<p>The type carries a proof that the program's gas usage is below the limit.</p>
+<h2 id="turning-programs-into-proofs"><a class="header" href="#turning-programs-into-proofs">Turning Programs into Proofs</a></h2>
+<p>In dependent type theory, a type can represent a proposition and a term of that type is a proof.
+A free monad program can be viewed as a <strong>construction of a proof</strong> about the sequence of instructions.</p>
+<p>Example in a dependently typed language:</p>
+<pre><code class="language-hs">-- In Idris/Agda style
+data Program : GasLimit -&gt; GasLimit -&gt; Type -&gt; Type where
+  Pure   : A -&gt; Program g g A
+  Instr  : F X -&gt; Program g1 g2 X -&gt; Program g1 g2 A
+</code></pre>
+<p>Here:</p>
+<ul>
+<li>The type <code>Program g_in g_out A</code> says that running the program transforms the available gas from <code>g_in</code> to <code>g_out</code> and produces an <code>A</code>.</li>
+<li>Writing a program of this type is a proof that the gas accounting is correct.</li>
+</ul>
+<h2 id="benefits-over-plain-free-monads"><a class="header" href="#benefits-over-plain-free-monads">Benefits Over Plain Free Monads</a></h2>
+<p>Without dependent types:</p>
+<ul>
+<li>Safety relies on runtime checks or careful manual construction.</li>
+<li>Properties like "stack never underflows" or "resource usage within bounds" require testing or external proofs.</li>
+</ul>
+<p>With dependent types:</p>
+<ul>
+<li>The type system enforces these properties during program construction.</li>
+<li>A well-typed program is already a <strong>certificate</strong> that it satisfies the desired property.</li>
+</ul>
+<h2 id="example-safe-stack-operations"><a class="header" href="#example-safe-stack-operations">Example: Safe Stack Operations</a></h2>
+<p>Plain free monad:</p>
+<pre><code class="language-hs">push : Val -&gt; Free&lt;StackInstr, ()&gt;
+pop  : Free&lt;StackInstr, Val&gt; -- may fail at runtime if empty
+</code></pre>
+<p>Dependent free monad:</p>
+<pre><code class="language-hs">push : Val -&gt; Program&lt;Depth, Depth + 1, ()&gt;
+pop  : Program&lt;Suc Depth, Depth, Val&gt; -- only type-checks if Depth &gt; 0
+</code></pre>
+<p>Here, the type encodes the <strong>stack depth</strong> before and after the operation.
+An attempt to <code>pop</code> from an empty stack is a type error, not a runtime failure.</p>
+<h2 id="summary-1"><a class="header" href="#summary-1">Summary</a></h2>
+<ul>
+<li>Dependent types turn free monads into <strong>proof-carrying programs</strong>.</li>
+<li>They make composition easier by tracking and combining properties automatically.</li>
+<li>They can statically guarantee safety and correctness without runtime checks.</li>
+<li>The type of a free monad program can <em>be</em> the proposition it proves.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="about"><a class="header" href="#about">About</a></h1>
+<p>This book distills a way of thinking about software inspired by Conal Elliott’s <strong>Denotational Design</strong>.
+The core idea is simple yet profound:</p>
+<div id="admonition-denotational-design" class="admonition admonish-note" role="note" aria-labelledby="admonition-denotational-design-title">
+<div class="admonition-title">
+<div id="admonition-denotational-design-title">
+<p>Denotational Design</p>
+</div>
+<a class="admonition-anchor-link" href="about.html#admonition-denotational-design"></a>
+</div>
+<div>
+<p><em>Define the meaning of a program before deciding how it runs.</em></p>
+</div>
+</div>
+<p>In this view, computation is not an opaque sequence of steps but a transparent mathematical object. We begin with <strong>specifications</strong> as pure, compositional descriptions of <em>what</em> a program means. These are expressed as algebraic structures, often in the form of traits or type signatures. The <strong>implementation</strong>, <em>how</em> those meanings are realized, is a separate, interchangeable layer.</p>
+<p>By separating meaning from mechanics, we gain:</p>
+<ul>
+<li><strong>Clarity</strong> - programs read like precise definitions.</li>
+<li><strong>Composability</strong> - parts fit together algebraically.</li>
+<li><strong>Refactorability</strong> - meaning stays fixed while implementation evolves.</li>
+<li><strong>Correctness</strong> - reasoning about programs becomes equational, not operational.</li>
+</ul>
+<p>These guidelines aim to provide practical techniques for applying this style in modern programming languages, especially Rust, without losing the elegance and rigor of its mathematical roots.</p>
+<h2 id="reference-of-mdbook"><a class="header" href="#reference-of-mdbook">Reference of mdbook</a></h2>
+<p><a href="https://rust-lang.github.io/mdBook/index.html">mdBook documentation</a></p>
+<h2 id="reference-of-admonish-mdbook-plugin-tooltip-boxes"><a class="header" href="#reference-of-admonish-mdbook-plugin-tooltip-boxes">Reference of <strong>admonish</strong> mdbook plugin (tooltip boxes)</a></h2>
+<p><a href="https://tommilligan.github.io/mdbook-admonish/">admonish documentation</a></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+
+    </div>
+    </body>
+</html>

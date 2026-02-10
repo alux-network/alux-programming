@@ -1,0 +1,13 @@
+.chapter-item.expanded.affix a {
+  font-size: 1.7em;
+  font-weight: bold;
+  color: var(--sidebar-active);
+}
+
+.part-title {
+  font-size: 1.2em;
+}
+
+h1 code, h2 code, h3 code, h4 code, h5 code, h6 code {
+  color: var(--inline-code-color);
+}
