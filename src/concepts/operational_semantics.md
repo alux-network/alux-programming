@@ -5,7 +5,7 @@ Concepts: [Free Monad](../concepts/free_monad.md), [CPS](../concepts/cps.md), [D
 Insights: [Operational Semantics in Context](../insights/operational_semantics.md)
 ```
 
-### Definition
+## Definition
 
 **Operational semantics** defines the meaning of programs by specifying *how they execute step by step*. It models program execution as transitions between **configurations** - abstract states containing program fragments, environments, or memory.
 

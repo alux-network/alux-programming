@@ -5,11 +5,11 @@ Concepts: [Free Monad](../concepts/free_monad.md)
 Insights: [Free Monad (dependently)](../insights/free-monad-dependent.md)
 ```
 
-### Definition
+## Definition
 
 A type system is called *dependent* when types can depend on values. This means that the shape, constraints, or meaning of a type may be parameterized by program values. With dependent types, you can express rich invariants and relationships directly in the type system.
 
-### Examples
+## Examples
 
 * `Vec<n, T>` - a vector type indexed by its length `n`
 * `Matrix<rows, cols, T>` - dimensions encoded in the type

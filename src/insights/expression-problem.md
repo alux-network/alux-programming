@@ -16,7 +16,7 @@ For the expression problem, this design means:
 - New syntax adds a new trait, leaving old code untouched.
 - New semantics adds a new interpreter type, leaving old code untouched.
 
-## 1. Specify Tiny Syntax Capabilities
+## Specify Tiny Syntax Capabilities
 
 Each constructor becomes a small trait. This is the **specification (spec)**.
 
@@ -50,7 +50,7 @@ where
 
 `#[ext(...)]` is a macro from the [`extend` crate](https://docs.rs/extend/latest/extend/) used to reduce boilerplate by generating extension methods from an `impl` block; it is not a new Rust language feature.
 
-## 2. Add New Semantics (New Interpreter)
+## Add New Semantics (New Interpreter)
 
 Interpreters implement the spec. No syntax changes needed.
 
@@ -96,7 +96,7 @@ let v: i64 = eval.expr_basic();        // 5
 let s: String = pretty.expr_basic();   // "(2 + 3)"
 ```
 
-## 3. Add New Syntax (New Capability Trait)
+## Add New Syntax (New Capability Trait)
 
 To add `Mul`, define a new trait. Existing code stays untouched.
 

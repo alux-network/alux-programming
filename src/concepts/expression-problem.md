@@ -199,7 +199,7 @@ In **functional/ADT** settings, rows are fixed and columns are easy to add.
 In **OO** settings, columns are fixed and rows are easy to add.  
 The challenge is to make **both directions** extensible.
 
-### Wadler’s Proposed Solution (GJ + Virtual Types)
+## Wadler’s Proposed Solution (GJ + Virtual Types)
 
 Wadler presents a solution in GJ (Generic Java) using:
 
@@ -211,12 +211,12 @@ Wadler presents a solution in GJ (Generic Java) using:
 
 The trick is to refer to `This.Exp` and `This.Visitor` so that each extension phase remains type-safe and independently compilable.
 
-#### Caveat (Java inner interfaces)
+### Caveat (Java inner interfaces)
 
 Wadler notes that Java treats inner interfaces as **static**, which breaks the indexing trick.  
 He suggests that loosening this restriction would make the solution viable; this has still not changed in modern Java (nested interfaces remain implicitly static).
 
-### Other Solution Directions Mentioned
+## Other Solution Directions Mentioned
 
 1. Corky Cartwright’s approach
 Requires **contravariant extension**: allow a base expression type to stand in for an extended one.

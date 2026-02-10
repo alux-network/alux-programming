@@ -5,7 +5,7 @@ Concepts: [Dependent types](../concepts/dependent_types.md), [CPS](../concepts/c
 Insights: [Mini EVM](../insights/evm-alg.md), [Free Monad (dependently)](../insights/free-monad-dependent.md)
 ```
 
-## **1. What is a Free Monad (Rust version)**
+## **What is a Free Monad (Rust version)**
 
 A **free monad** lets you:
 
@@ -23,7 +23,7 @@ You split:
 
 “Free” means you can build a monad **from any functor** (`F`) without committing to meaning.
 
-## **2. Rust Implementation**
+## **Rust Implementation**
 
 ### Free Monad type
 
@@ -116,7 +116,7 @@ fn main() {
 }
 ```
 
-## **3. Takeaway**
+## **Takeaway**
 
 * **Syntax** = `enum Console` (possible instructions)
 * **Program** = `Free<Console, A>` (data describing steps)

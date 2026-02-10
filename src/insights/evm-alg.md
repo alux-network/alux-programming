@@ -86,7 +86,7 @@ EVM execution = **defunctionalized CPS interpreter** for Ethereum bytecode.
 
 Here’s a **mini-EVM in Rust** using the same free monad style from the `Console` example, so you can clearly see the mapping to Ethereum’s real EVM execution model.
 
-## 1. Instruction Set (EVM subset)
+## Instruction Set (EVM subset)
 
 ```rust
 #[derive(Clone)]
@@ -98,7 +98,7 @@ enum EvmInstr<A> {
 }
 ```
 
-## 2. Free Monad Core
+## Free Monad Core
 
 ```rust
 #[derive(Clone)]
@@ -124,7 +124,7 @@ impl<F: Clone + 'static, A: 'static> Free<F, A> {
 }
 ```
 
-## 3. Smart Constructors
+## Smart Constructors
 
 ```rust
 fn push(val: u64) -> Free<EvmInstr<()>, ()> {
@@ -144,7 +144,7 @@ fn sload(key: u64) -> Free<EvmInstr<u64>, u64> {
 }
 ```
 
-## 4. EVM State
+## EVM State
 
 ```rust
 use std::collections::HashMap;
@@ -155,7 +155,7 @@ struct EvmState {
 }
 ```
 
-## 5. Interpreter
+## Interpreter
 
 ```rust
 fn run_evm<A>(mut prog: Free<EvmInstr<A>, A>, state: &mut EvmState) -> A {
@@ -190,7 +190,7 @@ fn run_evm<A>(mut prog: Free<EvmInstr<A>, A>, state: &mut EvmState) -> A {
 }
 ```
 
-## 6. Example Program
+## Example Program
 
 ```rust
 fn main() {
@@ -213,7 +213,7 @@ fn main() {
 }
 ```
 
-## 7. How This Maps to the Real EVM
+## How This Maps to the Real EVM
 
 * **`EvmInstr` enum** = EVM opcode set (syntax).
 * **`Free<EvmInstr, A>`** = Abstract EVM program before compilation.
