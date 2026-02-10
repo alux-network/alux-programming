@@ -6,6 +6,7 @@
 
 - [Operational Semantics](concepts/operational_semantics.md)
 - [Expression Problem](concepts/expression-problem.md)
+- [Referential Transparency](concepts/referential_transparency.md)
 - [Free Monad](concepts/free_monad.md)
 - [Continuation-Passing Style](concepts/cps.md)
 - [Defunctionalization](concepts/defunctionalization.md)
@@ -16,6 +17,7 @@
 
 - [Operational Semantics in Context](insights/operational_semantics.md)
 - [Expression Problem Reloaded](insights/expression-problem.md)
+- [Referential Transparency Reloaded](insights/referential-transparency.md)
 - [Mini EVM](insights/evm-alg.md)
 - [Free Monad (dependently)](insights/free-monad-dependent.md)
 
