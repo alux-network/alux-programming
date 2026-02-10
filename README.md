@@ -7,7 +7,10 @@ Install `mdbook` and preprocessors.
 _Dependencies of `mdbook-admonish` preprocessor requires rustc 1.64.0 or newer._
 
 ```sh
-cargo install mdbook mdbook-admonish mdbook-katex mdbook-linkcheck
+cargo install mdbook --version 0.4.52 --locked
+cargo install mdbook-admonish --locked
+cargo install mdbook-katex --locked
+cargo install mdbook-linkcheck --locked
 ```
 
 ## Run the book locally

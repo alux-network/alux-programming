@@ -28,10 +28,17 @@ jobs:
 
     - name: Install mdBook and plugins
       run: |
-        cargo install mdbook || true
-        cargo install mdbook-admonish || true
-        cargo install mdbook-katex || true
-        cargo install mdbook-linkcheck || true
+        cargo install mdbook --version 0.4.52 --locked
+        cargo install mdbook-admonish --locked
+        cargo install mdbook-katex --locked
+        cargo install mdbook-linkcheck --locked
+
+    - name: Print tool versions
+      run: |
+        mdbook --version
+        mdbook-admonish --version
+        mdbook-katex --version
+        mdbook-linkcheck --version
 
     - name: Build
       run: mdbook build
