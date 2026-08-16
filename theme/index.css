@@ -8,6 +8,77 @@
   font-size: 1.2em;
 }
 
+.content .section-image {
+  display: block;
+  width: 50%;
+  max-width: 400px;
+  height: auto;
+  margin-inline: auto;
+}
+
 h1 code, h2 code, h3 code, h4 code, h5 code, h6 code {
   color: var(--inline-code-color);
+}
+
+.content details:not(.admonition) {
+  margin: 1em 0;
+  overflow: hidden;
+  border: 1px solid var(--theme-popup-border);
+  border-left-width: 3px;
+  border-radius: 4px;
+}
+
+.content details:not(.admonition)[open] {
+  border-left-color: var(--links);
+}
+
+.content details:not(.admonition) > summary {
+  padding: 0.7em 0.9em;
+  cursor: pointer;
+  background: var(--quote-bg);
+}
+
+.content details:not(.admonition) > summary:hover {
+  background: var(--theme-hover);
+}
+
+.content details:not(.admonition)[open] > summary {
+  border-bottom: 1px solid var(--quote-border);
+}
+
+.content details:not(.admonition) > summary::marker {
+  color: var(--links);
+}
+
+.content details:not(.admonition) > :not(summary) {
+  margin-right: 1em;
+  margin-left: 1em;
+}
+
+.content details:not(.admonition) > :last-child {
+  margin-bottom: 1em;
+}
+
+.content figure {
+  margin: 2rem 0;
+}
+
+.content figure iframe {
+  display: block;
+  width: 100%;
+  border: 0;
+}
+
+.content figure figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.9em;
+  text-align: center;
+  opacity: 0.75;
+}
+
+.sidebar .sidebar-version {
+  display: block;
+  font-size: 0.8em;
+  color: var(--sidebar-fg);
+  opacity: 0.55;
 }

@@ -21,5 +21,6 @@ renderers = ["html"]
 git-repository-url = "https://github.com/alux-network/alux-programming"
 edit-url-template = "https://github.com/alux-network/alux-programming/edit/master/{path}"
 additional-css = ["theme/index.css", "theme/mdbook-admonish.css"]
+additional-js = ["theme/version.js"]
 no-section-label = true
 # fold.enable = false
