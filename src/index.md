@@ -1,30 +1,37 @@
-```admonish warning
-This book is in an early stage.
+```admonish warning title="ALUX project"
+ALUX codebase is under active development and is not yet publicly available.
 ```
 
-# <img src="assets/alux-logo.png" style="margin-right: 10px; width: 60px;"> ALUX Programming Guidelines
+# <img src="assets/alux-logo.png" style="margin-right: 10px; width: 60px;"> ALUX programming guidelines
 
 ```admonish note
-This book is a guide to writing programs by defining their meaning first and their mechanics second.
+This book develops the foundation needed to understand and contribute to ALUX’s meaning-first codebase, beginning with a central principle of [Denotational Design](denotational-design/design.md): define what programs mean before deciding how they work.
 
-Inspired by Conal Elliott’s Denotational Design, it treats computation as a clear mathematical object rather than an opaque sequence of steps.
+Following Conal Elliott, it treats computation as a clear mathematical object rather than an opaque sequence of steps.
 
-Specifications are expressed as simple, compositional traits that describe *what* a program is. Implementations provide interchangeable ways to *realise* those meanings.
+Specifications are expressed as simple, compositional [capability traits](rust-dd/capability-algebras.md) that describe *what* a program means. [Interpreters](rust-dd/interpreters.md) provide interchangeable ways to *realize* those meanings.
 
-The result is software that is easier to reason about, naturally composable, and correct by construction.
+The result is software whose composition rules, implementation obligations, and [valid equations](denotational-design/laws-and-interpretations.md) are easier to see and test.
 ```
 
-## How to Read This Book
+```admonish quote title="Machinery vs. meaning"
+[Concepts](concepts/index.md) and [Insights](insights/index.md) explain useful programming machinery. [Denotational Design](denotational-design/design.md) explains how to decide what machinery should preserve.
+```
 
-This book blends theory and practice. You will see each concept from **two perspectives**:
+## How to read this book
 
-* **Concepts** — core ideas expressed clearly and precisely, independent of language or framework.
-* **Insights** — deeper connections between concepts, with examples, design patterns, and transformations.
+Read the book in three layers:
 
-The examples are often in Rust but the principles are language-agnostic.
+* [**The Semantic View**](denotational-design/semantic-view.md) introduces [denotations and compositionality](denotational-design/denotations.md), [laws and interpretations](denotational-design/laws-and-interpretations.md), and the relationship between meaning and representation.
+* [**Design by Meaning in Rust**](rust-dd/capability-algebras.md) turns that view into [small capabilities](rust-dd/capability-algebras.md), [derived extensions](rust-dd/derived-meaning.md), [first-order programs](rust-dd/first-order-programs.md), and [thin interpreters](rust-dd/interpreters.md).
+* [**Concepts**](concepts/index.md) and [**Insights**](insights/index.md) explain important execution models, encodings, transformations, and connections.
 
-## Who This Book Is For
+The semantic principles are language-agnostic. Rust is the primary implementation language, and a [concurrent language pipeline](rust-dd/compiler-pipelines.md) connects these principles to Tolang.
 
-* Programmers who want to **design for meaning** rather than just mechanics.
+## Who this book is for
+
+* Programmers who want complex software to remain **modular, composable, testable, and maintainable** as it evolves.
 * Developers seeking to **connect category theory, type systems, and program design**.
-* Readers curious about how ideas like **Free Monads**, **CPS**, **Defunctionalization**, and **Dependent Types** fit together.
+* Readers familiar with representational and operational techniques—such as [**free monads**](concepts/free_monad.md), [**continuation-passing style (CPS)**](concepts/cps.md), and [**defunctionalization**](concepts/defunctionalization.md)—who want to understand how that machinery serves, rather than defines, meaning-first design.
+* Readers familiar with [**dependent types**](denotational-design/dependent-types.md) and proof-oriented programming who want to apply that mental model while writing high-performance Rust.
+* Contributors who need to read [meaning-first Rust specifications](rust-dd/capability-algebras.md) and understand how a [concurrent language can be compiled](rust-dd/compiler-pipelines.md) without making its compiler the definition of the language.
