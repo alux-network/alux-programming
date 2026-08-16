@@ -1,7 +1,9 @@
-# Referential Transparency Reloaded
+# Referential transparency reloaded
 
 ```admonish tip title="Related"
-Concepts: [Referential Transparency](../concepts/referential_transparency.md), [Expression Problem](../concepts/expression-problem.md)
+The Semantic View: [Denotations and compositionality](../denotational-design/denotations.md), [Laws and interpretations](../denotational-design/laws-and-interpretations.md)  
+Design by Meaning in Rust: [Capability algebras](../rust-dd/capability-algebras.md), [Derived meaning and composition](../rust-dd/derived-meaning.md)  
+Concepts: [Referential transparency](../concepts/referential_transparency.md)
 ```
 
 This page gives the Denotational Design interpretation of *referential transparency*.
@@ -11,7 +13,7 @@ Here we focus on what RT means as a design constraint.
 In DD, RT is not a purity label.
 It is a law on denotations: substitution must preserve specified meaning.
 
-## Denotational Design Restatement of RT
+## Denotational Design restatement of RT
 
 Denotational Design restates RT as a requirement on specifications, not on implementation style.
 The specification must define compositional meaning first; execution strategy is chosen later.
@@ -28,7 +30,7 @@ This remains true even when concrete interpreters perform I/O, concurrency, retr
 In other words, DD does not ask "is this implementation pure?"
 DD asks "are the denotational equalities explicit, and are interpreters preserving them?"
 
-## Purity And RT
+## Purity and RT
 
 RT and purity are related, but not identical.
 
@@ -43,14 +45,14 @@ The requirement is explicit semantic equalities, with effects isolated behind ca
 
 One minimal semantic reading is:
 
-```rust
+```rust,noplayground
 fn f(a: A, io: Io) -> (Result<B, E>, Io)
 ```
 
 For the same `a` and same `io` input, `f` yields the same `(result, io')`.
 This is the DD-style, context-indexed form of substitution reasoning.
 
-## Why This Clarifies RT
+## Why this clarifies RT
 
 Many RT debates blur a useful distinction:
 
@@ -63,7 +65,7 @@ DD separates these layers:
 
 This separation allows practical effects without losing law-based reasoning.
 
-## Representation-First Failure Mode
+## Representation-first failure mode
 
 If you commit early to concrete representation, RT discussion drifts into style arguments:
 
@@ -75,12 +77,12 @@ These are mostly encoding debates.
 DD asks a simpler question:
 what equalities are valid in your specification?
 
-## Practical DD Pattern
+## Practical DD pattern
 
 Define tiny capability traits and write program behavior as extensions over them.
 Then provide thin concrete interpreters.
 
-```rust
+```rust,noplayground
 trait FileSystem {
     type Error;
 
@@ -121,7 +123,7 @@ So this Rust method is not an RT value container in the same encoding sense as `
 The extension states semantic behavior against capabilities.
 Concrete implementations decide execution strategy: batching, retries, transport, parallelism, and storage details.
 
-## Final Insight
+## Final insight
 
 In Denotational Design, RT is a property of semantic specifications.
 Implementation choices are secondary as long as they preserve the stated denotational laws.

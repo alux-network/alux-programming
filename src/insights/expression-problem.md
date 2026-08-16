@@ -1,6 +1,8 @@
-# Expression Problem Reloaded
+# Expression Problem reloaded
 
 ```admonish tip title="Related"
+The Semantic View: [Denotational Design](../denotational-design/design.md)  
+Design by Meaning in Rust: [Capability algebras](../rust-dd/capability-algebras.md), [Derived meaning and composition](../rust-dd/derived-meaning.md), [Interpreters and effects](../rust-dd/interpreters.md)  
 Concepts: [Expression Problem](../concepts/expression-problem.md)
 ```
 
@@ -9,18 +11,18 @@ The solution is **Conal-style in design** and **tagless-final/object-algebra in 
 
 Oleg’s approach is explicitly denotational: assign compositional meaning first, then realize effects/interpreters as modular semantic layers. For the Expression Problem, this is exactly why the alignment with Denotational Design is expected rather than accidental. Conal’s Denotational Design formulation states the same priority directly: specify meaning compositionally first, and treat concrete execution strategies as secondary and replaceable.
 
-For the expression problem, this design means:
+For the expression-language example, this encoding means:
 
-- **Syntax** is modeled as tiny, independent capability traits.
-- **Semantics** are implementations of those traits.
+- **Constructor vocabulary** is modeled as tiny, independent algebra traits.
+- **Interpretations** are implementations of those traits.
 - New syntax adds a new trait, leaving old code untouched.
 - New semantics adds a new interpreter type, leaving old code untouched.
 
-## Specify Tiny Syntax Capabilities
+## Specify tiny syntax capabilities
 
 Each constructor becomes a small trait. This is the **specification (spec)**.
 
-```rust
+```rust,noplayground
 trait LitAlg {
     type Expr;
 
@@ -36,7 +38,7 @@ trait AddAlg {
 
 Programs are written as **extensions** over the alg traits; these extensions are also part of the specification and serve to compose smaller specs into reusable program-level specs:
 
-```rust
+```rust,noplayground
 #[ext(name = ExprPrograms)]
 impl<This> This
 where
@@ -50,11 +52,11 @@ where
 
 `#[ext(...)]` is a macro from the [`extend` crate](https://docs.rs/extend/latest/extend/) used to reduce boilerplate by generating extension methods from an `impl` block; it is not a new Rust language feature.
 
-## Add New Semantics (New Interpreter)
+## Add new interpretation
 
 Interpreters implement the spec. No syntax changes needed.
 
-```rust
+```rust,noplayground
 struct Eval;
 
 impl LitAlg for Eval {
@@ -88,7 +90,7 @@ impl AddAlg for Pretty {
 
 Now the same expression can be interpreted differently:
 
-```rust
+```rust,noplayground
 let eval = Eval;
 let pretty = Pretty;
 
@@ -96,11 +98,11 @@ let v: i64 = eval.expr_basic();        // 5
 let s: String = pretty.expr_basic();   // "(2 + 3)"
 ```
 
-## Add New Syntax (New Capability Trait)
+## Add new syntax (new capability trait)
 
 To add `Mul`, define a new trait. Existing code stays untouched.
 
-```rust
+```rust,noplayground
 trait MulAlg {
     type Expr;
 
@@ -121,7 +123,7 @@ where
 Existing interpreters still work for old expressions.  
 If they want the new syntax, they implement the new trait:
 
-```rust
+```rust,noplayground
 impl MulAlg for Eval {
     type Expr = i64;
 
@@ -137,7 +139,7 @@ impl MulAlg for Pretty {
 }
 ```
 
-## Why This Solves the Expression Problem
+## Why this solves the Expression Problem
 
 - **Add new operations**: define a new interpreter type implementing the same specs.
 - **Add new variants**: define a new capability trait and use it only where needed.
@@ -145,7 +147,7 @@ impl MulAlg for Pretty {
 
 This keeps the design modular: simple specs, extension by composition, and thin concrete implementations.
 
-## Final Insight: Wadler vs Denotational Design
+## Final insight: Wadler vs Denotational Design
 
 Wadler diagnosed the Expression Problem correctly at the level of language mechanisms: rows vs columns under static typing and modular extension. But that framing starts after the key mistake is already made: treating concrete representation as the model.
 
@@ -155,7 +157,18 @@ From a meaning-first view, many of these tensions are self-inflicted. Define com
 
 **Meaning of a language should be independent of the idea of a machine.**
 
-<iframe width="100%" height="315" src="https://www.youtube.com/embed/n2CBSNAVHVg?si=n-f84RYWjGtKkcVj&amp;clip=Ugkx52hOOFjiK-KEPMRhuB8vT6i4WUaav11c&amp;clipt=EKWcxgIYjoTIAg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<figure>
+  <iframe
+    width="100%"
+    height="315"
+    src="https://www.youtube.com/embed/n2CBSNAVHVg?si=n-f84RYWjGtKkcVj&amp;clip=Ugkx52hOOFjiK-KEPMRhuB8vT6i4WUaav11c&amp;clipt=EKWcxgIYjoTIAg"
+    title="Talk clip — a language's meaning should be independent of the machine"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen
+  ></iframe>
+  <figcaption>A language’s meaning should be independent of the machine</figcaption>
+</figure>
 
 ## References
 
