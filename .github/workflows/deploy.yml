@@ -1,4 +1,4 @@
-name: Deploy mdBook to GitHub Pages
+name: 📚 Deploy mdBook to GitHub Pages
 
 on:
   push:
@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   publish:
-    name: Build and publish
+    name: 🚀 Build and publish
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -29,9 +29,9 @@ jobs:
     - name: Install mdBook and plugins
       run: |
         cargo install mdbook --version 0.4.52 --locked
-        cargo install mdbook-admonish --locked
-        cargo install mdbook-katex --locked
-        cargo install mdbook-linkcheck --locked
+        cargo install mdbook-admonish --version 1.20.0 --locked
+        cargo install mdbook-katex --version 0.9.4 --locked
+        cargo install mdbook-linkcheck --version 0.7.7 --locked
 
     - name: Print tool versions
       run: |
@@ -40,10 +40,10 @@ jobs:
         mdbook-katex --version
         mdbook-linkcheck --version
 
-    - name: Build
+    - name: 🔨 Build
       run: mdbook build
 
-    - name: Publish to github-pages branch
+    - name: 🚀 Publish to github-pages branch
       if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       uses: peaceiris/actions-gh-pages@v4
       with:
