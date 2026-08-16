@@ -18,6 +18,12 @@ For the expression-language example, this encoding means:
 - New syntax adds a new trait, leaving old code untouched.
 - New semantics adds a new interpreter type, leaving old code untouched.
 
+```admonish example title="Object algebras in C#"
+This encoding is not Rust-specific. [`object-algebras`](https://github.com/tgrospic/object-algebras) develops the pattern in C# and pushes past the fixed carrier used here. On this page each interpreter picks one concrete `Self::Expr`, a plain type. The C# algebras instead abstract over a type *constructor* `F` — `FunctorAlg<F>`, `MonadAlg<F>`, `BankingDsl<F>` — carrying results as `App<F, a>` in place of the illegal `F<a>`.
+
+C# has no first-class higher-kinded types, so `App<F, a>` stands in for the application `F(a)`, recovered through inject/project wrappers. That `App` trick is exactly [defunctionalization](../concepts/defunctionalization.md): the abstraction the language cannot express becomes first-order data, applied on demand. Rust hits the same ceiling — it lacks first-class higher-kinded types too.
+```
+
 ## Specify tiny syntax capabilities
 
 Each constructor becomes a small trait. This is the **specification (spec)**.

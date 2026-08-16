@@ -71,6 +71,10 @@ In CPS (continuation-passing style), continuations are higher-order functions. D
 
 Suitable free-monad representations can be related to defunctionalized continuations in CPS-transformed programs. This is a close connection, not a universal identity between the two constructions.
 
+## Type-level application
+
+Defunctionalization can also encode type-level application in languages without native higher-kinded types. The [object-algebras C# experiment](https://github.com/tgrospic/object-algebras) applies this lightweight encoding through `App<F, a>`, using it to express functor, applicative, monad, and effect algebras.
+
 ## References
 
 - Reynolds, J. C. (1972). *Definitional Interpreters for Higher-Order Programming Languages*.  
