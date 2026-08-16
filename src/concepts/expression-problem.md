@@ -1,7 +1,13 @@
 # Expression Problem
 
 ```admonish tip title="Related"
-Insights: [Expression Problem Reloaded](../insights/expression-problem.md)
+The Semantic View: [Denotational Design](../denotational-design/design.md), [Denotations and compositionality](../denotational-design/denotations.md)  
+Design by Meaning in Rust: [Capability algebras](../rust-dd/capability-algebras.md), [Derived meaning and composition](../rust-dd/derived-meaning.md)  
+Insights: [Expression Problem reloaded](../insights/expression-problem.md)
+```
+
+```admonish note title="Semantic placement"
+The Expression Problem concerns modular extension of representations and operations. Denotational Design moves one question earlier: which semantic vocabulary and interpretations are worth representing in the first place?
 ```
 
 Phil Wadler’s expression problem is about **simultaneously** extending a language in two dimensions without modifying existing code:
@@ -16,7 +22,7 @@ The core tension:
 
 This section shows both sides with small Haskell and Java examples.
 
-## Haskell (Functional / ADT)
+## Haskell (functional / ADT)
 
 We start with a classic ADT for expressions and two operations.
 
@@ -24,7 +30,6 @@ We start with a classic ADT for expressions and two operations.
 data Expr
   = Lit Int
   | Add Expr Expr
-  | Mul Expr Expr  -- ✏️ UPDATE: new variant forces edits below
 
 eval :: Expr -> Int
 eval (Lit n)     = n
@@ -69,7 +74,7 @@ size (Mul a b) = 1 + size a + size b  -- ✏️ UPDATE: new case
 
 In Wadler’s terms, **data extension is not modular** in the ADT approach.
 
-## Java (Object-Oriented)
+## Java (object-oriented)
 
 We start with an interface and concrete classes for each variant.
 
@@ -181,13 +186,13 @@ final class Mul implements Expr {
 
 In Wadler’s terms, **operation extension is not modular** in the OO approach.
 
-## Summary (Wadler’s Point)
+## Summary (Wadler’s point)
 
 - Functional/ADT style favors **new operations** but resists **new variants**.
 - OO style favors **new variants** but resists **new operations**.
 - The expression problem asks for a design where **both** dimensions are extensible without modifying existing code.
 
-## Wadler’s Explanation and Solution Landscape (1998)
+## Wadler’s explanation and solution landscape (1998)
 
 Wadler frames the problem as: extend a datatype **by cases** (new variants) and extend **functions over that datatype** (new operations), *without recompiling existing code* and while preserving **static type safety** (no casts).
 
@@ -199,7 +204,7 @@ In **functional/ADT** settings, rows are fixed and columns are easy to add.
 In **OO** settings, columns are fixed and rows are easy to add.  
 The challenge is to make **both directions** extensible.
 
-## Wadler’s Proposed Solution (GJ + Virtual Types)
+## Wadler’s proposed solution (GJ + virtual types)
 
 Wadler presents a solution in GJ (Generic Java) using:
 
@@ -216,7 +221,7 @@ The trick is to refer to `This.Exp` and `This.Visitor` so that each extension ph
 Wadler notes that Java treats inner interfaces as **static**, which breaks the indexing trick.  
 He suggests that loosening this restriction would make the solution viable; this has still not changed in modern Java (nested interfaces remain implicitly static).
 
-## Other Solution Directions Mentioned
+## Other solution directions mentioned
 
 1. Corky Cartwright’s approach
 Requires **contravariant extension**: allow a base expression type to stand in for an extended one.
@@ -234,7 +239,7 @@ Works via an extended visitor design.
 Wadler cites two solutions that rely on language features designed specifically for the problem.
 These are less general than the virtual‑type approach.
 
-## Wadler’s Two Points
+## Wadler’s two points
 
 Wadler’s email makes two points clear:
 

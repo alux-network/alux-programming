@@ -1,11 +1,16 @@
-# Free Monad
+# Free monad
 
 ```admonish tip title="Related"
-Concepts: [Dependent types](../concepts/dependent_types.md), [CPS](../concepts/cps.md), [Defunctionalization](../concepts/defunctionalization.md)  
-Insights: [Mini EVM](../insights/evm-alg.md), [Free Monad (dependently)](../insights/free-monad-dependent.md)
+Design by Meaning in Rust: [First-order programs](../rust-dd/first-order-programs.md), [Interpreters and effects](../rust-dd/interpreters.md)  
+Concepts: [Continuation-passing style](../concepts/cps.md), [Defunctionalization](../concepts/defunctionalization.md)  
+Insights: [EVM algebra](../insights/evm-alg.md)
 ```
 
-## **What is a Free Monad (Rust version)**
+```admonish note title="Semantic placement"
+A free monad is a representation of instruction syntax with freely generated sequencing. The instruction functor already chooses a vocabulary; an interpreter then maps that syntax into a semantic domain. It is one powerful encoding, not the definition of Denotational Design.
+```
+
+## What is a free monad (Rust version)
 
 A **free monad** lets you:
 
@@ -19,15 +24,19 @@ Think of it as:
 You split:
 
 * **Syntax** → enum of instructions.
-* **Semantics** → interpreter function.
+* **Interpretation** → a structure-preserving map into a chosen semantic domain.
 
-“Free” means you can build a monad **from any functor** (`F`) without committing to meaning.
+“Free” means that the monad structure is generated from a functor `F` without adding equations beyond the monad laws. Choosing `F` already chooses instruction syntax; interpreting the resulting program supplies a particular denotation.
 
-## **Rust Implementation**
+## Rust implementation
 
-### Free Monad type
+```admonish warning title="Schematic encoding"
+Rust lacks direct higher-kinded type parameters, so a production free-monad encoding needs additional type-level machinery or a specialized instruction functor. The following code illustrates the intended shape; it is not a drop-in generic implementation.
+```
 
-```rust
+### Free monad type
+
+```rust,noplayground
 #[derive(Clone)]
 enum Free<F, A> {
     Pure(A),
@@ -58,9 +67,9 @@ impl<F: Clone + 'static, A: 'static> Free<F, A> {
 }
 ```
 
-### DSL: Console operations
+### DSL: console operations
 
-```rust
+```rust,noplayground
 #[derive(Clone)]
 enum Console<A> {
     Print(String, A),
@@ -79,7 +88,7 @@ fn read_line() -> Free<Console<String>, String> {
 
 ### Interpreter
 
-```rust
+```rust,noplayground
 fn run_console<A>(mut prog: Free<Console<A>, A>) -> A {
     loop {
         match prog {
@@ -105,7 +114,7 @@ fn run_console<A>(mut prog: Free<Console<A>, A>) -> A {
 
 ### Usage
 
-```rust
+```rust,noplayground
 fn main() {
     let program =
         print_line("What is your name?")
@@ -116,14 +125,14 @@ fn main() {
 }
 ```
 
-## **Takeaway**
+## Takeaway
 
 * **Syntax** = `enum Console` (possible instructions)
 * **Program** = `Free<Console, A>` (data describing steps)
-* **Semantics** = `run_console` (interpreter)
+* **Concrete interpretation** = `run_console`
 * Benefit: You can write multiple interpreters for the same program — e.g., run in real IO, log to a file, or compile to another language.
 
-## **Correlation to Continuations and CPS**
+## Correlation to continuations and CPS
 
 **Continuation-Passing Style (CPS)** is a way of writing programs where functions never return values directly but instead pass results to another function (the _continuation_) that represents “the rest of the program.”
 
@@ -135,7 +144,7 @@ That “rest of the program” is exactly a **continuation** — a function from
 
 * In our Rust free monad:
 
-  ```rust
+  ```rust,noplayground
   Free::FlatMap(Box<Free<F, A>>, Box<dyn Fn(A) -> Free<F, A>>)
   ```
 
@@ -161,7 +170,7 @@ That “rest of the program” is exactly a **continuation** — a function from
 | Program      | Nested continuations     | Nested `FlatMap` variants  |
 | Execution    | Calling functions        | Pattern matching + calling |
 
-## **GoF Design Patterns Mapping**
+## GoF (Gang of Four) design patterns mapping
 
 Free monads are **not** in GoF because they’re from functional programming theory, but they **subsume** or **emulate** several patterns:
 
@@ -173,7 +182,7 @@ Free monads are **not** in GoF because they’re from functional programming the
 | **Builder**     | The `.flat_map` chain is a fluent builder for programs.                                                            |
 | **Visitor**     | The interpreter is essentially a visitor over the instruction set.                                                 |
 
-## **Why Free Monad > These Patterns**
+## Why free monad > these patterns
 
 * GoF patterns are **manual OOP work** - you define interfaces, classes, and compose them.
 * Free monads are **algebraic** - you define *data* for instructions and *functions* to interpret them.
@@ -194,17 +203,17 @@ Free monads are **not** in GoF because they’re from functional programming the
 | Multiple interpreters | Strategy                   |
 
 
-## **Relation to Defunctionalization**
+## Relation to defunctionalization
 
 **Defunctionalization** is a program transformation that replaces higher-order functions with a first-order data structure that represents the possible functions, plus an interpreter that applies them.
 
 In CPS, continuations are higher-order functions. Defunctionalizing a CPS program replaces those continuations with an enum of continuation cases and an `apply` function to run them.
 
-A free monad can be seen as the result of defunctionalizing the continuations inside a CPS-transformed program:
+A free monad can, for suitable encodings, be related to defunctionalized continuations inside a CPS-transformed program:
 
 1. Start with a CPS version of your program. The "rest of the program" is carried in continuation functions.
 2. Defunctionalize those continuation functions into a finite set of cases in a data type.
-3. The resulting data type, together with the initial instruction set, is exactly the AST of a free monad.
+3. The resulting first-order data type can have the same instruction-and-continuation shape as a free-monad representation.
 
 **Key similarities**
 
@@ -222,4 +231,4 @@ A free monad can be seen as the result of defunctionalizing the continuations in
 | Scope   | General transformation                                         | Specific functional programming pattern                  |
 
 **Summary**
-Defunctionalization is a transformation technique. Free monads are a reusable design pattern. The free monad structure is what you get when you defunctionalize the continuations in a CPS program built from a functor F.
+Defunctionalization is a transformation technique. Free monads are an algebraic construction. They are closely related in some representations, but neither construction generally implies the other without additional assumptions.

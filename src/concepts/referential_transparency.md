@@ -1,16 +1,19 @@
-# Referential Transparency
+# Referential transparency
 
 ```admonish tip title="Related"
-Concepts: [Expression Problem](../concepts/expression-problem.md)  
-Insights: [Referential Transparency Reloaded](../insights/referential-transparency.md)
+The Semantic View: [Denotations and compositionality](../denotational-design/denotations.md), [Laws and interpretations](../denotational-design/laws-and-interpretations.md)  
+Insights: [Referential transparency reloaded](../insights/referential-transparency.md)
 ```
 
-Referential transparency (RT) is the substitution property of expressions:
-an expression can be replaced by its denotation without changing program meaning.
+```admonish note title="Semantic placement"
+Referential transparency depends on the chosen denotation and equality. It grants substitution when replacing an expression preserves that specified meaning, even if implementations differ operationally behind the semantic boundary.
+```
+
+Referential transparency (RT) is the substitution property of expressions: an expression can be replaced by its denotation without changing program meaning.
 
 Today, this is how RT is used in practice: as the basis for equational reasoning, safe refactoring, and law-driven API design.
 
-## Core Meaning
+## Core meaning
 
 RT says:
 
@@ -21,23 +24,18 @@ This is a semantic claim, not a coding-style slogan.
 
 ### Purity
 
-A pure function returns the same output for the same inputs and has no observable side effects.
-RT is the substitution law for expressions: replacing an expression with its denotation must preserve meaning.
-So purity is one common way to obtain RT in practice, while RT is the broader semantic criterion.
-See [Referential Transparency Reloaded](../insights/referential-transparency.md) for the DD purity-vs-RT distinction.
+A pure function returns the same output for the same inputs and has no observable side effects. RT is the substitution law for expressions: replacing an expression with its denotation must preserve meaning. So purity is one common way to obtain RT in practice, while RT is the broader semantic criterion. See [Referential transparency reloaded](../insights/referential-transparency.md) for the DD purity-vs-RT distinction.
 
-## Historical Context
+## Historical context
 
-In programming-language semantics, RT is strongly associated with Christopher Strachey's framing.
-His treatment separates value reasoning from update-heavy behavior:
+In programming-language semantics, RT is strongly associated with Christopher Strachey's framing. His treatment separates value reasoning from update-heavy behavior:
 
 - **R-values**: expression values.
 - **L-values**: locations that can be assigned.
 
-The key point is that expression-level substitution is stable when we stay in value reasoning.
-Assignment introduces updates to locations and makes substitution reasoning harder or invalid in the naive form.
+The key point is that expression-level substitution is stable when we stay in value reasoning. Assignment introduces updates to locations and makes substitution reasoning harder or invalid in the naive form.
 
-## What Assignment And Side Effects Mean Here
+## What assignment and side effects mean here
 
 In this context:
 
@@ -48,12 +46,11 @@ Assignment is a specific kind of side effect.
 
 This is why RT fails in many imperative settings: evaluation can depend on or mutate observable context outside the expression's explicit value interface.
 
-## How Modern Languages Present RT
+## How modern languages present RT
 
 ### Haskell
 
-RT is taught as default reasoning for pure expressions.
-Effects are explicit in typed constructions (`IO`, state threading, and related abstractions), so substitution laws are central in daily use.
+RT is taught as default reasoning for pure expressions. Effects are explicit in typed constructions (`IO`, state threading, and related abstractions), so substitution laws are central in daily use.
 
 ### Scala (Cats / Cats Effect)
 
@@ -65,12 +62,12 @@ In Scala FP practice, Cats Effect gives the most common RT framing:
 
 Cats Effect also contrasts this with eager `Future` evaluation, which is one reason RT discussions in Scala emphasize laziness and delayed execution.
 
-## RT Today
+## RT today
 
 Across modern ecosystems, RT is used as shorthand for substitution-safe behavior.
 In mixed-paradigm systems, teams usually apply RT claims to specific modules, APIs, or effect-typed regions rather than to all code globally.
 
-For the Denotational Design interpretation of RT, see [Referential Transparency Reloaded](../insights/referential-transparency.md).
+For the Denotational Design interpretation of RT, see [Referential transparency reloaded](../insights/referential-transparency.md).
 
 ## References
 

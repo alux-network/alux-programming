@@ -1,23 +1,41 @@
-# Branching and Confluence
+# Branching and confluence
 
-We encounter **branching** constantly in everyday life.
-Imagine:
+```admonish tip title="Related"
+The Semantic View: [Denotations and compositionality](../denotational-design/denotations.md), [Laws and interpretations](../denotational-design/laws-and-interpretations.md)  
+Design by Meaning in Rust: [Laws, scenarios, and evidence](../rust-dd/laws.md)  
+Concepts: [Operational semantics](operational_semantics.md)
+```
 
-* You wake up and decide: ☕ coffee **or** 🍵 tea.
-* If coffee: sugar or no sugar?
-* If tea: green or black?
+Branching, determinism, confluence, trace equivalence, and bisimulation all concern alternatives in computation. They are not the same property.
 
-Each decision **branches** into alternatives, like a little decision tree.
-But in the end, you don’t live in two universes — you end up with **one drink in your hand**.
-That’s **confluence**: although choices branch, they merge back into one reality.
+```admonish note title="Semantic placement"
+Control-flow branching is operational structure. Confluence is a property of a reduction relation. Trace equivalence and bisimulation compare behaviors. Denotational equality compares meanings in a chosen semantic domain. A sound design states which equality it needs rather than moving between these notions informally.
+```
 
-## Branching in Rust Programs
+## Behavioral equivalence
 
-The same pattern appears in programs. A sequential program may branch internally, but execution always continues as a **single flow**.
+Concurrent and interactive programs rarely have only one final result. A standard starting point is a **labeled transition system**:
 
-### `if`
+$$
+\mathcal{L} = (S, A_{\tau}, \to)
+$$
 
-```rust
+where $S$ is a set of states, $A_{\tau}$ is a set of observable action labels together with an internal action $\tau$, and $\to\;\subseteq S \times A_{\tau} \times S$ is the transition relation. We write $p \xrightarrow{a} p'$ when state $p$ can perform action $a$ and become $p'$.
+
+A behavioral equivalence specifies which differences between such systems are intentionally forgotten:
+
+* **linear-time observations** follow completed or partial executions and record what happened along them
+* **branching-time observations** also retain where alternatives were available and when choices were resolved
+
+Two systems can therefore admit the same traces while differing in branching structure. One may choose between two actions before an interaction, while another postpones that choice until afterward. The action sequences agree, but their future possibilities do not.
+
+Van Glabbeek's [linear-time–branching-time spectrum][linear-branching-spectrum] gives the standard systematic account of these behavioral equivalences. It is not a ranking from weak to strong; each point preserves a different collection of observations.
+
+## Branching in Rust programs
+
+An `if` selects one branch according to a condition:
+
+```rust,noplayground
 fn sign(x: i32) -> i32 {
     if x > 0 {
         1
@@ -29,12 +47,9 @@ fn sign(x: i32) -> i32 {
 }
 ```
 
-* **Branching:** program splits into one of three paths.
-* **Confluence:** for a given input value, the same branch condition will always be chosen. Each input deterministically follows exactly one path, and evaluation of conditions happens in a fixed order (first check `x > 0`, then `x < 0`, else default). Regardless of which path is taken, the result is always determined from the input, and execution continues in a single, unified flow.
+A `match` selects one arm according to a value:
 
-### `match`
-
-```rust
+```rust,noplayground
 fn day_type(day: &str) -> &str {
     match day {
         "Saturday" | "Sunday" => "Weekend",
@@ -44,124 +59,192 @@ fn day_type(day: &str) -> &str {
 }
 ```
 
-* **Branching:** many alternatives.
-* **Confluence:** for a given input value, the program deterministically selects exactly one matching branch. The essential property is that the *trace* of evaluation is deterministic: the same input always leads down the same path. In this simple example each branch yields the same type (`&str`), but even in settings with dependent types—where result types vary with input—the execution remains confluent because identical inputs always produce the same path and outcome.
+For fixed inputs in a deterministic language, these constructs select a predictable control-flow path. That property is **determinism**, not confluence.
 
+## What confluence means
 
-### Loops with Early Exit
+A reduction relation is confluent when two reductions from the same term can be joined again:
 
-```rust
-fn find_even(nums: &[i32]) -> Option<i32> {
-    for &n in nums {
-        if n % 2 == 0 {
-            return Some(n); // branch: exit early
-        }
-    }
-    None // confluence: reached if loop completes
-}
-```
+$$
+\begin{array}{ccccc}
+&& a && \\
+& \swarrow^{*} && \searrow^{*} & \\
+b &&&& c \\
+& \searrow^{*} && \swarrow^{*} & \\
+&& d &&
+\end{array}
+$$
 
-* **Branching:** may exit during iteration.
-* **Confluence:** one thread of control — either returns early or finishes and continues.
+Formally, if:
 
-## Sequential Confluence Illustrated
+$$
+a \to^* b
+\quad\text{and}\quad
+a \to^* c
+$$
 
-```
-Start
- ├─ branch A → ...
- └─ branch B → ...
-           ↘
-            Confluence → continues as one flow
-```
+then there must be some `d` such that:
 
-Just like your morning drink decision, a program doesn’t split into parallel worlds.
-Branches are **local alternatives**, but **sequential confluence** ensures only one actual path is taken, and execution rejoins into one future.
+$$
+b \to^* d
+\quad\text{and}\quad
+c \to^* d
+$$
 
-⚡ **Key idea:**
-Branching explores alternatives, confluence merges them back.
-In sequential programs, **confluence is guaranteed**: there’s always one final thread of execution.
+Confluence permits more than one reduction path. It says those paths are compatible in the sense that they can reach a common successor.
 
+## Determinism and confluence
 
-## Confluence Beyond Determinism
+A deterministic reduction relation has at most one next step from each state. It is therefore confluent in a straightforward sense: there are no competing one-step choices to reconcile.
 
-Confluence is often explained as the guarantee that the same input always produces the same output. But its essence is deeper: **the trace of evaluation itself is deterministic**. This means the path through the program is uniquely determined by the input, independent of external factors. In Rust, both `if` and `match` enforce deterministic traces. More broadly, confluence is what allows reasoning about programs algebraically, since the same input always reduces in a predictable way.
+The converse does not hold. A system may allow several reduction orders and still be confluent because all orders eventually agree.
 
-## Trace Equivalence
+Ordinary Rust `if` and `match` expressions demonstrate deterministic selection. They do not by themselves illustrate the interesting content of confluence.
 
-**Trace equivalence** means that two programs, given the same input, follow evaluation paths that yield the **same observable behavior**: the same result and the same observable effects. In pure code (no effects), this reduces to producing the same result for all inputs. With side effects, equivalence also requires that the same conditions are evaluated in the same order.
+## Church–Rosser
 
-**Example of not trace‑equivalent (side effect changes trace):**
+The Church–Rosser theorem states a confluence property for lambda-calculus reduction. If a term reduces to two results by different reduction paths, those results have a common reduct.
 
-```rust
+When a normal form exists, confluence implies that it is unique. This supports equational reasoning because evaluation order does not change the final normal form.
+
+Do not generalize this result to arbitrary imperative programs. Side effects, nondeterministic scheduling, failure, and observation of intermediate states may distinguish reduction orders.
+
+## Traces
+
+A **trace** records a sequence of observable actions or states. Trace semantics intentionally preserves more operational information than a result-only semantics.
+
+Two pure functions can return the same result while evaluating through different internal steps. They are equal in a result denotation if those steps are forgotten. They are not necessarily equal in a trace semantics.
+
+With effects, reordering conditions may change observations:
+
+```rust,noplayground
 fn is_admin() -> bool {
-    println!("checked admin"); // side effect
+    println!("checked admin");
     true
 }
+
 fn is_user() -> bool {
-    println!("checked user"); // side effect
+    println!("checked user");
     true
 }
-
-fn classify_role(x: i32) -> &'static str {
-    if is_admin() {
-        "admin"
-    } else if is_user() {
-        "user"
-    } else {
-        "other"
-    }
-}
 ```
 
-Here both `is_admin` and `is_user` return `true`, so the result is always `"admin"`. But the **trace differs**: if `is_admin` is checked first, only that prints; if conditions are reordered, `is_user` prints instead. The outcome is the same, but the traces differ, so the programs are **not trace‑equivalent**.
+Checking `is_admin` first and checking `is_user` first can return equivalent classifications while printing different traces.
 
-**Trace‑equivalent reorder (pure, disjoint, total):**
+The design question is whether those prints belong to the chosen semantic domain.
 
-```rust
-fn classify_a(x: i32) -> &'static str {
-    if x < 0 { "neg" } else if x == 0 { "zero" } else { "pos" }
-}
-fn classify_b(x: i32) -> &'static str {
-    if x == 0 { "zero" } else if x < 0 { "neg" } else { "pos" }
-}
-```
+## Trace equivalence
 
-The predicates are disjoint and cover all integers; both versions return the same label for every input. With no side effects, these are **trace‑equivalent**.
+Two systems are trace-equivalent when they admit the same observable traces under the selected trace model.
 
-## Bridge to Trees
+Trace equivalence can forget branching structure. Two systems may generate the same traces even when one commits to a choice earlier than the other. For interactive and concurrent systems, that distinction may matter.
 
-Branching in programs naturally connects to tree structures. A sequence of decisions can be visualized as a decision tree: each internal node is a branching point, and each leaf is a possible outcome. Restricting to two alternatives at each branch gives **binary trees**, which are a cornerstone of computer science. This perspective shifts branching from a control-flow mechanism into a structural representation of possibilities.
+## Bisimulation
 
-Conal Elliott has described memory addressing as a kind of **perfect binary leaf trees**, where each memory cell corresponds to a leaf reached by a sequence of left/right choices. This view links the abstract branching structure of programs to the very way data is organized and accessed.
+Bisimulation relates two transition systems step by step. Whenever one system makes an observable move, the other must be able to match it, and the resulting states must remain related.
 
-<iframe width="100%" height="315" src="https://www.youtube.com/embed/oaIMMclGuog?si=qGfA1CWoDyXuInHA&amp;clip=Ugkx_TTQq7uzqaz9F1my5lozpOJ9cusgqSG3&amp;clipt=ELD_mwEY0LOeAQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+Common variants include:
 
-## Bridge to Semantics
+* **strong bisimulation**, which matches individual transitions
+* **weak bisimulation**, which abstracts from selected internal transitions
+* **branching bisimulation**, which abstracts from internal work while preserving important choice structure
 
-Confluence is also a fundamental property in programming language semantics. In lambda calculus, for example, the **Church–Rosser theorem** states that if an expression can be reduced in different ways, all reduction paths will converge to a common result. This reflects the same guarantee as sequential confluence in Rust: different branches don’t lead to diverging realities but ultimately rejoin into one meaning. This bridge from everyday branching to formal semantics helps build intuition for deeper topics in programming theory.
+Bisimulation is often a stronger behavioral comparison than trace equivalence because it observes how alternatives remain available during interaction.
 
-## Bridge to Bisimulation
+<details>
+<summary><strong>Origins and formal definitions</strong></summary>
 
-Another important concept related to branching is **bisimulation**, used in process calculi and concurrency theory. Two systems are bisimilar if they can simulate each other’s steps: whenever one makes a move, the other can make a corresponding move, and the resulting states remain related. Unlike simple trace equivalence, bisimulation is sensitive to the structure of branching, not just final results. It ensures that two programs behave the same way under every possible interaction, making it a powerful tool for reasoning about equivalence in concurrent and interactive systems.
+Milner developed observational equivalence for communicating processes in [*A Calculus of Communicating Systems*][milner-ccs]. Park then characterized the corresponding equivalence coinductively in [*Concurrency and Automata on Infinite Sequences*][park-bisimulation], giving the greatest-fixed-point relation and proof method now known as bisimulation. Milner adopted and developed this method as a foundation for reasoning about process behavior.
 
-There are different **flavors** of bisimulation:
+**Strong bisimulation.** For labeled transition systems, a relation $R$ is a strong bisimulation when $p\mathrel{R}q$ implies, for every action $a$:
 
-* **Strong bisimulation** – requires that every single step of one process can be matched by an identical step in the other, including internal or invisible actions.
-* **Weak bisimulation** – abstracts away from internal or silent actions (often denoted τ). Two systems can be weakly bisimilar if they match on observable behavior, even if one performs extra internal steps.
-* **Branching bisimulation** – a refinement of weak bisimulation that preserves the branching structure more carefully: even when ignoring internal actions, the branching points must align so that the choice structure is respected.
+* if $p\xrightarrow{a}p'$, then some $q'$ satisfies $q\xrightarrow{a}q'$ and $p'\mathrel{R}q'$; and
+* if $q\xrightarrow{a}q'$, then some $p'$ satisfies $p\xrightarrow{a}p'$ and $p'\mathrel{R}q'$.
 
-These distinctions are crucial in concurrency theory: strong bisimulation is very strict, weak bisimulation allows flexibility with internal computation, and branching bisimulation balances the two by maintaining the essential shape of choices while abstracting from unobservable details.
+Two states are bisimilar when some bisimulation relates them. The definition is coinductive: after matching a transition, the successor states must satisfy the same behavioral obligation again.
 
-## Confluence and Bisimulation Compared
+**Branching bisimulation.** In a common divergence-blind presentation, a symmetric relation $R$ is a branching bisimulation when $p\mathrel{R}q$ and $p\xrightarrow{a}p'$ imply either:
 
-Although confluence and bisimulation both deal with branching and outcomes, they apply in different contexts:
+* $a = \tau$ and $p'\mathrel{R}q$, or
+* there are states $q_0$ and $q'$ such that
 
-* **Confluence** is about **deterministic evaluation**: for the same input, all reduction paths lead to the same result. It is mainly used in sequential semantics (e.g., lambda calculus) to prove consistency and simplify reasoning.
-* **Bisimulation** is about **behavioral equivalence** between two possibly concurrent systems: whenever one system can make a step, the other can match it. It is mainly used in process calculi and concurrency theory to establish that two processes behave the same under all possible interactions.
+  $$
+  q \xRightarrow{\tau} q_0 \xrightarrow{a} q',
+  \qquad
+  p\mathrel{R}q_0,
+  \qquad
+  p'\mathrel{R}q'
+  $$
 
-In short:
+Here $\xRightarrow{\tau}$ denotes zero or more internal transitions. Requiring the intermediate state $q_0$ to remain related to $p$ is what preserves the relevant branching potential while allowing internal work to be ignored. Van Glabbeek and Weijland introduced and developed this equivalence in [*Branching Time and Abstraction in Bisimulation Semantics*][branching-bisimulation].
 
-* Confluence → guarantees **one meaning** for each program.
-* Bisimulation → guarantees **two programs mean the same** in terms of behavior.
+</details>
 
-These notions complement each other: confluence helps ensure determinism in sequential computation, while bisimulation provides a robust notion of equivalence in concurrent or interactive computation.
+## Denotational equality
+
+Denotational equality depends on the selected semantic domain:
+
+$$
+\llbracket P \rrbracket = \llbracket Q \rrbracket
+$$
+
+The domain might itself be built from traces, transition systems modulo bisimulation, sets of outcomes, or another mathematical model. Denotational Design does not prescribe one universal equality. It requires the equality to be chosen explicitly and used compositionally.
+
+The relationship is:
+
+1. Begin with the operational system.
+2. Select the relevant observations.
+3. Choose the semantic domain and equality.
+
+## Branching as data
+
+Branching also appears structurally in trees. A binary path can be represented as a sequence of left/right decisions. This representation is useful for tries, execution identifiers, decision diagrams, and memory addressing.
+
+The semantic branch-position example in [Why meaning comes first](../denotational-design/semantic-view.md) deliberately separates this tree meaning from one bit-vector encoding.
+
+Conal Elliott has described memory addressing through perfect binary leaf-tree structure. The point is not that every machine literally stores a source-level tree; it is that a compositional tree model can reveal useful structure hidden by flat numeric addresses.
+
+<figure>
+  <iframe
+    width="100%"
+    height="315"
+    src="https://www.youtube.com/embed/oaIMMclGuog?si=qGfA1CWoDyXuInHA&amp;clip=Ugkx_TTQq7uzqaz9F1my5lozpOJ9cusgqSG3&amp;clipt=ELD_mwEY0LOeAQ"
+    title="Conal Elliott — memory addressing as a perfect binary leaf tree"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen
+  ></iframe>
+  <figcaption>Conal Elliott — memory addressing as a perfect binary leaf tree</figcaption>
+</figure>
+
+## Comparison
+
+| Concept | Subject | Central question |
+| --- | --- | --- |
+| Control-flow branching | One program execution | Which continuation is selected? |
+| Determinism | Transition relation | Is the next step uniquely determined? |
+| Confluence | Reduction relation | Can divergent reductions be joined? |
+| Trace equivalence | Observable action sequences | Do systems admit the same traces? |
+| Bisimulation | Branching transition structure | Can systems match each other's moves? |
+| Denotational equality | Chosen semantic domain | Do programs have the same specified meaning? |
+
+These notions can support one another, but none should be used as a synonym for another.
+
+## Further reading
+
+* [*A Calculus of Communicating Systems*][milner-ccs] — Milner's foundational development of CCS and observational equivalence
+* [*Concurrency and Automata on Infinite Sequences*][park-bisimulation] — Park's coinductive characterization of bisimulation
+* [*Algebraic Laws for Nondeterminism and Concurrency*][hennessy-milner-laws] — Hennessy and Milner on observational congruence and algebraic laws
+* [*What Is Branching Time and Why Use It?*][why-branching-time] ([compressed PDF][why-branching-time-pdf]) — a concise motivation for preserving branching structure
+* [*The Linear Time–Branching Time Spectrum*][linear-branching-spectrum] — the standard taxonomy of behavioral equivalences
+* [*Branching Time and Abstraction in Bisimulation Semantics*][branching-bisimulation] — the foundational treatment of branching bisimulation
+* [*Three Logics for Branching Bisimulation*][three-logics] — logical characterizations through Hennessy–Milner-style logics and CTL* without next-time
+
+[milner-ccs]: https://www.lfcs.inf.ed.ac.uk/reports/86/ECS-LFCS-86-7/ECS-LFCS-86-7.pdf
+[park-bisimulation]: https://wrap.warwick.ac.uk/id/eprint/47224/1/WRAP_Park_cs-rr-035.pdf
+[hennessy-milner-laws]: https://www.scss.tcd.ie/matthew.hennessy/pubs/old/HMjacm85.pdf
+[why-branching-time]: https://theory.stanford.edu/~rvg/branching/
+[why-branching-time-pdf]: https://cgi.cse.unsw.edu.au/~rvg/pub/branching.pdf.gz
+[linear-branching-spectrum]: https://ir.cwi.nl/pub/5685/5685.pdf
+[branching-bisimulation]: https://ir.cwi.nl/pub/5564/5564D.pdf
+[three-logics]: https://ir.cwi.nl/pub/1370/1370D.pdf

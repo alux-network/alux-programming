@@ -1,8 +1,13 @@
 # Defunctionalization
 
 ```admonish tip title="Related"
-Concepts: [Free Monad](../concepts/free_monad.md), [CPS](../concepts/cps.md)  
-Insights: [Mini EVM](../insights/evm-alg.md)
+Design by Meaning in Rust: [First-order programs](../rust-dd/first-order-programs.md), [Language and compiler pipelines](../rust-dd/compiler-pipelines.md)  
+Concepts: [Free monad](../concepts/free_monad.md), [Continuation-passing style](../concepts/cps.md)  
+Insights: [EVM algebra](../insights/evm-alg.md)
+```
+
+```admonish note title="Semantic placement"
+Defunctionalization changes representation while intending to preserve application behavior. In meaning-first design, the generated first-order values are useful when another interpreter must inspect or compose operations before execution.
 ```
 
 ## Definition
@@ -13,7 +18,7 @@ Defunctionalization is a program transformation that replaces higher-order funct
 
 Some languages, compilers, or runtimes cannot handle higher-order functions efficiently or at all. By defunctionalizing, you make the program purely first-order, which is easier to compile, analyze, serialize, or run in restricted environments.
 
-## The Process
+## The process
 
 1. Identify all possible higher-order functions that may be created and passed around.
 2. Assign each such function a unique tag in an enum or sum type, along with any data it needs to operate.
@@ -24,14 +29,14 @@ Some languages, compilers, or runtimes cannot handle higher-order functions effi
 
 Before: using a closure
 
-```rust
+```rust,noplayground
 let k: Box<dyn Fn(i32) -> i32> = Box::new(|x| x + 1);
 println!("{}", k(41));
 ```
 
 After: defunctionalized form
 
-```rust
+```rust,noplayground
 enum Cont {
     Add1
 }
@@ -62,9 +67,9 @@ println!("{}", apply(Cont::Add1, 41));
 
 In CPS (continuation-passing style), continuations are higher-order functions. Defunctionalizing CPS code turns these continuations into a finite set of cases in an enum plus an apply function.
 
-## Relation to Free Monads
+## Relation to free monads
 
-A free monad can be seen as the result of defunctionalizing the continuations in a CPS-transformed program. The resulting data structure is the free monad's AST, and the apply function is the interpreter.
+Suitable free-monad representations can be related to defunctionalized continuations in CPS-transformed programs. This is a close connection, not a universal identity between the two constructions.
 
 ## References
 
