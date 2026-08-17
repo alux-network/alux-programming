@@ -1,0 +1,424 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Derived meaning and composition - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ALUX programming guidelines</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming/edit/master/src/rust-dd/derived-meaning.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="derived-meaning-and-composition"><a class="header" href="#derived-meaning-and-composition">Derived meaning and composition</a></h1>
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-related"></a>
+</div>
+<div>
+<p>The Semantic View: <a href="../denotational-design/design.html">Denotational Design</a><br />
+Design by Meaning in Rust: <a href="capability-algebras.html">Capability algebras</a>, <a href="interpreters.html">Interpreters and effects</a><br />
+Concepts: <a href="../concepts/expression-problem.html">Expression Problem</a></p>
+</div>
+</div>
+<div id="admonition-orientation" class="admonition admonish-note" role="note" aria-labelledby="admonition-orientation-title">
+<div class="admonition-title">
+<div id="admonition-orientation-title">
+<p>Orientation</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-orientation"></a>
+</div>
+<div>
+<p>Derived behavior belongs to the capabilities it uses, written once as an extension over those bounds, not to any concrete type that happens to implement them. The <code>where</code> clause is the honest statement of what a derivation depends on.</p>
+</div>
+</div>
+<p>Primitive capabilities provide vocabulary. Most application behavior should be derived from that vocabulary once and shared by every interpreter.</p>
+<h2 id="extensions-own-derivations"><a class="header" href="#extensions-own-derivations">Extensions own derivations</a></h2>
+<p>Using the <a href="https://docs.rs/extend/latest/extend/"><code>extend</code></a> crate, branch operations can be derived independently of representation:</p>
+<pre><code class="language-rust noplayground">use extend::ext;
+
+#[ext(name = BranchExt)]
+pub impl&lt;This&gt; This
+where
+    This: BranchAlg,
+{
+    fn branch_child(&amp;self, branch: &amp;This::Branch, direction: Direction) -&gt; This::Branch {
+        self.branch_grow(branch, direction)
+    }
+
+    fn branch_left(&amp;self, branch: &amp;This::Branch) -&gt; This::Branch {
+        self.branch_child(branch, Direction::Left)
+    }
+
+    fn branch_right(&amp;self, branch: &amp;This::Branch) -&gt; This::Branch {
+        self.branch_child(branch, Direction::Right)
+    }
+
+    fn branch_is_ancestor(&amp;self, ancestor: &amp;This::Branch, descendant: &amp;This::Branch) -&gt; bool {
+        self.branch_path(ancestor, descendant).is_some()
+    }
+}</code></pre>
+<p>The <code>where</code> clause is the complete semantic dependency declaration: <code>BranchAlg</code>, and nothing more. No concrete branch type owns these definitions.</p>
+<p>The macro only removes trait-and-impl boilerplate. An ordinary extension trait can express the same design. Denotational Design is in the semantic boundary and derivation, not in the attribute.</p>
+<h2 id="why-not-put-it-on-the-struct"><a class="header" href="#why-not-put-it-on-the-struct">Why not put it on the struct?</a></h2>
+<div id="admonition-do-not-weld-derived-meaning-to-the-struct" class="admonition admonish-warning" role="note" aria-labelledby="admonition-do-not-weld-derived-meaning-to-the-struct-title">
+<div class="admonition-title">
+<div id="admonition-do-not-weld-derived-meaning-to-the-struct-title">
+<p>Do not weld derived meaning to the struct</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-do-not-weld-derived-meaning-to-the-struct"></a>
+</div>
+<div>
+<p>This is representation-first. If a numeric branch carrier is introduced, the derivation is copied or reimplemented, and the first concrete type has accidentally become the specification.</p>
+<pre><code class="language-rust noplayground">impl BitBranchStore {
+    // not recommended: derived branch meaning welded to one bit representation
+    fn is_ancestor(&amp;self, a: &amp;BitBranch, b: &amp;BitBranch) -&gt; bool {
+        // derived branch meaning mixed with bit storage
+    }
+}</code></pre>
+</div>
+</div>
+<p>Extensions reverse the ownership:</p>
+<div class="table-wrapper"><table><thead><tr><th>Layer</th><th>Responsibility</th></tr></thead><tbody>
+<tr><td>Semantic capability</td><td>Owns derived meaning</td></tr>
+<tr><td>Concrete type</td><td>Interprets primitive meaning</td></tr>
+</tbody></table>
+</div>
+<h2 id="compose-with-bounds"><a class="header" href="#compose-with-bounds">Compose with bounds</a></h2>
+<p>When one receiver interprets several capabilities, use direct bounds:</p>
+<pre><code class="language-rust noplayground">#[ext(name = PublishCurrentExt)]
+pub impl&lt;This, Document, Error&gt; This
+where
+    This: DocumentAlg&lt;Document = Document&gt; + PublishAlg&lt;Document = Document, Error = Error&gt;,
+{
+    async fn publish_current(&amp;self) -&gt; Result&lt;(), Error&gt; {
+        self.publish(self.document_current()).await
+    }
+}</code></pre>
+<div id="admonition-do-not-bundle-capabilities" class="admonition admonish-warning" role="note" aria-labelledby="admonition-do-not-bundle-capabilities-title">
+<div class="admonition-title">
+<div id="admonition-do-not-bundle-capabilities-title">
+<p>Do not bundle capabilities</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-do-not-bundle-capabilities"></a>
+</div>
+<div>
+<p>Do not create a supertrait merely to shorten the bound:</p>
+<pre><code class="language-rust noplayground">trait AppContext: DocumentAlg + PublishAlg {}</code></pre>
+<p>The bundle hides which operation consumes which capabilities and creates another interface every interpreter must satisfy.</p>
+</div>
+</div>
+<h2 id="five-different-composition-meanings"><a class="header" href="#five-different-composition-meanings">Five different composition meanings</a></h2>
+<p>Choose the form that truthfully describes the relationship.</p>
+<div class="table-wrapper"><table><thead><tr><th>Situation</th><th>Rust shape</th></tr></thead><tbody>
+<tr><td>One receiver interprets several capabilities</td><td>Direct bounds</td></tr>
+<tr><td>A separate value selects behavior</td><td>Explicit policy parameter</td></tr>
+<tr><td>Independent policies compose statically</td><td>Product or ordinary struct</td></tr>
+<tr><td>An environment carries another interpreter</td><td>Small <code>HasX</code> projection</td></tr>
+<tr><td>A wrapper substitutes for an inner interpreter</td><td>Delegation</td></tr>
+</tbody></table>
+</div>
+<h3 id="explicit-policy"><a class="header" href="#explicit-policy">Explicit policy</a></h3>
+<p>If a strategy is independently selected, pass it explicitly to the extension:</p>
+<pre><code class="language-rust noplayground">#[ext(name = CandidateSelectExt)]
+pub impl&lt;This&gt; This
+where
+    This: CandidateAlg,
+{
+    fn select_with&lt;Policy&gt;(&amp;self, policy: &amp;Policy) -&gt; This::Candidate
+    where
+        Policy: SelectionPolicyAlg&lt;Candidate = This::Candidate&gt;,
+    {
+        policy.select(self.candidates())
+    }
+}</code></pre>
+<p>The extension owns the shared derivation, while the policy remains an independently selected input. It is not hidden in the environment or chosen by <code>Default</code>.</p>
+<h3 id="product-of-policies"><a class="header" href="#product-of-policies">Product of policies</a></h3>
+<p>Independent policies can be composed without inventing inheritance:</p>
+<pre><code class="language-rust noplayground">struct CompilePolicy&lt;Optimize, Diagnostics&gt; {
+    optimize: Optimize,
+    diagnostics: Diagnostics,
+}</code></pre>
+<h3 id="projection"><a class="header" href="#projection">Projection</a></h3>
+<p>A <code>HasClock</code> trait says only that an environment can project a separate clock value:</p>
+<pre><code class="language-rust noplayground">trait HasClock {
+    type Clock;
+
+    fn clock(&amp;self) -&gt; &amp;Self::Clock;
+}</code></pre>
+<p>An operation that reads time adds <code>This::Clock: ClockAlg</code> in its own <code>where</code> clause. The projection remains about containment; the consuming operation states the capability it needs. Use this pattern only when the separation is real. Do not introduce <code>HasX</code> merely to organize fields.</p>
+<h3 id="delegation"><a class="header" href="#delegation">Delegation</a></h3>
+<p>Delegation means a wrapper itself can substitute for the inner interpreter. This is appropriate for transparent newtypes, shared pointers, and adapters that preserve the whole capability contract.</p>
+<p>Projection says “has.” Delegation says “is.” They are not interchangeable.</p>
+<h2 id="defaults-are-semantic-decisions-too"><a class="header" href="#defaults-are-semantic-decisions-too">Defaults are semantic decisions too</a></h2>
+<p>Mechanical empty states may implement <code>Default</code>. Domain policy should usually be explicit.</p>
+<p>The useful cases often have an algebraic explanation: the default is the identity element for the type's natural composition. Appending an empty buffer, combining with an empty map, or accumulating zero diagnostics contributes nothing. When that composition is associative, the type and operation form a monoid, and <code>Default</code> can name its neutral element rather than choose a policy.</p>
+<p>Good defaults:</p>
+<ul>
+<li>Empty buffer</li>
+<li>Empty map</li>
+<li>Zero accumulated diagnostics</li>
+</ul>
+<p>Suspicious defaults:</p>
+<ul>
+<li>Quorum threshold</li>
+<li>Leader policy</li>
+<li>Retry semantics</li>
+<li>Confirmation depth</li>
+<li>Output format</li>
+</ul>
+<p>This is the important distinction: a neutral element introduces no decision, while a quorum, leader strategy, or retry rule selects domain behavior. If changing a default changes domain meaning, compose the policy explicitly.</p>
+<h2 id="derived-meaning-should-stay-closed"><a class="header" href="#derived-meaning-should-stay-closed">Derived meaning should stay closed</a></h2>
+<p>An extension must use only its declared capabilities and explicit inputs. Direct field access, global state, and concrete downcasts make the <code>where</code> clause dishonest.</p>
+<p>Review the body as if it were a proof of the dependency declaration:</p>
+<div id="admonition-test-each-derivation" class="admonition admonish-question" role="note" aria-labelledby="admonition-test-each-derivation-title">
+<div class="admonition-title">
+<div id="admonition-test-each-derivation-title">
+<p>Test each derivation</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-test-each-derivation"></a>
+</div>
+<div>
+<p>Could every operation in this body be justified from these bounds?</p>
+</div>
+</div>
+<p>If not, either the bounds are incomplete or the code belongs at another layer.</p>
+<h2 id="review-checks"><a class="header" href="#review-checks">Review checks</a></h2>
+<ul>
+<li>Is derived behavior defined once over capabilities?</li>
+<li>Does the extension avoid concrete fields and context types?</li>
+<li>Are direct bounds used for one interpreter?</li>
+<li>Are policies explicit values when independently selected?</li>
+<li>Do projection and delegation make truthful claims?</li>
+<li>Are domain defaults visible in composition?</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../rust-dd/semantic-types.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../rust-dd/interpreters.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../rust-dd/semantic-types.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../rust-dd/interpreters.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/version.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

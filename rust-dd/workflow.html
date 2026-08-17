@@ -1,0 +1,423 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>A meaning-first workflow - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ALUX programming guidelines</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming/edit/master/src/rust-dd/workflow.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="a-meaning-first-workflow"><a class="header" href="#a-meaning-first-workflow">A meaning-first workflow</a></h1>
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-related"></a>
+</div>
+<div>
+<p>The Semantic View: <a href="../denotational-design/semantic-view.html">Why meaning comes first</a><br />
+Design by Meaning in Rust: <a href="capability-algebras.html">Capability algebras</a>, <a href="derived-meaning.html">Derived meaning and composition</a>, <a href="laws.html">Laws, scenarios, and evidence</a></p>
+</div>
+</div>
+<div id="admonition-a-repeatable-discipline" class="admonition admonish-note" role="note" aria-labelledby="admonition-a-repeatable-discipline-title">
+<div class="admonition-title">
+<div id="admonition-a-repeatable-discipline-title">
+<p>A repeatable discipline</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-a-repeatable-discipline"></a>
+</div>
+<div>
+<p>Denotational Design is a workflow, not only an explanation of finished code: state the semantic change, find the smallest primitive capabilities, compose them truthfully, then implement thin interpreters and check laws.</p>
+</div>
+</div>
+<p>Denotational Design is most useful as a repeatable development discipline, not only as an explanation of finished code.</p>
+<h2 id="the-core-workflow"><a class="header" href="#the-core-workflow">The core workflow</a></h2>
+<p>For a new feature or refactor:</p>
+<ol>
+<li>State the semantic change in one sentence.</li>
+<li>Identify the carrier and observable equality.</li>
+<li>Find the smallest primitive capabilities required.</li>
+<li>Define derived behavior over explicit capabilities.</li>
+<li>Choose the truthful composition form.</li>
+<li>Reify a first-order program only if structure needs multiple interpretations.</li>
+<li>Implement thin concrete interpreters.</li>
+<li>Add laws or shared scenarios.</li>
+<li>Validate alternative interpretations.</li>
+<li>Document meaning before machinery.</li>
+</ol>
+<h2 id="state-the-semantic-change"><a class="header" href="#state-the-semantic-change">State the semantic change</a></h2>
+<p>Weak statement:</p>
+<blockquote>
+<p>Add a cache and a manager method.</p>
+</blockquote>
+<p>Meaning-oriented statement:</p>
+<blockquote>
+<p>Resolving the same immutable source name denotes the same source value during one compilation.</p>
+</blockquote>
+<p>The second statement exposes a candidate law. Caching may later be chosen as one implementation.</p>
+<h2 id="find-the-primitive-boundary"><a class="header" href="#find-the-primitive-boundary">Find the primitive boundary</a></h2>
+<p>Ask:</p>
+<ul>
+<li>What new observation or transformation is required?</li>
+<li>Is it primitive at this boundary or derivable from existing meaning?</li>
+<li>Is a new associated carrier required?</li>
+<li>Is the supposed dependency only a storage location?</li>
+<li>Which distinctions should remain invisible?</li>
+</ul>
+<p>Add a capability only for genuinely new primitive meaning.</p>
+<h2 id="choose-composition-truthfully"><a class="header" href="#choose-composition-truthfully">Choose composition truthfully</a></h2>
+<p>Use this decision table:</p>
+<div class="table-wrapper"><table><thead><tr><th>Question</th><th>Choice</th></tr></thead><tbody>
+<tr><td>Does one receiver interpret all required meanings?</td><td>Direct bounds</td></tr>
+<tr><td>Is behavior independently selected?</td><td>Explicit policy value</td></tr>
+<tr><td>Are policies independently composable?</td><td>Product</td></tr>
+<tr><td>Does an environment contain another interpreter?</td><td>Projection</td></tr>
+<tr><td>Must a wrapper substitute for the inner interpreter?</td><td>Delegation</td></tr>
+</tbody></table>
+</div>
+<p>Do not introduce a large context trait as the default answer.</p>
+<h2 id="refactor-one-meaning-at-a-time"><a class="header" href="#refactor-one-meaning-at-a-time">Refactor one meaning at a time</a></h2>
+<p>When existing code is representation-first:</p>
+<ol>
+<li>Identify one semantic observation.</li>
+<li>Define one small capability.</li>
+<li>Move one derivation into an extension.</li>
+<li>Keep the current struct as its interpreter.</li>
+<li>Add one law-style test.</li>
+</ol>
+<div id="admonition-dd-is-not-abstraction-maximalism" class="admonition admonish-warning" role="note" aria-labelledby="admonition-dd-is-not-abstraction-maximalism-title">
+<div class="admonition-title">
+<div id="admonition-dd-is-not-abstraction-maximalism-title">
+<p>DD is not abstraction maximalism</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-dd-is-not-abstraction-maximalism"></a>
+</div>
+<div>
+<p>Avoid rewriting an entire subsystem into speculative abstractions. DD is not abstraction maximalism.</p>
+</div>
+</div>
+<h2 id="review-from-meaning-to-machinery"><a class="header" href="#review-from-meaning-to-machinery">Review from meaning to machinery</a></h2>
+<p>Read code in this order:</p>
+<ol>
+<li>capability traits</li>
+<li>semantic value types</li>
+<li>derived extensions</li>
+<li>first-order program syntax, if present</li>
+<li>shared laws and scenarios</li>
+<li>concrete interpreters</li>
+<li>runtime orchestration</li>
+</ol>
+<p>Starting from the largest state struct biases the review toward its representation.</p>
+<h2 id="common-failure-modes"><a class="header" href="#common-failure-modes">Common failure modes</a></h2>
+<div id="admonition-trait-shaped-concrete-state-is-not-denotational-design" class="admonition admonish-warning" role="note" aria-labelledby="admonition-trait-shaped-concrete-state-is-not-denotational-design-title">
+<div class="admonition-title">
+<div id="admonition-trait-shaped-concrete-state-is-not-denotational-design-title">
+<p>Trait-shaped concrete state is not Denotational Design</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-trait-shaped-concrete-state-is-not-denotational-design"></a>
+</div>
+<div>
+<pre><code class="language-rust noplayground">trait ContextAlg {
+    fn state(&amp;self) -&gt; &amp;ConcreteState;
+}</code></pre>
+<p>The trait changes syntax but not meaning ownership. The semantic core still depends on the concrete representation.</p>
+</div>
+</div>
+<h3 id="derived-logic-in-every-interpreter"><a class="header" href="#derived-logic-in-every-interpreter">Derived logic in every interpreter</a></h3>
+<p>If every implementation independently defines the same domain algorithm, the specification is duplicated.</p>
+<h3 id="god-capability"><a class="header" href="#god-capability">God capability</a></h3>
+<p>A supertrait containing unrelated operations hides the dependency row and prevents independent interpretation.</p>
+<h3 id="framework-owned-specification"><a class="header" href="#framework-owned-specification">Framework-owned specification</a></h3>
+<p>If route annotations or RPC registration are the only interface definition, documentation and execution can drift.</p>
+<h3 id="macro-owned-meaning"><a class="header" href="#macro-owned-meaning">Macro-owned meaning</a></h3>
+<p>If generated code has no public first-order target, the macro expansion becomes the accidental specification.</p>
+<h3 id="policy-hidden-in-defaults"><a class="header" href="#policy-hidden-in-defaults">Policy hidden in defaults</a></h3>
+<p>If <code>Default</code> silently chooses quorum, retry, ordering, or compilation policy, composition is no longer explicit.</p>
+<h3 id="tests-of-private-steps"><a class="header" href="#tests-of-private-steps">Tests of private steps</a></h3>
+<p>Tests coupled to field layout or traversal order discourage valid alternative interpreters.</p>
+<h2 id="pull-request-checklist"><a class="header" href="#pull-request-checklist">Pull request checklist</a></h2>
+<h3 id="meaning"><a class="header" href="#meaning">Meaning</a></h3>
+<ul>
+<li>Is the semantic change stated?</li>
+<li>Is the carrier and equality clear?</li>
+<li>Are intentional omissions named?</li>
+</ul>
+<h3 id="capabilities"><a class="header" href="#capabilities">Capabilities</a></h3>
+<ul>
+<li>Does each trait expose coherent primitive meaning?</li>
+<li>Are bounds placed where operations use them?</li>
+<li>Does derived code avoid concrete fields?</li>
+</ul>
+<h3 id="composition"><a class="header" href="#composition">Composition</a></h3>
+<ul>
+<li>Are direct bounds, policies, products, projections, and delegation used truthfully?</li>
+<li>Are semantic defaults explicit?</li>
+</ul>
+<h3 id="programs-and-interpreters"><a class="header" href="#programs-and-interpreters">Programs and interpreters</a></h3>
+<ul>
+<li>Is first-order structure introduced only when another interpretation needs it?</li>
+<li>Can convenience macros lower to public program values?</li>
+<li>Are concrete interpreters thin and boundary-specific?</li>
+</ul>
+<h3 id="evidence"><a class="header" href="#evidence">Evidence</a></h3>
+<ul>
+<li>Is a law or focused semantic assertion present?</li>
+<li>Can the same scenario run against another interpreter?</li>
+<li>Are finite tests described as evidence rather than proof?</li>
+</ul>
+<h2 id="reading-alux-style-code"><a class="header" href="#reading-alux-style-code">Reading ALUX-style code</a></h2>
+<p>The broad shape to recognize is:</p>
+<ol>
+<li>Tiny primitive capability traits</li>
+<li>Derived extensions over explicit bounds</li>
+<li>First-order programs when inspection or composition requires them</li>
+<li>Shared laws and scenarios</li>
+<li>Concrete runtime, compiler, HTTP, RPC, or storage interpreters</li>
+</ol>
+<p>Large concurrent systems still contain orchestration-heavy regions. Do not assume every existing interface is already an ideal denotational specification. Look for the semantic seams and read outward from them.</p>
+<p>Tolang uses the same perspective at language scale: syntax is normalized into meaning-bearing forms, compilation preserves that meaning, and a concurrent runtime interprets the executable representation. The operational story remains essential, but it comes after the semantic contract.</p>
+<h2 id="final-principle"><a class="header" href="#final-principle">Final principle</a></h2>
+<p>When uncertain, return to one question:</p>
+<div id="admonition-the-question-to-return-to" class="admonition admonish-quote" role="note" aria-labelledby="admonition-the-question-to-return-to-title">
+<div class="admonition-title">
+<div id="admonition-the-question-to-return-to-title">
+<p>The question to return to</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-the-question-to-return-to"></a>
+</div>
+<div>
+<p>What meaning is this machinery supposed to preserve?</p>
+</div>
+</div>
+<p>That question does not solve every engineering problem. It makes the problem visible at the correct level.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../rust-dd/compiler-pipelines.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../concepts/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../rust-dd/compiler-pipelines.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../concepts/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/version.js"></script>
+
+
+
+    </div>
+    </body>
+</html>
