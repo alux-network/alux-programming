@@ -112,17 +112,52 @@ A metadata interpreter can construct documentation. A test interpreter can colle
 
 Neutral interpreters demonstrate that the program carries meaning independently of one runtime.
 
-## Adapters and delegation
+## Composing interpreters by delegation
 
-Concrete wrappers often forward capabilities:
+Because meaning lives in small capability traits, an interpreter is usually *assembled* rather than written out. A carrier gains a capability by delegating to whatever already provides it, so the forwarding is generated, not hand-written. Two forms cover almost everything.
+
+**Forward a capability to a field.** ambassador's `#[derive(Delegate)]` forwards a whole trait to an inner value. A carrier that holds several components delegates each capability to the field that owns it, with no forwarding bodies:
 
 ```rust,noplayground
-struct Shared<T>(Arc<T>);
+#[derive(Delegate)]
+#[delegate(Clock, target = "clock")]
+#[delegate(Logger, target = "logger")]
+struct Service {
+    clock: SystemClock,
+    logger: StdoutLogger,
+}
 ```
 
-If `Shared<T>` truthfully behaves as the same interpreter as `T`, delegation is appropriate. If a larger environment merely stores `T` among unrelated services, projection is more honest.
+**Grant a capability through a getter.** Give a type one getter, and a blanket impl supplies the whole capability to every type that has that getter:
 
-Generated delegation removes boilerplate but does not establish semantic substitutability. Review the claim before applying the macro.
+```rust,noplayground
+trait Logger {
+    fn log(&self, message: &str);
+}
+
+trait HasLogger {
+    type Logger;
+
+    fn logger(&self) -> &Self::Logger;
+}
+
+// Any carrier that can hand back a logger is itself a `Logger`.
+impl<T> Logger for T
+where
+    T: HasLogger,
+    T::Logger: Logger,
+{
+    fn log(&self, message: &str) {
+        self.logger().log(message)
+    }
+}
+```
+
+The consequence is that many structs never need to exist. A monolithic context object — one large trait carrying several associated types and a dozen methods, plus its single concrete implementation — becomes a handful of small capability traits and a thin carrier that delegates each to the field or getter that provides it. Derived operations, such as checking whether a deadline has passed, are written once as extensions over the primitives rather than re-implemented on each carrier.
+
+```admonish warning title="Delegation forwards operations, not meaning"
+Generated delegation removes boilerplate but does not establish semantic substitutability. A `derive` macro such as ambassador's `#[derive(Delegate)]` proves the impls compile, not that the carrier denotes the same interpreter. If `Shared<T>(Arc<T>)` is to stand in for `T`, check the laws on the carrier — a wrapper that changes sharing or identity (`Arc`, pooling, caching) can forward every method correctly and still break a freshness or uniqueness law. When the carrier merely stores `T` among unrelated services, projection is more honest than delegation.
+```
 
 ## Errors belong to a boundary
 
