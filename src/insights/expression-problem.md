@@ -18,6 +18,8 @@ For the expression-language example, this encoding means:
 - New syntax adds a new trait, leaving old code untouched.
 - New semantics adds a new interpreter type, leaving old code untouched.
 
+`lit` and `add` are semantic operations, not constructors of a privileged AST. An AST is one interpretation among others.
+
 ```admonish example title="Object algebras in C#"
 This encoding is not Rust-specific. [`object-algebras`](https://github.com/tgrospic/object-algebras) develops the pattern in C# and pushes past the fixed carrier used here. On this page each interpreter picks one concrete `Self::Expr`, a plain type. The C# algebras instead abstract over a type *constructor* `F` — `FunctorAlg<F>`, `MonadAlg<F>`, `BankingDsl<F>` — carrying results as `App<F, a>` in place of the illegal `F<a>`.
 
@@ -147,19 +149,56 @@ impl MulAlg for Pretty {
 
 ## Why this solves the Expression Problem
 
-- **Add new operations**: define a new interpreter type implementing the same specs.
-- **Add new variants**: define a new capability trait and use it only where needed.
-- **No edits** to existing expressions or interpreters unless they opt into new syntax.
+The traditional Expression Problem has two axes over a representation:
 
-This keeps the design modular: simple specs, extension by composition, and thin concrete implementations.
+- add new variants (cases)
+- add new operations
 
-## Final insight: Wadler vs Denotational Design
+Denotational Design reframes the axes:
 
-Wadler diagnosed the Expression Problem correctly at the level of language mechanisms: rows vs columns under static typing and modular extension. But that framing starts after the key mistake is already made: treating concrete representation as the model.
+- **Extend the semantic vocabulary**: define a new capability trait (`MulAlg`).
+- **Add a new interpretation** of that vocabulary: define a new interpreter type (`Eval`, `Pretty`, an AST builder, a code generator).
 
-Denotational Design moves the diagnosis upstream. The core failure is representation-first programming: encoding machine structure (ADT, class graph, memory layout) before specifying meaning. Once that commitment is made, extensibility tradeoffs appear as “deep problems.”
+The two axes compose independently:
 
-From a meaning-first view, many of these tensions are self-inflicted. Define compositional meaning first, then choose encodings. The Expression Problem becomes an engineering choice among encodings, not a conceptual deadlock.
+- Existing programs do not change unless they require the new capability. `expr_basic` still asks only for `LitAlg + AddAlg`.
+- Existing interpreters do not change unless they choose to interpret the new capability. `Eval` without `impl MulAlg` still runs every program that does not use `mul`.
+
+This does not remove the implementation matrix. If `Eval` and `Pretty` should both interpret `mul`, both need an `impl MulAlg`. What changes is how the matrix is organized: each cell is *semantic operation × interpretation*, no cell is organized around a privileged representation, and each program depends only on the capabilities it uses.
+
+## Laws belong to the specification
+
+A semantic algebra is a carrier, operations, and laws. The carrier (`type Expr`) is chosen by the interpretation; the operations and laws belong to the specification. For example, an arithmetic meaning of `LitAlg + AddAlg` states:
+
+```text
+add(lit(m), lit(n)) = lit(m + n)
+```
+
+`Eval` satisfies this law. `Pretty` does not: `"(2 + 3)"` is not `"5"`. Both are valid interpreters of the syntax signature, but only `Eval` is a model of the arithmetic specification. The law is stated once, against the traits, and decides which interpreters qualify. No interpreter owns it.
+
+## Final insight: Featherweight Go vs Denotational Design
+
+Wadler diagnosed the Expression Problem at the level of language mechanisms: rows vs columns under static typing and modular extension. [Featherweight Go](../concepts/expression-problem.md#featherweight-go-solution-2020) gives a concrete solution: `Plus(type a Any)` keeps the recursive representation generic, and each operation constrains `a` independently (`Plus(type a Evaler)` for `Eval`, `Plus(type a Stringer)` for `String`). The representation is not tied to one closed expression interface, so both axes stay open.
+
+Traditional solutions start from the representation and ask how to keep both extension axes open. Featherweight Go pushes this surprisingly far by making the recursive representation generic and structurally extensible. Denotational Design moves the boundary one step earlier: representation is not the model. The model is the algebra and its laws; representation is one possible interpretation.
+
+**Featherweight Go makes representation extensible. Denotational Design makes representation optional.**
+
+|                      | Featherweight Go                         | Denotational Design                      |
+|----------------------|------------------------------------------|------------------------------------------|
+| Semantic center      | extensible representation                | algebra and laws                         |
+| `Num`/`Plus`, `lit`/`add` | structures (representation forms)   | semantic operations                      |
+| `Eval`, `String`/`Pretty` | methods and interfaces              | interpretations                          |
+| Recursive structure  | generic, open representation (`Plus(a)`) | none required                            |
+| Carrier              | the represented expression type          | chosen by the interpreter (`type Expr`)  |
+| AST                  | representation remains central           | optional, one interpretation among many  |
+| Matrix cell          | case × operation → method                | semantic operation × interpretation → `impl` |
+| New behavior         | add methods and interfaces               | add or compose capabilities              |
+| New implementation   | new structural realizations              | new interpreter                          |
+
+Wadler asks how to extend both axes of a representation. Denotational Design asks why representation should own either axis.
+
+Define compositional meaning first, then choose encodings. The Expression Problem becomes an engineering choice among encodings, not a conceptual deadlock.
 
 **Meaning of a language should be independent of the idea of a machine.**
 
@@ -189,6 +228,9 @@ From a meaning-first view, many of these tensions are self-inflicted. Define com
 
 * Kiselyov, O. *Having an Effect* (definitional/denotational framing of effects and extensible interpreters).  
   [https://okmij.org/ftp/Computation/having-effect.html#defint](https://okmij.org/ftp/Computation/having-effect.html#defint)
+
+* Griesemer, R., Hu, R., Kokke, W., Lange, J., Taylor, I. L., Toninho, B., Wadler, P., and Yoshida, N. (2020). *Featherweight Go*. Proc. ACM Program. Lang. 4 (OOPSLA). Section 2.3 gives the generic structural solution compared above.  
+  [https://homepages.inf.ed.ac.uk/wadler/papers/fg/fg.pdf](https://homepages.inf.ed.ac.uk/wadler/papers/fg/fg.pdf)
 
 * Oliveira, B. C. d. S., and Cook, W. R. (2012). *Extensibility for the Masses: Practical Extensibility with Object Algebras*.  
   [https://www.cs.utexas.edu/~wcook/Drafts/2012/ecoop2012.pdf](https://www.cs.utexas.edu/~wcook/Drafts/2012/ecoop2012.pdf)
