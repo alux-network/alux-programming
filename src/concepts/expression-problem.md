@@ -249,7 +249,44 @@ Wadler’s email makes two points clear:
    - Special-purpose language extensions, or
    - A compromise on static type safety or independent compilation.
 
+## Featherweight Go solution (2020)
+
+Wadler 1998 formulates and names the problem. Featherweight Go (FG) and its generic extension FGG (Featherweight Generic Go) later give a concrete, fully static solution in a Go-like language with structural interfaces and generics.
+
+The paper's solution (Fig. 8, simplified) has two structures, `Num` and `Plus`, and two operations, `Eval` and `String`:
+
+```go
+type Evaler interface { Eval() int }
+type Stringer interface { String() string }
+
+type Num struct { value int }
+type Plus(type a Any) struct { left a; right a }
+
+func (e Num) Eval() int { return e.value }
+func (e Plus(type a Evaler)) Eval() int { return e.left.Eval() + e.right.Eval() }
+
+func (e Num) String() string { return fmt.Sprintf("%d", e.value) }
+func (e Plus(type a Stringer)) String() string {
+    return fmt.Sprintf("(%s+%s)", e.left.String(), e.right.String())
+}
+
+type Expr interface { Evaler; Stringer }
+
+var e Expr = Plus(Expr){Num{1}, Num{2}}
+```
+
+The mechanism:
+
+- **Generic recursive representation.** The children of `Plus` have a type parameter `a` bounded only by `Any`. The structure is not tied to one closed interface listing every operation, so later operations remain possible.
+- **Operation-specific constraints.** Each method declaration bounds `a` independently: `Plus(type a Evaler)` for `Eval`, `Plus(type a Stringer)` for `String`. This relies on FGG's *covariant receivers*: a method's receiver bound may be stronger than the bound in the type declaration.
+- **Structural interfaces.** A structure implements an interface by having its methods, so `Expr` can be introduced after `Num` and `Plus` without touching them. The full operation set is fixed only where a value is built (`Plus(Expr){...}`).
+
+New cases are new structures; new operations are new interfaces and methods. Neither requires changing or recompiling existing declarations, and no type assertions are needed.
+
 ## References
 
-* Wadler, P. (1998). *The Expression Problem*. Java-Genericity mailing list note.  
+* Wadler, P. (1998). *The Expression Problem*. Java-Genericity mailing list note. Formulation and naming of the problem.  
   [https://homepages.inf.ed.ac.uk/wadler/papers/expression/expression.txt](https://homepages.inf.ed.ac.uk/wadler/papers/expression/expression.txt)
+
+* Griesemer, R., Hu, R., Kokke, W., Lange, J., Taylor, I. L., Toninho, B., Wadler, P., and Yoshida, N. (2020). *Featherweight Go*. Proc. ACM Program. Lang. 4 (OOPSLA). A later concrete language solution, Section 2.3.  
+  [https://homepages.inf.ed.ac.uk/wadler/papers/fg/fg.pdf](https://homepages.inf.ed.ac.uk/wadler/papers/fg/fg.pdf)
