@@ -17,6 +17,7 @@ import {gatewayMarkup} from './worlds.js';
 import {mountRealReader} from './real-reader.js';
 import './worlds.css';
 import './real-reader.css';
+import './gateway.css';
 import {language,languagePicker,languageURL,resolveLanguage,setLanguage,localizedBook,translateUI,t,rememberLanguage,stripLanguage} from './i18n.js';
 import {createIcons, Search, ArrowRight, ArrowLeft, Menu, X, Moon, Sun, BookOpen, Github, ArrowUpRight, ArrowDownRight, Copy, Check, RotateCcw, Undo2, Plus, Minus, Bookmark, ChevronRight, Map, ExternalLink} from 'lucide';
 

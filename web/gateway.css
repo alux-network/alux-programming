@@ -1,0 +1,80 @@
+/* The chooser has its own atmosphere; reader day/night surfaces stay independent. */
+body.gateway-view{background:#101a17;color:#ede6d4}
+.world-gateway{
+  background:#101a17;
+  min-height:100svh;
+  padding:100px 0 54px;
+}
+.world-gateway:before{
+  background:linear-gradient(180deg,#09141112 30%,#0b15172e 74%,#0b1517b3),url('/art/forest-gateway.webp') center/cover no-repeat;
+  opacity:1;
+}
+.world-gateway:after{
+  content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse at 16% 58%,#111c17a8,transparent 34%),radial-gradient(ellipse at 84% 58%,#0d1a23a8,transparent 34%);
+}
+.gateway-composition{
+  --wizard-size:min(78svh,940px,52vw);
+  width:min(1760px,96vw);
+  max-width:none;
+  grid-template-columns:minmax(0,1fr) var(--wizard-size) minmax(0,1fr);
+}
+.gateway-wizard{mask-image:linear-gradient(#000 0 84%,transparent 100%)}
+.world-choice{
+  max-width:370px;gap:22px;padding:24px 10px;
+  color:#efd6a2;text-shadow:0 2px 16px #050d0bd9;
+}
+.choice-real{color:#c8e1ee}
+.world-choice strong{
+  display:grid;align-items:center;min-height:2.7em;
+  font-size:clamp(28px,2.6vw,46px);letter-spacing:.045em;line-height:1.35;
+}
+html[lang=en] .world-choice strong{font-size:clamp(30px,3vw,50px);letter-spacing:.01em;min-height:1.35em;white-space:nowrap}
+html[lang|=zh] .world-choice strong,html[lang=ja] .world-choice strong,html[lang=ko] .world-choice strong{min-height:1.35em}
+.world-choice .choice-symbol{color:#d9b777;font-size:34px;display:grid;place-items:center;height:42px}
+.choice-real .choice-symbol{color:#a5c5d9;font-size:29px}
+.world-choice .choice-enter{color:#dec89f;font-size:19px;letter-spacing:.07em;padding-top:23px;line-height:1.5}
+.choice-real .choice-enter{color:#b5d2e0}
+.choice-enter:before{opacity:.48}
+.world-choice:before{width:300px;height:300px;background:radial-gradient(#d9af4826,transparent 68%)}
+.choice-real:before{background:radial-gradient(#7bb8d62b,transparent 68%)}
+.world-gateway>.language-picker{
+  top:28px;right:3.5vw;min-height:66px;min-width:248px;
+  padding:6px 18px;gap:13px;font-size:23px;color:#f0e7d4;
+  border:1px solid #c9b78d91;border-radius:6px;
+  background:#14221ee8;box-shadow:0 5px 24px #0003;
+  backdrop-filter:blur(14px);color-scheme:dark;
+  transition:background .2s,border-color .2s;
+}
+.world-gateway>.language-picker:hover{background:#23352ef5;border-color:#e2c68c}
+.world-gateway>.language-picker:focus-within{outline:2px solid #e2c68c;outline-offset:4px}
+.world-gateway>.language-picker svg{width:27px;height:27px;flex-shrink:0;color:#d8c59e}
+.world-gateway>.language-picker select{max-width:230px;min-width:170px;min-height:52px;padding:10px 8px;border:0;outline:none}
+.world-gateway>.language-picker:after{content:'';position:absolute;right:22px;top:calc(50% - 7px);width:12px;height:12px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);pointer-events:none}
+.world-gateway>.language-picker select{appearance:none;padding-inline-end:37px}
+.world-gateway>.language-picker option{background:#192923;color:#f0e7d4}
+@media(max-width:900px){
+  .world-gateway{padding:96px 0 30px}
+  .gateway-composition{
+    --wizard-size:min(95vw,55svh,560px);
+    width:100%;padding:0 20px;gap:0 16px;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  }
+  .gateway-wizard{grid-column:1/-1;grid-row:1}
+  .world-choice{grid-row:2;transform:none;gap:13px;padding:8px 0 16px;max-width:320px}
+  .world-choice:hover,.world-choice:active{transform:none}
+  .world-choice strong,html[lang=en] .world-choice strong{font-size:29px;white-space:normal;letter-spacing:.025em;min-height:2.7em}
+  .world-choice .choice-enter{font-size:17px;letter-spacing:.035em;padding-top:18px}
+  .world-choice .choice-symbol{font-size:29px;height:36px}.choice-real .choice-symbol{font-size:25px}
+  .world-gateway>.language-picker{top:20px;right:20px;min-width:225px;min-height:58px;font-size:19px;padding:4px 14px;gap:10px}
+  .world-gateway>.language-picker svg{width:24px;height:24px}
+  .world-gateway>.language-picker select{min-width:155px;min-height:48px;max-width:200px;padding:8px 34px 8px 5px}
+}
+@media(max-width:380px){
+  .gateway-composition{padding-inline:14px;column-gap:12px}
+  .world-choice strong,html[lang=en] .world-choice strong{font-size:26px}
+  .world-choice .choice-enter{font-size:16px}
+  .choice-enter-label{max-width:calc(100% - 26px)}
+  .choice-enter-arrow{inset-inline-start:calc(100% + 8px)}
+}
+@media(prefers-reduced-motion:reduce){.world-gateway>.language-picker{transition:none}}

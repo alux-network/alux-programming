@@ -2,6 +2,8 @@
 
 This independent web presentation preserves all 28 original chapters from `../src` and the existing mdBook publishing workflow. `/` opens the wizard chooser. Magic and Real world enter the same introduction directly, with a same-chapter world switch. The ALUX logo returns to the chooser. The redundant showcase homepage and standalone directory are outside the reading path; `/magic.html` and `/contents.html` remain compatible aliases.
 
+The chooser places the original wizard in a misty forest clearing, with warm and cool light distinguishing the two entrances. Its larger language control uses a high-contrast surface. The forest artwork is generated at 1672×941 native pixels and ordinarily encoded to WebP; it is not an upscaled 4K asset. Reader palettes remain independent.
+
 ## Run locally
 
 Use Node 22+ and `pnpm install`, then `pnpm dev` on `127.0.0.1:4173`. `pnpm build` validates translations, renders the book, and writes direct static routes. `pnpm preview --port 4174` serves the reviewed production build. Only local work is authorized: do not push, publish or alter deployment until the owner approves this design.
@@ -27,5 +29,7 @@ Resolution order is an explicit language path or legacy query, a saved manual ch
 `public/alux-black.png` and `public/alux-white.png` preserve the owner's official geometry. The favicon embeds ordinary scaled copies of those marks. Magic mastheads retain the generated bronze material variants; the technical reader uses the original mark and a live typographic wordmark. The magic Rust chapter emblem and the spine's cloth ribbon are generated assets; original source illustrations remain intact in `src`.
 
 All static routes include localized Open Graph and X large-image card metadata, localized 1200×630 JPEG cards, canonical links and language alternates. `scripts/share-card-design.mjs` contains the share-card composition. Set `ALUX_SITE_URL` only when preparing a separately authorized deployment; the local build defaults to `http://127.0.0.1:4174`. Telegram/X previews are checked locally; real crawler fetches and platform caches require a reachable public URL and have not been published or claimed verified here.
+
+The share cards use the same forest and original wizard with the official white ALUX mark. `node scripts/share-preview.mjs` regenerates the eleven-language local preview at `../output/分享预览.html`.
 
 Static chapter routes also provide localized no-JavaScript reading fallbacks. No original source chapter, formula, code example, media embed or publishing workflow is removed by the web layer.
