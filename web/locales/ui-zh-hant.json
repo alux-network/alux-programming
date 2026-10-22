@@ -58,8 +58,8 @@
   "Welcome": "歡迎",
   "The Semantic View": "語義視角",
   "THE SEMANTIC VIEW": "語義視角",
-  "Design by Meaning in Rust": "在 Rust 中以意義設計",
-  "DESIGN BY MEANING IN RUST": "在 Rust 中以意義設計",
+  "Design by Meaning in Rust": "Rust 中的語義驅動設計",
+  "DESIGN BY MEANING IN RUST": "Rust 中的語義驅動設計",
   "Concepts": "概念",
   "CONCEPTS": "概念",
   "Insights": "洞見",
@@ -131,5 +131,9 @@
   "Remove bookmark": "刪除書籤",
   "Close bookmarks": "關閉書籤",
   "No bookmarks yet.": "還沒有書籤。",
-  "Save a chapter with the bookmark button to continue reading here.": "點選閱讀工具欄的書籤按鈕，就能在這裡找到並繼續閱讀。"
+  "Save a chapter with the bookmark button to continue reading here.": "點選閱讀工具欄的書籤按鈕，就能在這裡找到並繼續閱讀。",
+  "Add bookmark": "加入書籤",
+  "Bookmarked": "已加入書籤",
+  "Hide contents": "收起目錄",
+  "Show contents": "展開目錄"
 }

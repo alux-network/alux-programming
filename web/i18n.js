@@ -1,4 +1,5 @@
 import {uiRows} from './ui-translations.js';
+import {englishUI} from './ui-english.js';
 import traditionalUI from './locales/ui-zh-hant.json';
 import {languages,normalizeLanguage,pathLanguage,stripLanguage,languagePath,htmlLanguage} from './locale-routing.js';
 export {languages,stripLanguage};
@@ -14,14 +15,14 @@ export const language=()=>active;
 export const rememberLanguage=()=>put('alux-programming-language',active);
 const form=(n,words)=>words[new Intl.PluralRules(active).select(Number(n))]||words.other;
 export function t(text){
-  const normalized=String(text).trim();const row=catalog.get(normalized);if(row)return active==='zh-hant'?traditionalUI[normalized]:['vi','ru','uk','de','es'].includes(active)?(extraUI[normalized]||normalized):row[columns[active]];
+  const normalized=String(text).trim();const row=catalog.get(normalized);if(row)return active==='en'?englishUI(normalized):active==='zh-hant'?traditionalUI[normalized]:['vi','ru','uk','de','es'].includes(active)?(extraUI[normalized]||normalized):row[columns[active]];
   const minutes=normalized.match(/^(\d+) (?:min|minute read)$/);if(minutes)return [minutes[1]+' min',minutes[1]+' 分钟',minutes[1]+'분',minutes[1]+'分',minutes[1]+' دقائق',minutes[1]+' 分鐘',minutes[1]+' phút',minutes[1]+' мин',minutes[1]+' хв',minutes[1]+' Min.',minutes[1]+' min'][columns[active]];
   const results=normalized.match(/^(\d+) RESULTS?$/);if(results){const n=results[1];const labels={en:n+' '+(n==='1'?'RESULT':'RESULTS'),zh:n+' 条结果','zh-hant':n+' 條結果',ko:n+'개 결과',ja:n+'件',vi:n+' kết quả',de:n+' '+form(n,{one:'Ergebnis',other:'Ergebnisse'}),es:n+' '+form(n,{one:'resultado',other:'resultados'}),ru:n+' '+form(n,{one:'результат',few:'результата',many:'результатов',other:'результата'}),uk:n+' '+form(n,{one:'результат',few:'результати',many:'результатів',other:'результату'}),ar:form(n,{zero:n+' نتيجة',one:'نتيجة واحدة',two:'نتيجتان',few:n+' نتائج',many:n+' نتيجة',other:n+' نتيجة'})};return labels[active];}
   const part=normalized.match(/^(?:PART|Part|Begin Part) ([IVX]+)$/);if(part)return [(normalized.startsWith('Begin')?'Begin Part ':'Part ')+part[1],'第 '+part[1]+' 部',part[1]+'부',part[1]+'部','الجزء '+part[1],'第 '+part[1]+' 部','Phần '+part[1],'Часть '+part[1],'Частина '+part[1],'Teil '+part[1],'Parte '+part[1]][columns[active]];
   const count=normalized.match(/^(\d+) CHAPTERS TO EXPLORE$/);if(count)return [count[0],count[1]+' 个章节',count[1]+'개 장',count[1]+'章',count[1]+' فصول',count[1]+' 個章節',count[1]+' chương',count[1]+' глав',count[1]+' розділів',count[1]+' Kapitel',count[1]+' capítulos'][columns[active]];
   const size=normalized.match(/^Reading size (\d+) pixels$/);if(size)return [size[0],'字号为 '+size[1]+' 像素','글자 크기 '+size[1]+'픽셀','文字サイズ '+size[1]+'ピクセル','حجم النص '+size[1]+' بكسل','字級為 '+size[1]+' 像素','Cỡ chữ '+size[1]+' pixel','Размер текста: '+size[1]+' пикс.','Розмір тексту: '+size[1]+' пікс.','Schriftgröße: '+size[1]+' Pixel','Tamaño del texto: '+size[1]+' píxeles'][columns[active]];
   const explore=normalized.match(/^Explore (.+)$/);if(explore)return ['Explore '+explore[1],'探索 '+explore[1],explore[1]+' 탐색',explore[1]+'を探る','استكشف '+explore[1],'探索 '+explore[1],'Khám phá '+explore[1],'Изучить '+explore[1],'Дослідити '+explore[1],explore[1]+' erkunden','Explorar '+explore[1]][columns[active]];
-  return text;
+  return active==='en'?englishUI(text):text;
 }
 export function languagePicker(){return `<label class="language-picker"><span class="visually-hidden">${t('Language')}</span><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></svg><select data-language aria-label="${t('Language')}">${languages.map(l=>`<option value="${l.code}" ${l.code===active?'selected':''}>${l.name}</option>`).join('')}</select></label>`;}
 export function languageURL(href){const url=new URL(href,location.origin);if(url.origin!==location.origin)return href;url.pathname=languagePath(url.pathname,active);url.searchParams.delete('lang');return url.pathname+url.search+url.hash;}
@@ -45,7 +46,7 @@ export async function setLanguage(next,manual=false){
   if(manual)put('alux-programming-language',next);
 }
 export function localizedBook(original){
-  if(active==='en')return original;
+  if(active==='en')return {...original,pages:original.pages.map(page=>({...page,title:englishUI(page.title)}))};
   const pages=original.pages.map(page=>{
     const meta=manifest[page.slug];const root=document.createElement('article');root.innerHTML=page.html;
     // Match source strings before replacing them so repeated phrases keep their own inline tokens.

@@ -1,6 +1,7 @@
 import {languagePicker,t} from './i18n.js';
 import {hasBookmark,toggleBookmark} from './bookmarks.js';
 import {PageFlip} from 'page-flip';
+import {readingSize,readingScale,applyReadingSize} from './reading-preferences.js';
 
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -10,15 +11,16 @@ export async function mountBookReader({app,page,pages,sidebar,brand,worldLink=''
   const rtl=()=>document.documentElement.dir==='rtl';
   const physicalIndex=n=>rtl()?Math.max(0,total-(portraitBook?1:2)-(portraitBook?n:n-n%2)):n;
   const currentPage=()=>flip?(rtl()?Math.max(0,total-(portraitBook?1:2)-flip.getCurrentPageIndex()):flip.getCurrentPageIndex()):folio;
-  let scale=Math.min(4,Math.max(-4,Number(storage.get('alux-reading-scale')||0)));let size=22+scale;
+  let scale=readingScale(storage),size=readingSize(scale);
   const idx=pages.indexOf(page);
   document.body.className='reading-view bound-reading'+((storage.get('alux-reading-theme')==='dark'||(!storage.get('alux-reading-theme')&&storage.get('alux-night')==='true'))?' night':'');
   storage.set('alux-reading-theme',document.body.classList.contains('night')?'dark':'light');
-  document.documentElement.style.setProperty('--reading-size',size+'px');document.body.style.setProperty('--sidebar-size',(18+scale)+'px');
-  app.innerHTML=`${sidebar}<div class="sidebar-scrim" id="sidebar-scrim"></div><div class="bound-reader"><header class="bound-toolbar">${brand}<nav class="bound-world-nav" aria-label="Reading world">${worldLink}${languagePicker()}</nav><div class="bound-location"><a href="#" data-open-contents>${icon('book-open')} Table of contents</a><span>${escape(page.group)}</span></div><div class="bound-tools"><button class="contents-toggle" id="toggle-menu" aria-label="Open book navigation" aria-expanded="false">${icon('book-open')}<span>Contents</span></button><button class="icon-button" data-search aria-label="Search the book">${icon('search')}</button><button class="icon-button" id="smaller-text" aria-label="Decrease text size">A−</button><button class="icon-button" id="larger-text" aria-label="Increase text size">A+</button><button class="icon-button" id="toggle-night" aria-label="Toggle night reading">${icon(document.body.classList.contains('night')?'sun':'moon')}</button><button class="icon-button" id="bookmark" aria-label="Bookmark this chapter" aria-pressed="false">${icon('bookmark')}</button><button class="bound-mode" id="reading-mode" aria-pressed="false">Scroll view</button></div></header><main id="main" class="bound-stage"><div class="bound-volume"><div id="page-book" class="page-book" aria-label="${escape(page.title)}"></div><span class="binding-ribbon" aria-hidden="true"></span></div><div class="bound-controls"><button id="previous-sheet" class="sheet-control">${icon('arrow-left')}<span>Previous page</span></button><div><span class="current-chapter-title">${escape(page.title)}</span><span id="folio-position" aria-live="polite">Preparing the pages…</span></div><button id="next-sheet" class="sheet-control"><span>Next page</span>${icon('arrow-right')}</button></div></main><div class="bound-outline"><details><summary>In this chapter ${icon('chevron-right')}</summary><nav>${page.headings.filter(h=>h.level>1&&h.level<4).map(h=>`<a href="#${h.id}">${h.text}</a>`).join('')}</nav></details><a href="https://github.com/alux-network/alux-programming/blob/master/src/${page.source}" target="_blank" rel="noopener noreferrer">Original source ${icon('arrow-up-right')}</a></div></div>`;
+  applyReadingSize(size);
+  app.innerHTML=`${sidebar}<div class="sidebar-scrim" id="sidebar-scrim"></div><div class="bound-reader"><header class="bound-toolbar">${brand}<nav class="bound-world-nav" aria-label="Reading world">${worldLink}${languagePicker()}</nav><div class="bound-tools"><button class="contents-toggle" id="toggle-menu" aria-label="Open book navigation" aria-expanded="false">${icon('book-open')}<span>Contents</span></button><button class="icon-button" data-search aria-label="Search the book">${icon('search')}</button><button class="icon-button" id="smaller-text" aria-label="Decrease text size">A−</button><button class="icon-button" id="larger-text" aria-label="Increase text size">A+</button><button class="icon-button" id="toggle-night" aria-label="Toggle night reading">${icon(document.body.classList.contains('night')?'sun':'moon')}</button><button class="icon-button" id="bookmark" aria-label="Bookmark this chapter" aria-pressed="false">${icon('bookmark')}</button><button class="bound-mode" id="reading-mode" aria-pressed="false">Scroll view</button></div></header><main id="main" class="bound-stage"><div class="bound-volume"><div id="page-book" class="page-book" aria-label="${escape(page.title)}"></div><span class="binding-ribbon" aria-hidden="true"></span></div><div class="bound-controls"><button id="previous-sheet" class="sheet-control">${icon('arrow-left')}<span>Previous page</span></button><div><span class="current-chapter-title">${escape(page.title)}</span><span id="folio-position" aria-live="polite">Preparing the pages…</span></div><button id="next-sheet" class="sheet-control"><span>Next page</span>${icon('arrow-right')}</button></div></main><div class="bound-outline"><details><summary>In this chapter ${icon('chevron-right')}</summary><nav>${page.headings.filter(h=>h.level>1&&h.level<4).map(h=>`<a href="#${h.id}">${h.text}</a>`).join('')}</nav></details><a href="https://github.com/alux-network/alux-programming/blob/master/src/${page.source}" target="_blank" rel="noopener noreferrer">Original source ${icon('arrow-up-right')}</a></div></div>`;
   const book=app.querySelector('#page-book');
   const volume=app.querySelector('.bound-volume');
   const source=document.createElement('div');source.innerHTML=page.html;
+  if(page.slug==='introduction.html')source.querySelector('.admonition.warning')?.remove();
   source.querySelectorAll('table').forEach(table=>{const wrap=document.createElement('div');wrap.className='table-scroll';wrap.tabIndex=0;wrap.setAttribute('role','region');wrap.setAttribute('aria-label','Scrollable table');table.before(wrap);wrap.append(table);});
   // The original decorative title icon is superseded by the generated masthead.
   // Keep the source title and all technical images unchanged.
@@ -27,12 +29,14 @@ export async function mountBookReader({app,page,pages,sidebar,brand,worldLink=''
   const originalHTML=source.innerHTML;
   let continuous=storage.get('alux-reader-mode')==='scroll',total=0,layoutKey='';
   const reduced=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
-  function menu(open){if(innerWidth>=1280){document.body.classList.toggle('contents-collapsed',!open);app.querySelector('#toggle-menu').setAttribute('aria-expanded',String(open));resized();return;}document.body.classList.toggle('menu-open',open);app.querySelector('#toggle-menu').setAttribute('aria-expanded',String(open));if(open)app.querySelector('.book-sidebar .active')?.focus();else app.querySelector('#toggle-menu').focus();}
+  function menuLabel(open){const button=app.querySelector('#toggle-menu'),label=t(open?'Hide contents':'Show contents');button.querySelector('span').textContent=label;button.setAttribute('aria-label',label);button.title=label;}
+  function menu(open){menuLabel(open);if(innerWidth>=1280){document.body.classList.toggle('contents-collapsed',!open);app.querySelector('#toggle-menu').setAttribute('aria-expanded',String(open));resized();return;}document.body.classList.toggle('menu-open',open);app.querySelector('#toggle-menu').setAttribute('aria-expanded',String(open));if(open)app.querySelector('.book-sidebar .active')?.focus();else app.querySelector('#toggle-menu').focus();}
   app.querySelector('#toggle-menu').setAttribute('aria-expanded',String(innerWidth>=1280&&!document.body.classList.contains('contents-collapsed')));
+  menuLabel(innerWidth>=1280&&!document.body.classList.contains('contents-collapsed'));
   app.querySelector('#toggle-menu').onclick=()=>menu(innerWidth>=1280?document.body.classList.contains('contents-collapsed'):!document.body.classList.contains('menu-open'));
   app.querySelector('#sidebar-scrim').onclick=()=>menu(false);
   app.querySelector('#toggle-night').onclick=()=>{document.body.classList.toggle('night');storage.set('alux-night',document.body.classList.contains('night'));storage.set('alux-reading-theme',document.body.classList.contains('night')?'dark':'light');app.querySelector('#toggle-night').innerHTML=icon(document.body.classList.contains('night')?'sun':'moon');hydrateIcons();};
-  const bookmark=()=>app.querySelector('#bookmark')?.setAttribute('aria-pressed',String(hasBookmark(page.slug)));bookmark();addEventListener('alux-bookmarks-changed',bookmark);app.querySelector('#bookmark').onclick=()=>{const added=toggleBookmark({slug:page.slug,realm:'magic',anchor:getCurrentAnchor()||'',folio:currentPage()});announce(added?'Chapter bookmarked':'Bookmark removed');};
+  const bookmark=()=>app.querySelector('#bookmark')?.setAttribute('aria-pressed',String(hasBookmark(page.slug)));bookmark();addEventListener('alux-bookmarks-changed',bookmark);app.querySelector('#bookmark').onclick=()=>{const added=toggleBookmark({slug:page.slug,realm:'magic',anchor:getCurrentAnchor()||'',folio:currentPage()});announce(added?'Chapter bookmarked':'Bookmark removed',app.querySelector('#bookmark'));};
   function footer(){
     const p=currentPage();folio=p;
     app.querySelector('#folio-position').textContent=continuous?t('Continuous reading'):`${String(p+1).padStart(2,'0')}${innerWidth>1000&&p+1<total?'–'+String(Math.min(p+2,total)).padStart(2,'0'):''} / ${String(total).padStart(2,'0')}`;
@@ -50,7 +54,7 @@ export async function mountBookReader({app,page,pages,sidebar,brand,worldLink=''
   }
   async function paginate(keep=0){
     if(disposed)return;
-    document.documentElement.style.setProperty('--reading-size',size+'px');document.body.style.setProperty('--sidebar-size',(18+scale)+'px');
+    applyReadingSize(size);
     document.body.classList.toggle('continuous-reading',continuous);
     // Dispose the library's owned subtree before installing a new book element.
     if(flip){flip.destroy();flip=null;}
@@ -58,10 +62,12 @@ export async function mountBookReader({app,page,pages,sidebar,brand,worldLink=''
     if(!target){target=document.createElement('div');target.id='page-book';target.className='page-book';volume.prepend(target);}
     target.innerHTML='';
     if(continuous){target.innerHTML=`<article class="prose continuous-prose">${originalHTML}</article>`;total=1;footer();hydrateIcons();return;}
-    const available=Math.max(300,volume.clientWidth-28);
+    const surface=getComputedStyle(volume);
+    const available=Math.max(240,volume.clientWidth-parseFloat(surface.paddingLeft)-parseFloat(surface.paddingRight));
     const portrait=innerWidth<=1000;portraitBook=portrait;
     const w=Math.floor(portrait?available:available/2);
-    const h=Math.max(430,volume.clientHeight-28);
+    const h=Math.max(430,volume.clientHeight-parseFloat(surface.paddingTop)-parseFloat(surface.paddingBottom));
+    target.style.width=(portrait?w:2*w)+'px';target.style.height=h+'px';
     volume.style.setProperty('--sheet-w',w+'px');volume.style.setProperty('--sheet-h',h+'px');
     layoutKey=`${w}/${h}/${size}`;
     const measure=document.createElement('div');measure.className='folio-measure';measure.style.width=w+'px';measure.style.height=h+'px';
@@ -78,6 +84,19 @@ export async function mountBookReader({app,page,pages,sidebar,brand,worldLink=''
       if(keepWithNext){const group=document.createElement('div');group.className='folio-group';group.append(node,nextNode);n++;if(nextNode.tagName==='P'&&/:\s*$/.test(nextNode.textContent)&&blocks[n+1]&&/^(UL|OL)$/.test(blocks[n+1].tagName)){group.append(blocks[++n]);}units.push(group);}else units.push(node);
     }
     for(const node of units){
+      // Prose notes may continue on a new sheet at paragraph boundaries.
+      if(node.matches('.admonition')&&node.children.length>2){
+        const children=[...node.children];let fragment=node.cloneNode(false);body.append(fragment);
+        for(const child of children){
+          fragment.append(child);
+          if(!fits()){
+            child.remove();if(!fragment.childElementCount)fragment.remove();
+            next();fragment=node.cloneNode(false);fragment.classList.add('admonition-continuation');body.append(fragment);fragment.append(child);
+            if(!fits()){const region=document.createElement('div');region.className='folio-overflow';region.tabIndex=0;region.setAttribute('role','region');region.setAttribute('aria-label','Scrollable technical content');region.style.maxHeight=body.clientHeight+'px';fragment.before(region);region.append(fragment);}
+          }
+        }
+        continue;
+      }
       // Tables continue between complete rows instead of leaving half a spread
       // empty or making the reader scroll an entire table inside one page.
       const table=node.matches('.table-scroll')?node.querySelector('table'):null;
@@ -105,9 +124,11 @@ export async function mountBookReader({app,page,pages,sidebar,brand,worldLink=''
     if(!portrait&&sheets.length%2){next();body.innerHTML=`<div class="folio-closing"><span>✦</span><p>First the meaning.<br><em>Then the machinery.</em></p><a href="#" data-open-contents>Explore another chapter ${icon('arrow-right')}</a></div>`;}
     measure.remove();
     if(rtl())sheets.reverse();sheets.forEach(s=>target.append(s));total=sheets.length;
-    flip=new PageFlip(target,{width:w,height:h,size:'fixed',minWidth:w,maxWidth:w,minHeight:h,maxHeight:h,autoSize:true,drawShadow:true,flippingTime:900,maxShadowOpacity:.24,usePortrait:portrait,showCover:false,startPage:physicalIndex(Math.max(0,Math.min(keep,total-1))),clickEventForward:true,useMouseEvents:false,disableFlipByClick:true,mobileScrollSupport:false,showPageCorners:false});
+    flip=new PageFlip(target,{width:w,height:h,size:'fixed',minWidth:w,maxWidth:w,minHeight:h,maxHeight:h,autoSize:false,drawShadow:true,flippingTime:560,maxShadowOpacity:.2,usePortrait:portrait,showCover:false,startPage:physicalIndex(Math.max(0,Math.min(keep,total-1))),clickEventForward:true,useMouseEvents:false,disableFlipByClick:false,mobileScrollSupport:false,showPageCorners:false});
     flip.on('flip',footer);
     flip.loadFromHTML(sheets);
+    // These are interior paper leaves, including an unpaired final sheet.
+    for(let i=0;i<sheets.length;i++){flip.getPage(i).setDensity('soft');flip.getPage(i).setDrawingDensity('soft');}
     requestAnimationFrame(()=>{if(disposed)return;footer();hydrateIcons();if(location.hash)goToAnchor(location.hash.slice(1),false);});
   }
   function turn(direction){
@@ -119,9 +140,10 @@ export async function mountBookReader({app,page,pages,sidebar,brand,worldLink=''
     const physicalDirection=rtl()?-direction:direction;if(reduced()){physicalDirection>0?flip.turnToNextPage():flip.turnToPrevPage();}else physicalDirection>0?flip.flipNext('bottom'):flip.flipPrev('bottom');
   }
   app.querySelector('#previous-sheet').onclick=()=>turn(-1);app.querySelector('#next-sheet').onclick=()=>turn(1);
-  for(const [id,delta]of [['smaller-text',-1],['larger-text',1]])app.querySelector('#'+id).onclick=()=>{scale=Math.max(-4,Math.min(4,scale+delta));size=22+scale;storage.set('alux-reading-scale',scale);paginate(folio);announce(`Reading size ${size} pixels`);};
-  const modeButton=app.querySelector('#reading-mode');modeButton.textContent=continuous?'Book view':'Scroll view';modeButton.setAttribute('aria-pressed',String(continuous));
-  modeButton.onclick=()=>{continuous=!continuous;storage.set('alux-reader-mode',continuous?'scroll':'book');modeButton.textContent=continuous?'Book view':'Scroll view';modeButton.setAttribute('aria-pressed',String(continuous));paginate(folio);};
+  for(const [id,delta]of [['smaller-text',-1],['larger-text',1]])app.querySelector('#'+id).onclick=()=>{scale=Math.max(-4,Math.min(4,scale+delta));size=readingSize(scale);storage.set('alux-reading-scale',scale);paginate(folio);announce(`Reading size ${size} pixels`);};
+  const modeButton=app.querySelector('#reading-mode');
+  const modeLabel=()=>{modeButton.innerHTML=icon(continuous?'book-open':'scroll-text')+`<span>${t(continuous?'Book view':'Scroll view')}</span>`;modeButton.setAttribute('aria-pressed',String(continuous));hydrateIcons();};modeLabel();
+  modeButton.onclick=()=>{continuous=!continuous;storage.set('alux-reader-mode',continuous?'scroll':'book');modeLabel();paginate(folio);};
   app.querySelectorAll('.bound-outline nav a').forEach(a=>a.addEventListener('click',()=>{app.querySelector('.bound-outline details').open=false;}));
   function goToAnchor(id,animate=true){const el=app.querySelector('#'+CSS.escape(decodeURIComponent(id)));if(!el)return;if(continuous){el.scrollIntoView({behavior:'smooth'});return;}const s=el.closest('.folio-page');if(s){const n=Number(s.dataset.folio);if(animate&&!reduced())flip.flip(physicalIndex(n),'bottom');else flip.turnToPage(physicalIndex(n));el.closest('.folio-overflow')?.scrollTo({top:Math.max(0,el.offsetTop-20)});}}
   const onHash=()=>goToAnchor(location.hash.slice(1));addEventListener('hashchange',onHash);

@@ -1,0 +1,71 @@
+.reader-music-dock{position:fixed;z-index:120;right:max(18px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:flex-end;gap:10px;font-family:var(--ui-font,Inter,system-ui,sans-serif);color:#262522}
+.reader-music-button{width:46px;height:46px;border:1px solid #c8c3b7;border-radius:50%;background:#f5f2eb;color:#39362f;box-shadow:0 4px 18px #17140e20;font-size:24px;line-height:1;cursor:pointer;touch-action:manipulation}
+.reader-music-button.is-playing{color:#584b3f}
+.reader-music-button:focus-visible,.reader-music-popover button:focus-visible,.reader-music-dialog button:focus-visible,.reader-music-volume input:focus-visible{outline:2px solid #8c775e;outline-offset:3px}
+.reader-music-popover{width:min(300px,calc(100vw - 36px));padding:17px;border:1px solid #d3cec2;border-radius:14px;background:#f7f4ed;box-shadow:0 12px 40px #17140e24}
+.reader-music-popover[hidden]{display:none}
+.reader-music-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;font-size:14px;font-weight:600}
+.reader-music-heading button,.reader-music-popover>[data-music-toggle]{border:0;background:transparent;color:inherit;cursor:pointer}
+.reader-music-heading button{padding:5px;font-size:12px}
+.reader-music-popover>[data-music-toggle]{width:100%;padding:10px 12px;border:1px solid #c9c3b7;border-radius:9px;text-align:start;font:inherit}
+.reader-music-volume{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:12px;margin-top:14px;font-size:12px}
+.reader-music-volume input{width:100%;accent-color:#75654f}
+.reader-music-error{margin:12px 0 0;color:#8b3e35;font-size:12px;line-height:1.5}
+.reader-music-error[hidden]{display:none}
+.reader-music-dialog{width:min(430px,calc(100vw - 32px));max-width:none;padding:0;border:1px solid #c9c3b7;border-radius:18px;background:#f6f3ec;color:#282620;box-shadow:0 22px 80px #11100d44}
+.reader-music-dialog::backdrop{background:#17161270;backdrop-filter:blur(3px)}
+.reader-music-dialog form{padding:clamp(24px,6vw,38px)}
+.reader-music-dialog .reader-music-eyebrow{margin:0 0 14px;color:#766b59;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.reader-music-dialog h2{margin:0;font-family:var(--display-font,Georgia,serif);font-size:clamp(24px,6vw,32px);font-weight:500;line-height:1.15}
+.reader-music-dialog form>p:not(.reader-music-eyebrow){margin:12px 0 24px;color:#625f58;font-size:14px;line-height:1.65}
+.reader-music-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.reader-music-actions button{min-height:44px;padding:9px 12px;border:1px solid #c9c3b7;border-radius:9px;background:transparent;color:inherit;font:inherit;font-size:13px;cursor:pointer}
+.reader-music-actions [data-music-with]{border-color:#50483d;background:#50483d;color:#fff}
+body.reading-view:not(.reality-view) .reader-music-dock{color:#e8e2d6}
+body.reading-view:not(.reality-view) .reader-music-button{border-color:#777164;background:#242724;color:#ddd5c7;box-shadow:0 5px 22px #0a0e0e60}
+body.reading-view:not(.reality-view) .reader-music-popover{border-color:#615f57;background:#252824;color:#e8e2d6;box-shadow:0 12px 40px #06090780}
+body.reading-view:not(.reality-view) .reader-music-popover>[data-music-toggle]{border-color:#605f56;color:#e8e2d6}
+body.reading-view:not(.reality-view) .reader-music-dialog{border-color:#605e55;background:#252824;color:#e8e2d6}
+body.reading-view:not(.reality-view) .reader-music-dialog form>p:not(.reader-music-eyebrow){color:#cbc5b8}
+body.reading-view:not(.reality-view) .reader-music-dialog .reader-music-eyebrow{color:#b8aa91}
+body.reading-view:not(.reality-view) .reader-music-actions button{border-color:#625f55;color:#e8e2d6}
+body.reading-view:not(.reality-view) .reader-music-actions [data-music-with]{border-color:#c0b49c;background:#c0b49c;color:#22231f}
+audio[aria-hidden="true"]{position:fixed;width:1px;height:1px;opacity:0;pointer-events:none}
+@media(max-width:560px){.reader-music-dock{right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom))}.reader-music-button{width:42px;height:42px}.reader-music-popover{width:min(280px,calc(100vw - 28px))}}
+@media(max-height:540px){.reader-music-dock{bottom:max(8px,env(safe-area-inset-bottom))}.reader-music-popover{padding:12px}.reader-music-dialog form{padding:20px}.reader-music-dialog form>p:not(.reader-music-eyebrow){margin-bottom:14px}}
+
+.reader-music-dock[hidden]{display:none}
+.reader-music-dialog{margin:auto;inset:0;max-height:calc(100svh - 32px);overflow:auto;font-family:var(--sans,system-ui,sans-serif)}
+.reader-music-dialog .reader-music-eyebrow{font-size:17px;letter-spacing:.04em;text-transform:none}
+.reader-music-dialog h2{font-family:var(--serif,Georgia,serif);font-size:30px;line-height:1.4}
+.reader-music-dialog form>p:not(.reader-music-eyebrow){font-size:20px;line-height:1.7}
+.reader-music-actions button{font-size:18px;min-height:50px}
+.reader-music-heading{font-size:20px;line-height:1.5}
+.reader-music-heading button{font-size:17px;min-height:44px}
+.reader-music-popover>[data-music-toggle]{font-size:19px;min-height:48px}
+.reader-music-volume{font-size:18px;line-height:1.5}
+.reader-music-volume input{min-height:36px}
+.reader-music-error{font-size:17px}
+.reader-music-button{width:52px;height:52px;font-size:29px}
+.reader-music-dialog[data-default-music=off] [data-music-with]{background:transparent;color:inherit}
+.reader-music-dialog[data-default-music=off] [data-music-without]{background:#50483d;color:#fff;border-color:#50483d}
+body.real-theme-coal .reader-music-dialog,body.real-theme-coal .reader-music-popover,body.real-theme-coal .reader-music-button{background:#252525;color:#ddd;border-color:#646464}
+body.real-theme-coal .reader-music-dialog :is(.reader-music-eyebrow,form>p:not(.reader-music-eyebrow)){color:#bbb}
+body.real-theme-coal .reader-music-actions button{color:#ddd;border-color:#777}
+body.real-theme-coal .reader-music-dialog[data-default-music=off] [data-music-without]{background:#c4c4c4;color:#222}
+@media(max-width:560px){.reader-music-actions{grid-template-columns:1fr}.reader-music-dialog h2{font-size:27px}.reader-music-dialog form>p:not(.reader-music-eyebrow){font-size:19px}.reader-music-button{width:48px;height:48px}}
+.reader-music-dock{position:relative;right:auto;bottom:auto;z-index:40;display:flex;flex-shrink:0}
+.reader-music-button{width:48px;height:48px;border-radius:4px;box-shadow:none}
+.reader-music-popover{position:fixed;z-index:140;width:min(320px,calc(100vw - 24px));max-height:calc(100svh - 24px);overflow:auto}
+body.reading-view:not(.reality-view) .reader-music-button{background:transparent;border-color:var(--line);color:var(--ink);box-shadow:none}
+body.reading-view:not(.reality-view):not(.night) .reader-music-popover,body.reading-view:not(.reality-view):not(.night) .reader-music-dialog{background:#f3ebd9;color:#454936;border-color:#b3a384}
+body.reading-view:not(.reality-view):not(.night) .reader-music-dialog :is(.reader-music-eyebrow,form>p:not(.reader-music-eyebrow)){color:#62664f}
+body.reading-view:not(.reality-view):not(.night) .reader-music-actions button,body.reading-view:not(.reality-view):not(.night) .reader-music-popover>[data-music-toggle]{color:#454936}
+@media(max-width:760px){.bound-tools .reader-music-dock{grid-row:2;grid-column:2}.reader-music-button{width:44px;height:44px}.real-toolbar-left{grid-template-columns:repeat(6,minmax(44px,1fr))}.real-toolbar-left .reader-music-dock{grid-row:1;grid-column:6;justify-self:center}}
+body.reality-view .reader-music-popover,body.reality-view .reader-music-dialog,body.reality-view .reader-music-button{background:#f1f0ed;color:#333;border-color:#bcbcbc}
+body.reality-view .reader-music-actions [data-music-with],body.reality-view .reader-music-dialog[data-default-music=off] [data-music-without]{background:#383838;color:#fff;border-color:#777}
+body.reality-view .reader-music-dialog[data-default-music=off] [data-music-with]{background:transparent;color:#333}
+body.real-theme-coal .reader-music-popover,body.real-theme-coal .reader-music-dialog,body.real-theme-coal .reader-music-button{background:#252525;color:#ddd;border-color:#646464}
+body.real-theme-coal .reader-music-actions [data-music-with],body.real-theme-coal .reader-music-dialog[data-default-music=off] [data-music-without]{background:#c4c4c4;color:#222}
+body.real-theme-coal .reader-music-dialog[data-default-music=off] [data-music-with]{background:transparent;color:#ddd}
+.reader-music-volume input{min-height:44px}

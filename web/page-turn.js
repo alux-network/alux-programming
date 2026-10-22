@@ -1,34 +1,35 @@
 import {PageFlip} from 'page-flip';
 
-// The outgoing DOM becomes a soft sheet. PageFlip computes the fold, clipping
-// polygon and moving shadows; the destination remains stationary underneath.
-export async function turnRoute(app, update) {
-  const width=innerWidth,height=innerHeight,scroll=scrollY;
-  const layer=document.createElement('div');layer.className='route-book-turn';layer.setAttribute('aria-hidden','true');layer.inert=true;
-  const host=document.createElement('div');host.className='route-flip-host';layer.append(host);
-  function sheet(classes,content,offset=0){
-    const el=document.createElement('section');el.className='route-soft-sheet';el.dataset.density='soft';
-    const surface=document.createElement('div');surface.className='route-sheet-surface '+classes;
-    surface.style.width=width+'px';surface.style.minHeight=height+'px';
-    content.removeAttribute('id');content.querySelectorAll('[id]').forEach(n=>n.removeAttribute('id'));
-    content.style.transform=`translateY(${-offset}px)`;surface.append(content);el.append(surface);return el;
-  }
-  const old=sheet(document.body.className,app.cloneNode(true),scroll);
-  old.classList.add('route-outgoing');
-  host.append(old);document.body.append(layer);
-  // Keep the old full-size page visible while the next chapter is paginated.
+function visibleSheets(book){
+ return [...book.querySelectorAll('.folio-page')].filter(e=>getComputedStyle(e).display!=='none'&&e.getBoundingClientRect().width>0).sort((a,b)=>a.getBoundingClientRect().left-b.getBoundingClientRect().left).map(e=>{const copy=e.cloneNode(true);copy.className='folio-page';copy.removeAttribute('style');copy.removeAttribute('id');copy.querySelectorAll('[id]').forEach(n=>n.removeAttribute('id'));return copy;});
+}
+// Only paper turns. The cover and bookmark remain owned by the new reader.
+export async function turnRoute(app,update,direction=1){
+ const old=app.querySelector('.page-book');
+ if(!old||document.body.classList.contains('continuous-reading')){await update();return;}
+ const before=visibleSheets(old),rect=old.getBoundingClientRect();
+ if(!before.length){await update();return;}
+ const veil=document.createElement('div');veil.inert=true;veil.setAttribute('aria-hidden','true');
+ Object.assign(veil.style,{position:'fixed',left:rect.left+'px',top:rect.top+'px',width:rect.width+'px',height:rect.height+'px',overflow:'hidden',pointerEvents:'none',zIndex:9});
+ const snapshot=old.cloneNode(true);snapshot.removeAttribute('id');snapshot.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));veil.append(snapshot);document.body.append(veil);
+ let flip,host;
+ try{
   await update();
-  // Keep the real destination live underneath. Cloning a second PageFlip tree
-  // before its animation frame can capture hidden sheets and expose the cover.
+  // PageFlip paints its initial spread on the next animation frame.
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-  const destination=document.createElement('section');destination.className='route-soft-sheet route-destination';destination.dataset.density='soft';
-  host.append(destination);
-  const book=new PageFlip(host,{width,height,size:'fixed',minWidth:width,maxWidth:width,minHeight:height,maxHeight:height,usePortrait:true,autoSize:false,drawShadow:true,maxShadowOpacity:.35,flippingTime:1150,useMouseEvents:false,disableFlipByClick:true,showPageCorners:false,mobileScrollSupport:false});
-  const copies=new MutationObserver(records=>{for(const record of records)for(const node of record.addedNodes)if(node.nodeType===1&&node.matches('.route-outgoing')&&node!==old)node.classList.add('route-sheet-back');});
-  copies.observe(host,{childList:true,subtree:true});
-  try{
-    book.loadFromHTML([old,destination]);
-    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-    await new Promise(resolve=>{let started=false;const timer=setTimeout(resolve,1550);book.on('changeState',e=>{if(e.data==='flipping')started=true;if(started&&e.data==='read'){clearTimeout(timer);resolve();}});book.flipNext('bottom');});
-  }finally{copies.disconnect();book.destroy();layer.remove();}
+  const book=app.querySelector('.page-book'),volume=app.querySelector('.bound-volume');
+  if(!book||!volume)return;
+  const after=visibleSheets(book),r=book.getBoundingClientRect(),v=volume.getBoundingClientRect();
+  if(!after.length)return;
+  const portrait=after.length===1,w=r.width/(portrait?1:2),h=r.height;
+  host=document.createElement('div');host.className='chapter-flip-host';host.inert=true;host.setAttribute('aria-hidden','true');
+  Object.assign(host.style,{position:'absolute',left:r.left-v.left-volume.clientLeft+'px',top:r.top-v.top-volume.clientTop+'px',width:r.width+'px',height:h+'px',zIndex:9,pointerEvents:'none',overflow:'hidden'});
+  const backward=(direction<0)!==(document.dir==='rtl');
+  const sheets=backward?[...after,...before]:[...before,...after];
+  for(const sheet of sheets){sheet.style.width=w+'px';sheet.style.height=h+'px';host.append(sheet);}
+  volume.append(host);veil.remove();
+  flip=new PageFlip(host,{width:w,height:h,size:'fixed',autoSize:false,usePortrait:portrait,showCover:false,startPage:backward?after.length:0,flippingTime:560,drawShadow:true,maxShadowOpacity:.2,useMouseEvents:false,disableFlipByClick:false,mobileScrollSupport:false,showPageCorners:false});
+  flip.loadFromHTML(sheets);
+  await new Promise(resolve=>{let started=false;const timer=setTimeout(resolve,1000);flip.on('changeState',e=>{if(e.data==='flipping')started=true;if(started&&e.data==='read'){clearTimeout(timer);resolve();}});requestAnimationFrame(()=>requestAnimationFrame(()=>backward?flip.flipPrev('bottom'):flip.flipNext('bottom')));});
+ }finally{veil.remove();flip?.destroy();host?.remove();}
 }

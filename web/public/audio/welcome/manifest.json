@@ -1,0 +1,131 @@
+{
+  "purpose": "ALUX Programming gateway welcome narration; no background music",
+  "target_loudness_lufs": -16,
+  "true_peak_max_dbtp": -2,
+  "assets": [
+    {
+      "language": "en",
+      "text": "Welcome to ALUX Programming. Define meaning first, then create a world. Choose your path, and let's begin.",
+      "engine": "qwen_custom_voice_1.7B_uncle_fu",
+      "duration_seconds": 7.76,
+      "integrated_loudness_lufs": -17.1,
+      "true_peak_dbtp": -2.2,
+      "sourcefile": "en.wav",
+      "mp3": "audio/welcome/en.mp3",
+      "full_decode": "passed"
+    },
+    {
+      "language": "zh",
+      "text": "欢迎来到阿拉克斯编程。先定义意义，再创造世界。选择你的道路，我们从这里开始。",
+      "engine": "accepted_qwen3_uncle_fu_wav_reused",
+      "duration_seconds": 10.48,
+      "integrated_loudness_lufs": -16.6,
+      "true_peak_dbtp": -2.2,
+      "sourcefile": "zh.wav",
+      "mp3": "audio/welcome/zh.mp3",
+      "full_decode": "passed"
+    },
+    {
+      "language": "zh-hant",
+      "text": "歡迎來到阿拉克斯編程。先定義意義，再創造世界。選擇你的道路，我們從這裡開始。",
+      "engine": "accepted_qwen3_uncle_fu_wav_reused",
+      "duration_seconds": 10.48,
+      "integrated_loudness_lufs": -16.6,
+      "true_peak_dbtp": -2.2,
+      "sourcefile": "zh-hant.wav",
+      "mp3": "audio/welcome/zh-hant.mp3",
+      "full_decode": "passed"
+    },
+    {
+      "language": "ja",
+      "text": "ALUX Programmingへようこそ。まず意味を定め、世界を創りましょう。あなたの道を選んで、ここから始めましょう。",
+      "engine": "qwen_custom_voice_1.7B_uncle_fu",
+      "duration_seconds": 8.64,
+      "integrated_loudness_lufs": -16.9,
+      "true_peak_dbtp": -2.2,
+      "sourcefile": "ja.wav",
+      "mp3": "audio/welcome/ja.mp3",
+      "full_decode": "passed",
+      "spoken_text": "アラクス・プログラミングへようこそ。まず意味を定め、世界を創りましょう。あなたの道を選んで、ここから始めましょう。"
+    },
+    {
+      "language": "ko",
+      "text": "ALUX Programming에 오신 것을 환영합니다. 먼저 의미를 정하고, 그다음 세계를 만들어 보세요. 원하는 길을 고르고, 함께 시작해 봅시다.",
+      "engine": "qwen_custom_voice_1.7B_uncle_fu",
+      "duration_seconds": 12.48,
+      "integrated_loudness_lufs": -16.5,
+      "true_peak_dbtp": -2.2,
+      "sourcefile": "ko.wav",
+      "mp3": "audio/welcome/ko.mp3",
+      "full_decode": "passed",
+      "spoken_text": "아라크스 프로그래밍에 오신 것을 환영합니다. 먼저 의미를 정하고, 그다음 세계를 만들어 보세요. 원하는 길을 고르고, 함께 시작해 봅시다."
+    },
+    {
+      "language": "vi",
+      "text": "Chào mừng bạn đến với ALUX Programming. Hãy xác định ý nghĩa trước, rồi kiến tạo một thế giới. Chọn con đường của bạn, và chúng ta bắt đầu.",
+      "engine": "omnivoice_local_clone_from_accepted_uncle_fu_sample",
+      "duration_seconds": 11.62,
+      "integrated_loudness_lufs": -17.1,
+      "true_peak_dbtp": -2.3,
+      "sourcefile": "vi.wav",
+      "mp3": "audio/welcome/vi.mp3",
+      "full_decode": "passed"
+    },
+    {
+      "language": "de",
+      "text": "Willkommen bei ALUX Programming. Definiere zuerst die Bedeutung, dann erschaffe eine Welt. Wähle deinen Weg, und wir beginnen.",
+      "engine": "qwen_custom_voice_1.7B_uncle_fu",
+      "duration_seconds": 9.36,
+      "integrated_loudness_lufs": -17.1,
+      "true_peak_dbtp": -2.2,
+      "sourcefile": "de.wav",
+      "mp3": "audio/welcome/de.mp3",
+      "full_decode": "passed"
+    },
+    {
+      "language": "es",
+      "text": "Te damos la bienvenida a ALUX Programming. Primero define el significado y luego crea un mundo. Elige tu camino. Empecemos.",
+      "engine": "qwen_custom_voice_1.7B_uncle_fu",
+      "duration_seconds": 10.24,
+      "integrated_loudness_lufs": -16.7,
+      "true_peak_dbtp": -2.3,
+      "sourcefile": "es.wav",
+      "mp3": "audio/welcome/es.mp3",
+      "full_decode": "passed"
+    },
+    {
+      "language": "ru",
+      "text": "Добро пожаловать в ALUX Programming. Сначала определите смысл, затем создайте мир. Выберите свой путь — и начнём.",
+      "engine": "qwen_custom_voice_1.7B_uncle_fu",
+      "duration_seconds": 9.92,
+      "integrated_loudness_lufs": -16.3,
+      "true_peak_dbtp": -2.3,
+      "sourcefile": "ru.wav",
+      "mp3": "audio/welcome/ru.mp3",
+      "full_decode": "passed",
+      "spoken_text": "Добро пожаловать в Алакс Программинг. Сначала определите смысл, затем создайте мир. Выберите свой путь — и начнём."
+    },
+    {
+      "language": "uk",
+      "text": "Ласкаво просимо до ALUX Programming. Спершу визначте значення, а потім створіть світ. Оберіть свій шлях — і почнімо.",
+      "engine": "omnivoice_local_clone_from_accepted_uncle_fu_sample",
+      "duration_seconds": 10.24,
+      "integrated_loudness_lufs": -16.5,
+      "true_peak_dbtp": -2.2,
+      "sourcefile": "uk.wav",
+      "mp3": "audio/welcome/uk.mp3",
+      "full_decode": "passed"
+    },
+    {
+      "language": "ar",
+      "text": "مرحبا بك في ALUX Programming. حدّد المعنى أولا، ثم ابتكر عالما. اختر طريقك، ولنبدأ من هنا.",
+      "engine": "omnivoice_local_clone_from_accepted_uncle_fu_sample",
+      "duration_seconds": 10.44,
+      "integrated_loudness_lufs": -17.0,
+      "true_peak_dbtp": -2.3,
+      "sourcefile": "ar.wav",
+      "mp3": "audio/welcome/ar.mp3",
+      "full_decode": "passed"
+    }
+  ]
+}

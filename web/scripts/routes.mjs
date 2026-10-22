@@ -5,6 +5,7 @@ import {languages,languagePath,htmlLanguage} from '../locale-routing.js';
 import {siteDescriptions,socialLocales} from '../site-meta.js';
 import {uiRows} from '../ui-translations.js';
 import {gatewayMarkup} from '../worlds.js';
+import {englishUI} from '../ui-english.js';
 const siteOrigin=(process.env.ALUX_SITE_URL||'http://127.0.0.1:4174').replace(/\/$/,'');
 const dir=path.resolve(import.meta.dirname,'../dist');
 const {pages}=JSON.parse(await fs.readFile(path.join(dir,'content.json'),'utf8'));
@@ -19,8 +20,8 @@ const extras=[['atlas.html','The chapter atlas'],['contents.html','Table of cont
 for(const {code} of languages){
  const dict=code==='en'?null:JSON.parse(await fs.readFile(path.join(locales,code+'.json'),'utf8'));
  const extraUI=['vi','ru','uk','de','es'].includes(code)?JSON.parse(await fs.readFile(path.join(locales,'ui-'+code+'.json'),'utf8')):{};
- const t=text=>['vi','ru','uk','de','es'].includes(code)?(extraUI[text]||text):code==='zh-hant'?(hantUI[text]||text):(uiRows.find(row=>row[0]===text)?.[columns[code]]||text);
- const localPages=pages.map(p=>{if(!dict)return p;const {document}=parseHTML('<html><body><article>'+p.html+'</article></body></html>');const root=document.querySelector('article'),used=new Set();
+ const t=text=>code==='en'?englishUI(text):['vi','ru','uk','de','es'].includes(code)?(extraUI[text]||text):code==='zh-hant'?(hantUI[text]||text):(uiRows.find(row=>row[0]===text)?.[columns[code]]||text);
+ const localPages=pages.map(p=>{if(!dict)return {...p,title:englishUI(p.title)};const {document}=parseHTML('<html><body><article>'+p.html+'</article></body></html>');const root=document.querySelector('article'),used=new Set();
   for(const unit of manifest[p.slug].units){const canonical=document.createElement('div');canonical.innerHTML=unit.source;const target=[...root.querySelectorAll('h1,h2,h3,h4,h5,h6,p,li,td,th,.admonition-title,summary,figcaption')].find(el=>!used.has(el)&&el.innerHTML===canonical.innerHTML);if(!target)throw Error('Static translation cannot match '+unit.key);used.add(target);target.innerHTML=escape(dict[unit.key]).replace(/⟦(\d+)⟧/g,(_,n)=>unit.tokens[Number(n)]);}
   return{...p,title:dict[manifest[p.slug].titleKey],html:root.innerHTML,text:root.textContent};
  });
@@ -33,6 +34,7 @@ for(const {code} of languages){
   if(realm==='real')document.body.className='reality-view real-theme-light';
   if(body){const no=document.createElement('noscript');no.innerHTML=realm==='gateway'?body:`<main class="no-script-page ${realm==='real'?'real-prose':'prose'}"><nav><a href="/">${t('Choose world')}</a> · <a href="/${realm==='real'?'real/':''}introduction.html">${t('Introduction')}</a></nav>${body}</main>`;
    no.querySelectorAll('h1 img').forEach(e=>e.remove());
+   if(no.querySelector('#alux-programming-guidelines'))no.querySelector('.admonition.warning')?.remove();
    no.querySelectorAll('a[href]').forEach(a=>{const href=a.getAttribute('href');if(!href.startsWith('/')||href.startsWith('//'))return;let [slug,hash]=href.slice(1).split('#');if(realm==='real'&&known.has(slug))slug='real/'+slug;a.setAttribute('href',languagePath('/'+slug,code)+(hash?'#'+hash:''));});
    no.querySelectorAll('.copy-code').forEach(el=>el.remove());
    for(const el of no.querySelectorAll('*')){for(const node of el.childNodes)if(node.nodeType===3&&!el.closest('pre,code,.katex')){const original=node.textContent.trim();if(original)node.textContent=node.textContent.replace(original,t(original));}for(const name of ['alt','aria-label','title'])if(el.hasAttribute(name))el.setAttribute(name,t(el.getAttribute(name)));}document.body.append(no);

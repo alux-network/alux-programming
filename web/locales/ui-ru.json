@@ -131,5 +131,9 @@
   "Remove bookmark": "Удалить закладку",
   "Close bookmarks": "Закрыть закладки",
   "No bookmarks yet.": "Закладок пока нет.",
-  "Save a chapter with the bookmark button to continue reading here.": "Добавьте главу в закладки, чтобы продолжить чтение отсюда."
+  "Save a chapter with the bookmark button to continue reading here.": "Добавьте главу в закладки, чтобы продолжить чтение отсюда.",
+  "Add bookmark": "Добавить закладку",
+  "Bookmarked": "В закладках",
+  "Hide contents": "Скрыть оглавление",
+  "Show contents": "Показать оглавление"
 }

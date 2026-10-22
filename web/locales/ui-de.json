@@ -131,5 +131,9 @@
   "Remove bookmark": "Lesezeichen entfernen",
   "Close bookmarks": "Lesezeichen schließen",
   "No bookmarks yet.": "Noch keine Lesezeichen.",
-  "Save a chapter with the bookmark button to continue reading here.": "Speichere ein Kapitel über die Lesezeichen-Schaltfläche, um hier weiterzulesen."
+  "Save a chapter with the bookmark button to continue reading here.": "Speichere ein Kapitel über die Lesezeichen-Schaltfläche, um hier weiterzulesen.",
+  "Add bookmark": "Lesezeichen setzen",
+  "Bookmarked": "Lesezeichen hinzugefügt",
+  "Hide contents": "Inhaltsverzeichnis ausblenden",
+  "Show contents": "Inhaltsverzeichnis anzeigen"
 }

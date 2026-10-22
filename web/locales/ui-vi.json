@@ -29,7 +29,7 @@
   "Next world": "Thế giới tiếp theo",
   "Enter this world": "Bước vào thế giới này",
   "Start with what a program means. Explore denotations, compositionality, laws, and the relationship between meaning and representation.": "Bắt đầu từ ý nghĩa của chương trình. Khám phá ngữ nghĩa chỉ định, tính hợp thành, các định luật và mối quan hệ giữa ý nghĩa với biểu diễn.",
-  "Give meaning a concrete vocabulary. Explore capability traits, derived operations, interpreters, evidence, and compiler pipelines in Rust.": "Trao cho ý nghĩa một từ vựng cụ thể. Khám phá các đặc trưng năng lực, phép toán suy ra, bộ diễn giải, bằng chứng và quy trình trình biên dịch trong Rust.",
+  "Give meaning a concrete vocabulary. Explore capability traits, derived operations, interpreters, evidence, and compiler pipelines in Rust.": "Trao cho ý nghĩa một từ vựng cụ thể. Khám phá các đặc trưng năng lực, phép toán suy ra, bộ diễn giải, bằng chứng và quy trình biên dịch trong Rust.",
   "Look beneath the surface of a program. Explore the structures and transformations that connect ideas to execution.": "Nhìn sâu hơn bề mặt chương trình. Khám phá các cấu trúc và phép biến đổi kết nối ý tưởng với thực thi.",
   "Return to familiar ideas with a new perspective. Follow the connections between the semantic view and real programming machinery.": "Trở lại những ý tưởng quen thuộc với góc nhìn mới. Lần theo mối liên hệ giữa góc nhìn ngữ nghĩa và cơ chế lập trình thực tế.",
   "Reading world": "Thế giới đọc sách",
@@ -131,5 +131,9 @@
   "Remove bookmark": "Xóa dấu trang",
   "Close bookmarks": "Đóng dấu trang",
   "No bookmarks yet.": "Chưa có dấu trang nào.",
-  "Save a chapter with the bookmark button to continue reading here.": "Lưu chương bằng nút dấu trang để có thể tiếp tục đọc tại đây."
+  "Save a chapter with the bookmark button to continue reading here.": "Lưu chương bằng nút dấu trang để có thể tiếp tục đọc tại đây.",
+  "Add bookmark": "Thêm dấu trang",
+  "Bookmarked": "Đã đánh dấu",
+  "Hide contents": "Ẩn mục lục",
+  "Show contents": "Hiện mục lục"
 }
