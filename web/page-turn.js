@@ -18,7 +18,10 @@ export async function turnRoute(app, update) {
   host.append(old);document.body.append(layer);
   // Keep the old full-size page visible while the next chapter is paginated.
   await update();
-  const destination=sheet(document.body.className,app.cloneNode(true));
+  // Keep the real destination live underneath. Cloning a second PageFlip tree
+  // before its animation frame can capture hidden sheets and expose the cover.
+  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  const destination=document.createElement('section');destination.className='route-soft-sheet route-destination';destination.dataset.density='soft';
   host.append(destination);
   const book=new PageFlip(host,{width,height,size:'fixed',minWidth:width,maxWidth:width,minHeight:height,maxHeight:height,usePortrait:true,autoSize:false,drawShadow:true,maxShadowOpacity:.35,flippingTime:1150,useMouseEvents:false,disableFlipByClick:true,showPageCorners:false,mobileScrollSupport:false});
   const copies=new MutationObserver(records=>{for(const record of records)for(const node of record.addedNodes)if(node.nodeType===1&&node.matches('.route-outgoing')&&node!==old)node.classList.add('route-sheet-back');});

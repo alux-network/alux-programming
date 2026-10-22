@@ -22,6 +22,7 @@
 .route-book-turn{position:fixed;inset:0;z-index:500;overflow:hidden;pointer-events:none;background:transparent;isolation:isolate}
 .route-flip-host{position:absolute!important;inset:0!important;width:100vw!important;height:100dvh!important;min-width:0!important}
 .route-soft-sheet{overflow:hidden;background:#f6f0e4}
+.route-soft-sheet.route-destination{background:transparent!important}
 .route-sheet-surface{position:relative;overflow:hidden;background:#f6f0e4;pointer-events:none}
 .route-sheet-surface.bound-reading{background:#dfd0b3}
 .route-sheet-surface #app,.route-sheet-surface>div{width:100%}
