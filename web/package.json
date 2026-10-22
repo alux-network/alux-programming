@@ -1,0 +1,20 @@
+{
+  "name": "alux-programming-web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/content.mjs && vite --host 127.0.0.1 --port 4173",
+    "build": "node scripts/content.mjs && vite build && node scripts/routes.mjs",
+    "preview": "vite preview --host 127.0.0.1 --port 4173"
+  },
+  "dependencies": {
+    "@fontsource/cormorant-garamond": "^5.2.8",
+    "highlight.js": "^11.11.1",
+    "katex": "^0.16.22",
+    "lucide": "^0.468.0",
+    "marked": "^16.2.0",
+    "page-flip": "^2.0.7",
+    "vite": "^7.1.0"
+  }
+}

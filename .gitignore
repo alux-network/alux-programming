@@ -1,1 +1,6 @@
 book
+output/
+web/node_modules/
+web/dist/
+web/public/content.json
+web/public/book-assets/
