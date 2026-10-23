@@ -78,7 +78,7 @@ export async function mountBookReader({app,page,pages,sidebar,brand,worldLink=''
     volume.style.setProperty('--sheet-w',w+'px');volume.style.setProperty('--sheet-h',h+'px');
     return {w,h,portrait};
   }
-  function initialPages(keep:number):void {
+  function initialPages(keep:number):HTMLElement[]|undefined {
     const target=ownedBookSurface(volume);if(!target)return;
     const {w,h,portrait}=sheetLayout();
     const sheets=paginateChapter({page,pages,icon,host:volume,w,h,portrait});
@@ -89,6 +89,7 @@ export async function mountBookReader({app,page,pages,sidebar,brand,worldLink=''
     target.style.width=(portrait?w:2*w)+'px';target.style.height=h+'px';
     for(const sheet of sheets.slice(first,first+(portrait?1:2))){const local=Number(sheet.dataset.folio);sheet.classList.toggle('folio-verso',!portrait&&(rtl()?local%2===1:local%2===0));target.append(sheet);}
     query<HTMLButtonElement>('#previous-sheet',app).disabled=true;query<HTMLButtonElement>('#next-sheet',app).disabled=true;
+    return sheets;
   }
   function clearBook():HTMLElement|null {
     if(flip){flip.destroy();flip=null;}
@@ -103,14 +104,15 @@ export async function mountBookReader({app,page,pages,sidebar,brand,worldLink=''
     document.body.classList.toggle('continuous-reading',continuous);
     if(continuous){const target=clearBook();if(!target)return;target.innerHTML=`<article class="prose continuous-prose">${originalHTML}</article>`;restoreEmbeds(target);total=1;footer();hydrateIcons();return;}
     const readyImages=imagesReady??=bookImagesReady(pages);
-    if(!flip)initialPages(keep);
+    const previewSheets=!flip?initialPages(keep):undefined;
     // Keep the current paper visible while fonts, images and new page counts prepare.
     const {w,h,portrait}=sheetLayout();
     layoutKey=`${w}/${h}/${size}`;
     const cacheKey=`${document.documentElement.lang}/${layoutKey}/${portrait}`;
     let layouts=pageCountCache.get(pages);
     if(!layouts){layouts=new Map();pageCountCache.set(pages,layouts);}
-    let counts=layouts.get(cacheKey),sheets;
+    // A cached layout already has settled fonts/images; its preview is the final pagination.
+    let counts=layouts.get(cacheKey),sheets=counts?previewSheets:undefined;
     if(!counts){
       // Math and language subsets may not have appeared in the opening chapter.
       // Load every used font before measuring any chapter, so offsets remain exact.

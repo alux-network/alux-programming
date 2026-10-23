@@ -18,6 +18,8 @@ The JSON backend contains Markdown, not an HTML syntax tree. The same build ther
 
 `scripts/translation-alignment.ts` maps the existing translation catalog onto the native rendered blocks and fails on missing prose or changed protected code, formulas and links. It carries a derived manifest in the reader data, leaving the approved dictionaries intact. `src/localization.ts` supplies the same transformation to the browser and static routes. Four legacy heading fragments remain compatible aliases for mdBook's canonical IDs. The strict TypeScript sources live in `src/` and `scripts/`; Node executes erasable build-script types, while `tsc --noEmit` checks the whole web project.
 
+Localization indexes canonical block HTML once per chapter, preserving document order for duplicate blocks and rebuilding the index after nested block changes. Search caches lowercase titles and text by localized page-array identity; language changes supply a new array. Search input updates translate only the results container and reuse the same decorative arrow SVG, without refreshing the reader's icons or prose.
+
 ## Reading
 
 Agents adding chapters or interface content must follow [AGENTS.md](AGENTS.md) for alignment, typography, capitalization, localization, responsive behavior and verification.
@@ -31,6 +33,8 @@ My bookmarks is visible in each sidebar. Multiple saved chapters retain their wo
 Magic book pages are numbered continuously across the whole book. The same pagination algorithm measures chapter offsets and renders the sheets; changing language, text size or viewport recalculates the total. Page numbers sit at the outer edges, with a compact range/total below the book. Continuous scrolling does not invent page numbers. Chapter-end contents links navigate to a dedicated full contents page. Its chapter links enter the selected chapter directly; they do not pass through part-opening pages. The toolbar Contents button still toggles the reading sidebar.
 
 The current chapter appears immediately as readable sheets while fonts, images and whole-book numbering prepare. Provisional page numbers stay hidden. Fonts and images load concurrently, and decoded images are reused across chapter navigation. Reflow keeps the previous content until its replacement is ready; a noninteractive copy bridges PageFlip's first paint without duplicating anchors or starting embedded players.
+
+When the current layout already has settled fonts, images and cached chapter counts, the reader reuses its freshly paginated preview sheets for PageFlip. Uncached layouts still wait for resources and measure every chapter before assigning continuous page numbers.
 
 Embedded interview clips retain their original references and show their individual time ranges. The web generator supplies explicit YouTube playback start/end bounds; repeated thumbnails alone do not imply duplicate clips.
 

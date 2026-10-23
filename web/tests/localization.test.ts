@@ -123,6 +123,38 @@ test('missing translations and unmatched source units fail with useful messages'
   );
 });
 
+test('duplicate source blocks are translated in first-unused DOM order',()=>{
+  const original=fixture();
+  original.pages[0].html='<p>Repeated</p><p>Repeated</p>';
+  const manifest:TranslationManifest={
+    'chapter.html':{titleKey:'title.chapter',units:[
+      {key:'first',source:'Repeated',tokens:[]},
+      {key:'second',source:'Repeated',tokens:[]}
+    ]},
+    'child.html':{titleKey:'title.child',units:[]}
+  };
+  const {document}=parseHTML('<!doctype html><html><body></body></html>');
+  const localized=localizeBook(original,{'title.chapter':'Titre','first':'Premier','second':'Deuxième','title.child':'Enfant'},manifest,englishUI,document as unknown as Document);
+  const result=parseHTML(`<article>${localized.pages[0].html}</article>`).document.querySelector('article');
+  assert.deepEqual([...result?.querySelectorAll('p')??[]].map(node=>node.textContent),['Premier','Deuxième']);
+});
+
+test('nested block mutation rebuilds candidates before matching the next unit',()=>{
+  const original=fixture();
+  original.pages[0].html='<ul><li><p>Nested</p></li></ul>';
+  const manifest:TranslationManifest={
+    'chapter.html':{titleKey:'title.chapter',units:[
+      {key:'inner',source:'Nested',tokens:[]},
+      {key:'outer',source:'<p>Changed nested</p>',tokens:[]}
+    ]},
+    'child.html':{titleKey:'title.child',units:[]}
+  };
+  const {document}=parseHTML('<!doctype html><html><body></body></html>');
+  const localized=localizeBook(original,{'title.chapter':'Titre','inner':'Changed nested','outer':'Changed outer','title.child':'Enfant'},manifest,englishUI,document as unknown as Document);
+  const result=parseHTML(`<article>${localized.pages[0].html}</article>`).document.querySelector('article');
+  assert.equal(result?.querySelector('li')?.innerHTML,'Changed outer');
+});
+
 test('English display normalization applies to page, group, part, and chapter titles without changing content',()=>{
   const original=fixture();
   original.pages[0].title='Search the book';

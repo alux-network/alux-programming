@@ -26,19 +26,43 @@ export function localizeBook(
     const root=document.createElement('article');
     root.innerHTML=page.html;
     const used=new Set<Element>();
+    let candidatesByHtml=new Map<string,Element[]>();
+    const rebuildCandidates=():void=>{
+      candidatesByHtml=new Map<string,Element[]>();
+      for(const element of root.querySelectorAll(translatableBlocks)){
+        const candidates=candidatesByHtml.get(element.innerHTML)??[];
+        candidates.push(element);
+        candidatesByHtml.set(element.innerHTML,candidates);
+      }
+    };
+    const hasTranslatableParent=(element:Element):boolean=>{
+      for(let parent=element.parentElement;parent&&parent!==root;parent=parent.parentElement){
+        if(parent.matches(translatableBlocks))return true;
+      }
+      return false;
+    };
+    const hasTranslatableChild=(element:Element):boolean=>element.querySelector(translatableBlocks)!==null;
+    rebuildCandidates();
+    let candidatesDirty=false;
     for(const unit of chapter.units){
+      if(candidatesDirty){rebuildCandidates();candidatesDirty=false;}
       const canonical=document.createElement('div');
       canonical.innerHTML=unit.source;
-      const target=[...root.querySelectorAll(translatableBlocks)].find(element=>!used.has(element)&&element.innerHTML===canonical.innerHTML);
+      const sourceHtml=canonical.innerHTML;
+      const target=candidatesByHtml.get(sourceHtml)?.find(element=>!used.has(element)&&root.contains(element)&&element.innerHTML===sourceHtml);
       if(!target)throw new Error(`Translated block cannot be matched: ${unit.key}`);
+      if(hasTranslatableParent(target)||hasTranslatableChild(target))candidatesDirty=true;
       used.add(target);
       const translated=dictionary[unit.key];
       if(typeof translated!=='string')throw new Error(`Translation is missing: ${unit.key}`);
       target.innerHTML=safeHtml(translated).replace(/⟦(\d+)⟧/g,(_token,index)=>unit.tokens[Number(index)]??'');
+      if(hasTranslatableParent(target)||hasTranslatableChild(target))candidatesDirty=true;
     }
 
+    const elementsById=new Map<string,HTMLElement>();
+    for(const element of root.querySelectorAll<HTMLElement>('[id]'))if(!elementsById.has(element.id))elementsById.set(element.id,element);
     const headings=page.headings.map(heading=>{
-      const element=[...root.querySelectorAll<HTMLElement>('[id]')].find(candidate=>candidate.id===heading.id);
+      const element=elementsById.get(heading.id);
       const text=element?.textContent?.replace(/#$/,'').trim();
       return {...heading,text:text||heading.text};
     });

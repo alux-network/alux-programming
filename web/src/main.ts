@@ -13,6 +13,7 @@ import '../contents.css';
 import '../refinements.css';
 import {updateSiteMeta} from './site-meta.ts';
 import {bookmarks,removeBookmark} from './bookmarks.ts';
+import {searchBook} from './search.ts';
 import {gatewayMarkup} from './worlds.ts';
 import {mountGatewayWelcome} from './gateway-welcome.ts';
 import {mountRealReader} from './real-reader.ts';
@@ -26,7 +27,7 @@ import '../reader-presentation.css';
 import '../reader-music.css';
 import {syncReaderMusic} from './reader-music.ts';
 import {language,languagePicker,languageURL,resolveLanguage,setLanguage,localizedBook,translateUI,t,rememberLanguage,stripLanguage} from './i18n.ts';
-import {createIcons, Search, ArrowRight, ArrowLeft, Menu, X, Moon, Sun, BookOpen, Github, ArrowUpRight, ArrowDownRight, Copy, Check, RotateCcw, Undo2, Plus, Minus, Bookmark, ChevronRight, Map, ExternalLink, WandSparkles, SquareCode, ScrollText} from 'lucide';
+import {createIcons, createElement, Search, ArrowRight, ArrowLeft, Menu, X, Moon, Sun, BookOpen, Github, ArrowUpRight, ArrowDownRight, Copy, Check, RotateCcw, Undo2, Plus, Minus, Bookmark, ChevronRight, Map, ExternalLink, WandSparkles, SquareCode, ScrollText} from 'lucide';
 import {query, targetElement} from './dom.ts';
 import type {BookGroup, BookNode, Icon, ReaderBook, ReaderController, ReaderPage, ReaderStorage} from './book.ts';
 
@@ -150,11 +151,12 @@ addEventListener('alux-bookmarks-changed',()=>{updateBookmarkCounts();if(savedDi
 document.addEventListener('click',(e:MouseEvent)=>{const target=targetElement(e);if(!target)return;if(target.closest('[data-bookmarks]')){savedOrigin=document.activeElement instanceof HTMLElement?document.activeElement:null;renderBookmarks();savedDialog.showModal();query<HTMLElement>('[data-close-bookmarks]',savedDialog).focus();}if(target.closest('[data-close-bookmarks]'))closeBookmarks();const remove=target.closest<HTMLElement>('[data-remove-bookmark]');if(remove){const slug=remove.dataset.removeBookmark;if(slug)removeBookmark(slug);savedDialog.querySelector<HTMLElement>('[data-remove-bookmark],[data-close-bookmarks]')?.focus();}const resume=target.closest<HTMLElement>('[data-resume-bookmark]');if(resume){const slug=resume.dataset.resumeBookmark;const item=bookmarks().find(x=>x.slug===slug);if(item?.folio!==undefined)storage.set('alux-folio-'+item.slug,item.folio);if(item?.scroll!==undefined)storage.set('alux-real-scroll-'+item.slug,item.scroll);closeBookmarks();}});
 savedDialog.addEventListener('click',(e:MouseEvent)=>{if(e.target===savedDialog)closeBookmarks();});savedDialog.addEventListener('cancel',(e:Event)=>{e.preventDefault();closeBookmarks();});
 
+const searchArrow=createElement([ArrowRight[0],{...ArrowRight[1],'stroke-width':1.5,'data-lucide':'arrow-right','aria-hidden':'true',class:'lucide lucide-arrow-right'},ArrowRight[2]]).outerHTML;
 const dialog=query<HTMLDialogElement>('#search-dialog');let searchOrigin:HTMLElement|null=null;
 function openSearch():void{if(dialog.open||activeRealm==='gateway')return;searchOrigin=document.activeElement instanceof HTMLElement?document.activeElement:null;dialog.showModal();const input=query<HTMLInputElement>('#search-input');input.value='';searchResults('');input.focus();}
 function closeSearch():void{dialog.close();searchOrigin?.focus();}
-function searchResults(queryText:string):void{const q=queryText.toLowerCase().trim();const container=query<HTMLElement>('#search-results');if(!q){container.innerHTML='<p class="search-hint">A keyword opens a new page.</p>';}else{const terms=q.split(/\s+/);const hits=pages.map(p=>{const title=p.title.toLowerCase(),text=p.text.toLowerCase();return{p,score:terms.reduce((n,t)=>n+(title.includes(t)?15:0)+(text.includes(t)?1:0),0),matches:terms.every(t=>text.includes(t)||title.includes(t))};}).filter(x=>x.matches).sort((a,b)=>b.score-a.score);container.innerHTML=`<div class="search-group-label">${hits.length} ${hits.length===1?'RESULT':'RESULTS'}</div>`+(hits.length?hits.map(({p})=>{const at=p.text.toLowerCase().indexOf(terms[0]??'');return resultItem(p,(at>50?'…':'')+p.text.slice(Math.max(0,at-45),Math.max(0,at-45)+150)+'…',q)}).join(''):'<div class="no-results"><h3>No pages found.</h3><p>Try a concept such as “capability”, “Rust” or “meaning”.</p></div>');}hydrateIcons();container.querySelectorAll<HTMLAnchorElement>('a').forEach(a=>a.addEventListener('click',closeSearch));}
-function resultItem(p:ReaderPage,snippet:string,q:string):string{return `<a class="search-result" href="/${activeRealm==='real'?'real/':''}${p.slug}"><span><small>${p.group}</small><strong>${escape(p.title)}</strong>${snippet?`<p>${escape(snippet)}</p>`:''}</span>${icon('arrow-right')}</a>`;}
+function searchResults(queryText:string):void{const q=queryText.toLowerCase().trim();const container=query<HTMLElement>('#search-results');if(!q){container.innerHTML='<p class="search-hint">A keyword opens a new page.</p>';}else{const hits=searchBook(pages,q);container.innerHTML=`<div class="search-group-label">${hits.length} ${hits.length===1?'RESULT':'RESULTS'}</div>`+(hits.length?hits.map(({p,at})=>{return resultItem(p,(at>50?'…':'')+p.text.slice(Math.max(0,at-45),Math.max(0,at-45)+150)+'…',q)}).join(''):'<div class="no-results"><h3>No pages found.</h3><p>Try a concept such as “capability”, “Rust” or “meaning”.</p></div>');}translateUI(container);container.querySelectorAll<HTMLAnchorElement>('a').forEach(a=>a.addEventListener('click',closeSearch));}
+function resultItem(p:ReaderPage,snippet:string,q:string):string{return `<a class="search-result" href="/${activeRealm==='real'?'real/':''}${p.slug}"><span><small>${p.group}</small><strong>${escape(p.title)}</strong>${snippet?`<p>${escape(snippet)}</p>`:''}</span>${searchArrow}</a>`;}
 document.addEventListener('click',(e:MouseEvent)=>{const target=targetElement(e);if(!target)return;if(target.closest('[data-search]'))openSearch();if(target.closest('[data-close-search]'))closeSearch();});
 query<HTMLInputElement>('#search-input').addEventListener('input',(e:Event)=>{if(e.target instanceof HTMLInputElement)searchResults(e.target.value);});
 dialog.addEventListener('click',(e:MouseEvent)=>{if(e.target===dialog)closeSearch();});dialog.addEventListener('cancel',(e:Event)=>{e.preventDefault();closeSearch();});
