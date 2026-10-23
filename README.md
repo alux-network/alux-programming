@@ -1,19 +1,32 @@
-# <img src="src/assets/alux-logo.png" style="margin-right: 10px; width: 60px;"> ALUX programming guidelines
+# ALUX Programming
 
-A book about **designing programs by meaning first** — specifying *what* a program means before deciding *how* it runs — in the style of Conal Elliott's Denotational Design, with a concrete path into Rust.
+**English** · [简体中文](docs/README.zh.md) · [繁體中文](docs/README.zh-hant.md) · [日本語](docs/README.ja.md) · [한국어](docs/README.ko.md) · [Tiếng Việt](docs/README.vi.md) · [Deutsch](docs/README.de.md) · [Español](docs/README.es.md) · [Русский](docs/README.ru.md) · [Українська](docs/README.uk.md) · [العربية](docs/README.ar.md)
 
-It provides the foundation for understanding and contributing to ALUX’s meaning-first codebase.
+A book about defining what programs mean, then choosing how to run them. It develops Conal Elliott’s denotational design approach through composition, laws and interpreters, with examples in Rust.
 
-Built with [mdBook] and published to GitHub Pages: <https://alux-network.github.io/alux-programming/>
+The book provides the foundation for understanding and contributing to ALUX’s meaning-first codebase. Written by Tomislav Grospic.
 
-## What's inside
+[Read online](https://alux-network.github.io/alux-programming/) · [Contents](src/SUMMARY.md) · [Web reader setup](web/README.md)
 
-The book is organized in four parts (full table of contents in [`src/SUMMARY.md`](src/SUMMARY.md)):
+## In the book
 
-- **The Semantic View** — denotations, compositionality, laws and interpretations, dependent types: the meaning-first foundation.
-- **Design by Meaning in Rust** — capability algebras, derived meaning and composition, interpreters and effects, laws/scenarios/evidence, first-order programs, compiler pipelines, and a meaning-first workflow.
-- **Concepts** — operational semantics, the expression problem, referential transparency, free monads, continuation-passing style, defunctionalization, branching and confluence.
-- **Insights** — short essays connecting those concepts back to the semantic view (semantics to machines, the expression problem reloaded, referential transparency reloaded, and the EVM as an algebra).
+- **The Semantic View** — denotations, compositionality, laws, interpretations and dependent types.
+- **Design by Meaning in Rust** — capability traits, derived operations, interpreters, evidence and compiler pipelines.
+- **Concepts** — operational semantics, free monads, continuations, defunctionalization and related mechanisms.
+- **Insights** — connections between those mechanisms, program meaning and execution.
+
+## Multilingual web reader
+
+The web reader offers eleven languages, a paper book view and continuous scrolling, plus a plain technical view. Font size, day/night mode, search and bookmarks work across both worlds.
+
+Requires Node.js 22+ and pnpm:
+
+```sh
+pnpm --dir web install
+pnpm --dir web dev
+```
+
+Open [127.0.0.1:4173](http://127.0.0.1:4173/). The reader selects an initial language and remembers a manual choice; all language editions remain available in the language menu. See [the maintenance guide](web/AGENTS.md) before adding content or changing the interface.
 
 ## Build and run locally
 

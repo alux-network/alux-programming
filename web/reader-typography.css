@@ -7,8 +7,11 @@ html{scrollbar-gutter:stable}
 .bound-reading .sidebar-group a>span{font-size:.64em;min-width:1.7em}
 .bound-reading .book-sidebar .sidebar-bottom{font:500 max(18px,calc(var(--sidebar-size) - 2px))/1.8 var(--serif);letter-spacing:.025em;color:#66543a;opacity:1;padding-top:24px}
 .bound-reading.night .book-sidebar .sidebar-bottom{color:#c5b994}
-.bound-reading .book-sidebar .sidebar-bottom>span{font-size:28px;color:#9b783e;margin-bottom:12px;opacity:1}
-.bound-reading.night .book-sidebar .sidebar-bottom>span{color:#c5b17d}
+.bound-reading .book-sidebar .sidebar-bottom .sidebar-source{display:flex;align-items:center;justify-content:center;width:48px;height:48px;margin:0 auto 12px;color:#9b783e;border-radius:4px}
+.bound-reading.night .book-sidebar .sidebar-bottom .sidebar-source{color:#c5b17d}
+.bound-reading .sidebar-source svg{width:28px;height:28px}
+.bound-reading .sidebar-source:hover{background:#9d804b12}
+.bound-reading .sidebar-source:focus-visible{outline:2px solid currentColor;outline-offset:2px}
 .bound-reading .sidebar-search{min-height:48px;gap:9px}.bound-reading .sidebar-search kbd{font-size:11px}
 body.bound-reading .book-sidebar .sidebar-search{font-size:calc(var(--sidebar-size) + 2px);min-height:60px;padding:13px 14px;gap:12px}
 body.bound-reading .book-sidebar .sidebar-search svg{width:26px;height:26px}
@@ -59,10 +62,6 @@ body.bound-reading .book-sidebar .my-bookmarks small,body.reality-view .real-sid
 .bound-reading .folio-content :is(.code-toolbar,.copy-code,.admonition-title),.reality-view .real-prose :is(.code-toolbar,.admonition-title){font-size:14px}
 .folio-running-head{font-size:15px;height:40px;padding-bottom:12px}.folio-running-head>span:last-child{font-size:12px}
 .folio-content{height:calc(100% - 83px)}.folio-footer{font-size:14px}
-.folio-footer .folio-source{display:grid;place-items:center;width:44px;height:44px;margin-inline-start:-10px;color:inherit;text-decoration:none;border-radius:4px}
-.folio-footer .folio-source svg{width:22px;height:22px}
-.folio-footer .folio-source:hover{color:var(--copper);background:#9d804b12}
-.folio-footer .folio-source:focus-visible{outline:2px solid currentColor;outline-offset:1px}
 body.bound-reading.night .folio-page{background-color:#1c251f;color:#bcc2b5}
 body.bound-reading.night .folio-page :is(h1,h2,h3,h4){color:#c7c9ba}
 @media(min-width:1280px){

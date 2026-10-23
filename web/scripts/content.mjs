@@ -10,6 +10,8 @@ const src=path.join(root,'src');
 const out=path.join(root,'web/public');
 const summary=await fs.readFile(path.join(src,'SUMMARY.md'),'utf8');
 const groups=[]; const pages=[]; let group=null;
+// Shared by both readers and static fallbacks; retain the original mdBook assets in src/.
+const readingArt={'assets/semantic-view.png':'/art/semantic-view.webp','assets/design-by-meaning-rust.png':'/art/capability-crab.webp','assets/concepts.png':'/art/concepts.webp','assets/insights.png':'/art/insights.webp'};
 for(const line of summary.split(/\r?\n/)){
   if(/^# /.test(line)){group={title:line.slice(2),pages:[]};groups.push(group);}
   const m=line.match(/\[([^\]]+)\]\(([^)]+\.md)\)/);
@@ -26,6 +28,7 @@ for(const page of pages){
     if(!href||/^(?:[a-z][a-z\d+.-]*:|\/\/|#)/i.test(href))return href;
     const [file,anchor]=href.split('#');
     const resolved=path.posix.normalize(path.posix.join(path.posix.dirname(page.source),file));
+    if(readingArt[resolved])return readingArt[resolved];
     if(/\.md$/.test(file)){
       const dest=pages.find(x=>x.source===resolved);
       if(!dest)errors.push(`${page.source}: missing ${href}`);

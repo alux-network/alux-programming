@@ -22,6 +22,7 @@ import './gateway.css';
 import './reader-typography.css';
 import './reader-dialogs.css';
 import './reader-materials.css';
+import './reader-presentation.css';
 import './reader-music.css';
 import {syncReaderMusic} from './reader-music.js';
 import {language,languagePicker,languageURL,resolveLanguage,setLanguage,localizedBook,translateUI,t,rememberLanguage,stripLanguage} from './i18n.js';
@@ -57,7 +58,7 @@ function contents(){current=null;document.body.className='contents-view';app.inn
 function part(index){current=null;document.body.className='part-view';app.innerHTML=header()+partMarkup({index,groups:parts,pages,icon})+footer();document.title=parts[index].title+' · ALUX Programming';hydrateIcons();}
 function atlas(){current=null;currentObserver?.disconnect();document.body.className='atlas-view';app.innerHTML=header()+'<main id="main" class="atlas-main"></main>'+footer();mountAtlas({root:$('#main'),groups:parts,pages,icon,hydrateIcons});document.title='The chapter atlas · ALUX Programming';}
 
-function sidebar(){return `<aside class="book-sidebar" id="book-sidebar" aria-label="Table of contents">${brand(true)}<button class="my-bookmarks" data-bookmarks>${icon('bookmark')}<span>My bookmarks</span><small data-bookmark-count></small></button><button class="sidebar-search" data-search>${icon('search')}<span>Search the book</span><kbd>Ctrl K</kbd></button><nav>${`<a class="intro-nav ${current.source==='index.md'?'active':''}" href="/introduction.html">${icon('book-open')} Introduction</a>`}${groups.map((g,i)=>`<section class="sidebar-group"><h2><span>${romans[i]}</span>${g.title}</h2>${g.pages.map((s,j)=>{const p=pages.find(x=>x.slug===s);return `<a href="/${s}" class="${s===current.slug?'active':''}" ${s===current.slug?'aria-current="page"':''}><span>${String(j+1).padStart(2,'0')}</span>${p.title}</a>`}).join('')}</section>`).join('')}</nav><div class="sidebar-bottom"><span>✦</span> SMALL BUILDING BLOCKS.<br>WORLDS OF POSSIBILITY.</div></aside>`;}
+function sidebar(){return `<aside class="book-sidebar" id="book-sidebar" aria-label="Table of contents">${brand(true)}<button class="my-bookmarks" data-bookmarks>${icon('bookmark')}<span>My bookmarks</span><small data-bookmark-count></small></button><button class="sidebar-search" data-search>${icon('search')}<span>Search the book</span><kbd>Ctrl K</kbd></button><nav>${`<a class="intro-nav ${current.source==='index.md'?'active':''}" href="/introduction.html">${icon('book-open')} Introduction</a>`}${groups.map((g,i)=>`<section class="sidebar-group"><h2><span>${romans[i]}</span>${g.title}</h2>${g.pages.map((s,j)=>{const p=pages.find(x=>x.slug===s);return `<a href="/${s}" class="${s===current.slug?'active':''}" ${s===current.slug?'aria-current="page"':''}><span>${String(j+1).padStart(2,'0')}</span>${p.title}</a>`}).join('')}</section>`).join('')}</nav><div class="sidebar-bottom"><a class="sidebar-source" href="https://github.com/alux-network/alux-programming" target="_blank" rel="noopener noreferrer" aria-label="Source on GitHub" title="Source on GitHub">${icon('github')}</a> SMALL BUILDING BLOCKS.<br>WORLDS OF POSSIBILITY.</div></aside>`;}
 function reader(p){
   current=p;currentObserver?.disconnect();
   const token=renderToken;

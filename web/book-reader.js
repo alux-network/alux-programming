@@ -25,7 +25,6 @@ export async function mountBookReader({app,page,pages,sidebar,brand,worldLink=''
   // The original decorative title icon is superseded by the generated masthead.
   // Keep the source title and all technical images unchanged.
   source.querySelectorAll('h1 img').forEach(img=>img.remove());
-  source.querySelectorAll('img[src$="design-by-meaning-rust.png"]').forEach(img=>img.src='/art/capability-crab.webp');
   const originalHTML=source.innerHTML;
   let continuous=storage.get('alux-reader-mode')==='scroll',total=0,layoutKey='';
   const reduced=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -49,8 +48,7 @@ export async function mountBookReader({app,page,pages,sidebar,brand,worldLink=''
   }
   function pageElement(number){
     const sheet=document.createElement('section');sheet.className='folio-page';sheet.dataset.density='soft';sheet.dataset.folio=number;
-    const sourceLink=portraitBook||number%2===0?`<a class="folio-source" href="https://github.com/alux-network/alux-programming/blob/master/src/${page.source}" target="_blank" rel="noopener noreferrer" aria-label="View source on GitHub" title="View source on GitHub">${icon('github')}</a>`:'<span aria-hidden="true"></span>';
-    sheet.innerHTML=`<header class="folio-running-head"><span>${escape(page.group)}</span><span>ALUX PROGRAMMING</span></header><article class="folio-content prose"></article><footer class="folio-footer">${sourceLink}<span>${String(number+1).padStart(2,'0')}</span></footer>`;
+    sheet.innerHTML=`<header class="folio-running-head"><span>${escape(page.group)}</span><span>ALUX PROGRAMMING</span></header><article class="folio-content prose"></article><footer class="folio-footer"><span>✦</span><span>${String(number+1).padStart(2,'0')}</span></footer>`;
     return sheet;
   }
   async function paginate(keep=0){

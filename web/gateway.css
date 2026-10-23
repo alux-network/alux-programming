@@ -52,7 +52,7 @@ html[lang|=zh] .world-choice strong,html[lang=ja] .world-choice strong,html[lang
 .world-gateway>.language-picker:focus-within{outline:2px solid #e2c68c;outline-offset:4px}
 .world-gateway>.language-picker svg{width:27px;height:27px;flex-shrink:0;color:#d8c59e}
 .world-gateway>.language-picker select{max-width:230px;min-width:170px;min-height:52px;padding:10px 8px;border:0;outline:none}
-.world-gateway>.language-picker:after{content:'';position:absolute;right:22px;top:calc(50% - 7px);width:12px;height:12px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);pointer-events:none}
+.world-gateway>.language-picker:after{content:'';position:absolute;inset-inline-end:22px;top:calc(50% - 7px);width:12px;height:12px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);pointer-events:none}
 .world-gateway>.language-picker select{appearance:none;padding-inline-end:37px}
 .world-gateway>.language-picker option{background:#192923;color:#f0e7d4}
 @media(max-width:900px){
