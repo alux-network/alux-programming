@@ -1,4 +1,5 @@
 /* Both magic reading modes use one type scale; pagination only changes layout. */
+.video-clip-range{font-size:.8em;line-height:1.5;text-align:center;font-variant-numeric:tabular-nums;opacity:.85;margin-top:.25em}
 .bound-reading{--book-body-font:Georgia,'Times New Roman',serif;--book-line:1.8;--book-title:54px;--book-title-line:1.12}
 html[lang|=zh] .bound-reading,html[lang=ja] .bound-reading{--book-body-font:'Noto Serif SC','Songti SC','SimSun',serif;--book-line:1.9;--book-title:44px;--book-title-line:1.3}
 html[lang=ko] .bound-reading{--book-body-font:'Malgun Gothic',sans-serif;--book-line:1.85;--book-title:44px;--book-title-line:1.3}

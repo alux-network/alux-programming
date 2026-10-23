@@ -18,6 +18,10 @@ The Real world uses a quiet technical-document layout with neutral gray-white da
 
 My bookmarks is visible in each sidebar. Multiple saved chapters retain their world and reading position, can be opened or removed, and migrate the older single-bookmark setting. Bookmarks, reading preferences and manual language choices are stored on the current browser; no account or server-side reading collection is implied.
 
+Magic book pages are numbered continuously across the whole book. The same pagination algorithm measures chapter offsets and renders the sheets; changing language, text size or viewport recalculates the total. Page numbers sit at the outer edges, with a compact range/total below the book. Continuous scrolling does not invent page numbers. Chapter-end contents links open the existing sidebar, return it to the top and focus Introduction.
+
+Embedded interview clips retain their original references and show their individual time ranges. The web generator supplies explicit YouTube playback start/end bounds; repeated thumbnails alone do not imply duplicate clips.
+
 ## Languages
 
 The menu order is English, 简体中文, 繁體中文, 日本語, 한국어, Tiếng Việt, Deutsch, Español, Русский, Українська, العربية. English has no language prefix. The other paths use `/zh/`, `/zh-hant/`, `/ja/`, `/ko/`, `/vi/`, `/de/`, `/es/`, `/ru/`, `/uk/`, `/ar/`. The Real reader follows the language directory, e.g. `/zh/real/introduction.html`. HTML uses `zh-Hans` and `zh-Hant`. Old `?lang=` links and common Chinese locale aliases are canonicalized without losing the chapter or anchor.

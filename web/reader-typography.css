@@ -5,13 +5,19 @@ html{scrollbar-gutter:stable}
 .bound-reading .book-sidebar .sidebar-group h2{font:600 calc(var(--sidebar-size) + 2px)/1.45 var(--serif);letter-spacing:0;text-transform:none;margin-bottom:12px;text-wrap:wrap;overflow-wrap:break-word}
 .bound-reading .book-sidebar :is(.my-bookmarks,.sidebar-search),.reality-view .real-sidebar .my-bookmarks{font-size:var(--reader-ui-size);line-height:1.5}
 .bound-reading .sidebar-group a>span{font-size:.64em;min-width:1.7em}
-.bound-reading .book-sidebar .sidebar-bottom{font:500 max(18px,calc(var(--sidebar-size) - 2px))/1.8 var(--serif);letter-spacing:.025em;color:#66543a;opacity:1;padding-top:24px}
+.bound-reading .book-sidebar .sidebar-bottom{padding-top:24px}
 .bound-reading.night .book-sidebar .sidebar-bottom{color:#c5b994}
-.bound-reading .book-sidebar .sidebar-bottom .sidebar-source{display:flex;align-items:center;justify-content:center;width:48px;height:48px;margin:0 auto 12px;color:#9b783e;border-radius:4px}
+.bound-reading .book-sidebar .sidebar-bottom .sidebar-source{display:flex;align-items:center;justify-content:center;width:48px;height:48px;margin:0 auto;color:#9b783e;border-radius:4px}
 .bound-reading.night .book-sidebar .sidebar-bottom .sidebar-source{color:#c5b17d}
 .bound-reading .sidebar-source svg{width:28px;height:28px}
 .bound-reading .sidebar-source:hover{background:#9d804b12}
 .bound-reading .sidebar-source:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+body.bound-reading .book-sidebar nav .intro-nav,body.reality-view .real-sidebar nav .real-intro{font-size:var(--sidebar-size)!important;line-height:1.5;min-height:48px;display:flex;align-items:center;gap:12px}
+.bound-reading .intro-nav svg{width:22px;height:22px;flex-shrink:0}
+.bound-reading :is(.folio-chapter-end,.folio-closing) a[data-open-contents]{font:500 var(--reading-size)/1.5 var(--serif);min-height:48px;padding:8px 12px;justify-content:center;max-width:100%;overflow-wrap:anywhere}
+.bound-reading [data-open-contents] svg{flex-shrink:0}
+.bound-controls #folio-position{font-size:14px;white-space:nowrap}
+.folio-page.folio-verso .folio-footer{flex-direction:row-reverse}
 .bound-reading .sidebar-search{min-height:48px;gap:9px}.bound-reading .sidebar-search kbd{font-size:11px}
 body.bound-reading .book-sidebar .sidebar-search{font-size:calc(var(--sidebar-size) + 2px);min-height:60px;padding:13px 14px;gap:12px}
 body.bound-reading .book-sidebar .sidebar-search svg{width:26px;height:26px}

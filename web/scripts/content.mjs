@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { Marked } from 'marked';
 import katex from 'katex';
 import hljs from 'highlight.js';
+import {parseHTML} from 'linkedom';
 
 const root=path.resolve(import.meta.dirname,'../..');
 const src=path.join(root,'src');
@@ -59,6 +60,28 @@ for(const page of pages){
     }
   }});
   page.html=await md.parse(raw);
+  // Keep the original clip references and specify the embedded playback bounds.
+  if(page.html.includes('clipt=')){
+    const {document}=parseHTML('<html><body><article>'+page.html+'</article></body></html>');
+    const article=document.querySelector('article');
+    for(const frame of article.querySelectorAll('iframe[src]')){
+      const url=new URL(frame.getAttribute('src'));
+      if(url.hostname!=='www.youtube.com'||!url.pathname.startsWith('/embed/')||!url.searchParams.has('clipt'))continue;
+      const values=[];let value=0,shift=0;
+      for(const byte of Buffer.from(url.searchParams.get('clipt'),'base64url')){
+        value+=(byte&127)*2**shift;
+        if(byte&128)shift+=7;else{values.push(value);value=0;shift=0;}
+      }
+      if(values.length!==4||values[0]!==16||values[2]!==24||values[3]<=values[1])throw Error(page.source+': invalid video clip range');
+      const start=Math.floor(values[1]/1000),end=Math.ceil(values[3]/1000);
+      url.searchParams.set('start',String(start));url.searchParams.set('end',String(end));
+      frame.setAttribute('src',url.href);
+      const time=seconds=>[Math.floor(seconds/3600),Math.floor(seconds/60)%60,seconds%60].map(n=>String(n).padStart(2,'0')).join(':');
+      const range=document.createElement('div');range.className='video-clip-range';range.dir='ltr';range.textContent=time(start)+'–'+time(end);
+      frame.closest('figure')?.append(range);
+    }
+    page.html=article.innerHTML;
+  }
   page.text=raw.replace(/<[^>]+>/g,' ').replace(/[`#*_>\[\]]/g,'').replace(/\s+/g,' ').trim();
   page.minutes=Math.max(1,Math.ceil(page.text.split(/\s+/).length/220));
 }
