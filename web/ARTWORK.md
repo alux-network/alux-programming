@@ -13,4 +13,4 @@ The prism, mechanisms and book/lens images were redrawn for the web reader on 20
 
 Keep complete objects and transparent margins. Check both PNG and WebP on the actual day and night backgrounds, at their rendered size and at full resolution. The PNG masters are not runtime page dependencies. Do not regenerate the official ALUX mark, change chapter meaning, add text to decorative illustrations, or replace technical diagrams without checking their content.
 
-For a future replacement, add the asset here, update the single mapping in `scripts/content.mjs`, and check all four reading combinations: magic book, magic scroll, real day and real night. Preserve original alt text where its meaning still applies; otherwise update and localize it deliberately.
+For a future replacement, add the asset here, update the single mapping in `scripts/reader-presentation.ts`, and check all four reading combinations: magic book, magic scroll, real day and real night. Preserve original alt text where its meaning still applies; otherwise update and localize it deliberately.

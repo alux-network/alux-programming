@@ -13,10 +13,11 @@ export const siteDescriptions={
  ar:'حدّد معنى البرنامج أولًا، ثم اختر طريقة تنفيذه. تعرّف إلى التصميم الدلالي والتركيب والقوانين والمفسرات من خلال أمثلة بلغة Rust.'
 };
 export const socialLocales={en:'en_US',zh:'zh_CN','zh-hant':'zh_TW',ja:'ja_JP',ko:'ko_KR',ar:'ar_AR',vi:'vi_VN',ru:'ru_RU',uk:'uk_UA',de:'de_DE',es:'es_ES'};
-export function updateSiteMeta(code){
+import type {LanguageCode} from './locale-routing.ts';
+export function updateSiteMeta(code:LanguageCode):void{
  const entry=/^\/(?:en\/|zh\/|zh-hant\/|ja\/|ko\/|vi\/|de\/|es\/|ru\/|uk\/|ar\/)?$/.test(location.pathname);
  const title=entry?(siteTitles[code]||siteTitles.en):document.title,description=siteDescriptions[code]||siteDescriptions.en;
  const values={'description':description,'og:title':title,'og:description':description,'og:type':'website','og:site_name':'ALUX Programming','og:locale':socialLocales[code]||'en_US','og:url':location.origin+location.pathname,'og:image':location.origin+'/social/alux-programming-'+code+'.jpg','og:image:width':'1200','og:image:height':'630','og:image:alt':'ALUX Programming','twitter:card':'summary_large_image','twitter:title':title,'twitter:description':description,'twitter:image':location.origin+'/social/alux-programming-'+code+'.jpg','twitter:image:alt':'ALUX Programming'};
- for(const [key,value]of Object.entries(values)){const attr=key.startsWith('og:')?'property':'name';let meta=document.head.querySelector(`meta[${attr}="${key}"]`);if(!meta){meta=document.createElement('meta');meta.setAttribute(attr,key);document.head.append(meta);}meta.content=value;}
- let canonical=document.head.querySelector('link[rel="canonical"]');if(!canonical){canonical=document.createElement('link');canonical.rel='canonical';document.head.append(canonical);}canonical.href=location.origin+location.pathname;
+  for(const [key,value]of Object.entries(values)){const attr=key.startsWith('og:')?'property':'name';let meta=document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);if(!meta){meta=document.createElement('meta');meta.setAttribute(attr,key);document.head.append(meta);}meta.content=value;}
+  let canonical=document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');if(!canonical){canonical=document.createElement('link');canonical.rel='canonical';document.head.append(canonical);}canonical.href=location.origin+location.pathname;
 }

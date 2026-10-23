@@ -1,7 +1,8 @@
-import {language} from './i18n.js';
-import './reader-music.css';
+import {language} from './i18n.ts';
+import type {LanguageCode} from './locale-routing.ts';
+import '../reader-music.css';
 
-const copy={
+const copy:Record<LanguageCode,MusicCopy>={
   en:{music:'Reading music',on:'Play music',off:'Pause music',volume:'Volume',close:'Close',promptTitle:'A little music for this world?',promptBody:'Let the forest breathe softly in the background while you read.',withMusic:'Read with music',withoutMusic:'Read without music',unavailable:'Music could not start. Try again from the music button.'},
   zh:{music:'阅读音乐',on:'播放音乐',off:'暂停音乐',volume:'音量',close:'关闭',promptTitle:'为这个世界添一点音乐？',promptBody:'让森林的呼吸轻轻陪伴你的阅读。',withMusic:'伴随音乐阅读',withoutMusic:'不播放音乐',unavailable:'音乐暂时无法播放，请点音乐按钮重试。'},
   'zh-hant':{music:'閱讀音樂',on:'播放音樂',off:'暫停音樂',volume:'音量',close:'關閉',promptTitle:'為這個世界添一點音樂？',promptBody:'讓森林的呼吸輕輕陪伴你的閱讀。',withMusic:'伴隨音樂閱讀',withoutMusic:'不播放音樂',unavailable:'音樂暫時無法播放，請點音樂按鈕重試。'},
@@ -15,74 +16,79 @@ const copy={
   uk:{music:'Музика для читання',on:'Увімкнути музику',off:'Призупинити музику',volume:'Гучність',close:'Закрити',promptTitle:'Додати трохи музики до цього світу?',promptBody:'Нехай подих лісу тихо супроводжує читання.',withMusic:'Читати з музикою',withoutMusic:'Читати без музики',unavailable:'Не вдалося запустити музику. Спробуйте ще раз кнопкою музики.'}
 };
 
-const hints={
+const hints:Record<LanguageCode,string[]>={
  en:['Music is on. Click the note to pause.','Music is off. Click the note to play.'],zh:['音乐已开启，点击音符即可关闭。','音乐已关闭，点击音符即可开启。'],'zh-hant':['音樂已開啟，點擊音符即可關閉。','音樂已關閉，點擊音符即可開啟。'],ja:['音楽を再生中。音符を押すと停止します。','音楽は停止中。音符を押すと再生します。'],ko:['음악이 켜져 있습니다. 음표를 누르면 꺼집니다.','음악이 꺼져 있습니다. 음표를 누르면 켜집니다.'],vi:['Nhạc đang bật. Nhấn nốt nhạc để tắt.','Nhạc đang tắt. Nhấn nốt nhạc để bật.'],de:['Musik läuft. Zum Pausieren auf die Note klicken.','Musik ist aus. Zum Abspielen auf die Note klicken.'],es:['Música activada. Pulsa la nota para pausarla.','Música desactivada. Pulsa la nota para reproducirla.'],ru:['Музыка включена. Нажмите на ноту, чтобы выключить.','Музыка выключена. Нажмите на ноту, чтобы включить.'],uk:['Музику ввімкнено. Натисніть ноту, щоб вимкнути.','Музику вимкнено. Натисніть ноту, щоб увімкнути.'],ar:['الموسيقى تعمل. اضغط النوتة لإيقافها.','الموسيقى متوقفة. اضغط النوتة لتشغيلها.']
 };
-const storage={get(key){try{return localStorage.getItem(key)}catch{return null}},set(key,value){try{localStorage.setItem(key,value)}catch{}}};
-const validRealm=realm=>realm==='magic'||realm==='real';
-let audio,context,gain,source,button,popover,dock,hideTimer,keyboardInHint=false,adjustingVolume=false,activeRealm=null,contextCreatedAt=0,contextEverRunning=false;
-const musicEnabled={magic:true,real:false};
-const strings=()=>copy[language()]||copy.en;
-const desired=()=>Boolean(musicEnabled[activeRealm]);
+type Realm='magic'|'real';
+type MusicCopy={music:string;on:string;off:string;volume:string;close:string;promptTitle:string;promptBody:string;withMusic:string;withoutMusic:string;unavailable:string};
+const storage={get(key:string):string|null{try{return localStorage.getItem(key)}catch{return null}},set(key:string,value:string):void{try{localStorage.setItem(key,value)}catch{}}};
+const validRealm=(realm:string|null|undefined):realm is Realm=>realm==='magic'||realm==='real';
+let audio:HTMLAudioElement|null=null,context:AudioContext|null=null,gain:GainNode|null=null,source:MediaElementAudioSourceNode|null=null;
+let button:HTMLButtonElement|null=null,popover:HTMLElement|null=null,dock:HTMLDivElement|null=null,hideTimer:ReturnType<typeof setTimeout>|undefined;
+let keyboardInHint=false,adjustingVolume=false,activeRealm:Realm|null=null,contextCreatedAt=0,contextEverRunning=false;
+const musicEnabled:Record<Realm,boolean>={magic:true,real:false};
+const strings=():MusicCopy=>copy[language()];
+const desired=():boolean=>activeRealm?musicEnabled[activeRealm]:false;
 const volume=()=>{const n=Number(storage.get('alux-reader-music-volume')??1);return Number.isFinite(n)?Math.max(0,Math.min(1,n)):1;};
-function bindAudio(){
- audio=document.createElement('audio');audio.loop=true;audio.preload='none';audio.volume=1;audio.src=new URL((import.meta.env.BASE_URL||'/')+'audio/forest-breath.mp3',location.href).href;audio.setAttribute('aria-hidden','true');audio.tabIndex=-1;
- for(const event of ['playing','pause','ended'])audio.addEventListener(event,syncControls);
- audio.addEventListener('error',()=>{audio.dataset.failed='true';syncControls();});document.body.append(audio);
+function bindAudio():void{
+ const media=document.createElement('audio');media.loop=true;media.preload='none';media.volume=1;media.src=new URL((import.meta.env.BASE_URL||'/')+'audio/forest-breath.mp3',location.href).href;media.setAttribute('aria-hidden','true');media.tabIndex=-1;
+ for(const event of ['playing','pause','ended'])media.addEventListener(event,syncControls);
+ media.addEventListener('error',()=>{media.dataset.failed='true';syncControls();});audio=media;document.body.append(media);
 }
-function getGain(rebuild=false){
+function getGain(rebuild=false):void{
+ const media=audio;if(!media)return;
  if(context&&context.state!=='closed'&&!rebuild)return;
- if(rebuild&&context){const position=audio?.currentTime||0;try{source?.disconnect();context.close()}catch{}audio?.remove();bindAudio();try{audio.currentTime=position}catch{}context=null;source=null;gain=null;}
- const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;
- try{if('audioSession'in navigator)navigator.audioSession.type='playback';}catch{}
- context=new Ctx();contextCreatedAt=Date.now();contextEverRunning=false;gain=context.createGain();gain.gain.value=volume();gain.connect(context.destination);source=context.createMediaElementSource(audio);source.connect(gain);
- context.addEventListener('statechange',()=>{if(context?.state==='running'){contextEverRunning=true;if(activeRealm&&desired())audio.play().then(syncControls).catch(syncControls);}});
+  if(rebuild&&context){const position=media.currentTime;try{source?.disconnect();context.close()}catch{}media.remove();bindAudio();if(audio)audio.currentTime=position;context=null;source=null;gain=null;}
+ const Ctx=window.AudioContext||(window as Window&{webkitAudioContext?:typeof AudioContext}).webkitAudioContext;if(!Ctx)return;
+ try{const session=(navigator as Navigator&{audioSession?:{type:string}}).audioSession;if(session)session.type='playback';}catch{}
+  const audioContext=new Ctx();context=audioContext;contextCreatedAt=Date.now();contextEverRunning=false;gain=audioContext.createGain();gain.gain.value=volume();gain.connect(audioContext.destination);source=audioContext.createMediaElementSource(audio??media);source.connect(gain);
+  audioContext.addEventListener('statechange',()=>{if(context?.state==='running'){contextEverRunning=true;if(activeRealm&&desired())audio?.play().then(syncControls).catch(syncControls);}});
 }
-const status=()=>Boolean(audio&&!audio.paused&&!audio.ended&&(!context||context.state==='running'));
+const status=():boolean=>Boolean(audio&&!audio.paused&&!audio.ended&&(!context||context.state==='running'));
 function syncControls(){
- if(!button)return;const s=strings(),playing=status();button.setAttribute('aria-label',playing?s.off:s.on);button.title=playing?s.off:s.on;button.setAttribute('aria-pressed',String(playing));button.classList.toggle('is-playing',playing);button.firstElementChild.textContent=playing?'♫':'♪';
- popover.setAttribute('dir',language()==='ar'?'rtl':'ltr');popover.setAttribute('aria-label',s.music);popover.querySelector('[data-music-hint]').textContent=(hints[language()]||hints.en)[playing?0:1];popover.querySelector('[data-music-volume-label]').textContent=s.volume;popover.querySelector('[data-music-close]').setAttribute('aria-label',s.close);popover.querySelector('.reader-music-error').textContent=s.unavailable;popover.querySelector('.reader-music-error').hidden=!audio?.dataset.failed;
+ if(!button)return;const s=strings(),playing=status();button.setAttribute('aria-label',playing?s.off:s.on);button.title=playing?s.off:s.on;button.setAttribute('aria-pressed',String(playing));button.classList.toggle('is-playing',playing);if(button.firstElementChild)button.firstElementChild.textContent=playing?'♫':'♪';
+  if(!popover)return;popover.setAttribute('dir',language()==='ar'?'rtl':'ltr');popover.setAttribute('aria-label',s.music);popover.querySelector<HTMLElement>('[data-music-hint]')!.textContent=hints[language()][playing?0:1];popover.querySelector<HTMLElement>('[data-music-volume-label]')!.textContent=s.volume;popover.querySelector<HTMLButtonElement>('[data-music-close]')!.setAttribute('aria-label',s.close);const error=popover.querySelector<HTMLElement>('.reader-music-error')!;error.textContent=s.unavailable;error.hidden=!audio?.dataset.failed;
 }
-function pause(){audio?.pause();syncControls();}
-function play(){
+function pause():void{audio?.pause();syncControls();}
+function play():void{
  if(!audio||!activeRealm||!desired()||document.hidden)return;
  delete audio.dataset.failed;getGain();if(context?.state!=='running')context?.resume().catch(()=>{});
- audio.play().then(()=>{if(!activeRealm||!desired()||document.hidden)audio.pause();syncControls();}).catch(()=>syncControls());
+  const media=audio;media.play().then(()=>{if(!activeRealm||!desired()||document.hidden)media.pause();syncControls();}).catch(()=>syncControls());
 }
-function positionPopover(){
+function positionPopover():void{
  if(!button||!popover||popover.hidden)return;const rect=button.getBoundingClientRect(),width=popover.getBoundingClientRect().width,height=popover.getBoundingClientRect().height;
  popover.style.left=Math.max(12,Math.min(innerWidth-width-12,rect.right-width))+'px';popover.style.top=Math.max(12,Math.min(innerHeight-height-12,rect.bottom+8))+'px';
 }
-function dismiss(){clearTimeout(hideTimer);keyboardInHint=false;adjustingVolume=false;if(popover)popover.hidden=true;}
-function scheduleHint(delay=5000){clearTimeout(hideTimer);hideTimer=setTimeout(()=>{if(!popover.matches(':hover')&&!keyboardInHint&&!adjustingVolume)dismiss();},delay);}
-function showHint(){popover.hidden=false;syncControls();positionPopover();scheduleHint();}
-function buildUI(){
- if(button)return;const s=strings();button=document.createElement('button');button.type='button';button.className='reader-music-button';button.innerHTML='<span aria-hidden="true">♪</span>';
- popover=document.createElement('section');popover.className='reader-music-popover';popover.hidden=true;popover.innerHTML='<div class="reader-music-heading"><p data-music-hint role="status"></p><button type="button" data-music-close>×</button></div><label class="reader-music-volume"><span data-music-volume-label></span><input data-music-volume type="range" min="0" max="1" step="0.01" value="'+volume()+'"><output>'+Math.round(volume()*100)+'%</output></label><p class="reader-music-error" role="status" hidden></p>';
- dock=document.createElement('div');dock.className='reader-music-dock';dock.append(button);document.body.append(dock,popover);
- button.addEventListener('click',()=>{musicEnabled[activeRealm]=!status();if(desired())play();else pause();showHint();});
+function dismiss():void{clearTimeout(hideTimer);keyboardInHint=false;adjustingVolume=false;if(popover)popover.hidden=true;}
+function scheduleHint(delay=5000):void{clearTimeout(hideTimer);if(!popover)return;hideTimer=setTimeout(()=>{if(!popover?.matches(':hover')&&!keyboardInHint&&!adjustingVolume)dismiss();},delay);}
+function showHint():void{if(!popover)return;popover.hidden=false;syncControls();positionPopover();scheduleHint();}
+function buildUI():void{
+  if(button)return;const s=strings();const musicButton=document.createElement('button');musicButton.type='button';musicButton.className='reader-music-button';musicButton.innerHTML='<span aria-hidden="true">♪</span>';button=musicButton;
+  const panel=document.createElement('section');panel.className='reader-music-popover';panel.hidden=true;panel.innerHTML='<div class="reader-music-heading"><p data-music-hint role="status"></p><button type="button" data-music-close>×</button></div><label class="reader-music-volume"><span data-music-volume-label></span><input data-music-volume type="range" min="0" max="1" step="0.01" value="'+volume()+'"><output>'+Math.round(volume()*100)+'%</output></label><p class="reader-music-error" role="status" hidden></p>';popover=panel;
+  const musicDock=document.createElement('div');musicDock.className='reader-music-dock';musicDock.append(musicButton);dock=musicDock;document.body.append(musicDock,panel);
+  musicButton.addEventListener('click',()=>{if(!activeRealm)return;musicEnabled[activeRealm]=!status();if(desired())play();else pause();showHint();});
  button.addEventListener('mouseenter',showHint);button.addEventListener('focus',showHint);
- popover.addEventListener('pointerenter',()=>clearTimeout(hideTimer));
- popover.addEventListener('pointerleave',()=>scheduleHint(2000));
- popover.addEventListener('pointerdown',event=>{keyboardInHint=false;adjustingVolume=event.target.matches('[data-music-volume]');clearTimeout(hideTimer);});
+  panel.addEventListener('pointerenter',()=>clearTimeout(hideTimer));
+  panel.addEventListener('pointerleave',()=>scheduleHint(2000));
+   panel.addEventListener('pointerdown',event=>{keyboardInHint=false;adjustingVolume=event.target instanceof Element&&event.target.matches('[data-music-volume]');clearTimeout(hideTimer);});
  const finishAdjustment=()=>{if(adjustingVolume){adjustingVolume=false;scheduleHint(2000);}};document.addEventListener('pointerup',finishAdjustment,{passive:true});document.addEventListener('pointercancel',finishAdjustment,{passive:true});
- popover.addEventListener('keydown',()=>{keyboardInHint=true;clearTimeout(hideTimer);});
- popover.addEventListener('focusout',event=>{if(!popover.contains(event.relatedTarget)){keyboardInHint=false;scheduleHint(2000);}});
- popover.querySelector('[data-music-close]').addEventListener('click',dismiss);
- popover.querySelector('[data-music-volume]').addEventListener('input',event=>{const value=Number(event.target.value);storage.set('alux-reader-music-volume',String(value));if(gain)gain.gain.setTargetAtTime(value,context.currentTime,.025);popover.querySelector('output').textContent=Math.round(value*100)+'%';clearTimeout(hideTimer);});
- document.addEventListener('click',event=>{const path=event.composedPath();if(!path.includes(popover)&&!path.includes(button))dismiss();});
+  panel.addEventListener('keydown',()=>{keyboardInHint=true;clearTimeout(hideTimer);});
+  panel.addEventListener('focusout',event=>{if(!(event.relatedTarget instanceof Node)||!panel.contains(event.relatedTarget)){keyboardInHint=false;scheduleHint(2000);}});
+   panel.querySelector<HTMLButtonElement>('[data-music-close]')!.addEventListener('click',dismiss);
+   panel.querySelector<HTMLInputElement>('[data-music-volume]')!.addEventListener('input',event=>{const value=Number((event.currentTarget as HTMLInputElement).value);storage.set('alux-reader-music-volume',String(value));if(gain&&context)gain.gain.setTargetAtTime(value,context.currentTime,.025);panel.querySelector('output')!.replaceChildren(Math.round(value*100)+'%');clearTimeout(hideTimer);});
+  document.addEventListener('click',event=>{const path=event.composedPath();if(!path.includes(panel)&&!path.includes(musicButton))dismiss();});
  document.addEventListener('keydown',event=>{if(event.key==='Escape')dismiss();});syncControls();
 }
-export function syncReaderMusic(realm){
- const next=validRealm(realm)?realm:null;if(!next&&!dock)return;buildUI();if(!audio)bindAudio();
- if(next){const host=document.querySelector(next==='magic'?'.bound-tools':'.real-toolbar-left');const theme=host?.querySelector(next==='magic'?'#toggle-night':'#real-night');if(theme)theme.after(dock);else host?.append(dock);}
+export function syncReaderMusic(realm:string|null|undefined):void{
+  const next=validRealm(realm)?realm:null;if(!next&&!dock)return;buildUI();if(!audio)bindAudio();const musicDock=dock;if(!musicDock)return;
+  if(next){const host=document.querySelector(next==='magic'?'.bound-tools':'.real-toolbar-left');const theme=host?.querySelector(next==='magic'?'#toggle-night':'#real-night');if(theme)theme.after(musicDock);else host?.append(musicDock);}
  if(next===activeRealm){syncControls();return;}activeRealm=next;dismiss();
- if(!next){pause();dock.hidden=true;return;}pause();musicEnabled[next]=next==='magic';dock.hidden=false;
+  if(!next){pause();musicDock.hidden=true;return;}pause();musicEnabled[next]=next==='magic';musicDock.hidden=false;
  if(desired())play();showHint();
 }
-function onGesture(event){
- if(!activeRealm&&document.body.classList.contains('gateway-view')&&event.target?.closest?.('.world-choice')){if(!audio)bindAudio();getGain();context?.resume().catch(()=>{});return;}
- if(!activeRealm||!desired()||document.hidden||event.composedPath().includes(button)||event.composedPath().includes(popover))return;
+function onGesture(event:Event):void{
+ if(!activeRealm&&document.body.classList.contains('gateway-view')&&event.target instanceof Element&&event.target.closest('.world-choice')){if(!audio)bindAudio();getGain();context?.resume().catch(()=>{});return;}
+ if(!activeRealm||!desired()||document.hidden||(button&&event.composedPath().includes(button))||(popover&&event.composedPath().includes(popover)))return;
  if(context&&context.state!=='running'&&contextEverRunning&&Date.now()-contextCreatedAt>1000)getGain(true);
  if(!status())play();
 }

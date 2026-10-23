@@ -11,4 +11,4 @@ const labels={
  'The book':'The Book','Read the introduction':'Read the Introduction','Open the book':'Open the Book','Try again':'Try Again','Copy code':'Copy Code',
  'Browse as a list':'Browse as a List','The chapter atlas':'The Chapter Atlas','Interactive chapter map':'Interactive Chapter Map','Previous world':'Previous World','Next world':'Next World','Enter this world':'Enter This World','About the book':'About the Book','Source on GitHub':'Source on GitHub'
 };
-export const englishUI=text=>labels[text]||text;
+export const englishUI=(text:string):string=>(labels as Record<string,string>)[text]||text;
