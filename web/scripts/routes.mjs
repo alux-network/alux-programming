@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {parseHTML} from 'linkedom';
 import {languages,languagePath,htmlLanguage} from '../locale-routing.js';
-import {siteDescriptions,socialLocales} from '../site-meta.js';
+import {siteTitles,siteDescriptions,socialLocales} from '../site-meta.js';
 import {uiRows} from '../ui-translations.js';
 import {gatewayMarkup} from '../worlds.js';
 import {englishUI} from '../ui-english.js';
@@ -29,7 +29,7 @@ for(const {code} of languages){
  async function write(route,title,description,body='',realm='magic'){
   const {document}=parseHTML(template);document.documentElement.lang=htmlLanguage(code);document.documentElement.dir=code==='ar'?'rtl':'ltr';document.title=title+' · ALUX Programming';document.querySelector('meta[name=description]').content=description;
   const canonicalURL=siteOrigin+languagePath('/'+route.replace(/index\.html$/,''),code);
-  const shareTitle=(route==='introduction.html'||route==='real/introduction.html'?t('Introduction'):title)+' · ALUX Programming';document.title=shareTitle;
+  const shareTitle=route==='index.html'?siteTitles[code]:(route==='introduction.html'||route==='real/introduction.html'?t('Introduction'):title)+' · ALUX Programming';document.title=shareTitle;
   const values={'og:title':shareTitle,'og:description':siteDescriptions[code],'og:type':'website','og:site_name':'ALUX Programming','og:locale':socialLocales[code],'og:url':canonicalURL,'og:image':siteOrigin+'/social/alux-programming-'+code+'.jpg','og:image:width':'1200','og:image:height':'630','og:image:alt':'ALUX Programming','twitter:card':'summary_large_image','twitter:title':shareTitle,'twitter:description':siteDescriptions[code],'twitter:image':siteOrigin+'/social/alux-programming-'+code+'.jpg','twitter:image:alt':'ALUX Programming'};
   for(const [name,value]of Object.entries(values)){const meta=document.createElement('meta');meta.setAttribute(name.startsWith('og:')?'property':'name',name);meta.content=value;document.head.append(meta);}const canonical=document.createElement('link');canonical.rel='canonical';canonical.href=canonicalURL;document.head.append(canonical);
   if(realm==='real')document.body.className='reality-view real-theme-light';

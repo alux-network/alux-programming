@@ -2,6 +2,8 @@
 
 # ALUX-Programmierleitfaden
 
+![ALUX-Programmierleitfaden](../web/public/social/alux-programming-de.jpg)
+
 Dieses Buch beschreibt, wie man zuerst die Bedeutung eines Programms festlegt und danach seine Ausführung wählt. Es folgt Conal Elliotts denotationellem Entwurf und verbindet Komposition, Gesetze und Interpreter mit Capability-Traits und Beispielen in Rust.
 
 Autor: Tomislav Grospic.
@@ -19,7 +21,7 @@ Der Webreader unterstützt elf Sprachen. Zur Wahl stehen eine Buchansicht mit Se
 
 Das vollständige Inhaltsverzeichnis öffnet Kapitel direkt. Die Seitenzahlen laufen über Kapitelgrenzen hinweg und werden bei Änderungen von Sprache, Schriftgröße oder Fenstergröße neu berechnet.
 
-[Original-Inhaltsverzeichnis](../src/SUMMARY.md) · [Wartungs- und Typografierichtlinien](../web/AGENTS.md)
+[Original-Inhaltsverzeichnis](../src/SUMMARY.md) · [Telegram / X](../web/previews/social.html) · [Wartungs- und Typografierichtlinien](../web/AGENTS.md)
 
 ## Lokal starten
 

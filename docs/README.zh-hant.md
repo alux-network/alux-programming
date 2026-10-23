@@ -2,6 +2,8 @@
 
 # ALUX 程式設計指南
 
+![ALUX 程式設計指南](../web/public/social/alux-programming-zh-hant.jpg)
+
 這本書從程式的含義出發談設計：先定義清楚的語義、組合規則和定律，再選擇實作方式。書中沿用 Conal Elliott 的指稱設計思路，透過 Rust 的能力 trait、解釋器和證據落實到程式碼中。
 
 作者：Tomislav Grospic。
@@ -19,7 +21,7 @@
 
 全書目錄可直接進入章節；翻頁閱讀的頁碼跨章連續，並隨語言、字級和視窗大小重新計算。
 
-[原文目錄](../src/SUMMARY.md) · [維護與排版規範](../web/AGENTS.md)
+[原文目錄](../src/SUMMARY.md) · [Telegram / X](../web/previews/social.html) · [維護與排版規範](../web/AGENTS.md)
 
 ## 在本機執行
 

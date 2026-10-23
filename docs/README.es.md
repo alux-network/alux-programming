@@ -2,6 +2,8 @@
 
 # Guía de programación de ALUX
 
+![Guía de programación de ALUX](../web/public/social/alux-programming-es.jpg)
+
 Este libro explica cómo definir primero el significado de un programa y elegir después cómo ejecutarlo. Sigue el diseño denotacional de Conal Elliott y lleva la composición, las leyes y los intérpretes a ejemplos en Rust mediante traits de capacidades.
 
 Autor: Tomislav Grospic.
@@ -19,7 +21,7 @@ El lector web admite once idiomas. Permite elegir entre páginas de libro, despl
 
 El índice completo abre cada capítulo directamente. La numeración continúa entre capítulos y se recalcula según el idioma, el tamaño de letra y la ventana.
 
-[Índice original](../src/SUMMARY.md) · [Normas de mantenimiento y tipografía](../web/AGENTS.md)
+[Índice original](../src/SUMMARY.md) · [Telegram / X](../web/previews/social.html) · [Normas de mantenimiento y tipografía](../web/AGENTS.md)
 
 ## Ejecutar en local
 

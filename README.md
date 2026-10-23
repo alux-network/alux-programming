@@ -2,6 +2,8 @@
 
 **English** · [简体中文](docs/README.zh.md) · [繁體中文](docs/README.zh-hant.md) · [日本語](docs/README.ja.md) · [한국어](docs/README.ko.md) · [Tiếng Việt](docs/README.vi.md) · [Deutsch](docs/README.de.md) · [Español](docs/README.es.md) · [Русский](docs/README.ru.md) · [Українська](docs/README.uk.md) · [العربية](docs/README.ar.md)
 
+![ALUX Programming](web/public/social/alux-programming-en.jpg)
+
 A book about designing programs by first defining their meaning, then choosing how to execute them. It follows Conal Elliott’s denotational design approach through composition, laws and interpreters, with examples in Rust.
 
 The book provides the foundation for understanding and contributing to ALUX’s meaning-first codebase. Written by Tomislav Grospic.
@@ -19,7 +21,7 @@ The book provides the foundation for understanding and contributing to ALUX’s 
 
 The web reader offers eleven languages, a paper book view and continuous scrolling, plus a plain technical view. A full contents page opens chapters directly. Book-view page numbers continue across chapters and adjust to the language, text size and window. Both worlds share font size, day/night mode, search and bookmarks.
 
-[Preview the reader](web/previews/index.html) · [Preview screenshots](web/previews/assets/) · [Reader maintenance guide](web/AGENTS.md)
+[Telegram and X preview](web/previews/social.html) · [Preview the reader](web/previews/index.html) · [Preview screenshots](web/previews/assets/) · [Reader maintenance guide](web/AGENTS.md)
 
 The preview HTML opens locally after checkout; its reader links require the local server below. The published online edition still uses mdBook.
 

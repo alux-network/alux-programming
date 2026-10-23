@@ -2,6 +2,8 @@
 
 # Hướng dẫn lập trình ALUX
 
+![Hướng dẫn lập trình ALUX](../web/public/social/alux-programming-vi.jpg)
+
 Cuốn sách trình bày cách xác định ý nghĩa của chương trình trước khi chọn cách thực thi. Dựa trên thiết kế theo ngữ nghĩa biểu thị của Conal Elliott, sách giải thích phép hợp thành, các luật và bộ thông dịch, rồi áp dụng chúng qua các trait năng lực và ví dụ bằng Rust.
 
 Tác giả: Tomislav Grospic.
@@ -19,7 +21,7 @@ Bản web hỗ trợ 11 ngôn ngữ, với chế độ lật trang, cuộn liên
 
 Mục lục mở trực tiếp từng chương. Số trang nối tiếp qua các chương và được tính lại theo ngôn ngữ, cỡ chữ và kích thước cửa sổ.
 
-[Mục lục bản gốc](../src/SUMMARY.md) · [Hướng dẫn bảo trì và trình bày](../web/AGENTS.md)
+[Mục lục bản gốc](../src/SUMMARY.md) · [Telegram / X](../web/previews/social.html) · [Hướng dẫn bảo trì và trình bày](../web/AGENTS.md)
 
 ## Chạy trên máy
 

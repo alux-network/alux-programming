@@ -2,6 +2,8 @@
 
 # ALUX 프로그래밍 가이드
 
+![ALUX 프로그래밍 가이드](../web/public/social/alux-programming-ko.jpg)
+
 프로그램이 무엇을 의미하는지 먼저 정의하고, 실행 방법은 그다음에 선택하는 설계를 다룹니다. Conal Elliott의 지시적 설계를 바탕으로 합성, 법칙, 해석기를 설명하고 Rust의 능력 trait와 예제를 통해 구현으로 이어갑니다.
 
 저자: Tomislav Grospic.
@@ -19,7 +21,7 @@
 
 전체 목차에서 각 장을 바로 열 수 있습니다. 페이지 번호는 장이 바뀌어도 이어지며 언어, 글자 크기, 창 크기에 따라 다시 계산됩니다.
 
-[원문 목차](../src/SUMMARY.md) · [유지보수 및 조판 지침](../web/AGENTS.md)
+[원문 목차](../src/SUMMARY.md) · [Telegram / X](../web/previews/social.html) · [유지보수 및 조판 지침](../web/AGENTS.md)
 
 ## 로컬 실행
 

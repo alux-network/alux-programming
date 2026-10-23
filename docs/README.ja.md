@@ -2,6 +2,8 @@
 
 # ALUX プログラミングガイド
 
+![ALUX プログラミングガイド](../web/public/social/alux-programming-ja.jpg)
+
 プログラムが何を意味するかを定めてから、どう実行するかを選ぶための本です。Conal Elliott の指示的設計をもとに、合成、法則、インタープリターを説明し、Rust のケイパビリティ trait と具体例で実装につなげます。
 
 著者：Tomislav Grospic。
@@ -19,7 +21,7 @@
 
 全体の目次から各章を直接開けます。ページ番号は章をまたいで続き、言語、文字サイズ、ウィンドウの大きさに応じて再計算されます。
 
-[原文の目次](../src/SUMMARY.md) · [保守・組版ガイド](../web/AGENTS.md)
+[原文の目次](../src/SUMMARY.md) · [Telegram / X](../web/previews/social.html) · [保守・組版ガイド](../web/AGENTS.md)
 
 ## ローカルで起動
 

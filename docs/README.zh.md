@@ -2,6 +2,8 @@
 
 # ALUX 编程指南
 
+![ALUX 编程指南](../web/public/social/alux-programming-zh.jpg)
+
 这本书从程序的含义出发讲设计：先定义清楚的语义、组合规则和定律，再选择实现方式。书中沿用 Conal Elliott 的指称设计思路，通过 Rust 的能力 trait、解释器和证据把它落到代码中。
 
 作者：Tomislav Grospic。
@@ -19,7 +21,7 @@
 
 全书目录可直接进入章节；翻页阅读的页码跨章连续，并随语言、字号和窗口大小重新计算。
 
-[原文目录](../src/SUMMARY.md) · [维护与排版规范](../web/AGENTS.md)
+[原文目录](../src/SUMMARY.md) · [Telegram / X](../web/previews/social.html) · [维护与排版规范](../web/AGENTS.md)
 
 ## 本地运行
 

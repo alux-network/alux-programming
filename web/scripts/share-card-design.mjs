@@ -1,26 +1,22 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import {uiRows} from '../ui-translations.js';
-import {englishUI} from '../ui-english.js';
-const wording={
- en:['Build with|meaning.','Two worlds. One book.'],
- zh:['以意义|构建程序。','两个世界，同一本书。'],
- 'zh-hant':['以意義|構建程式。','兩個世界，同一本書。'],
- ja:['意味から、|つくる。','二つの世界で、一冊の本を。'],
- ko:['의미에서|시작하세요.','두 가지 세계, 한 권의 책.'],
- vi:['Xây dựng từ|ý nghĩa.','Hai thế giới. Một cuốn sách.'],
- de:['Mit Bedeutung|entwickeln.','Zwei Welten. Ein Buch.'],
- es:['Crea con|significado.','Dos mundos. Un libro.'],
- ru:['Создавайте|со смыслом.','Два мира. Одна книга.'],
- uk:['Створюйте|зі змістом.','Два світи. Одна книга.'],
- ar:['ابدأ بالمعنى،|ثم ابنِ.','عالمان. كتاب واحد.']
+import {htmlLanguage} from '../locale-routing.js';
+export const shareCopy={
+ en:['Programming','Design programs|by meaning.','Denotational design · Composition · Rust'],
+ zh:['编程指南','先定义含义，|再设计程序。','指称设计 · 组合性 · Rust'],
+ 'zh-hant':['程式設計指南','先定義含義，|再設計程式。','指稱設計 · 組合性 · Rust'],
+ ja:['プログラミングガイド','意味を定め、|プログラムを設計する。','指示的設計 · 合成性 · Rust'],
+ ko:['프로그래밍 가이드','의미를 정의하고,|프로그램을 설계하세요.','지시적 설계 · 합성성 · Rust'],
+ vi:['Hướng dẫn lập trình','Thiết kế từ|ý nghĩa.','Ngữ nghĩa biểu thị · Phép hợp thành · Rust'],
+ de:['Programmierleitfaden','Nach Bedeutung|programmieren.','Denotationeller Entwurf · Komposition · Rust'],
+ es:['Guía de programación','Diseña programas|desde el significado.','Diseño denotacional · Composición · Rust'],
+ ru:['Руководство по программированию','Проектируйте,|исходя из смысла.','Денотационное проектирование · Композиция · Rust'],
+ uk:['Посібник із програмування','Проєктуйте,|виходячи зі змісту.','Денотаційне проєктування · Композиція · Rust'],
+ ar:['دليل البرمجة','حدّد المعنى،|ثم صمّم البرنامج.','التصميم الدلالي · التركيب · Rust']
 };
 export async function shareCardMarkup(code,origin='http://127.0.0.1:4173'){
- const columns={en:0,zh:1,ko:2,ja:3,ar:4};let ui={};
- if(code==='zh-hant'||['vi','de','es','ru','uk'].includes(code))ui=JSON.parse(await fs.readFile(path.resolve(import.meta.dirname,'../locales/ui-'+code+'.json'),'utf8'));
- const t=text=>code==='en'?englishUI(text):ui[text]||uiRows.find(row=>row[0]===text)?.[columns[code]]||text;
- const [title,caption]=wording[code];const headingSize=['zh','zh-hant','ja','ko','ar'].includes(code)?70:['ru','uk','de','vi'].includes(code)?72:82;
- return `<!doctype html><html lang="${code}" dir="ltr"><head><meta charset="utf-8"><style>
- @font-face{font-family:Book;src:url('${origin}/node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-600-normal.woff2');font-weight:600}*{box-sizing:border-box}body{margin:0;width:1200px;height:630px;overflow:hidden;background:#101a17;color:#eee6d4;font-family:Book,Georgia,serif}.card{position:relative;height:630px;isolation:isolate;background:#101a17}.paper{position:absolute;inset:0;background:linear-gradient(90deg,#0a1717f2 0%,#0a1717d9 38%,#0b17204d 75%),url('${origin}/art/forest-gateway.webp') center/cover;opacity:1;z-index:-1}.copy{position:absolute;left:76px;top:48px;z-index:1;width:570px}.brand{display:flex;align-items:center;gap:19px;font-size:42px;letter-spacing:7px;color:#d7c6a0}.brand small{display:block;font:17px Georgia,serif;letter-spacing:2.8px;margin-top:5px}.brand img{width:78px;height:78px;object-fit:contain;filter:brightness(.72) sepia(1) saturate(.65) brightness(.95)}.rule{width:65px;height:1px;background:#c8a466;margin:30px 0 20px}h1{font-size:${headingSize}px;line-height:1.13;font-weight:600;margin:0 0 25px;letter-spacing:-1px}p{font:20px/1.55 Arial,'Microsoft YaHei',sans-serif;color:#bfcbbf;max-width:440px}.worlds{font-size:24px;display:flex;gap:24px;color:#e4c88f;align-items:center;margin-top:30px}.worlds span:last-child{color:#b5d8e8}.worlds b{width:1px;height:20px;background:#b5c0a566;font-weight:400}.wizard{position:absolute;width:390px;right:55px;bottom:8px}.wizard img{display:block;width:100%}.cjk h1{font-family:'SimSun','Yu Mincho',serif;font-weight:500;letter-spacing:1px}.arabic .copy{width:480px}.arabic .brand{justify-content:flex-end}.arabic h1,.arabic p{direction:rtl;text-align:right;font-family:'Traditional Arabic',Tahoma,serif}.arabic p{font-size:29px;max-width:none}.arabic .worlds{font-size:30px;justify-content:flex-end;direction:rtl}.arabic h1{font-size:82px}.cjk .worlds,.arabic .worlds{font-family:'SimSun','Traditional Arabic',serif}
- </style></head><body class="${['zh','zh-hant','ja','ko'].includes(code)?'cjk':code==='ar'?'arabic':''}"><main class="card"><div class="paper"></div><div class="copy"><div class="brand"><img src="${origin}/alux-white.png" alt=""><span>ALUX<small>PROGRAMMING</small></span></div><div class="rule"></div><h1>${title.replace('|','<br>')}</h1><p>${caption}</p><div class="worlds"><span>${t('Magic world')}</span><b></b><span>${t('Real world')}</span></div></div><div class="wizard"><img src="${origin}/art/wizard-standing.webp" alt=""></div></main></body></html>`;
+ const [subtitle,heading,caption]=shareCopy[code]||shareCopy.en;
+ const size={en:72,zh:76,'zh-hant':76,ja:56,ko:57,vi:80,de:72,es:64,ru:66,uk:60,ar:82}[code]||72;
+ const rtl=code==='ar';
+ return `<!doctype html><html lang="${htmlLanguage(code)}"><head><meta charset="utf-8"><style>
+ @font-face{font-family:Book;src:url('${origin}/node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-600-normal.woff2');font-weight:600}@font-face{font-family:Book;src:url('${origin}/node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-vietnamese-600-normal.woff2');font-weight:600;unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+1EA0-1EF9,U+20AB}*{box-sizing:border-box}body{margin:0;width:1200px;height:630px;overflow:hidden;background:#18251f;color:#e1e4d6;font-family:Book,Georgia,serif}.card{position:relative;height:630px;isolation:isolate}.paper{position:absolute;inset:0;background:linear-gradient(90deg,#14241ff5 0%,#14241fe8 43%,#14241f33 78%),url('${origin}/art/forest-gateway.webp') center/cover;z-index:-1}.copy{position:absolute;left:72px;top:46px;width:650px;z-index:1}.brand{display:flex;align-items:center;gap:19px}.brand img{width:78px;height:78px;object-fit:contain}.brand-name{font-size:48px;line-height:1;letter-spacing:7px;color:#e1e4d6}.brand-subtitle{display:block;font:24px/1.4 Georgia,'Microsoft YaHei',serif;letter-spacing:.5px;margin-top:8px;color:#e1e4d6}.rule{width:70px;height:1px;background:#c9ae75;margin:32px 0 28px}h1{font-size:${size}px;line-height:1.17;font-weight:600;margin:0 0 28px;letter-spacing:0}h1{height:210px;display:flex;flex-direction:column;justify-content:center}h1 span{display:block}p{font:25px/1.65 Arial,'Microsoft YaHei',sans-serif;color:#d5c18f;max-width:620px;margin:0}p{height:80px}.byline{font:22px/1.4 Georgia,serif;color:#c1cbbf;margin-top:28px;letter-spacing:.4px}.wizard{position:absolute;width:390px;right:38px;bottom:8px}.wizard img{display:block;width:100%}.cjk h1{font-family:'SimSun','Yu Mincho','Malgun Gothic',serif;font-weight:500}.cjk .brand-subtitle{font-family:'SimSun','Yu Mincho','Malgun Gothic',serif}.arabic .copy{width:630px}.arabic .brand{justify-content:flex-end}.arabic .rule{margin-left:auto}.arabic h1,.arabic p{direction:rtl;text-align:right;font-family:'Traditional Arabic',Tahoma,serif}.arabic p{font-size:32px}.arabic .byline{text-align:right}.arabic .brand-subtitle{direction:rtl;font-family:'Traditional Arabic',Tahoma,serif;font-size:30px}.arabic .brand-name{display:block;direction:ltr;text-align:right}
+ </style></head><body class="${['zh','zh-hant','ja','ko'].includes(code)?'cjk':rtl?'arabic':''}"><main class="card"><div class="paper"></div><div class="copy"><div class="brand"><img src="${origin}/art/alux-bronze-night.webp" alt=""><div><span class="brand-name">ALUX</span><span class="brand-subtitle">${subtitle}</span></div></div><div class="rule"></div><h1>${heading.split('|').map(line=>`<span>${line}</span>`).join('')}</h1><p>${caption}</p><div class="byline" dir="ltr">Tomislav Grospic</div></div><div class="wizard"><img src="${origin}/art/wizard-standing.webp" alt=""></div></main></body></html>`;
 }
