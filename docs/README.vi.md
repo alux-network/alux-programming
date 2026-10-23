@@ -17,6 +17,8 @@ Tác giả: Tomislav Grospic.
 
 Bản web hỗ trợ 11 ngôn ngữ, với chế độ lật trang, cuộn liên tục hoặc giao diện tài liệu kỹ thuật gọn gàng. Bạn có thể đổi cỡ chữ, chế độ sáng/tối, tìm kiếm và lưu dấu trang. Ngôn ngữ được chọn thủ công sẽ được ghi nhớ.
 
+Mục lục mở trực tiếp từng chương. Số trang nối tiếp qua các chương và được tính lại theo ngôn ngữ, cỡ chữ và kích thước cửa sổ.
+
 [Mục lục bản gốc](../src/SUMMARY.md) · [Hướng dẫn bảo trì và trình bày](../web/AGENTS.md)
 
 ## Chạy trên máy

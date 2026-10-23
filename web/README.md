@@ -1,6 +1,6 @@
 # ALUX Programming — local preview
 
-This independent web presentation preserves all 28 original chapters from `../src` and the existing mdBook publishing workflow. `/` opens the wizard chooser. Magic and Real world enter the same introduction directly, with a same-chapter world switch. The ALUX logo returns to the chooser. The redundant showcase homepage and standalone directory are outside the reading path; `/magic.html` and `/contents.html` remain compatible aliases.
+This independent web presentation preserves all 28 original chapters from `../src` and the existing mdBook publishing workflow. `/` opens the wizard chooser. Magic and Real world enter the same introduction directly, with a same-chapter world switch. The ALUX logo returns to the chooser. Full contents pages are available at `/contents.html` and `/real/contents.html`, with language prefixes where appropriate; chapter entries open the chosen reader directly. `/magic.html` remains a compatible entrance alias.
 
 The chooser places a complete standing wizard in a misty forest clearing, with warm and cool light distinguishing the two entrances. Its larger language control uses a high-contrast surface. The forest artwork is generated at 1672×941 native pixels and ordinarily encoded to WebP; it is not an upscaled 4K asset. Reader palettes remain independent.
 
@@ -38,7 +38,7 @@ All static routes include localized Open Graph and X large-image card metadata, 
 
 The share cards use the same forest and complete standing wizard with the official white ALUX mark. `node scripts/share-preview.mjs` regenerates the eleven-language local preview at `../output/分享预览.html`.
 
-The PR also includes `previews/index.html`, desktop/phone captures in `previews/assets`, and the eleven share cards. The tracked preview is an engineering review artifact outside Vite's public output. It links to the local production preview on port 4174; the main reading path does not expose this review page.
+The PR also includes [the Chinese/English preview](previews/index.html), current desktop/phone captures in `previews/assets`, and the eleven share cards. The preview covers day/night contents, book and scroll layouts, the technical reader and eleven welcome voices. It links to the local production preview on port 4174, with a field for another running server address. Open the HTML file directly after checkout; keep the local server running for reader links. The preview stays outside Vite's public output.
 
 Static chapter routes also provide localized no-JavaScript reading fallbacks. No original source chapter, formula, code example, media embed or publishing workflow is removed by the web layer.
 

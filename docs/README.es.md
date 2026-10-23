@@ -17,6 +17,8 @@ Autor: Tomislav Grospic.
 
 El lector web admite once idiomas. Permite elegir entre páginas de libro, desplazamiento continuo y una vista técnica sencilla. Incluye tamaño de letra, modo claro/oscuro, búsqueda y marcadores. La elección manual del idioma se conserva.
 
+El índice completo abre cada capítulo directamente. La numeración continúa entre capítulos y se recalcula según el idioma, el tamaño de letra y la ventana.
+
 [Índice original](../src/SUMMARY.md) · [Normas de mantenimiento y tipografía](../web/AGENTS.md)
 
 ## Ejecutar en local

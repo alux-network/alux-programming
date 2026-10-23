@@ -17,6 +17,8 @@ Autor: Tomislav Grospic.
 
 Der Webreader unterstützt elf Sprachen. Zur Wahl stehen eine Buchansicht mit Seitenwechseln, fortlaufendes Scrollen und eine schlichte technische Ansicht. Schriftgröße, Tag-/Nachtmodus, Suche und Lesezeichen sind verfügbar. Eine manuell gewählte Sprache bleibt gespeichert.
 
+Das vollständige Inhaltsverzeichnis öffnet Kapitel direkt. Die Seitenzahlen laufen über Kapitelgrenzen hinweg und werden bei Änderungen von Sprache, Schriftgröße oder Fenstergröße neu berechnet.
+
 [Original-Inhaltsverzeichnis](../src/SUMMARY.md) · [Wartungs- und Typografierichtlinien](../web/AGENTS.md)
 
 ## Lokal starten
