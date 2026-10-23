@@ -18,7 +18,7 @@ The Real world uses a quiet technical-document layout with neutral gray-white da
 
 My bookmarks is visible in each sidebar. Multiple saved chapters retain their world and reading position, can be opened or removed, and migrate the older single-bookmark setting. Bookmarks, reading preferences and manual language choices are stored on the current browser; no account or server-side reading collection is implied.
 
-Magic book pages are numbered continuously across the whole book. The same pagination algorithm measures chapter offsets and renders the sheets; changing language, text size or viewport recalculates the total. Page numbers sit at the outer edges, with a compact range/total below the book. Continuous scrolling does not invent page numbers. Chapter-end contents links open the existing sidebar, return it to the top and focus Introduction.
+Magic book pages are numbered continuously across the whole book. The same pagination algorithm measures chapter offsets and renders the sheets; changing language, text size or viewport recalculates the total. Page numbers sit at the outer edges, with a compact range/total below the book. Continuous scrolling does not invent page numbers. Chapter-end contents links navigate to a dedicated full contents page. Its chapter links enter the selected chapter directly; they do not pass through part-opening pages. The toolbar Contents button still toggles the reading sidebar.
 
 Embedded interview clips retain their original references and show their individual time ranges. The web generator supplies explicit YouTube playback start/end bounds; repeated thumbnails alone do not imply duplicate clips.
 

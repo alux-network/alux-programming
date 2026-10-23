@@ -6,9 +6,10 @@ import {siteDescriptions,socialLocales} from '../site-meta.js';
 import {uiRows} from '../ui-translations.js';
 import {gatewayMarkup} from '../worlds.js';
 import {englishUI} from '../ui-english.js';
+import {contentsMarkup} from '../contents.js';
 const siteOrigin=(process.env.ALUX_SITE_URL||'http://127.0.0.1:4174').replace(/\/$/,'');
 const dir=path.resolve(import.meta.dirname,'../dist');
-const {pages}=JSON.parse(await fs.readFile(path.join(dir,'content.json'),'utf8'));
+const {pages,groups}=JSON.parse(await fs.readFile(path.join(dir,'content.json'),'utf8'));
 const template=await fs.readFile(path.join(dir,'index.html'),'utf8');
 const locales=path.resolve(import.meta.dirname,'../locales');
 const manifest=JSON.parse(await fs.readFile(path.join(locales,'manifest.json'),'utf8'));
@@ -43,7 +44,10 @@ for(const {code} of languages){
   const destination=path.join(dir,languagePath('/'+route,code));await fs.mkdir(path.dirname(destination),{recursive:true});await fs.writeFile(destination,document.toString());
  }
  for(const p of localPages){await write(p.slug,p.title,p.text.slice(0,175),p.html);await write('real/'+p.slug,p.title,p.text.slice(0,175),p.html,'real');}
- for(const [route,title] of extras)await write(route,t(title),t(title),route==='contents.html'?localPages[0].html:'');
+ const contentsGroups=groups.map(group=>({...group,title:t(group.title)}));
+ const contentsBody=real=>contentsMarkup({groups:contentsGroups,pages:localPages,icon:()=>'',real}).replace(/^<main[^>]*>/,'').replace(/<\/main>$/,'');
+ for(const [route,title] of extras)await write(route,t(title),t(title),route==='contents.html'?contentsBody(false):'');
+ await write('real/contents.html',t('Table of contents'),t('Table of contents'),contentsBody(true),'real');
  await write('magic.html',localPages[0].title,localPages[0].text.slice(0,175),localPages[0].html);
  await write('real/index.html',localPages[0].title,localPages[0].text.slice(0,175),localPages[0].html,'real');
  await write('index.html',t('Choose your world'),t('ALUX Programming'),gatewayMarkup({t}),'gateway');

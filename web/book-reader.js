@@ -28,12 +28,7 @@ export async function mountBookReader({app,page,pages,sidebar,brand,worldLink=''
   const reduced=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
   function menuLabel(open){const button=app.querySelector('#toggle-menu'),label=t(open?'Hide contents':'Show contents');button.querySelector('span').textContent=label;button.setAttribute('aria-label',label);button.title=label;}
   function menu(open){menuLabel(open);if(innerWidth>=1280){document.body.classList.toggle('contents-collapsed',!open);app.querySelector('#toggle-menu').setAttribute('aria-expanded',String(open));resized();return;}document.body.classList.toggle('menu-open',open);app.querySelector('#toggle-menu').setAttribute('aria-expanded',String(open));if(open)app.querySelector('.book-sidebar .active')?.focus();else app.querySelector('#toggle-menu').focus();}
-  function openContents(){
-    menu(true);
-    const sidebar=app.querySelector('.book-sidebar');
-    sidebar.scrollTo({top:0,behavior:'instant'});
-    sidebar.querySelector('.intro-nav')?.focus({preventScroll:true});
-  }
+  function openContents(){onNavigate('/contents.html');}
   app.querySelector('#toggle-menu').setAttribute('aria-expanded',String(innerWidth>=1280&&!document.body.classList.contains('contents-collapsed')));
   menuLabel(innerWidth>=1280&&!document.body.classList.contains('contents-collapsed'));
   app.querySelector('#toggle-menu').onclick=()=>menu(innerWidth>=1280?document.body.classList.contains('contents-collapsed'):!document.body.classList.contains('menu-open'));

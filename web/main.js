@@ -54,7 +54,7 @@ fontSize=Math.min(23,Math.max(16,fontSize));
 function brand(side=false){return `<a class="brand crafted-brand" href="/" aria-label="ALUX Programming home"><img class="brand-seal brand-seal-day" src="/art/alux-bronze.webp" alt="" width="72" height="72"><img class="brand-seal brand-seal-night" src="/art/alux-bronze-night.webp" alt="" width="72" height="72"><span class="brand-letters"><span class="brand-name">ALUX</span><span class="brand-subtitle">PROGRAMMING</span></span></a>`;}
 function header(){return `<header class="site-header">${brand()}<nav aria-label="Main navigation"><a class="worlds-nav" href="/">Choose world</a><a href="/introduction.html">The book</a><a href="/contents.html">Chapters</a><a href="https://github.com/alux-network/alux-programming" target="_blank" rel="noopener noreferrer">GitHub ${icon('arrow-up-right')}</a></nav><button data-search class="search-button" aria-label="Search the book">${icon('search')}<span>Search</span><kbd>⌘ / Ctrl K</kbd></button>${languagePicker()}</header>`;}
 function footer(){return `<footer class="site-footer"><div>${brand()}<p>Clear ideas. Composable programs.</p></div><div><a href="/about.html">About the book ${icon('arrow-up-right')}</a><a href="https://www.alux.network/" target="_blank" rel="noopener noreferrer">ALUX Network ${icon('arrow-up-right')}</a><a href="https://github.com/alux-network/alux-programming" target="_blank" rel="noopener noreferrer">Source on GitHub ${icon('arrow-up-right')}</a></div><span>Made of ideas.<br>Built to be explored.</span></footer>`;}
-function contents(){current=null;document.body.className='contents-view';app.innerHTML=header()+contentsMarkup({groups,pages,icon})+footer();document.title='Table of contents · ALUX Programming';hydrateIcons();}
+function contents(real=false){current=null;const night=storage.get('alux-reading-theme')==='dark';document.body.className='contents-view'+(night?' contents-night':'')+(real?' contents-real':'');app.innerHTML=`<header class="contents-toolbar">${brand()}<div><button class="icon-button" data-search aria-label="Search the book">${icon('search')}</button>${languagePicker()}</div></header>`+contentsMarkup({groups,pages,icon,real});document.title='Table of contents · ALUX Programming';hydrateIcons();}
 function part(index){current=null;document.body.className='part-view';app.innerHTML=header()+partMarkup({index,groups:parts,pages,icon})+footer();document.title=parts[index].title+' · ALUX Programming';hydrateIcons();}
 function atlas(){current=null;currentObserver?.disconnect();document.body.className='atlas-view';app.innerHTML=header()+'<main id="main" class="atlas-main"></main>'+footer();mountAtlas({root:$('#main'),groups:parts,pages,icon,hydrateIcons});document.title='The chapter atlas · ALUX Programming';}
 
@@ -76,9 +76,7 @@ function announce(text,anchor=document.activeElement?.closest('button')){const e
 function renderRoute(){
   disposeWelcome?.();disposeWelcome=null;
   nextRender=Promise.resolve();renderToken++;readerController?.dispose();readerController=null;document.body.classList.remove('menu-open','continuous-reading');
-  let showContents=false;
   let pathname=decodeURI(stripLanguage(location.pathname)).replace(/^\//,'');if(pathname==='magic.html'){history.replaceState({},'',languageURL('/introduction.html'+location.hash));pathname='introduction.html';}
-  if(pathname==='contents.html'||pathname==='real/contents.html'){showContents=true;pathname=pathname.startsWith('real/')?'real/introduction.html':'introduction.html';history.replaceState({},'',languageURL('/'+pathname));}
   const real=pathname.startsWith('real/');
   const slug=real?(pathname.slice(5)||'introduction.html'):pathname;
   const page=pages.find(p=>p.slug===(slug==='index.html'&&real?'introduction.html':slug));
@@ -86,12 +84,12 @@ function renderRoute(){
   if(page&&real){current=page;readerController=mountRealReader({app,page,pages,groups,icon,hydrateIcons,storage,announce,onNavigate:href=>navigate(href)});}
   else if(page)reader(page);
   else if(pathname==='atlas.html')atlas();
-  else if(pathname==='contents.html')contents();
+  else if(pathname==='contents.html'||pathname==='real/contents.html')contents(real);
   else if(partRoutes.includes(pathname))part(partRoutes.indexOf(pathname));
 
   else if(activeRealm==='gateway'){current=null;document.body.className='gateway-view';app.innerHTML=gatewayMarkup({t,languagePicker});document.title=t('Choose your world')+' · ALUX Programming';hydrateIcons();disposeWelcome=mountGatewayWelcome(app.querySelector('.world-gateway'));}
   else{current=null;document.title=t('This page is uncharted.')+' · ALUX Programming';document.body.className='home-view';app.innerHTML=header()+'<main id="main" class="not-found"><span>404</span><h1>This page is uncharted.</h1><p>Find your way back to the book.</p><a class="button primary" href="/">Choose a world</a></main>';hydrateIcons();}
-  if(page)document.title=(page.slug==='introduction.html'?t('Introduction'):page.title)+' · ALUX Programming';else if(activeRealm!=='gateway')document.title=t(document.title.split(' · ')[0])+' · ALUX Programming';translateUI(document);updateSiteMeta(language());updateBookmarkCounts();return nextRender.then(()=>{if(showContents)readerController?.openContents?.();syncReaderMusic(activeRealm);});
+  if(page)document.title=(page.slug==='introduction.html'?t('Introduction'):page.title)+' · ALUX Programming';else if(activeRealm!=='gateway')document.title=t(document.title.split(' · ')[0])+' · ALUX Programming';translateUI(document);updateSiteMeta(language());updateBookmarkCounts();return nextRender.then(()=>{syncReaderMusic(activeRealm);});
 }
 function afterRoute(focus=false){if(location.hash){const id=decodeURIComponent(location.hash.slice(1));if(readerController)readerController.goToAnchor(id,false);else requestAnimationFrame(()=>document.getElementById(id)?.scrollIntoView());}else if(activeRealm==='real'&&readerController?.restorePosition)readerController.restorePosition();else window.scrollTo({top:0,behavior:'instant'});if(focus){const m=$('#main');m?.setAttribute('tabindex','-1');m?.focus({preventScroll:true});}}
 let navigating=false;
