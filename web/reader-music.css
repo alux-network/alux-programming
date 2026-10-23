@@ -1,0 +1,24 @@
+
+.reader-music-dock{position:relative;display:flex;flex-shrink:0;z-index:40}
+.reader-music-dock[hidden],.reader-music-popover[hidden]{display:none}
+.reader-music-button{display:grid;place-items:center;width:48px;height:48px;min-width:44px;padding:0;border:1px solid #bcbcbc;border-radius:4px;background:#f1f0ed;color:#444;font-size:28px;cursor:pointer;touch-action:manipulation}
+.reader-music-button.is-playing{background:#e1e5e1;color:#253d31;border-color:#849489}
+.reader-music-button:focus-visible,.reader-music-popover button:focus-visible,.reader-music-volume input:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+.reader-music-popover{position:fixed;z-index:140;width:min(420px,calc(100vw - 24px));max-height:calc(100svh - 24px);overflow:auto;padding:18px;border:1px solid #c4c1b9;border-radius:8px;background:#f6f3eb;color:#3d4037;box-shadow:0 8px 30px #1113;font:18px/1.5 var(--sans,system-ui,sans-serif)}
+.reader-music-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:12px;font-weight:500}
+.reader-music-heading button{display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;margin:-7px -10px 0 0;border:0;background:transparent;color:inherit;font:26px/1 sans-serif;cursor:pointer}
+.reader-music-popover [data-music-hint]{margin:0;font-size:20px;line-height:1.6;color:inherit}
+.reader-music-volume{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;font-size:16px}
+.reader-music-volume input{min-width:0;width:100%;min-height:44px;accent-color:#827153}
+.reader-music-volume output{font:14px var(--sans,system-ui,sans-serif);min-width:38px;text-align:end}
+.reader-music-error{font-size:16px;line-height:1.5;margin:10px 0 0}.reader-music-error[hidden]{display:none}
+audio[aria-hidden="true"]{position:fixed;width:1px;height:1px;opacity:0;pointer-events:none}
+body.reading-view:not(.reality-view) .reader-music-button{background:transparent;border-color:var(--line);color:var(--ink)}
+body.reading-view:not(.reality-view) .reader-music-button.is-playing{background:#a68e5420;border-color:#a18b5b}
+body.night .reader-music-popover{background:#252d25;color:#d3d1c1;border-color:#626650}
+body.reality-view .reader-music-popover{background:#f3f2ef;color:#333;border-color:#bbb}
+body.real-theme-coal .reader-music-popover,body.real-theme-coal .reader-music-button{background:#252525;color:#ddd;border-color:#646464}
+body.real-theme-coal .reader-music-button.is-playing{background:#383838;color:#eee}
+@media(max-width:760px){.bound-tools .reader-music-dock{grid-row:2;grid-column:2}.reader-music-button{width:44px;height:44px}.real-toolbar-left{grid-template-columns:repeat(6,minmax(44px,1fr))}.real-toolbar-left .reader-music-dock{grid-row:1;grid-column:6;justify-self:center}}
+
+@media(max-width:760px){.real-toolbar-left #real-menu{grid-column:1;grid-row:1}.real-toolbar-left [data-search]{grid-column:2;grid-row:1}.real-toolbar-left .real-font[data-real-size="-1"]{grid-column:3;grid-row:1}.real-toolbar-left .real-font[data-real-size="1"]{grid-column:4;grid-row:1}.real-toolbar-left #real-night{grid-column:5;grid-row:1}.real-toolbar-left .reader-music-dock{grid-column:6;grid-row:1}}

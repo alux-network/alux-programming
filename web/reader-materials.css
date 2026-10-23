@@ -1,0 +1,47 @@
+/* Quiet vellum and aged metal: decorative light stays below reading contrast. */
+.bound-reading:not(.night) :is(.folio-content,.continuous-prose) .code-block{background:#e8e0cf;border-color:#b3a68d;color:#374337}
+.bound-reading:not(.night) :is(.folio-content,.continuous-prose) .code-toolbar{color:#6f583b;border-color:#b3a68d66}
+.bound-reading:not(.night) :is(.folio-content,.continuous-prose) .copy-code{color:#505c4b}
+.bound-reading:not(.night) :is(.folio-content,.continuous-prose) .code-toolbar .rust-playground{color:#76512d!important}
+.bound-reading:not(.night) :is(.folio-content,.continuous-prose) .copy-code:hover{color:#71421d!important}
+.bound-reading:not(.night) :is(.folio-content,.continuous-prose) .code-block pre{scrollbar-color:#969a84 #d6cdbb}
+.bound-reading:not(.night) :is(.folio-content,.continuous-prose) :is(.hljs-keyword,.hljs-selector-tag,.hljs-literal){color:#85451c}
+.bound-reading:not(.night) :is(.folio-content,.continuous-prose) :is(.hljs-string,.hljs-regexp){color:#435e34}
+.bound-reading:not(.night) :is(.folio-content,.continuous-prose) :is(.hljs-title,.hljs-type,.hljs-built_in){color:#2e5d61}
+.bound-reading:not(.night) :is(.folio-content,.continuous-prose) .hljs-comment{color:#5e634f}
+.bound-reading:not(.night) :is(.folio-content,.continuous-prose) :is(.hljs-number,.hljs-meta){color:#705229}
+.bound-reading:not(.night) :is(.folio-content,.continuous-prose) .hljs-params{color:#374337}
+.bound-reading .folio-page{background-color:#f1e8d4;background-image:linear-gradient(#f2eadc99,#f2eadc99),url('/art/ivory-paper.webp');background-size:626px 626px}
+.bound-reading.continuous-reading .bound-volume{background-color:#f1e8d4;background-image:linear-gradient(#f2eadcbb,#f2eadcbb),url('/art/ivory-paper.webp');background-size:626px 626px}
+body.bound-reading.night{--copper:#b9a172;--text:#bdc1b6;--ink:#c7c9bc;--muted:#a0aa9b;--line:#8b816047}
+body.bound-reading.night .bound-reader{background:#18211c}
+body.bound-reading.night .bound-toolbar{background:#18211c}
+body.bound-reading.night .folio-page,body.bound-reading.night.continuous-reading .bound-volume{background:#202820;color:#bdc1b6}
+body.bound-reading.night .folio-page:nth-child(odd){box-shadow:inset -19px 0 27px -23px #080d0a;border-right:1px solid #60604755}
+body.bound-reading.night .folio-page:nth-child(even){box-shadow:inset 19px 0 27px -23px #080d0a}
+body.bound-reading.night .folio-page :is(h1,h2,h3,h4){color:#c7c9bc}
+body.bound-reading.night .folio-page .admonition{background:#b3b59a09;border-color:#8c8b6740}
+body.bound-reading.night .continuous-prose{color:#bdc1b6}
+body.bound-reading.night .bound-volume{border-color:#81734e;background:#28372b;box-shadow:0 0 0 1px #5e583e,inset 0 0 0 5px #1c2a20,inset 0 0 0 6px #7b704c,0 5px 0 -2px #77715a,0 7px 0 -3px #444a39,0 16px 28px #0003}
+body.bound-reading.night .bound-volume:before,body.bound-reading.night .bound-volume:after{border-color:#8b7c50;background:transparent;filter:none}
+body.bound-reading.night .crafted-brand .brand-seal-night{filter:saturate(.85) brightness(.88) contrast(1.02)}
+body.bound-reading.night .crafted-brand :is(.brand-name,.brand-subtitle){color:#c9b486!important}
+.bound-reading .bound-toolbar{position:relative;top:auto;backdrop-filter:none}
+.bound-reading .folio-content h1{font-size:54px;line-height:1.12}
+html[lang|=zh] .bound-reading .folio-content h1,html[lang=ja] .bound-reading .folio-content h1,html[lang=ko] .bound-reading .folio-content h1{font-size:44px;line-height:1.3;word-break:keep-all;overflow-wrap:break-word}
+.bound-reading .admonition-continuation{margin-top:0}
+.bound-reading .continuous-prose{max-width:78ch}
+.bound-reading .folio-running-head{font-size:18px;color:#7e6c4e;letter-spacing:.03em}
+.bound-reading .folio-running-head>span:last-child{font-size:16px}
+.bound-reading .folio-footer{font-size:17px;color:#806c4a}
+.bound-reading.night :is(.folio-running-head,.folio-footer){color:#a99c7c}
+#announcement{font:500 19px/1.5 var(--sans);max-width:min(420px,calc(100vw - 24px));padding:12px 18px;border:1px solid #a595754d;border-radius:7px;background:#f3ead8;color:#494636;box-shadow:0 6px 20px #25211320;transition:opacity .16s;z-index:150}
+#announcement.anchored{bottom:auto;right:auto;transform:none;margin:0;position:fixed}
+body.night #announcement{background:#303a2d;color:#e0ddce;border-color:#8f957766;box-shadow:0 6px 20px #0004}
+body.reality-view #announcement{background:#f1f0ed;color:#333;border-color:#bcbcbc}
+body.real-theme-coal #announcement{background:#303030;color:#e1e1e1;border-color:#656565}
+@media(max-width:760px){.bound-reading .folio-running-head{font-size:15px}.bound-reading .folio-running-head>span:last-child{font-size:14px}.bound-reading .folio-footer{font-size:15px}#announcement{font-size:18px}}
+
+/* A lifted night leaf catches a little light, while the resting spread stays dim. */
+body.bound-reading.night .paper-turning .folio-page.--soft:not(.--simple){background:linear-gradient(105deg,#344134 0%,#2a362b 22%,#202820 66%,#111a14 100%);box-shadow:inset 2px 0 0 #aaa07b70,inset -2px 0 0 #070c09b3,0 8px 24px #0008}
+body.bound-reading.night .paper-turning :is(.stf__innerShadow,.stf__outerShadow){filter:contrast(1.15)}
