@@ -5,7 +5,7 @@ import type {ReaderBook, TranslationDictionary, TranslationManifest} from '../sr
 import {localizeBook} from '../src/localization.ts';
 import {languages,languagePath,htmlLanguage} from '../src/locale-routing.ts';
 import type {LanguageCode} from '../src/locale-routing.ts';
-import {siteTitles,siteDescriptions,socialLocales} from '../src/site-meta.ts';
+import {siteTitles,siteDescriptions,socialLocales,siteBrandName,brandedPageTitle} from '../src/site-meta.ts';
 import {uiRows} from '../src/ui-translations.ts';
 import {gatewayMarkup} from '../src/worlds.ts';
 import {englishUI} from '../src/ui-english.ts';
@@ -33,10 +33,11 @@ for(const {code} of languages){
  const localized=localizeBook(content,dict,manifest,translate,parseHTML('<html><body></body></html>').document as unknown as Document);
  const localPages=localized.pages;
  async function write(route:string,title:string,description:string,body='',realm='magic'):Promise<void>{
-  const {document}=parseHTML(template);document.documentElement.lang=htmlLanguage(code);document.documentElement.dir=code==='ar'?'rtl':'ltr';document.title=title+' · ALUX Programming';document.querySelector('meta[name=description]')?.setAttribute('content',description);
+  const {document}=parseHTML(template);document.documentElement.lang=htmlLanguage(code);document.documentElement.dir=code==='ar'?'rtl':'ltr';document.querySelector('meta[name=description]')?.setAttribute('content',description);
   const canonicalURL=siteOrigin+languagePath('/'+route.replace(/index\.html$/,''),code);
-  const shareTitle=route==='index.html'?siteTitles[code]:(route==='introduction.html'||route==='real/introduction.html'?translate('Introduction'):title)+' · ALUX Programming';document.title=shareTitle;
-  const values:Record<string,string>={'og:title':shareTitle,'og:description':siteDescriptions[code],'og:type':'website','og:site_name':'ALUX Programming','og:locale':socialLocales[code],'og:url':canonicalURL,'og:image':siteOrigin+'/social/alux-programming-'+code+'.jpg','og:image:width':'1200','og:image:height':'630','og:image:alt':'ALUX Programming','twitter:card':'summary_large_image','twitter:title':shareTitle,'twitter:description':siteDescriptions[code],'twitter:image':siteOrigin+'/social/alux-programming-'+code+'.jpg','twitter:image:alt':'ALUX Programming'};
+  const chapterTitle=route==='introduction.html'||route==='real/introduction.html'?translate('Introduction'):title;
+  const shareTitle=route==='index.html'?siteTitles[code]:brandedPageTitle(chapterTitle,code);document.title=route==='index.html'?siteBrandName(code):shareTitle;
+  const values:Record<string,string>={'application-name':siteBrandName(code),'apple-mobile-web-app-title':siteBrandName(code),'og:title':shareTitle,'og:description':siteDescriptions[code],'og:type':'website','og:site_name':siteBrandName(code),'og:locale':socialLocales[code],'og:url':canonicalURL,'og:image':siteOrigin+'/social/alux-programming-'+code+'.jpg','og:image:width':'1200','og:image:height':'630','og:image:alt':siteTitles[code],'twitter:card':'summary_large_image','twitter:title':shareTitle,'twitter:description':siteDescriptions[code],'twitter:image':siteOrigin+'/social/alux-programming-'+code+'.jpg','twitter:image:alt':siteTitles[code]};
   for(const [name,value]of Object.entries(values)){const meta=document.createElement('meta');meta.setAttribute(name.startsWith('og:')?'property':'name',name);meta.content=value;document.head.append(meta);}const canonical=document.createElement('link');canonical.rel='canonical';canonical.href=canonicalURL;document.head.append(canonical);
   if(realm==='real')document.body.className='reality-view real-theme-light';
   if(body){const no=document.createElement('noscript');no.innerHTML=realm==='gateway'?body:`<main class="no-script-page ${realm==='real'?'real-prose':'prose'}"><nav><a href="/">${translate('Choose world')}</a> · <a href="/${realm==='real'?'real/':''}introduction.html">${translate('Introduction')}</a></nav>${body}</main>`;
