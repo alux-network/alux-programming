@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { parseHTML } from 'linkedom';
-import { ownedBookSurface } from '../src/reader-surface.ts';
+import { copyBookSurface, ownedBookSurface } from '../src/reader-surface.ts';
 
 const markup = (): Document => parseHTML('<html><body><main id="app"><div class="bound-volume"><div id="page-book">First chapter</div></div></main></body></html>').document as unknown as Document;
 
@@ -48,4 +48,20 @@ test('a detached volume cannot create a new book', () => {
   volume.remove();
   assert.equal(ownedBookSurface(volume), null);
   assert.equal(document.querySelector('#page-book'), null);
+});
+
+test('the first-frame backdrop has readable content without duplicate anchors or active players', () => {
+  const document = markup();
+  const book = document.querySelector<HTMLElement>('#page-book')!;
+  book.innerHTML = '<article id="chapter"><h1 id="heading">Chapter text</h1><iframe src="https://example.com/player" srcdoc="player"></iframe></article>';
+  const copy = copyBookSurface(book);
+  assert.equal(copy.textContent, book.textContent);
+  assert.equal(copy.hasAttribute('id'), false);
+  assert.equal(copy.querySelectorAll('[id]').length, 0);
+  assert.equal(copy.querySelector('iframe')?.hasAttribute('src'), false);
+  assert.equal(copy.querySelector('iframe')?.hasAttribute('srcdoc'), false);
+  assert.equal(copy.getAttribute('aria-hidden'), 'true');
+  assert.ok(copy.inert);
+  assert.equal(book.querySelector('h1')?.id, 'heading');
+  assert.equal(book.querySelector('iframe')?.getAttribute('src'), 'https://example.com/player');
 });

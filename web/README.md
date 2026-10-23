@@ -30,6 +30,8 @@ My bookmarks is visible in each sidebar. Multiple saved chapters retain their wo
 
 Magic book pages are numbered continuously across the whole book. The same pagination algorithm measures chapter offsets and renders the sheets; changing language, text size or viewport recalculates the total. Page numbers sit at the outer edges, with a compact range/total below the book. Continuous scrolling does not invent page numbers. Chapter-end contents links navigate to a dedicated full contents page. Its chapter links enter the selected chapter directly; they do not pass through part-opening pages. The toolbar Contents button still toggles the reading sidebar.
 
+The current chapter appears immediately as readable sheets while fonts, images and whole-book numbering prepare. Provisional page numbers stay hidden. Fonts and images load concurrently, and decoded images are reused across chapter navigation. Reflow keeps the previous content until its replacement is ready; a noninteractive copy bridges PageFlip's first paint without duplicating anchors or starting embedded players.
+
 Embedded interview clips retain their original references and show their individual time ranges. The web generator supplies explicit YouTube playback start/end bounds; repeated thumbnails alone do not imply duplicate clips.
 
 ## Languages

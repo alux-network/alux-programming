@@ -34,6 +34,11 @@ export function presentChapter(nativeHTML: string, nativePath: string, routes: R
   }
   for (const image of root.querySelectorAll<HTMLImageElement>('img[src]')) {
     image.setAttribute('src', address(image.getAttribute('src') || '', true));
+    // Reserve the exact square aspect ratio even in offscreen, lazy pagination probes.
+    if (Object.values(readingArt).includes(image.getAttribute('src') || '')) {
+      image.setAttribute('width', '512');
+      image.setAttribute('height', '512');
+    }
     // Markdown images are lazy; inline raw-HTML marks preserve their original attributes.
     if (!image.hasAttribute('style')) image.setAttribute('loading', 'lazy');
   }

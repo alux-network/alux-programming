@@ -5,7 +5,7 @@ import {PageFlip} from 'page-flip';
 import {prepareChapterSource,paginateChapter} from './pagination.ts';
 import {readingSize,readingScale,applyReadingSize} from './reading-preferences.ts';
 import {query} from './dom.ts';
-import {ownedBookSurface} from './reader-surface.ts';
+import {copyBookSurface,ownedBookSurface} from './reader-surface.ts';
 import type {ReaderController, ReaderOptions, ReaderPage} from './book.ts';
 
 interface BookReaderOptions extends ReaderOptions { worldLink?: string }
@@ -13,6 +13,15 @@ interface BookReaderController extends ReaderController {
   getState(): { total: number; folio: number; layoutKey: string; continuous: boolean; size: number };
 }
 const pageCountCache = new WeakMap<ReaderPage[], Map<string, number[]>>();
+const decodedImages = new Map<string, Promise<void>>();
+function bookImagesReady(pages: ReaderPage[]): Promise<void[]> {
+  const sources=new Set(pages.flatMap(chapter=>[...chapter.html.matchAll(/<img[^>]+src="([^"]+)"/g)].map(match=>match[1])));
+  return Promise.all([...sources].map(src=>{
+    let ready=decodedImages.get(src);
+    if(!ready){const image=new Image();image.src=src;ready=image.decode().catch(()=>{decodedImages.delete(src);});decodedImages.set(src,ready);}
+    return ready;
+  }));
+}
 const escape=(s: string): string=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c] ?? c));
 
 /** Paginated HTML on full-size physical sheets. Source blocks are moved, never rewritten. */
@@ -33,6 +42,7 @@ export async function mountBookReader({app,page,pages,sidebar,brand,worldLink=''
   const originalHTML=source.innerHTML;
   const restoreEmbeds=(root: ParentNode): void=>root.querySelectorAll<HTMLIFrameElement>('iframe[data-embed-src]').forEach(frame=>{frame.src=frame.dataset.embedSrc ?? '';delete frame.dataset.embedSrc;});
   let continuous=storage.get('alux-reader-mode')==='scroll',total=0,layoutKey='',pageOffset=0,bookTotal=0,paginationRevision=0;
+  let imagesReady:Promise<void[]>|null=null;
   const reduced=(): boolean=>matchMedia('(prefers-reduced-motion:reduce)').matches;
   function menuLabel(open: boolean): void {const button=query<HTMLButtonElement>('#toggle-menu',app),label=t(open?'Hide contents':'Show contents');query<HTMLSpanElement>('span',button).textContent=label;button.setAttribute('aria-label',label);button.title=label;}
   function menu(open: boolean): void {menuLabel(open);if(innerWidth>=1280){document.body.classList.toggle('contents-collapsed',!open);query<HTMLButtonElement>('#toggle-menu',app).setAttribute('aria-expanded',String(open));resized();return;}document.body.classList.toggle('menu-open',open);query<HTMLButtonElement>('#toggle-menu',app).setAttribute('aria-expanded',String(open));if(open)app.querySelector<HTMLElement>('.book-sidebar .active')?.focus();else query<HTMLButtonElement>('#toggle-menu',app).focus();}
@@ -54,29 +64,49 @@ export async function mountBookReader({app,page,pages,sidebar,brand,worldLink=''
     storage.set('alux-folio-'+page.slug,p);storage.set('alux-last-chapter',page.slug);
     const prev=query<HTMLButtonElement>('#previous-sheet',app),next=query<HTMLButtonElement>('#next-sheet',app);
     prev.disabled=p===0&&idx===0;
+    next.disabled=false;
     query<HTMLSpanElement>('span',prev).textContent=p===0?t('Previous chapter'):t('Previous page');
     const last=p+(innerWidth>1000?2:1)>=total;
     query<HTMLSpanElement>('span',next).textContent=last?(idx+1<pages.length?t('Next chapter'):t('Back to contents')):t('Next page');
   }
-  async function paginate(keep=0){
-    if(!isCurrent())return;
-    applyReadingSize(size);
-    document.body.classList.toggle('continuous-reading',continuous);
-    // Dispose the library's owned subtree before installing a new book element.
-    if(flip){flip.destroy();flip=null;}
-    const target=ownedBookSurface(volume);
-    if(!target)return;
-    target.innerHTML='';
-    if(continuous){paginationRevision++;target.innerHTML=`<article class="prose continuous-prose">${originalHTML}</article>`;restoreEmbeds(target);total=1;footer();hydrateIcons();return;}
+  function sheetLayout(){
     const surface=getComputedStyle(volume);
     const available=Math.max(240,volume.clientWidth-parseFloat(surface.paddingLeft)-parseFloat(surface.paddingRight));
-    const portrait=innerWidth<=1000;portraitBook=portrait;
+    const portrait=innerWidth<=1000;
     const w=Math.floor(portrait?available:available/2);
     const h=Math.max(430,volume.clientHeight-parseFloat(surface.paddingTop)-parseFloat(surface.paddingBottom));
-    target.style.width=(portrait?w:2*w)+'px';target.style.height=h+'px';
     volume.style.setProperty('--sheet-w',w+'px');volume.style.setProperty('--sheet-h',h+'px');
-    layoutKey=`${w}/${h}/${size}`;
+    return {w,h,portrait};
+  }
+  function initialPages(keep:number):void {
+    const target=ownedBookSurface(volume);if(!target)return;
+    const {w,h,portrait}=sheetLayout();
+    const sheets=paginateChapter({page,pages,icon,host:volume,w,h,portrait});
+    const start=Math.max(0,Math.min(keep,sheets.length-1));
+    const first=portrait?start:start-start%2;
+    target.replaceChildren();folio=first;
+    target.classList.add('reader-preview');target.setAttribute('aria-busy','true');
+    target.style.width=(portrait?w:2*w)+'px';target.style.height=h+'px';
+    for(const sheet of sheets.slice(first,first+(portrait?1:2))){const local=Number(sheet.dataset.folio);sheet.classList.toggle('folio-verso',!portrait&&(rtl()?local%2===1:local%2===0));target.append(sheet);}
+    query<HTMLButtonElement>('#previous-sheet',app).disabled=true;query<HTMLButtonElement>('#next-sheet',app).disabled=true;
+  }
+  function clearBook():HTMLElement|null {
+    if(flip){flip.destroy();flip=null;}
+    const target=ownedBookSurface(volume);
+    if(target){target.innerHTML='';target.classList.remove('reader-preview');target.removeAttribute('aria-busy');}
+    return target;
+  }
+  async function paginate(keep=0){
+    if(!isCurrent())return;
     const revision=++paginationRevision;
+    applyReadingSize(size);
+    document.body.classList.toggle('continuous-reading',continuous);
+    if(continuous){const target=clearBook();if(!target)return;target.innerHTML=`<article class="prose continuous-prose">${originalHTML}</article>`;restoreEmbeds(target);total=1;footer();hydrateIcons();return;}
+    const readyImages=imagesReady??=bookImagesReady(pages);
+    if(!flip)initialPages(keep);
+    // Keep the current paper visible while fonts, images and new page counts prepare.
+    const {w,h,portrait}=sheetLayout();
+    layoutKey=`${w}/${h}/${size}`;
     const cacheKey=`${document.documentElement.lang}/${layoutKey}/${portrait}`;
     let layouts=pageCountCache.get(pages);
     if(!layouts){layouts=new Map();pageCountCache.set(pages,layouts);}
@@ -89,7 +119,7 @@ export async function mountBookReader({app,page,pages,sidebar,brand,worldLink=''
       const fontContent=document.createElement('article');fontContent.className='folio-content prose';
       for(const chapter of pages){const prepared=prepareChapterSource(chapter);prepared.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));fontContent.append(...prepared.childNodes);}
       fontPage.append(fontContent);fontProbe.append(fontPage);volume.append(fontProbe);
-      fontContent.getBoundingClientRect();await document.fonts.ready;fontProbe.remove();
+      fontContent.getBoundingClientRect();await Promise.all([document.fonts.ready,readyImages]);fontProbe.remove();
       if(!isCurrent()||revision!==paginationRevision)return;
       counts=[];
       for(const chapter of pages){
@@ -102,6 +132,13 @@ export async function mountBookReader({app,page,pages,sidebar,brand,worldLink=''
       layouts.set(cacheKey,counts);
     }
     sheets??=paginateChapter({page,pages,icon,host:volume,w,h,portrait});
+    const previous=ownedBookSurface(volume);
+    const backdrop=previous?.textContent?.trim()?copyBookSurface(previous):null;
+    if(backdrop&&previous){const r=previous.getBoundingClientRect(),v=volume.getBoundingClientRect();Object.assign(backdrop.style,{position:'absolute',left:`${r.left-v.left-volume.clientLeft}px`,top:`${r.top-v.top-volume.clientTop}px`,width:`${r.width}px`,height:`${r.height}px`,pointerEvents:'none',zIndex:'4'});volume.append(backdrop);}
+    const keepPage=flip?currentPage():keep;
+    const target=clearBook();if(!target){backdrop?.remove();return;}
+    portraitBook=portrait;
+    target.style.width=(portrait?w:2*w)+'px';target.style.height=h+'px';
     pageOffset=counts.slice(0,idx).reduce((sum,n)=>sum+n,0);
     bookTotal=counts.reduce((sum,n)=>sum+n,0);
     target.dataset.pageOffset=String(pageOffset);target.dataset.bookPages=String(bookTotal);
@@ -113,13 +150,13 @@ export async function mountBookReader({app,page,pages,sidebar,brand,worldLink=''
       restoreEmbeds(sheet);
     }
     if(rtl())sheets.reverse();sheets.forEach(s=>target.append(s));total=sheets.length;
-    flip=new PageFlip(target,{width:w,height:h,size:'fixed',minWidth:w,maxWidth:w,minHeight:h,maxHeight:h,autoSize:false,drawShadow:true,flippingTime:560,maxShadowOpacity:document.body.classList.contains('night')?.55:.2,usePortrait:portrait,showCover:false,startPage:physicalIndex(Math.max(0,Math.min(keep,total-1))),clickEventForward:true,useMouseEvents:false,disableFlipByClick:false,mobileScrollSupport:false,showPageCorners:false});
+    flip=new PageFlip(target,{width:w,height:h,size:'fixed',minWidth:w,maxWidth:w,minHeight:h,maxHeight:h,autoSize:false,drawShadow:true,flippingTime:560,maxShadowOpacity:document.body.classList.contains('night')?.55:.2,usePortrait:portrait,showCover:false,startPage:physicalIndex(Math.max(0,Math.min(keepPage,total-1))),clickEventForward:true,useMouseEvents:false,disableFlipByClick:false,mobileScrollSupport:false,showPageCorners:false});
     flip.on('flip',footer);
     flip.on('changeState',event=>target.classList.toggle('paper-turning',event.data==='flipping'));
     flip.loadFromHTML(sheets);
     // These are interior paper leaves, including an unpaired final sheet.
     for(let i=0;i<sheets.length;i++){flip.getPage(i).setDensity('soft');flip.getPage(i).setDrawingDensity('soft');}
-    requestAnimationFrame(()=>{if(!isCurrent()||revision!==paginationRevision)return;footer();hydrateIcons();if(location.hash)goToAnchor(location.hash.slice(1),false);});
+    requestAnimationFrame(()=>{backdrop?.remove();if(!isCurrent()||revision!==paginationRevision)return;footer();hydrateIcons();if(location.hash)goToAnchor(location.hash.slice(1),false);});
   }
   function turn(direction: number): void {
     if(!isCurrent()||continuous||!flip)return;
@@ -158,10 +195,8 @@ export async function mountBookReader({app,page,pages,sidebar,brand,worldLink=''
   app.addEventListener('toggle',detailsToggle,true);
   async function copyCode(e: MouseEvent): Promise<void>{const target=e.target instanceof Element?e.target:null;const button=target?.closest<HTMLElement>('.copy-code');if(!button)return;try{const code=query<HTMLElement>('code',query<HTMLElement>('.code-block',button));await navigator.clipboard.writeText(code.textContent??'');button.textContent=t('Copied');setTimeout(()=>button.textContent=t('Copy code'),1800)}catch{button.textContent=t('Select code to copy');}}
   function resized(): void {clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{if(isCurrent())paginate(folio)},250)}addEventListener('resize',resized);
-  await document.fonts.ready;
-  const imageSources=new Set(pages.flatMap(chapter=>[...chapter.html.matchAll(/<img[^>]+src="([^"]+)"/g)].map(match=>match[1])));
-  await Promise.all([...imageSources].map(src=>{const img=new Image();img.src=src;return img.decode().catch(()=>{});}));
-  if(!disposed&&volume.isConnected)await paginate(Number(storage.get('alux-folio-'+page.slug)||0));
+  const savedFolio=Number(storage.get('alux-folio-'+page.slug)||0);
+  if(isCurrent())await paginate(savedFolio);
   function getCurrentAnchor(): string | undefined {const headings=[...app.querySelectorAll<HTMLElement>('#page-book h1[id],#page-book h2[id],#page-book h3[id],#page-book h4[id]')];if(continuous)return(headings.filter(h=>h.getBoundingClientRect().top<170).at(-1)||headings[0])?.id;headings.sort((a,b)=>Number(a.closest<HTMLElement>('.folio-page')?.dataset.folio||0)-Number(b.closest<HTMLElement>('.folio-page')?.dataset.folio||0));const current=currentPage();return(headings.filter(h=>Number(h.closest<HTMLElement>('.folio-page')?.dataset.folio)<=current).at(-1)||headings[0])?.id}
   return {goToAnchor,getCurrentAnchor,openContents,dispose(){disposed=true;paginationRevision++;clearTimeout(resizeTimer);removeEventListener('resize',resized);removeEventListener('keydown',key);removeEventListener('hashchange',onHash);app.removeEventListener('click',copyCode);app.removeEventListener('click',contentsClick);volume.removeEventListener('click',blankClick);removeEventListener('alux-bookmarks-changed',bookmark);app.removeEventListener('toggle',detailsToggle,true);flip?.destroy();flip=null;},getState(){return{total,folio,layoutKey,continuous,size}}};
 }

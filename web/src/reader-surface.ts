@@ -10,3 +10,15 @@ export function ownedBookSurface(volume: HTMLElement): HTMLElement | null {
   }
   return book;
 }
+
+/** A short-lived visual copy covers PageFlip's first, still-unpainted frame. */
+export function copyBookSurface(book: HTMLElement): HTMLElement {
+  const copy = book.cloneNode(true) as HTMLElement;
+  copy.removeAttribute('id');
+  copy.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
+  copy.querySelectorAll('iframe').forEach(frame => { frame.removeAttribute('src'); frame.removeAttribute('srcdoc'); });
+  copy.inert = true;
+  copy.setAttribute('aria-hidden', 'true');
+  copy.classList.add('reader-backdrop');
+  return copy;
+}
