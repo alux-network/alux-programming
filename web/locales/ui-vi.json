@@ -51,7 +51,7 @@
   "The book": "Cuốn sách",
   "Chapters": "Các chương",
   "Search": "Tìm kiếm",
-  "Search the book": "Tìm trong sách",
+  "Search the book": "Tìm kiếm",
   "Table of contents": "Mục lục",
   "Contents": "Nội dung",
   "Introduction": "Giới thiệu",
@@ -135,5 +135,6 @@
   "Add bookmark": "Thêm dấu trang",
   "Bookmarked": "Đã đánh dấu",
   "Hide contents": "Ẩn mục lục",
-  "Show contents": "Hiện mục lục"
+  "Show contents": "Hiện mục lục",
+  "A keyword opens a new page.": "Một từ khóa mở ra trang mới."
 }

@@ -20,7 +20,7 @@ const hints={
 };
 const storage={get(key){try{return localStorage.getItem(key)}catch{return null}},set(key,value){try{localStorage.setItem(key,value)}catch{}}};
 const validRealm=realm=>realm==='magic'||realm==='real';
-let audio,context,gain,source,button,popover,dock,hideTimer,activeRealm=null,contextCreatedAt=0,contextEverRunning=false;
+let audio,context,gain,source,button,popover,dock,hideTimer,keyboardInHint=false,adjustingVolume=false,activeRealm=null,contextCreatedAt=0,contextEverRunning=false;
 const musicEnabled={magic:true,real:false};
 const strings=()=>copy[language()]||copy.en;
 const desired=()=>Boolean(musicEnabled[activeRealm]);
@@ -41,7 +41,7 @@ function getGain(rebuild=false){
 const status=()=>Boolean(audio&&!audio.paused&&!audio.ended&&(!context||context.state==='running'));
 function syncControls(){
  if(!button)return;const s=strings(),playing=status();button.setAttribute('aria-label',playing?s.off:s.on);button.title=playing?s.off:s.on;button.setAttribute('aria-pressed',String(playing));button.classList.toggle('is-playing',playing);button.firstElementChild.textContent=playing?'♫':'♪';
- popover.setAttribute('dir',language()==='ar'?'rtl':'ltr');popover.querySelector('[data-music-title]').textContent=s.music;popover.querySelector('[data-music-hint]').textContent=(hints[language()]||hints.en)[playing?0:1];popover.querySelector('[data-music-volume-label]').textContent=s.volume;popover.querySelector('[data-music-close]').setAttribute('aria-label',s.close);popover.querySelector('.reader-music-error').textContent=s.unavailable;popover.querySelector('.reader-music-error').hidden=!audio?.dataset.failed;
+ popover.setAttribute('dir',language()==='ar'?'rtl':'ltr');popover.setAttribute('aria-label',s.music);popover.querySelector('[data-music-hint]').textContent=(hints[language()]||hints.en)[playing?0:1];popover.querySelector('[data-music-volume-label]').textContent=s.volume;popover.querySelector('[data-music-close]').setAttribute('aria-label',s.close);popover.querySelector('.reader-music-error').textContent=s.unavailable;popover.querySelector('.reader-music-error').hidden=!audio?.dataset.failed;
 }
 function pause(){audio?.pause();syncControls();}
 function play(){
@@ -50,19 +50,24 @@ function play(){
  audio.play().then(()=>{if(!activeRealm||!desired()||document.hidden)audio.pause();syncControls();}).catch(()=>syncControls());
 }
 function positionPopover(){
- if(!button||!popover||popover.hidden)return;const rect=button.getBoundingClientRect(),width=Math.min(310,innerWidth-24),height=popover.getBoundingClientRect().height;
+ if(!button||!popover||popover.hidden)return;const rect=button.getBoundingClientRect(),width=popover.getBoundingClientRect().width,height=popover.getBoundingClientRect().height;
  popover.style.left=Math.max(12,Math.min(innerWidth-width-12,rect.right-width))+'px';popover.style.top=Math.max(12,Math.min(innerHeight-height-12,rect.bottom+8))+'px';
 }
-function dismiss(){clearTimeout(hideTimer);if(popover)popover.hidden=true;}
-function showHint(){
- popover.hidden=false;syncControls();positionPopover();clearTimeout(hideTimer);hideTimer=setTimeout(()=>{if(!popover.matches(':hover')&&!popover.contains(document.activeElement))dismiss();},6500);
-}
+function dismiss(){clearTimeout(hideTimer);keyboardInHint=false;adjustingVolume=false;if(popover)popover.hidden=true;}
+function scheduleHint(delay=5000){clearTimeout(hideTimer);hideTimer=setTimeout(()=>{if(!popover.matches(':hover')&&!keyboardInHint&&!adjustingVolume)dismiss();},delay);}
+function showHint(){popover.hidden=false;syncControls();positionPopover();scheduleHint();}
 function buildUI(){
  if(button)return;const s=strings();button=document.createElement('button');button.type='button';button.className='reader-music-button';button.innerHTML='<span aria-hidden="true">♪</span>';
- popover=document.createElement('section');popover.className='reader-music-popover';popover.hidden=true;popover.innerHTML='<div class="reader-music-heading"><span data-music-title></span><button type="button" data-music-close>×</button></div><p data-music-hint role="status"></p><label class="reader-music-volume"><span data-music-volume-label></span><input data-music-volume type="range" min="0" max="1" step="0.01" value="'+volume()+'"><output>'+Math.round(volume()*100)+'%</output></label><p class="reader-music-error" role="status" hidden></p>';
+ popover=document.createElement('section');popover.className='reader-music-popover';popover.hidden=true;popover.innerHTML='<div class="reader-music-heading"><p data-music-hint role="status"></p><button type="button" data-music-close>×</button></div><label class="reader-music-volume"><span data-music-volume-label></span><input data-music-volume type="range" min="0" max="1" step="0.01" value="'+volume()+'"><output>'+Math.round(volume()*100)+'%</output></label><p class="reader-music-error" role="status" hidden></p>';
  dock=document.createElement('div');dock.className='reader-music-dock';dock.append(button);document.body.append(dock,popover);
  button.addEventListener('click',()=>{musicEnabled[activeRealm]=!status();if(desired())play();else pause();showHint();});
  button.addEventListener('mouseenter',showHint);button.addEventListener('focus',showHint);
+ popover.addEventListener('pointerenter',()=>clearTimeout(hideTimer));
+ popover.addEventListener('pointerleave',()=>scheduleHint(2000));
+ popover.addEventListener('pointerdown',event=>{keyboardInHint=false;adjustingVolume=event.target.matches('[data-music-volume]');clearTimeout(hideTimer);});
+ const finishAdjustment=()=>{if(adjustingVolume){adjustingVolume=false;scheduleHint(2000);}};document.addEventListener('pointerup',finishAdjustment,{passive:true});document.addEventListener('pointercancel',finishAdjustment,{passive:true});
+ popover.addEventListener('keydown',()=>{keyboardInHint=true;clearTimeout(hideTimer);});
+ popover.addEventListener('focusout',event=>{if(!popover.contains(event.relatedTarget)){keyboardInHint=false;scheduleHint(2000);}});
  popover.querySelector('[data-music-close]').addEventListener('click',dismiss);
  popover.querySelector('[data-music-volume]').addEventListener('input',event=>{const value=Number(event.target.value);storage.set('alux-reader-music-volume',String(value));if(gain)gain.gain.setTargetAtTime(value,context.currentTime,.025);popover.querySelector('output').textContent=Math.round(value*100)+'%';clearTimeout(hideTimer);});
  document.addEventListener('click',event=>{const path=event.composedPath();if(!path.includes(popover)&&!path.includes(button))dismiss();});
@@ -70,7 +75,7 @@ function buildUI(){
 }
 export function syncReaderMusic(realm){
  const next=validRealm(realm)?realm:null;if(!next&&!dock)return;buildUI();if(!audio)bindAudio();
- if(next){document.querySelector(next==='magic'?'.bound-tools':'.real-toolbar-left')?.append(dock);}
+ if(next){const host=document.querySelector(next==='magic'?'.bound-tools':'.real-toolbar-left');const theme=host?.querySelector(next==='magic'?'#toggle-night':'#real-night');if(theme)theme.after(dock);else host?.append(dock);}
  if(next===activeRealm){syncControls();return;}activeRealm=next;dismiss();
  if(!next){pause();dock.hidden=true;return;}pause();musicEnabled[next]=next==='magic';dock.hidden=false;
  if(desired())play();showHint();

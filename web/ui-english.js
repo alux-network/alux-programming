@@ -3,7 +3,7 @@ const labels={
  'Add bookmark':'Add Bookmark','Hide contents':'Hide Contents','Show contents':'Show Contents',
  'ALUX programming':'ALUX Programming','ALUX programming guidelines':'ALUX Programming Guidelines',
  'Magic world':'Magic World','Real world':'Real World','Choose world':'Choose World','Choose a world':'Choose a World','Choose your world':'Choose Your World',
- 'Click to enter':'Click to Enter','Table of contents':'Table of Contents','My bookmarks':'My Bookmarks','Search the book':'Search the Book',
+ 'Click to enter':'Click to Enter','Table of contents':'Table of Contents','My bookmarks':'My Bookmarks','Search the book':'Search',
  'Previous page':'Previous Page','Next page':'Next Page','Previous chapter':'Previous Chapter','Next chapter':'Next Chapter',
  'Back to contents':'Back to Contents','In this chapter':'In This Chapter','Original source':'Original Source',
  'Scroll view':'Scroll View','Book view':'Book View','Continuous reading':'Continuous Reading','Continue reading':'Continue Reading',

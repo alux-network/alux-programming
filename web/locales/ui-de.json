@@ -51,7 +51,7 @@
   "The book": "Das Buch",
   "Chapters": "Kapitel",
   "Search": "Suchen",
-  "Search the book": "Im Buch suchen",
+  "Search the book": "Suche",
   "Table of contents": "Inhaltsverzeichnis",
   "Contents": "Inhalt",
   "Introduction": "Einführung",
@@ -135,5 +135,6 @@
   "Add bookmark": "Lesezeichen setzen",
   "Bookmarked": "Lesezeichen hinzugefügt",
   "Hide contents": "Inhaltsverzeichnis ausblenden",
-  "Show contents": "Inhaltsverzeichnis anzeigen"
+  "Show contents": "Inhaltsverzeichnis anzeigen",
+  "A keyword opens a new page.": "Ein Stichwort öffnet eine neue Seite."
 }

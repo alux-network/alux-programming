@@ -51,7 +51,7 @@
   "The book": "Книжка",
   "Chapters": "Розділи",
   "Search": "Пошук",
-  "Search the book": "Шукати в книжці",
+  "Search the book": "Пошук",
   "Table of contents": "Зміст",
   "Contents": "Зміст книжки",
   "Introduction": "Вступ",
@@ -135,5 +135,6 @@
   "Add bookmark": "Додати закладку",
   "Bookmarked": "У закладках",
   "Hide contents": "Сховати зміст",
-  "Show contents": "Показати зміст"
+  "Show contents": "Показати зміст",
+  "A keyword opens a new page.": "Ключове слово відкриває нову сторінку."
 }

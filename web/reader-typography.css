@@ -1,10 +1,14 @@
 /* Shared reading sizes are set once per locale by reading-preferences.js. */
 html{scrollbar-gutter:stable}
 .bound-reading .folio-content,.bound-reading .continuous-prose{font-size:var(--reading-size)!important}
-.bound-reading .book-sidebar nav a,.reality-view .real-sidebar nav a{font-size:var(--sidebar-size)!important;line-height:1.5}
-.bound-reading .book-sidebar .sidebar-group h2{font:600 calc(var(--sidebar-size)*.84)/1.5 var(--serif);letter-spacing:.015em;text-transform:none}
+.bound-reading .book-sidebar nav a,.reality-view .real-sidebar nav a{font-size:calc(var(--sidebar-size) - 2px)!important;line-height:1.6}
+.bound-reading .book-sidebar .sidebar-group h2{font:600 calc(var(--sidebar-size) + 2px)/1.45 var(--serif);letter-spacing:0;text-transform:none;margin-bottom:12px;text-wrap:wrap;overflow-wrap:break-word}
 .bound-reading .book-sidebar :is(.my-bookmarks,.sidebar-search),.reality-view .real-sidebar .my-bookmarks{font-size:var(--reader-ui-size);line-height:1.5}
 .bound-reading .sidebar-group a>span{font-size:.64em;min-width:1.7em}
+.bound-reading .book-sidebar .sidebar-bottom{font:500 max(18px,calc(var(--sidebar-size) - 2px))/1.8 var(--serif);letter-spacing:.025em;color:#66543a;opacity:1;padding-top:24px}
+.bound-reading.night .book-sidebar .sidebar-bottom{color:#c5b994}
+.bound-reading .book-sidebar .sidebar-bottom>span{font-size:28px;color:#9b783e;margin-bottom:12px;opacity:1}
+.bound-reading.night .book-sidebar .sidebar-bottom>span{color:#c5b17d}
 .bound-reading .sidebar-search{min-height:48px;gap:9px}.bound-reading .sidebar-search kbd{font-size:11px}
 body.bound-reading .book-sidebar .sidebar-search{font-size:calc(var(--sidebar-size) + 2px);min-height:60px;padding:13px 14px;gap:12px}
 body.bound-reading .book-sidebar .sidebar-search svg{width:26px;height:26px}
@@ -23,8 +27,8 @@ body.bound-reading .book-sidebar .my-bookmarks small,body.reality-view .real-sid
 .bound-reading .bound-tools .icon-button svg{width:27px;height:27px}
 .bound-tools .contents-toggle{font-size:24px;min-height:48px;height:48px;padding:8px 14px}
 .bound-tools .contents-toggle svg{width:25px;height:25px}
-.bound-reading .bound-tools .contents-toggle{color:#f5edda;background:#435a40;border:1px solid #7a8b6b;box-shadow:none}
-.bound-reading .bound-tools .contents-toggle:hover{background:#354c34}
+.bound-reading .bound-tools .contents-toggle{color:#454c33;background:#ddd5bc;border:1px solid #9e9675;box-shadow:none}
+.bound-reading .bound-tools .contents-toggle:hover{background:#d2caac}
 .bound-reading.night .bound-tools .contents-toggle{color:#d8d8c6;background:#354637;border-color:#66765d}
 .bound-reading .bound-tools .bound-mode{display:inline-flex;align-items:center;justify-content:center;gap:9px;font:600 23px/1.3 var(--serif);border:1px solid var(--line);border-radius:3px;padding:10px 13px;margin-inline-start:6px;white-space:normal;text-wrap:balance}
 .bound-tools .bound-mode svg{width:25px;height:25px;flex-shrink:0}
@@ -49,12 +53,16 @@ body.bound-reading .book-sidebar .my-bookmarks small,body.reality-view .real-sid
 .real-pagination{min-width:0}.real-pagination a{min-width:0;flex:1}.real-pagination a>span{min-width:0;overflow-wrap:anywhere;hyphens:auto}
 .real-prose :is(h1,h2,h3,h4){overflow-wrap:anywhere;hyphens:auto}
 .real-prose :not(pre)>code{overflow-wrap:anywhere;white-space:normal}
-.real-sidebar nav h2{font-size:.84em;line-height:1.5}
+.real-sidebar nav h2{font-size:calc(var(--sidebar-size) + 2px);line-height:1.45;margin-bottom:12px;text-wrap:wrap;overflow-wrap:break-word}
 .reality-view .real-main{max-width:1000px;font-size:var(--real-size)!important}
 .bound-reading .folio-content .code-block pre,.reality-view .real-prose pre{font-size:calc(var(--reading-size)*.8)}
 .bound-reading .folio-content :is(.code-toolbar,.copy-code,.admonition-title),.reality-view .real-prose :is(.code-toolbar,.admonition-title){font-size:14px}
 .folio-running-head{font-size:15px;height:40px;padding-bottom:12px}.folio-running-head>span:last-child{font-size:12px}
 .folio-content{height:calc(100% - 83px)}.folio-footer{font-size:14px}
+.folio-footer .folio-source{display:grid;place-items:center;width:44px;height:44px;margin-inline-start:-10px;color:inherit;text-decoration:none;border-radius:4px}
+.folio-footer .folio-source svg{width:22px;height:22px}
+.folio-footer .folio-source:hover{color:var(--copper);background:#9d804b12}
+.folio-footer .folio-source:focus-visible{outline:2px solid currentColor;outline-offset:1px}
 body.bound-reading.night .folio-page{background-color:#1c251f;color:#bcc2b5}
 body.bound-reading.night .folio-page :is(h1,h2,h3,h4){color:#c7c9ba}
 @media(min-width:1280px){
@@ -95,4 +103,37 @@ body.bound-reading.night .folio-page :is(h1,h2,h3,h4){color:#c7c9ba}
  .real-toolbar .real-bookmark{grid-row:2;grid-column:1/-1;width:100%;justify-content:center}
  .real-toolbar-left .real-tool:not(.real-bookmark){justify-self:center}
  .real-pagination a{font-size:18px}.real-pagination small{font-size:15px}
+}
+
+/* Short, readable search labels and article callout headings. */
+body.bound-reading .book-sidebar .sidebar-search{font-family:var(--serif);text-align:start}
+body.bound-reading .book-sidebar .sidebar-search>span{flex:1;white-space:nowrap}
+body.bound-reading .admonition .admonition-title,body.reality-view .admonition .admonition-title{font:500 max(18px,calc(var(--reading-size)*.9))/1.5 var(--serif);letter-spacing:0;text-transform:none;margin-bottom:12px;color:#76512d}
+body.bound-reading.night .admonition-title{color:#c9b78b}
+body.reality-view .admonition .admonition-title{font-family:var(--sans);color:var(--real-fg)}
+/* Give section changes breathing room, including headings kept with their paragraphs. */
+.bound-reading .folio-content>.folio-heading-group:not(:first-child){padding-block-start:22px}
+.bound-reading :is(.folio-content,.continuous-prose) :is(h2,h3,h4){line-height:1.35;text-wrap:wrap}
+.bound-reading .folio-content>:is(h2,h3,h4){margin-block-start:36px}
+.bound-reading .folio-content>:is(h2,h3,h4):first-child{margin-block-start:0}
+.bound-reading .continuous-prose :is(h2,h3,h4){margin-block-start:36px}
+/* The Chinese volume name fits naturally on one line when a full sidebar is available. */
+@media(min-width:1280px){
+ html[lang|=zh] .bound-reading .book-sidebar{width:380px}
+ html[lang|=zh] .bound-reading .bound-reader{margin-left:380px}
+ html[lang|=zh] .bound-reading.contents-collapsed .bound-reader{margin-left:0}
+}
+@media(max-width:760px){
+ .bound-toolbar{height:212px;min-height:212px;grid-template-rows:48px 140px}
+ .bound-toolbar>.bound-tools{height:140px;grid-template-rows:44px 44px 44px;grid-template-columns:repeat(5,minmax(44px,1fr));gap:4px}
+ .bound-tools .contents-toggle{grid-row:1;grid-column:1/5}
+ .bound-tools [data-search]{grid-row:1;grid-column:5}
+ .bound-tools #smaller-text{grid-row:2;grid-column:1}
+ .bound-tools #larger-text{grid-row:2;grid-column:2}
+ .bound-tools #toggle-night{grid-row:2;grid-column:3}
+ body.bound-reading .bound-tools .reader-music-dock{grid-row:2;grid-column:4;justify-self:center}
+ .bound-tools #bookmark{grid-row:2;grid-column:5}
+ .bound-tools .bound-mode{grid-row:3;grid-column:1/-1;width:100%;max-width:100%;justify-content:center}
+ .bound-tools>.icon-button{justify-self:center}
+ .bound-volume{height:calc(100svh - 301px)}
 }

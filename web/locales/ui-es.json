@@ -51,7 +51,7 @@
   "The book": "El libro",
   "Chapters": "Capítulos",
   "Search": "Buscar",
-  "Search the book": "Buscar en el libro",
+  "Search the book": "Buscar",
   "Table of contents": "Índice",
   "Contents": "Contenido",
   "Introduction": "Introducción",
@@ -135,5 +135,6 @@
   "Add bookmark": "Añadir marcador",
   "Bookmarked": "Guardado",
   "Hide contents": "Ocultar índice",
-  "Show contents": "Mostrar índice"
+  "Show contents": "Mostrar índice",
+  "A keyword opens a new page.": "Una palabra clave abre una nueva página."
 }

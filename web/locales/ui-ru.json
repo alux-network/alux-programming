@@ -51,7 +51,7 @@
   "The book": "Книга",
   "Chapters": "Главы",
   "Search": "Поиск",
-  "Search the book": "Поиск по книге",
+  "Search the book": "Поиск",
   "Table of contents": "Оглавление",
   "Contents": "Содержание",
   "Introduction": "Введение",
@@ -135,5 +135,6 @@
   "Add bookmark": "Добавить закладку",
   "Bookmarked": "В закладках",
   "Hide contents": "Скрыть оглавление",
-  "Show contents": "Показать оглавление"
+  "Show contents": "Показать оглавление",
+  "A keyword opens a new page.": "Ключевое слово открывает новую страницу."
 }

@@ -51,7 +51,7 @@
   "The book": "閱讀本書",
   "Chapters": "章節",
   "Search": "搜尋",
-  "Search the book": "搜尋本書",
+  "Search the book": "搜尋",
   "Table of contents": "全書目錄",
   "Contents": "目錄",
   "Introduction": "導言",
@@ -135,5 +135,6 @@
   "Add bookmark": "加入書籤",
   "Bookmarked": "已加入書籤",
   "Hide contents": "收起目錄",
-  "Show contents": "展開目錄"
+  "Show contents": "展開目錄",
+  "A keyword opens a new page.": "一個關鍵詞，翻開下一頁。"
 }

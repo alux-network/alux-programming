@@ -22,13 +22,13 @@ export async function turnRoute(app,update,direction=1){
   const after=visibleSheets(book),r=book.getBoundingClientRect(),v=volume.getBoundingClientRect();
   if(!after.length)return;
   const portrait=after.length===1,w=r.width/(portrait?1:2),h=r.height;
-  host=document.createElement('div');host.className='chapter-flip-host';host.inert=true;host.setAttribute('aria-hidden','true');
+  host=document.createElement('div');host.className='chapter-flip-host paper-turning';host.inert=true;host.setAttribute('aria-hidden','true');
   Object.assign(host.style,{position:'absolute',left:r.left-v.left-volume.clientLeft+'px',top:r.top-v.top-volume.clientTop+'px',width:r.width+'px',height:h+'px',zIndex:9,pointerEvents:'none',overflow:'hidden'});
   const backward=(direction<0)!==(document.dir==='rtl');
   const sheets=backward?[...after,...before]:[...before,...after];
   for(const sheet of sheets){sheet.style.width=w+'px';sheet.style.height=h+'px';host.append(sheet);}
   volume.append(host);veil.remove();
-  flip=new PageFlip(host,{width:w,height:h,size:'fixed',autoSize:false,usePortrait:portrait,showCover:false,startPage:backward?after.length:0,flippingTime:560,drawShadow:true,maxShadowOpacity:.2,useMouseEvents:false,disableFlipByClick:false,mobileScrollSupport:false,showPageCorners:false});
+  flip=new PageFlip(host,{width:w,height:h,size:'fixed',autoSize:false,usePortrait:portrait,showCover:false,startPage:backward?after.length:0,flippingTime:560,drawShadow:true,maxShadowOpacity:document.body.classList.contains('night')?.55:.2,useMouseEvents:false,disableFlipByClick:false,mobileScrollSupport:false,showPageCorners:false});
   flip.loadFromHTML(sheets);
   await new Promise(resolve=>{let started=false;const timer=setTimeout(resolve,1000);flip.on('changeState',e=>{if(e.data==='flipping')started=true;if(started&&e.data==='read'){clearTimeout(timer);resolve();}});requestAnimationFrame(()=>requestAnimationFrame(()=>backward?flip.flipPrev('bottom'):flip.flipNext('bottom')));});
  }finally{veil.remove();flip?.destroy();host?.remove();}
