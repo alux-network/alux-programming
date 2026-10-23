@@ -1,0 +1,491 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>EVM algebra - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ALUX programming guidelines</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming/edit/master/src/insights/evm-alg.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="evm-algebra"><a class="header" href="#evm-algebra">EVM algebra</a></h1>
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-related"></a>
+</div>
+<div>
+<p>Design by Meaning in Rust: <a href="../rust-dd/interpreters.html">Interpreters and effects</a>, <a href="../rust-dd/first-order-programs.html">First-order programs</a>, <a href="../rust-dd/compiler-pipelines.html">Language and compiler pipelines</a><br />
+Concepts: <a href="../concepts/operational_semantics.html">Operational semantics</a>, <a href="../concepts/free_monad.html">Free monad</a>, <a href="../concepts/cps.html">Continuation-passing style</a>, <a href="../concepts/defunctionalization.html">Defunctionalization</a></p>
+</div>
+</div>
+<p>The <strong>Ethereum Virtual Machine (EVM)</strong> is a stack-based virtual CPU that executes <strong>Ethereum bytecode</strong>, the compiled form of smart contracts written in Solidity, Vyper, or another EVM-compatible language.</p>
+<p>At the lowest level:</p>
+<ul>
+<li>The EVM processes <strong>opcodes</strong> (ADD, PUSH, JUMP, SSTORE, etc.).</li>
+<li>Execution state includes:
+<ul>
+<li><strong>Stack</strong>: LIFO data stack for operands.</li>
+<li><strong>Memory</strong>: transient byte array for temporary values.</li>
+<li><strong>Storage</strong>: persistent key-value store for each contract.</li>
+<li><strong>Program counter</strong>: points to the next opcode.</li>
+<li><strong>Gas</strong>: metering that charges for execution steps.</li>
+</ul>
+</li>
+</ul>
+<h2 id="evm-as-an-interpreter-pattern"><a class="header" href="#evm-as-an-interpreter-pattern">EVM as an interpreter pattern</a></h2>
+<p>An EVM client is an interpreter over an instruction language:</p>
+<ul>
+<li><strong>Instruction set</strong> = EVM opcodes (an enum of variants).</li>
+<li><strong>Program</strong> = a sequence of instructions.</li>
+<li><strong>Interpreter</strong> = the rule for how each opcode changes machine state.</li>
+<li><strong>Multiple interpreters</strong> = the EVM spec is fixed, but Geth, Nethermind, Besu, and Erigon are alternative implementations of the same interpreter.</li>
+</ul>
+<p>This is the through-line of three techniques in this book — <strong>free monads</strong>, <strong>continuation-passing style</strong>, and <strong>defunctionalization</strong> — which differ only in how they represent <em>the rest of the program</em>.</p>
+<h2 id="three-encodings-of-one-machine"><a class="header" href="#three-encodings-of-one-machine">Three encodings of one machine</a></h2>
+<p>Each encoding below runs the same fixed program:</p>
+<pre><code class="language-text">push 2; push 3; add; sstore 1 5; load 1 -&gt; v; push v
+</code></pre>
+<p>and every one produces the same observation:</p>
+<pre><code class="language-text">stack:   [5, 5]
+storage: {1: 5}
+</code></pre>
+<p>They differ only in how control — "what to do next" — is represented.</p>
+<details>
+<summary><strong>Free monad</strong> — the program is data; an interpreter gives it meaning</summary>
+<p>The instruction functor generates a program tree. <code>and_then</code> is monadic bind, and <code>run</code> is one interpreter — a second interpreter (a compiler to bytecode) could fold the same tree. The generic <code>Free&lt;A&gt;</code> is specialized to this instruction set so it compiles in stable Rust.</p>
+<pre><pre class="playground"><code class="language-rust">use std::collections::HashMap;
+
+struct State { stack: Vec&lt;u64&gt;, storage: HashMap&lt;u64, u64&gt; }
+
+// The free monad over the EVM instruction set: a program is data — a tree of
+// instructions ending in `Pure`, each carrying its continuation.
+enum Free&lt;A&gt; {
+    Pure(A),
+    Push(u64, Box&lt;Free&lt;A&gt;&gt;),
+    Add(Box&lt;Free&lt;A&gt;&gt;),
+    SStore(u64, u64, Box&lt;Free&lt;A&gt;&gt;),
+    SLoad(u64, Box&lt;dyn FnOnce(u64) -&gt; Free&lt;A&gt;&gt;),
+}
+
+impl&lt;A: 'static&gt; Free&lt;A&gt; {
+    // Monadic bind: graft `k` onto every leaf of the program.
+    fn and_then&lt;B: 'static&gt;(self, k: impl FnOnce(A) -&gt; Free&lt;B&gt; + 'static) -&gt; Free&lt;B&gt; {
+        match self {
+            Free::Pure(a) =&gt; k(a),
+            Free::Push(v, next) =&gt; Free::Push(v, Box::new(next.and_then(k))),
+            Free::Add(next) =&gt; Free::Add(Box::new(next.and_then(k))),
+            Free::SStore(x, y, next) =&gt; Free::SStore(x, y, Box::new(next.and_then(k))),
+            Free::SLoad(key, cont) =&gt; Free::SLoad(key, Box::new(move |v| cont(v).and_then(k))),
+        }
+    }
+}
+
+fn push(v: u64) -&gt; Free&lt;()&gt; { Free::Push(v, Box::new(Free::Pure(()))) }
+fn add() -&gt; Free&lt;()&gt; { Free::Add(Box::new(Free::Pure(()))) }
+fn sstore(k: u64, v: u64) -&gt; Free&lt;()&gt; { Free::SStore(k, v, Box::new(Free::Pure(()))) }
+fn sload(k: u64) -&gt; Free&lt;u64&gt; { Free::SLoad(k, Box::new(|v| Free::Pure(v))) }
+
+// Interpreter: give the program data meaning against the machine state.
+fn run(mut prog: Free&lt;()&gt;, st: &amp;mut State) {
+    loop {
+        prog = match prog {
+            Free::Pure(()) =&gt; return,
+            Free::Push(v, next) =&gt; { st.stack.push(v); *next }
+            Free::Add(next) =&gt; {
+                let b = st.stack.pop().unwrap();
+                let a = st.stack.pop().unwrap();
+                st.stack.push(a + b);
+                *next
+            }
+            Free::SStore(k, v, next) =&gt; { st.storage.insert(k, v); *next }
+            Free::SLoad(k, cont) =&gt; { let v = *st.storage.get(&amp;k).unwrap_or(&amp;0); cont(v) }
+        };
+    }
+}
+
+fn main() {
+    let program = push(2)
+        .and_then(|_| push(3))
+        .and_then(|_| add())
+        .and_then(|_| sstore(1, 5))
+        .and_then(|_| sload(1))
+        .and_then(|v| push(v));
+
+    let mut st = State { stack: vec![], storage: HashMap::new() };
+    run(program, &amp;mut st);
+    println!("stack:   {:?}", st.stack);
+    println!("storage: {:?}", st.storage);
+}</code></pre></pre>
+</details>
+<details>
+<summary><strong>Continuation-passing style (CPS)</strong> — each opcode calls "the rest of the program"</summary>
+<p>Every handler does its work and then invokes the continuation <code>k</code>. <code>sload</code> passes the loaded value to a continuation that expects it. Control is explicit as nested continuations, with no program data structure at all.</p>
+<pre><pre class="playground"><code class="language-rust">use std::collections::HashMap;
+
+struct State { stack: Vec&lt;u64&gt;, storage: HashMap&lt;u64, u64&gt; }
+
+// Each opcode does its work, then calls the continuation `k` = "the rest of
+// the program". `sload` passes the loaded value on to its continuation.
+fn push(st: &amp;mut State, v: u64, k: impl FnOnce(&amp;mut State)) {
+    st.stack.push(v);
+    k(st);
+}
+fn add(st: &amp;mut State, k: impl FnOnce(&amp;mut State)) {
+    let b = st.stack.pop().unwrap();
+    let a = st.stack.pop().unwrap();
+    st.stack.push(a + b);
+    k(st);
+}
+fn sstore(st: &amp;mut State, key: u64, val: u64, k: impl FnOnce(&amp;mut State)) {
+    st.storage.insert(key, val);
+    k(st);
+}
+fn sload(st: &amp;mut State, key: u64, k: impl FnOnce(&amp;mut State, u64)) {
+    let v = *st.storage.get(&amp;key).unwrap_or(&amp;0);
+    k(st, v);
+}
+
+fn main() {
+    let mut st = State { stack: vec![], storage: HashMap::new() };
+
+    push(&amp;mut st, 2, |st| {
+        push(st, 3, |st| {
+            add(st, |st| {
+                sstore(st, 1, 5, |st| {
+                    sload(st, 1, |st, v| {
+                        push(st, v, |_st| {});
+                    });
+                });
+            });
+        });
+    });
+
+    println!("stack:   {:?}", st.stack);
+    println!("storage: {:?}", st.storage);
+}</code></pre></pre>
+</details>
+<details>
+<summary><strong>Defunctionalized</strong> — the operation calls become data run by one <code>apply</code></summary>
+<p>Where the free monad and CPS versions <em>call</em> the operations (<code>push(2)</code>, <code>add()</code>, <code>sstore(1, 5)</code>, <code>sload(1)</code>) — a small algebra that reads almost like a specification — defunctionalization reifies each call as first-order data. One <code>apply</code> function then interprets that data, and the continuations collapse too: "the rest of the program" becomes the next index (<code>pc</code>). Read it as the operation algebra written as data, with <code>apply</code> its single interpreter.</p>
+<pre><pre class="playground"><code class="language-rust">use std::collections::HashMap;
+
+struct State { stack: Vec&lt;u64&gt;, storage: HashMap&lt;u64, u64&gt; }
+
+// The EVM algebra reified: where the other encodings CALL `push(2)`, `add()`,
+// `sstore(1, 5)`, `sload(1)`, each such call becomes a first-order value — a
+// tag with its arguments.
+enum Op {
+    Push(u64),
+    Add,
+    SStore(u64, u64),
+    SLoad(u64),
+}
+
+// `apply` is the single interpreter for the reified operations: it gives each
+// tag its meaning against the machine state.
+fn apply(op: &amp;Op, st: &amp;mut State) {
+    match op {
+        Op::Push(v) =&gt; st.stack.push(*v),
+        Op::Add =&gt; {
+            let b = st.stack.pop().unwrap();
+            let a = st.stack.pop().unwrap();
+            st.stack.push(a + b);
+        }
+        Op::SStore(k, v) =&gt; { st.storage.insert(*k, *v); }
+        Op::SLoad(k) =&gt; {
+            let v = *st.storage.get(k).unwrap_or(&amp;0);
+            st.stack.push(v);
+        }
+    }
+}
+
+fn main() {
+    // The program is now data: a flat list of reified operation calls.
+    let code = vec![
+        Op::Push(2),
+        Op::Push(3),
+        Op::Add,
+        Op::SStore(1, 5),
+        Op::SLoad(1),
+    ];
+
+    // `pc` is the defunctionalized continuation: "the rest of the program" is
+    // just the next index.
+    let mut st = State { stack: vec![], storage: HashMap::new() };
+    let mut pc = 0;
+    while pc &lt; code.len() {
+        apply(&amp;code[pc], &amp;mut st);
+        pc += 1;
+    }
+
+    println!("stack:   {:?}", st.stack);
+    println!("storage: {:?}", st.storage);
+}</code></pre></pre>
+</details>
+<h2 id="from-continuations-to-bytecode"><a class="header" href="#from-continuations-to-bytecode">From continuations to bytecode</a></h2>
+<p>The three encodings are the same computation seen at different distances from the machine:</p>
+<ul>
+<li><strong>Free monad</strong> builds the program <em>algebraically</em> as data, then interprets it. The same tree could be folded by several interpreters — one that runs it, one that pretty-prints it, one that compiles it.</li>
+<li><strong>CPS</strong> removes the data structure and makes control explicit: "do this opcode, then call the continuation." The loaded value flows to the continuation that needs it.</li>
+<li><strong>Defunctionalization</strong> turns the operation <em>calls</em> into first-order data and reads them back with one <code>apply</code>, while the continuations collapse into a <code>pc</code> over a <code>Vec&lt;Op&gt;</code>. The driver loop is a CPS trampoline without closures.</li>
+</ul>
+<div id="admonition-analogy-not-derivation" class="admonition admonish-note" role="note" aria-labelledby="admonition-analogy-not-derivation-title">
+<div class="admonition-title">
+<div id="admonition-analogy-not-derivation-title">
+<p>Analogy, not derivation</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-analogy-not-derivation"></a>
+</div>
+<div>
+<p>The EVM can be analyzed as a first-order abstract machine whose explicit program counter resembles a defunctionalized control representation. This structural analogy does not by itself prove that EVM bytecode was obtained by a CPS transformation followed by defunctionalization.</p>
+</div>
+</div>
+<h2 id="key-insight"><a class="header" href="#key-insight">Key insight</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Concept</th><th>Free monad world</th><th>EVM reality</th></tr></thead><tbody>
+<tr><td>Instruction type</td><td>Enum of opcodes</td><td>Fixed EVM opcodes</td></tr>
+<tr><td>Program representation</td><td>Tree built from <code>Free&lt;A&gt;</code></td><td>Linear bytecode array</td></tr>
+<tr><td>Continuation</td><td>Closure in the instruction node</td><td>Program counter (<code>pc</code>)</td></tr>
+<tr><td>Interpreter</td><td>Pattern match on the program</td><td>Switch on opcode, mutate VM state</td></tr>
+<tr><td>Multiple interpreters</td><td>Different folds of the same program</td><td>Multiple Ethereum client implementations</td></tr>
+</tbody></table>
+</div>
+<h2 id="how-this-maps-to-the-real-evm"><a class="header" href="#how-this-maps-to-the-real-evm">How this maps to the real EVM</a></h2>
+<ul>
+<li>The <strong>instruction set</strong> (<code>Free</code>'s variants, or the <code>Op</code> enum) mirrors the EVM opcode set.</li>
+<li>The <strong>program</strong> (a <code>Free</code> tree, nested continuations, or a <code>Vec&lt;Op&gt;</code>) is the contract before and after compilation.</li>
+<li>The <strong>interpreter</strong> (<code>run</code>, the CPS handlers, or <code>apply</code>) is what a client such as Geth, Besu, or Nethermind implements.</li>
+<li>The <strong>machine state</strong> (<code>stack</code>, <code>storage</code>) is the EVM's stack, memory, and storage.</li>
+<li>Real EVM bytecode is the defunctionalized form: a flat instruction array indexed by a program counter, exactly the defunctionalized encoding above.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../insights/referential-transparency.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../about.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../insights/referential-transparency.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../about.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/version.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

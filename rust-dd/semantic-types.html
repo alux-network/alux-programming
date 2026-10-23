@@ -1,0 +1,384 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Semantic types in Rust - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ALUX programming guidelines</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming/edit/master/src/rust-dd/semantic-types.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="semantic-types-in-rust"><a class="header" href="#semantic-types-in-rust">Semantic types in Rust</a></h1>
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-related"></a>
+</div>
+<div>
+<p>The Semantic View: <a href="../denotational-design/dependent-types.html">Dependent types and proofs</a>, <a href="../denotational-design/design.html">Denotational Design</a><br />
+Design by Meaning in Rust: <a href="capability-algebras.html">Capability algebras</a>, <a href="first-order-programs.html">First-order programs</a>, <a href="laws.html">Laws, scenarios, and evidence</a><br />
+Concepts: <a href="../concepts/referential_transparency.html">Referential transparency</a></p>
+</div>
+</div>
+<div id="admonition-orientation" class="admonition admonish-note" role="note" aria-labelledby="admonition-orientation-title">
+<div class="admonition-title">
+<div id="admonition-orientation-title">
+<p>Orientation</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-orientation"></a>
+</div>
+<div>
+<p>Meaning-first Rust uses types to keep semantic structure visible. Associated types name carrier families, bounds state relationships between them, and extensions derive new operations from explicit premises. Laws still determine what every interpretation must preserve.</p>
+</div>
+</div>
+<p>Several different roles are all spelled <code>type</code> in Rust. Keeping them distinct prevents meaning from collapsing into representation.</p>
+<div class="table-wrapper"><table><thead><tr><th>Role</th><th>Example</th><th>What it says</th></tr></thead><tbody>
+<tr><td>Semantic type</td><td><code>Direction</code></td><td>Which domain distinctions matter</td></tr>
+<tr><td>Interpreter-selected carrier</td><td><code>BranchAlg::Branch</code></td><td>Which representation an interpreter chooses</td></tr>
+<tr><td>Derived operation</td><td><code>BranchExt::branch_child</code></td><td>What follows from declared capabilities</td></tr>
+<tr><td>Stage type</td><td><code>Syntax</code>, <code>CoreProgram</code>, <code>Executable</code></td><td>Which transformation a value has passed</td></tr>
+<tr><td>Representation type</td><td><code>BitBranch</code></td><td>How one interpreter stores branch meaning</td></tr>
+<tr><td>Evidence program</td><td>A scenario or reusable law extension</td><td>Which observations compatible interpreters must satisfy</td></tr>
+</tbody></table>
+</div>
+<h2 id="semantic-types-before-representation"><a class="header" href="#semantic-types-before-representation">Semantic types before representation</a></h2>
+<p>Suppose a branching domain distinguishes two directions:</p>
+<pre><code class="language-rust noplayground">#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Direction {
+    Left,
+    Right,
+}</code></pre>
+<p><code>Direction</code> names the distinction directly. One interpreter may encode a path compactly:</p>
+<pre><code class="language-rust noplayground">struct BitBranch(Vec&lt;bool&gt;);</code></pre>
+<p>The booleans belong to that representation. They are not the definition of left and right, and another interpreter need not use them.</p>
+<div id="admonition-a-compact-encoding-is-not-the-semantic-type" class="admonition admonish-warning" role="note" aria-labelledby="admonition-a-compact-encoding-is-not-the-semantic-type-title">
+<div class="admonition-title">
+<div id="admonition-a-compact-encoding-is-not-the-semantic-type-title">
+<p>A compact encoding is not the semantic type</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-a-compact-encoding-is-not-the-semantic-type"></a>
+</div>
+<div>
+<p>Do not define domain behavior by bit positions, byte offsets, or machine branches. Those artifacts must encode the semantic distinctions; they do not own them.</p>
+</div>
+</div>
+<p>This separation lets storage and execution layouts change without silently changing the domain.</p>
+<h2 id="associated-types-choose-carriers"><a class="header" href="#associated-types-choose-carriers">Associated types choose carriers</a></h2>
+<p>A capability algebra can leave its carrier to each interpreter:</p>
+<pre><code class="language-rust noplayground">trait BranchAlg {
+    type Branch;
+
+    fn branch_root(&amp;self) -&gt; Self::Branch;
+    fn branch_grow(&amp;self, branch: &amp;Self::Branch, direction: Direction) -&gt; Self::Branch;
+    fn branch_path(
+        &amp;self,
+        ancestor: &amp;Self::Branch,
+        descendant: &amp;Self::Branch,
+    ) -&gt; Option&lt;Vec&lt;Direction&gt;&gt;;
+}</code></pre>
+<p><code>Self::Branch</code> is not a hidden field type. It is the carrier chosen by an interpretation of branch meaning. A bit path, numeric tree position, symbolic term, or another representation can satisfy the same algebra.</p>
+<p>For an interpreter <code>T</code>, the notation <code>T::Branch</code> can be read as a carrier family <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathsf">Branch</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mclose">)</span></span></span></span>. Changing the interpreter may change the carrier, while every operation remains indexed consistently by the same choice.</p>
+<h2 id="extensions-derive-consequences"><a class="header" href="#extensions-derive-consequences">Extensions derive consequences</a></h2>
+<p>An extension can construct a new operation from exactly the premises it needs:</p>
+<pre><code class="language-rust noplayground">#[ext(name = BranchExt)]
+pub impl&lt;This&gt; This
+where
+    This: BranchAlg,
+{
+    fn branch_child(
+        &amp;self,
+        branch: &amp;This::Branch,
+        direction: Direction,
+    ) -&gt; This::Branch {
+        self.branch_grow(branch, direction)
+    }
+}</code></pre>
+<p>The <code>where</code> clause is the premise: <code>This</code> interprets the branch algebra. The method is the consequence: for that interpreter's carrier, a branch and a direction determine a child branch.</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mopen"><span class="delimsizing size1">(</span></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord"><span class="mord mathsf" style="margin-right:0.01389em;">BranchAlg</span></span><span class="mclose"><span class="delimsizing size1">)</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟹</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord mathsf">branchChild</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathsf">Branch</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord"><span class="mord mathsf">Direction</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathsf">Branch</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mclose">)</span></span></span></span></span></p>
+<p>Nothing in the derivation chooses a concrete branch representation. The result remains in the carrier family selected by the interpreter.</p>
+<h2 id="equality-bounds-state-compatibility"><a class="header" href="#equality-bounds-state-compatibility">Equality bounds state compatibility</a></h2>
+<p>Two capabilities sometimes need to agree on a carrier. An associated-type equality can state that requirement without selecting a concrete representation:</p>
+<pre><code class="language-rust noplayground">Right: BranchAlg&lt;Branch = Left::Branch&gt;</code></pre>
+<p>Read the bound as a local proposition: <code>Left</code> and <code>Right</code> interpret branch operations over the same carrier. Put this equality at the operation that needs the agreement rather than forcing it onto either algebra globally.</p>
+<p>Such a bound is stronger and more precise than accepting one concrete context merely because it happens to contain both implementations.</p>
+<h2 id="stage-types-make-compiler-contracts-visible"><a class="header" href="#stage-types-make-compiler-contracts-visible">Stage types make compiler contracts visible</a></h2>
+<p>A compiler pipeline should not pass one undifferentiated tree through every phase. Distinct stage types state which transformation has occurred:</p>
+<div class="table-wrapper"><table><thead><tr><th>Stage</th><th>Input</th><th>Output</th><th>Contract</th></tr></thead><tbody>
+<tr><td>Parse</td><td>Source text</td><td><code>Syntax</code></td><td>Recognizes surface grammar</td></tr>
+<tr><td>Normalize</td><td><code>Syntax</code></td><td><code>CoreProgram</code></td><td>Produces the chosen core meaning</td></tr>
+<tr><td>Code generation</td><td><code>CoreProgram</code></td><td><code>Executable</code></td><td>Preserves program observations in executable form</td></tr>
+<tr><td>Runtime</td><td><code>Executable</code></td><td>Observable behavior</td><td>Interprets the executable consistently with the language model</td></tr>
+</tbody></table>
+</div>
+<p>These types prevent accidental stage confusion, but their names alone do not prove preservation. The transformations still need stated laws, representative scenarios, and cross-interpreter evidence.</p>
+<h2 id="read-the-contract"><a class="header" href="#read-the-contract">Read the contract</a></h2>
+<p>The type-level structure admits a useful logical reading:</p>
+<div class="table-wrapper"><table><thead><tr><th>Rust form</th><th>Reading</th></tr></thead><tbody>
+<tr><td><code>This: BranchAlg</code></td><td><code>This</code> supplies an interpretation of branch meaning</td></tr>
+<tr><td><code>This::Branch</code></td><td>The branch carrier is selected by <code>This</code></td></tr>
+<tr><td><code>Right: BranchAlg&lt;Branch = Left::Branch&gt;</code></td><td>Two interpretations agree on their carrier</td></tr>
+<tr><td><code>-&gt; This::Branch</code></td><td>The result remains in the selected carrier family</td></tr>
+</tbody></table>
+</div>
+<p>This reading encourages APIs to expose what determines a type, which equalities composition requires, and which conclusions follow from those premises. Associated types, generic associated types, const generics, typestate, and zero-sized witnesses can all express parts of such contracts when the underlying distinction is real.</p>
+<p>Do not manufacture type-level machinery merely to make an implementation look more formal. A type should expose meaning or preserve a necessary relationship, not decorate a representation.</p>
+<h2 id="types-do-not-replace-laws"><a class="header" href="#types-do-not-replace-laws">Types do not replace laws</a></h2>
+<p>A type signature constrains which programs can be formed. Laws constrain how their operations relate. Both are required.</p>
+<p>For example, <code>BranchAlg::Branch</code> says that each interpreter chooses a branch carrier. It does not by itself establish that:</p>
+<ul>
+<li>the path from a branch to itself is empty</li>
+<li>replaying a root path reconstructs the branch</li>
+<li>opposite children are distinct</li>
+</ul>
+<p>Those are semantic laws shared by compatible interpreters. Representation-specific claims—such as unused bits being zero—belong to the interpreter that chose that representation.</p>
+<div id="admonition-read-types-as-claims" class="admonition admonish-quote" role="note" aria-labelledby="admonition-read-types-as-claims-title">
+<div class="admonition-title">
+<div id="admonition-read-types-as-claims-title">
+<p>Read types as claims</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-read-types-as-claims"></a>
+</div>
+<div>
+<p>Ask what each type claims, what determines it, which laws complete it, and which interpreter realizes it.</p>
+</div>
+</div>
+<h2 id="review-checks"><a class="header" href="#review-checks">Review checks</a></h2>
+<ul>
+<li>Does a domain distinction appear before its compact machine encoding?</li>
+<li>Is an associated type an interpreter-selected carrier rather than disguised concrete state?</li>
+<li>Do equality bounds state only the compatibility required at that use site?</li>
+<li>Do distinct compiler stages have distinct types and explicit contracts?</li>
+<li>Are semantic propositions separated from representation invariants?</li>
+<li>Are claims that Rust cannot express backed by reusable laws or scenarios?</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../rust-dd/capability-algebras.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../rust-dd/derived-meaning.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../rust-dd/capability-algebras.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../rust-dd/derived-meaning.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/version.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

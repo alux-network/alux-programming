@@ -1,0 +1,414 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>First-order programs - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ALUX programming guidelines</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming/edit/master/src/rust-dd/first-order-programs.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="first-order-programs"><a class="header" href="#first-order-programs">First-order programs</a></h1>
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-related"></a>
+</div>
+<div>
+<p>Design by Meaning in Rust: <a href="derived-meaning.html">Derived meaning and composition</a>, <a href="compiler-pipelines.html">Language and compiler pipelines</a><br />
+Concepts: <a href="../concepts/cps.html">Continuation-passing style</a>, <a href="../concepts/defunctionalization.html">Defunctionalization</a>, <a href="../concepts/free_monad.html">Free monad</a><br />
+Insights: <a href="../insights/expression-problem.html">Expression Problem reloaded</a></p>
+</div>
+</div>
+<div id="admonition-when-to-reify-application" class="admonition admonish-note" role="note" aria-labelledby="admonition-when-to-reify-application-title">
+<div class="admonition-title">
+<div id="admonition-when-to-reify-application-title">
+<p>When to reify application</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-when-to-reify-application"></a>
+</div>
+<div>
+<p>Ordinary functions and extensions already express derived behavior. Turn application into first-order data only when another interpreter must inspect, compose, serialize, or compile a program before running it.</p>
+</div>
+</div>
+<p>Ordinary functions and extension methods are usually the best way to express derived behavior. Sometimes another interpreter must inspect, combine, document, serialize, or compile the structure of a program before applying it. Then application itself must become first-order data.</p>
+<h2 id="execution-erases-structure"><a class="header" href="#execution-erases-structure">Execution erases structure</a></h2>
+<p>Consider:</p>
+<pre><code class="language-rust noplayground">#[ext(name = StatusExt)]
+pub impl&lt;This&gt; This
+where
+    This: StatusAlg,
+{
+    async fn status_current(&amp;self) -&gt; This::Status {
+        self.status().await
+    }
+}</code></pre>
+<p>Calling this method yields a status. After the call begins, an external interpreter cannot generally recover:</p>
+<ul>
+<li>the semantic context type</li>
+<li>the ordered arguments</li>
+<li>source argument names</li>
+<li>the result type</li>
+<li>the identity of the operation</li>
+</ul>
+<p>That information was present in the source-level function type, but ordinary execution consumes it.</p>
+<h2 id="defunctionalizing-application"><a class="header" href="#defunctionalizing-application">Defunctionalizing application</a></h2>
+<p>Defunctionalization replaces a member of a known family of functions with a first-order tag and a shared application operation.</p>
+<p>A minimal operation vocabulary is:</p>
+<pre><code class="language-rust noplayground">trait OperationAlg {
+    type Context;
+    type Args;
+
+    const ARG_NAMES: &amp;'static [&amp;'static str];
+}
+
+trait ApplyAlg&lt;Handle, Args&gt; {
+    type Output;
+
+    async fn apply(&amp;self, handle: Handle, args: Args) -&gt; Self::Output;
+}</code></pre>
+<p>A zero-sized <code>CurrentStatusOperation&lt;App&gt;</code> can denote application of the original extension method. It should invoke that method, not contain a second copy of its body.</p>
+<ol>
+<li>Begin with the extension method.</li>
+<li>Reify it as an operation type.</li>
+<li>Preserve its context, argument product, argument names, and output.</li>
+<li>Interpret it through <code>ApplyAlg</code>.</li>
+</ol>
+<p>The method remains ergonomic for normal calls. The operation value exists for contexts that require first-order structure.</p>
+<h2 id="do-not-reify-without-a-consumer"><a class="header" href="#do-not-reify-without-a-consumer">Do not reify without a consumer</a></h2>
+<p>First-order programs add type machinery. Use them when they enable a real second interpretation:</p>
+<ul>
+<li>runtime registration</li>
+<li>documentation or schema generation</li>
+<li>static inspection</li>
+<li>program composition before execution</li>
+<li>serialization</li>
+<li>compilation</li>
+</ul>
+<p>If code only needs to call a function, keep the function.</p>
+<h2 id="portable-interface-programs"><a class="header" href="#portable-interface-programs">Portable interface programs</a></h2>
+<p>Suppose an HTTP surface contains:</p>
+<div class="table-wrapper"><table><thead><tr><th>Method</th><th>Path</th><th>Input</th><th>Operation</th><th>Output</th></tr></thead><tbody>
+<tr><td><code>GET</code></td><td><code>/status</code></td><td>—</td><td><code>status_current</code></td><td>JSON</td></tr>
+<tr><td><code>POST</code></td><td><code>/set_temperature</code></td><td>Body: <code>f32</code></td><td><code>adjust_status</code></td><td>JSON</td></tr>
+<tr><td><code>GET</code></td><td><code>/download</code></td><td>—</td><td><code>current_file</code></td><td>Streamed file</td></tr>
+</tbody></table>
+</div>
+<p>A portable program must preserve:</p>
+<ul>
+<li>method and path selectors</li>
+<li>input roles such as path, query, body, header, and authentication</li>
+<li>the operation value</li>
+<li>output role such as JSON or file</li>
+<li>route merge and nesting</li>
+</ul>
+<p>It should not preserve a particular framework request, router, or response type.</p>
+<p>One fluent notation might be:</p>
+<pre><code class="language-rust noplayground">self.routes()
+    .get("/status", self.op(CurrentStatusOperation::&lt;App&gt;::default()).json())
+    .post("/set_temperature", self.op(AdjustStatusOperation::&lt;App&gt;::default()).body::&lt;f32&gt;().json())
+    .get("/download", self.op(CurrentFileOperation::&lt;App&gt;::default()).file())</code></pre>
+<p>The fluent calls construct a typed program. They do not have to register a server route immediately.</p>
+<h2 id="one-program-several-folds"><a class="header" href="#one-program-several-folds">One program, several folds</a></h2>
+<p>The same first-order program can support several interpretations:</p>
+<div class="table-wrapper"><table><thead><tr><th>Program</th><th>Interpretations</th></tr></thead><tbody>
+<tr><td>Typed HTTP program</td><td>Text documentation, executable routes, OpenAPI metadata, client bindings, conformance tests</td></tr>
+<tr><td>Typed JSON-RPC program</td><td>Method registry, schema, client, test harness</td></tr>
+</tbody></table>
+</div>
+<p>Do not maintain separate route or method lists for execution and documentation. That creates competing specifications.</p>
+<h2 id="input-and-output-roles"><a class="header" href="#input-and-output-roles">Input and output roles</a></h2>
+<p>The operation already knows its argument and result types. A transport declaration should add only transport meaning.</p>
+<pre><code class="language-rust noplayground">self.op(FindOperation::&lt;App&gt;::default())
+    .path::&lt;u64&gt;()
+    .query::&lt;String&gt;()
+    .json()</code></pre>
+<p><code>path</code>, <code>query</code>, and <code>json</code> identify roles. They should not force the author to restate an output type already determined by <code>ApplyAlg</code>.</p>
+<p>Output conversion belongs to the transport interpreter. A server may convert one result to JSON and another to a streamed attachment. The semantic operations remain unaware of either representation.</p>
+<h2 id="composition-is-program-meaning"><a class="header" href="#composition-is-program-meaning">Composition is program meaning</a></h2>
+<p>Programs should preserve general composition:</p>
+<ul>
+<li>Empty program</li>
+<li>Merge programs</li>
+<li>Nest a program under a prefix</li>
+<li>Lift an endpoint into a program</li>
+</ul>
+<p>These are more fundamental than one framework's router methods. Familiar fluent names such as <code>get</code>, <code>post</code>, <code>merge</code>, and <code>nest</code> can be aliases over the neutral algebra.</p>
+<p>Independent specifications can publish small programs:</p>
+<div class="table-wrapper"><table><thead><tr><th>Input programs</th><th>Composition</th><th>Result</th></tr></thead><tbody>
+<tr><td>Status and download programs</td><td>Merge</td><td>Service program</td></tr>
+<tr><td>Catalog program</td><td>Nest</td><td>Service program</td></tr>
+</tbody></table>
+</div>
+<p>An application selects and interprets the resulting composition.</p>
+<h2 id="macros-must-lower-to-public-meaning"><a class="header" href="#macros-must-lower-to-public-meaning">Macros must lower to public meaning</a></h2>
+<p>Rust macros can make first-order declarations pleasant:</p>
+<pre><code class="language-rust noplayground">#[ext(name = StatusApiExt, defunc(via = http))]
+pub impl&lt;This&gt; This
+where
+    This: HttpApiAlg + JsonOutAlg,
+{
+    fn status_api&lt;Alg&gt;(&amp;self)
+    where
+        Alg: StatusAlg,
+    {
+        self.routes().get("/status", self.op(Alg::status_current).json());
+    }
+}</code></pre>
+<p>The macro is healthy only when it lowers to a public, manually constructible first-order program. Generated callbacks must not become the sole definition of the interface.</p>
+<p>Good direction:</p>
+<ol>
+<li>Convenient syntax</li>
+<li>Public operation and program values</li>
+<li>Generic fold</li>
+<li>Concrete framework</li>
+</ol>
+<p>Representation-first direction:</p>
+<ol>
+<li>Framework annotation</li>
+<li>Opaque generated callbacks</li>
+<li>Reverse-engineered documentation</li>
+</ol>
+<h2 id="relation-to-existing-concepts"><a class="header" href="#relation-to-existing-concepts">Relation to existing concepts</a></h2>
+<p>First-order interface programs build on techniques from other chapters: defunctionalization is the general transformation, extensible syntax and interpretations are the Expression Problem, and a free monad is one particular syntax-with-sequencing representation. The Related links at the top of the page lead to each.</p>
+<p>Do not identify these techniques with DD itself. DD determines what structure matters; first-order representations preserve that structure when ordinary calls would erase it.</p>
+<h2 id="review-checks"><a class="header" href="#review-checks">Review checks</a></h2>
+<ul>
+<li>Is reification required by a real second interpreter?</li>
+<li>Does the operation invoke the authored method rather than duplicate it?</li>
+<li>Are arguments and output inferred from the operation?</li>
+<li>Does transport syntax add only transport roles?</li>
+<li>Can the program be constructed without its convenience macro?</li>
+<li>Do runtime and metadata interpret the same program?</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../rust-dd/laws.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../rust-dd/compiler-pipelines.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../rust-dd/laws.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../rust-dd/compiler-pipelines.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/version.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

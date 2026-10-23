@@ -1,0 +1,402 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Capability algebras - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ALUX programming guidelines</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming/edit/master/src/rust-dd/capability-algebras.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="capability-algebras"><a class="header" href="#capability-algebras">Capability algebras</a></h1>
+<img class="section-image" src="../assets/design-by-meaning-rust.png" alt="Design by meaning in Rust — building software from small capability traits">
+<div id="admonition-related" class="admonition admonish-tip" role="note" aria-labelledby="admonition-related-title">
+<div class="admonition-title">
+<div id="admonition-related-title">
+<p>Related</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-related"></a>
+</div>
+<div>
+<p>The Semantic View: <a href="../denotational-design/design.html">Denotational Design</a>, <a href="../denotational-design/denotations.html">Denotations and compositionality</a><br />
+Design by Meaning in Rust: <a href="semantic-types.html">Semantic types in Rust</a>, <a href="derived-meaning.html">Derived meaning and composition</a><br />
+Concepts: <a href="../concepts/expression-problem.html">Expression Problem</a>, <a href="../concepts/branching.html">Branching and confluence</a></p>
+</div>
+</div>
+<div id="admonition-orientation" class="admonition admonish-note" role="note" aria-labelledby="admonition-orientation-title">
+<div class="admonition-title">
+<div id="admonition-orientation-title">
+<p>Orientation</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-orientation"></a>
+</div>
+<div>
+<p>A capability trait is a small algebra: it names the primitive observations and transformations a meaning requires and leaves representation to the interpreter. Design the vocabulary from meaning, not from the fields a first implementation happens to hold.</p>
+</div>
+</div>
+<p>Rust does not have a built-in construct called “Denotational Design.” We encode semantic vocabularies with ordinary language features. Small capability traits are one useful encoding.</p>
+<p>The suffix <code>Alg</code> in this book means <strong>algebra</strong>: a coherent set of primitive operations over interpreter-chosen carriers.</p>
+<h2 id="start-from-meaning"><a class="header" href="#start-from-meaning">Start from meaning</a></h2>
+<p>The branch-position meaning from the previous part can be expressed as:</p>
+<pre><code class="language-rust noplayground">#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Direction {
+    Left,
+    Right,
+}
+
+pub trait BranchAlg {
+    type Branch;
+
+    fn branch_root(&amp;self) -&gt; Self::Branch;
+    fn branch_grow(&amp;self, branch: &amp;Self::Branch, direction: Direction) -&gt; Self::Branch;
+    fn branch_path(&amp;self, ancestor: &amp;Self::Branch, descendant: &amp;Self::Branch) -&gt; Option&lt;Vec&lt;Direction&gt;&gt;;
+}</code></pre>
+<p>The trait states three primitive meanings:</p>
+<ul>
+<li>construct the root</li>
+<li>grow a branch in one direction</li>
+<li>observe the relative path when it exists</li>
+</ul>
+<p>It does not reveal where branches are stored or how paths are encoded.</p>
+<h2 id="capabilities-are-not-field-projections"><a class="header" href="#capabilities-are-not-field-projections">Capabilities are not field projections</a></h2>
+<div id="admonition-field-projections-are-not-semantic-capabilities" class="admonition admonish-warning" role="note" aria-labelledby="admonition-field-projections-are-not-semantic-capabilities-title">
+<div class="admonition-title">
+<div id="admonition-field-projections-are-not-semantic-capabilities-title">
+<p>Field projections are not semantic capabilities</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-field-projections-are-not-semantic-capabilities"></a>
+</div>
+<div>
+<p>Compare:</p>
+<pre><code class="language-rust noplayground">trait BranchContext {
+    fn branches(&amp;self) -&gt; &amp;Vec&lt;Vec&lt;bool&gt;&gt;;
+    fn branches_mut(&amp;mut self) -&gt; &amp;mut Vec&lt;Vec&lt;bool&gt;&gt;;
+}</code></pre>
+<p>This trait hides a struct behind methods but still exposes its representation. Any derived logic becomes coupled to vectors, booleans, ownership, and mutation strategy.</p>
+</div>
+</div>
+<p>A semantic capability exposes the observation or transformation downstream meaning requires. Ask:</p>
+<div id="admonition-ask-of-every-capability" class="admonition admonish-question" role="note" aria-labelledby="admonition-ask-of-every-capability-title">
+<div class="admonition-title">
+<div id="admonition-ask-of-every-capability-title">
+<p>Ask of every capability</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-ask-of-every-capability"></a>
+</div>
+<div>
+<p>If the implementation used a database, symbolic term, compact integer, or remote service, would this operation still make sense?</p>
+</div>
+</div>
+<p>If yes, the operation may belong in the capability. If callers need the current field layout, it probably does not.</p>
+<h2 id="one-primitive-meaning-per-trait"><a class="header" href="#one-primitive-meaning-per-trait">One primitive meaning per trait</a></h2>
+<p>Small traits make dependencies visible:</p>
+<pre><code class="language-rust noplayground">pub trait ClockAlg {
+    type Instant;
+
+    fn clock_now(&amp;self) -&gt; Self::Instant;
+}
+
+pub trait DeadlineAlg&lt;Instant&gt; {
+    fn deadline_expired(&amp;self, now: &amp;Instant) -&gt; bool;
+}</code></pre>
+<p>A derived operation that needs time and a deadline can require both traits. It does not need an <code>ApplicationContext</code> containing logging, storage, networking, configuration, and scheduling.</p>
+<p>“Small” does not mean one method mechanically. Group operations when they form one inseparable semantic structure. Split them when they express independent meanings or admit independent interpreters.</p>
+<h2 id="associated-types-select-carriers"><a class="header" href="#associated-types-select-carriers">Associated types select carriers</a></h2>
+<p>Use associated types when the interpreter chooses representation:</p>
+<pre><code class="language-rust noplayground">pub trait SourceAlg {
+    type Source;
+    type Error;
+
+    fn source_read(&amp;self, name: &amp;str) -&gt; Result&lt;Self::Source, Self::Error&gt;;
+}</code></pre>
+<p>Do not require <code>String</code>, <code>std::io::Error</code>, or a concrete syntax tree unless those are stable semantic vocabulary at this boundary.</p>
+<p>Conversely, concrete semantic values are welcome:</p>
+<pre><code class="language-rust noplayground">pub enum Severity {
+    Warning,
+    Error,
+}</code></pre>
+<p>The rule is not “make every type abstract.” The rule is “do not confuse interpreter machinery with semantic vocabulary.”</p>
+<h2 id="put-bounds-where-they-are-used"><a class="header" href="#put-bounds-where-they-are-used">Put bounds where they are used</a></h2>
+<p>Keep a primitive free of constraints it does not need:</p>
+<pre><code class="language-rust noplayground">pub trait CandidateAlg {
+    type Candidate;
+
+    fn candidates(&amp;self) -&gt; impl Iterator&lt;Item = Self::Candidate&gt;;
+}</code></pre>
+<div id="admonition-do-not-add-preemptive-bounds" class="admonition admonish-warning" role="note" aria-labelledby="admonition-do-not-add-preemptive-bounds-title">
+<div class="admonition-title">
+<div id="admonition-do-not-add-preemptive-bounds-title">
+<p>Do not add preemptive bounds</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-do-not-add-preemptive-bounds"></a>
+</div>
+<div>
+<p>Do not constrain the associated type merely because one future algorithm might need it:</p>
+<pre><code class="language-rust noplayground">pub trait CandidateAlg {
+    // not recommended: every interpreter now pays for bounds
+    // most operations never use
+    type Candidate: Clone + Ord + Hash + Send + Sync;
+
+    fn candidates(&amp;self) -&gt; impl Iterator&lt;Item = Self::Candidate&gt;;
+}</code></pre>
+<p>The operation that sorts candidates can require <code>Ord</code>; the operation that places them in a hash set can require <code>Hash</code>.</p>
+</div>
+</div>
+<p>Use-site bounds keep primitive meanings reusable and reveal the real contract of derived behavior.</p>
+<h2 id="effects-can-be-primitive-meaning"><a class="header" href="#effects-can-be-primitive-meaning">Effects can be primitive meaning</a></h2>
+<p>Capability traits do not imply pure execution:</p>
+<pre><code class="language-rust noplayground">pub trait PublishAlg {
+    type Document;
+    type Error;
+
+    async fn publish(&amp;self, document: Self::Document) -&gt; Result&lt;(), Self::Error&gt;;
+}</code></pre>
+<p>Publishing is an effect. It may still be a primitive semantic operation at the current boundary. The concrete interpreter may use HTTP, a queue, a file, or a test buffer.</p>
+<p>The semantic layer should not prescribe retries, socket ownership, task spawning, or connection pools unless those distinctions are part of the intended meaning.</p>
+<h2 id="naming-the-boundary"><a class="header" href="#naming-the-boundary">Naming the boundary</a></h2>
+<p>Capabilities should be phrased from the consumer's semantic perspective:</p>
+<div class="table-wrapper"><table><thead><tr><th>Meaning-oriented</th><th>Representation-oriented</th></tr></thead><tbody>
+<tr><td><code>closed_outcome(slot)</code></td><td><code>get_runtime_map(slot)</code></td></tr>
+<tr><td><code>source_read(name)</code></td><td><code>compiler_context().sources().lookup(name)</code></td></tr>
+<tr><td><code>branch_path(ancestor, descendant)</code></td><td><code>raw_branch_bits(id)</code></td></tr>
+</tbody></table>
+</div>
+<p>Naming is design. A mechanical name invites mechanical coupling.</p>
+<h2 id="review-checks"><a class="header" href="#review-checks">Review checks</a></h2>
+<ul>
+<li>Does the trait expose one coherent primitive meaning?</li>
+<li>Could an independent interpreter implement it without copying the first representation?</li>
+<li>Are associated types abstract only where the interpreter genuinely chooses?</li>
+<li>Are concrete types stable semantic vocabulary?</li>
+<li>Are bounds absent until an operation uses them?</li>
+<li>Does the trait avoid returning managers, contexts, and raw storage?</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../denotational-design/dependent-types.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../rust-dd/semantic-types.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../denotational-design/dependent-types.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../rust-dd/semantic-types.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/version.js"></script>
+
+
+
+    </div>
+    </body>
+</html>
