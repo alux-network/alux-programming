@@ -17,13 +17,17 @@ const labels={
 export function mountGatewayWelcome(root){
  const locale=language(),copy=labels[locale]||labels.en;
  const audio=new Audio(`${import.meta.env.BASE_URL}audio/welcome/${locale}.mp3`);
- audio.preload='none';audio.loop=false;audio.volume=1;audio.hidden=true;audio.dataset.gatewayWelcome='';audio.setAttribute('aria-hidden','true');let disposed=false,played=false;
+ audio.preload='auto';audio.loop=false;audio.volume=1;audio.hidden=true;audio.dataset.gatewayWelcome='';audio.setAttribute('aria-hidden','true');let disposed=false,played=false,stopped=false;
  const button=document.createElement('button');button.type='button';button.className='gateway-welcome';
  const update=()=>{const playing=!audio.paused&&!audio.ended;button.textContent=playing?'◼ '+copy[2]:'▷ '+copy[played?1:0];button.setAttribute('aria-label',copy[playing?2:played?1:0]);button.dataset.playing=String(playing);};
- const play=()=>{if(disposed)return;audio.play().then(()=>{if(disposed){audio.pause();return;}played=true;update();}).catch(()=>update());};
- button.addEventListener('click',()=>{if(audio.paused||audio.ended)play();else{audio.pause();update();}});
+ const play=()=>{if(disposed||document.hidden)return;audio.play().then(()=>{if(disposed||stopped){audio.pause();return;}played=true;update();}).catch(()=>update());};
+ const unlock=event=>{if(event.composedPath().includes(button)||played||stopped||disposed)return;play();};
+ const gestures=['pointerdown','touchend','click','keydown'];
+ for(const type of gestures)document.addEventListener(type,unlock,{capture:true,passive:true});
+ button.title=copy[2]+' / '+copy[1];
+ button.addEventListener('click',()=>{if(audio.paused||audio.ended){stopped=false;audio.currentTime=0;play();}else{stopped=true;audio.pause();update();}});
  for(const event of ['playing','pause','ended','error'])audio.addEventListener(event,update);
  const visibility=()=>{if(document.hidden)audio.pause();};document.addEventListener('visibilitychange',visibility);
  root.append(audio,button);update();play();
- return ()=>{disposed=true;audio.pause();audio.removeAttribute('src');audio.load();button.remove();document.removeEventListener('visibilitychange',visibility);};
+ return ()=>{disposed=true;for(const type of gestures)document.removeEventListener(type,unlock,{capture:true});audio.pause();audio.removeAttribute('src');audio.load();button.remove();document.removeEventListener('visibilitychange',visibility);};
 }

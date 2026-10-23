@@ -54,3 +54,10 @@ html[dir=rtl] #search-dialog{text-align:right}html[dir=rtl] #search-dialog .sear
  #search-dialog .search-result p,#search-dialog .search-hint{font-size:19px}
  #search-dialog .search-footer{font-size:17px;padding:12px 18px;justify-content:flex-start}
 }
+
+/* Chapter names keep the book's editorial type, while input and helper copy stay quiet. */
+#search-dialog .search-group-label{text-transform:none;font-weight:400;letter-spacing:0}
+#search-dialog .search-result strong{font-family:var(--serif,Georgia,serif);font-size:32px;line-height:1.25;font-weight:600;letter-spacing:0}
+html[lang|=zh] #search-dialog .search-result strong,html[lang=ja] #search-dialog .search-result strong{font-family:'Noto Serif SC','Songti SC','SimSun',serif;font-size:27px;font-weight:400;line-height:1.5}
+#search-dialog .search-result small{font-weight:400}
+@media(max-width:760px){#search-dialog .search-result strong{font-size:29px}html[lang|=zh] #search-dialog .search-result strong,html[lang=ja] #search-dialog .search-result strong{font-size:25px}}
