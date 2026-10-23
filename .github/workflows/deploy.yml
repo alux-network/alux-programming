@@ -41,7 +41,9 @@ jobs:
         mdbook-linkcheck --version
 
     - name: 🔨 Build
-      run: mdbook build
+      run: |
+        mdbook build
+        cp CNAME book/html/CNAME
 
     - name: 🚀 Publish to github-pages branch
       if: github.event_name == 'push' && github.ref == 'refs/heads/master'
