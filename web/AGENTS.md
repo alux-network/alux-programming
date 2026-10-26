@@ -4,9 +4,9 @@
 
 ## 新增内容如何接入
 
-1. 原始英文内容以 `src/` 的 Markdown 和 `src/SUMMARY.md` 为准。新增章节须同时登记目录，保留原有章节、链接、标题锚点、代码和公式。不要直接编辑生成的 `web/public/content.json` 或 `web/dist/`。
+1. 原始英文内容以 `src/` 的 Markdown 和唯一的 `src/SUMMARY.md` 为准。译文与英文源相邻，例如 `chapter.zh.md`；缺失译文时回退英文，不维护另一套目录或覆盖英文。新增章节须登记目录，保留原有章节、链接、标题锚点、代码和公式。不要直接编辑生成的 `web/public/content.json`、`web/public/content/` 或 `web/dist/`。
 2. 使用 Markdown 的一个一级标题作为章名，二级标题表示章节内分节，三级标题表示子节。不要为获得某个字号而跳过语义层级，不用加粗段落冒充标题。
-3. `scripts/book.ts` 从 mdBook JSON 获取结构，从原生 HTML 获取处理后的正文；`scripts/reader-presentation.ts` 只做阅读器展示适配，不另行编译 Markdown。`src/book.ts` 定义两种界面共用的模型，`src/localization.ts` 同时供浏览器与静态路由使用。更新翻译键、语言清单与必要的界面翻译时，保留受保护的代码、公式、链接和原生标题锚点；不为让校验通过而改写词典或放宽匹配。新增页面必须可在魔法世界和现实世界访问。
+3. `scripts/mdbook-localization.ts` 在 mdBook 正常预处理前选择译文源；`scripts/book.ts` 从各语言的 mdBook JSON 获取结构，从原生 HTML 获取正文。`scripts/reader-presentation.ts` 只做展示适配，不另行编译 Markdown。`src/book.ts` 定义两种界面、搜索和静态路由共用的模型，浏览器按需加载 `content/<lang>.json`。界面文案单独放在 `locales/ui/`，组件使用明确的类型化键；不恢复正文词典、HTML token 对齐或 DOM 文本扫描。新增页面必须可在两个世界访问。
 4. 新控件复用现有工具栏、图标与交互方式。新增文案须覆盖当前全部语言；不要把新英文字符串直接留在其他语种界面，也不要只靠 CSS 改变文本含义。
 
 ## 排版、字号与对齐
@@ -28,7 +28,7 @@
 
 ## 英文大小写与多语言
 
-- 品牌名称固定为 `ALUX Programming`，`ALUX` 保持全大写。英文界面导航、按钮和模式名称沿用 `src/ui-english.ts` 的约定，例如 `Magic World`、`Real World`、`Book View`。先复用现有文案键，不对所有字符串机械执行首字母大写。
+- 品牌名称固定为 `ALUX Programming`，`ALUX` 保持全大写。英文界面导航、按钮和模式名称沿用 `locales/ui/en.json` 的约定，例如 `Magic World`、`Real World`、`Book View`。先复用现有文案键，不对所有字符串机械执行首字母大写。
 - 原文标题、正文句子、书目名称保持作者原有大小写。代码、类型、函数、变量、路径、命令、URL、锚点和数学符号不参与界面大小写转换，不翻译或改写受保护的技术标识符。
 - 翻译忠于原文的含义、逻辑、语气和技术边界，同时使用母语者自然的表达；不要按英文词序逐字硬译。术语与现有章节一致，同一概念不能在目录、正文和搜索结果中无故换名。
 - 中文署名用“光之十一”，英文署名用“Shixi Lin”；双语材料可同时出现。中文欢迎语中 ALUX 的读音按已经确认的“阿拉克斯”。

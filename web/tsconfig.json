@@ -10,9 +10,11 @@
     "isolatedModules": true,
     "erasableSyntaxOnly": true,
     "strict": true,
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
     "noEmit": true,
     "skipLibCheck": true,
     "types": ["node", "vite/client"]
   },
-  "include": ["src/**/*.ts", "scripts/**/*.ts", "tests/**/*.ts", "vite.config.ts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "scripts/**/*.ts", "tests/**/*.ts", "vite.config.ts"]
 }

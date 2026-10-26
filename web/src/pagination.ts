@@ -1,4 +1,8 @@
 import type { Icon, ReaderPage } from './book.ts';
+import { englishMessages } from './ui-messages.ts';
+import type { MessageKey } from './ui-messages.ts';
+import { languagePath } from './locale-routing.ts';
+import type { LanguageCode } from './locale-routing.ts';
 
 interface PaginationOptions {
   page: ReaderPage;
@@ -8,13 +12,23 @@ interface PaginationOptions {
   w: number;
   h: number;
   portrait: boolean;
+  label?: (key: MessageKey) => string;
+  locale?: LanguageCode;
 }
 
 // One layout algorithm supplies both the rendered chapter and whole-book page counts.
 const escape = (value: string): string =>
-  value.replace(/[&<>"']/g, character => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-  })[character] ?? character);
+  value.replace(
+    /[&<>"']/g,
+    (character) =>
+      ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[character] ?? character
+  );
 
 function content(sheet: HTMLElement): HTMLElement {
   const element = sheet.querySelector<HTMLElement>('.folio-content');
@@ -22,36 +36,62 @@ function content(sheet: HTMLElement): HTMLElement {
   return element;
 }
 
-export function prepareChapterSource(page: ReaderPage): HTMLDivElement {
+export function prepareChapterSource(
+  page: ReaderPage,
+  label: (key: MessageKey) => string = (key) => englishMessages[key],
+  locale: LanguageCode = 'en'
+): HTMLDivElement {
   const source = document.createElement('div');
   source.innerHTML = page.html;
-  if (page.slug === 'introduction.html') source.querySelector('.admonition.warning')?.remove();
-  source.querySelectorAll<HTMLTableElement>('table').forEach(table => {
+  if (page.slug === 'introduction.html')
+    source.querySelector('.admonition.warning')?.remove();
+  source.querySelectorAll<HTMLTableElement>('table').forEach((table) => {
     const wrap = document.createElement('div');
     wrap.className = 'table-scroll';
     wrap.tabIndex = 0;
     wrap.setAttribute('role', 'region');
-    wrap.setAttribute('aria-label', 'Scrollable table');
+    wrap.setAttribute('aria-label', label('Scrollable table'));
     table.before(wrap);
     wrap.append(table);
   });
-  source.querySelectorAll('h1 img').forEach(image => image.remove());
+  source.querySelectorAll('h1 img').forEach((image) => image.remove());
+  for (const anchor of source.querySelectorAll<HTMLAnchorElement>(
+    'a[href^="/"]'
+  )) {
+    const href = anchor.getAttribute('href') || '';
+    if (href.startsWith('//')) continue;
+    const url = new URL(href, 'https://book.invalid');
+    anchor.setAttribute(
+      'href',
+      languagePath(url.pathname, locale) + url.search + url.hash
+    );
+  }
   // Measuring a clip must not start another embedded player.
-  source.querySelectorAll<HTMLIFrameElement>('iframe[src]').forEach(frame => {
+  source.querySelectorAll<HTMLIFrameElement>('iframe[src]').forEach((frame) => {
     frame.dataset.embedSrc = frame.getAttribute('src') ?? '';
     frame.removeAttribute('src');
   });
   return source;
 }
 
-export function paginateChapter({ page, pages, icon, host, w, h, portrait }: PaginationOptions): HTMLElement[] {
+export function paginateChapter({
+  page,
+  pages,
+  icon,
+  host,
+  w,
+  h,
+  portrait,
+  label = (key) => englishMessages[key],
+  locale = 'en'
+}: PaginationOptions): HTMLElement[] {
   const idx = pages.indexOf(page);
   function pageElement(number: number): HTMLElement {
     const sheet = document.createElement('section');
     sheet.className = 'folio-page';
     sheet.dataset.density = 'soft';
     sheet.dataset.folio = String(number);
-    sheet.innerHTML = `<header class="folio-running-head"><span>${escape(page.group)}</span><span>ALUX PROGRAMMING</span></header><article class="folio-content prose"></article><footer class="folio-footer"><span>✦</span><span>${String(number + 1).padStart(2, '0')}</span></footer>`;
+    sheet.innerHTML = `<header class="folio-running-head"><span>${escape(page.group)}</span><span>${escape(label('ALUX PROGRAMMING'))}</span></header><article class="folio-content prose"></article><footer class="folio-footer"><span>✦</span><span>${String(number + 1).padStart(2, '0')}</span></footer>`;
     return sheet;
   }
 
@@ -75,24 +115,35 @@ export function paginateChapter({ page, pages, icon, host, w, h, portrait }: Pag
   }
 
   const parsed = document.createElement('div');
-  parsed.innerHTML = prepareChapterSource(page).innerHTML;
+  parsed.innerHTML = prepareChapterSource(page, label, locale).innerHTML;
   const blocks = Array.from(parsed.children) as HTMLElement[];
   const units: HTMLElement[] = [];
   for (let n = 0; n < blocks.length; n++) {
     const node = blocks[n];
     const nextNode = blocks[n + 1];
     if (!node) continue;
-    const keepWithNext = Boolean(nextNode && (
-      (/^H[1-4]$/.test(node.tagName) && !nextNode.matches('.admonition,.table-scroll')) ||
-      (node.tagName === 'P' && /:\s*$/.test(node.textContent ?? '') && /^(UL|OL|DIV)$/.test(nextNode.tagName))
-    ));
+    const keepWithNext = Boolean(
+      nextNode &&
+      ((/^H[1-4]$/.test(node.tagName) &&
+        !nextNode.matches('.admonition,.table-scroll')) ||
+        (node.tagName === 'P' &&
+          /:\s*$/.test(node.textContent ?? '') &&
+          /^(UL|OL|DIV)$/.test(nextNode.tagName)))
+    );
     if (keepWithNext && nextNode) {
       const group = document.createElement('div');
-      group.className = /^H[1-4]$/.test(node.tagName) ? 'folio-group folio-heading-group' : 'folio-group';
+      group.className = /^H[1-4]$/.test(node.tagName)
+        ? 'folio-group folio-heading-group'
+        : 'folio-group';
       group.append(node, nextNode);
       n++;
       const following = blocks[n + 1];
-      if (nextNode.tagName === 'P' && /:\s*$/.test(nextNode.textContent ?? '') && following && /^(UL|OL)$/.test(following.tagName)) {
+      if (
+        nextNode.tagName === 'P' &&
+        /:\s*$/.test(nextNode.textContent ?? '') &&
+        following &&
+        /^(UL|OL)$/.test(following.tagName)
+      ) {
         group.append(following);
         n++;
       }
@@ -135,7 +186,9 @@ export function paginateChapter({ page, pages, icon, host, w, h, portrait }: Pag
 
     // Tables continue between complete rows instead of leaving half a spread
     // empty or making the reader scroll an entire table inside one page.
-    const table = node.matches('.table-scroll') ? node.querySelector<HTMLTableElement>('table') : null;
+    const table = node.matches('.table-scroll')
+      ? node.querySelector<HTMLTableElement>('table')
+      : null;
     const firstBody = table?.tBodies[0];
     if (table && firstBody && firstBody.rows.length > 1) {
       const rows = Array.from(firstBody.rows);
@@ -197,7 +250,7 @@ export function paginateChapter({ page, pages, icon, host, w, h, portrait }: Pag
 
   const end = document.createElement('nav');
   end.className = 'folio-chapter-end';
-  end.innerHTML = `<span>✦</span><p>Continue the journey</p>${idx + 1 < pages.length ? `<a href="/${pages[idx + 1]?.slug}">${escape(pages[idx + 1]?.title ?? '')} ${icon('arrow-right')}</a>` : '<a href="/contents.html" data-open-contents>Return to the table of contents</a>'}`;
+  end.innerHTML = `<span>✦</span><p>${escape(label('Continue the journey'))}</p>${idx + 1 < pages.length ? `<a href="${languagePath('/' + (pages[idx + 1]?.slug || ''), locale)}">${escape(pages[idx + 1]?.title ?? '')} ${icon('arrow-right')}</a>` : `<a href="${languagePath('/contents.html', locale)}" data-open-contents>${escape(label('Return to the table of contents'))}</a>`}`;
   body.append(end);
   if (!fits()) {
     end.remove();
@@ -206,7 +259,7 @@ export function paginateChapter({ page, pages, icon, host, w, h, portrait }: Pag
   }
   if (!portrait && sheets.length % 2) {
     next();
-    body.innerHTML = `<div class="folio-closing"><span>✦</span><p>First the meaning.<br><em>Then the machinery.</em></p><a href="/contents.html" data-open-contents>Explore another chapter ${icon('arrow-right')}</a></div>`;
+    body.innerHTML = `<div class="folio-closing"><span>✦</span><p>${escape(label('First the meaning.'))}<br><em>${escape(label('Then the machinery.'))}</em></p><a href="${languagePath('/contents.html', locale)}" data-open-contents>${escape(label('Explore another chapter'))} ${icon('arrow-right')}</a></div>`;
   }
   measure.remove();
   return sheets;

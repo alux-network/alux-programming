@@ -4,4 +4,5 @@ web/node_modules/
 web/dist/
 web/.cache/
 web/public/content.json
+web/public/content/
 web/public/book-assets/
