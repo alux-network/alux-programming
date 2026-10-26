@@ -19,7 +19,7 @@ These are local results. CI and physical devices are separate. Reproducible logs
 | --- | --- | --- |
 | Current-chapter-only pagination | PASS | Runtime User Timing records measured canonical IDs. Four-profile checks cover initial and subsequent routes; only selected language data requested. |
 | Content/boundaries after size, orientation, language and mode changes | PASS | Exact normalized text comparisons, canonical section continuity, existing 99 language/viewport/route cases. |
-| Lifecycle resource cleanup | PASS | Five destroyed PageFlip instances: baseline 5 active frames/5 resize listeners; patched 0 frames/0 listeners/0 hosts, no exceptions. Four warmed round trips after GC each show 3 documents, 5597 nodes, 75 JS listeners; global counts stable. |
+| Lifecycle resource cleanup | PASS | Five destroyed PageFlip instances: baseline 5 active frames/5 resize listeners; patched 0 frames/0 listeners/0 hosts, no exceptions. Final four warmed round trips after GC each show 3 documents, 5602 nodes, 75 JS listeners; global counts stable. |
 | Page-turn completion/cancellation | PASS | Normal-motion navigation, back interruption, forward restoration; no animation/measurement hosts left. Clipboard completion guards unmount. |
 | Eleven-language structure and protected content | PASS | 11 native editions × 28 chapters; exact code/math/link/image/media checks and mutation tests retained; canonical hierarchy/anchors; 36 Node tests. Existing Chromium regression: 318 assertions, 99 route/viewport/language cases. |
 | Missing translation English fallback | PASS | Build-level source-selection fixtures. Not a simulated missing network response. |
@@ -29,7 +29,7 @@ These are local results. CI and physical devices are separate. Reproducible logs
 | Repeated build determinism | PASS | Sorted SHA-256 inventory of every dist file, including scripts/styles/fonts/media; no timestamp exclusions. |
 | Internal routes/anchors/resources | PASS | 737 HTML pages, 11594 links, 5522 fragments, 3784 resource references, zero missing targets; browser captures internal failures. |
 | Original mdBook publishing | NOT TESTED locally | Native web HTML/JSON passes with mdBook0.4.52/admonish1.20.0/KaTeX0.9.4. Local linkcheck absent. Unchanged publishing CI installs linkcheck0.7.7 and remains the full check. |
-| Frontend CI | NOT TESTED in local snapshot | Separate reader.yml adds frozen install/lint/types/build/tests, repeat hashes, links and four engine/profile configurations. Live CI result will be reported in PR. Original deploy workflow unchanged. |
+| Frontend CI | NOT TESTED in local snapshot | Separate reader.yml adds frozen install/lint/types/build/tests, repeat hashes, links and four engine/profile configurations on pinned Ubuntu24.04 with a 30-minute bound. The initial moving ubuntu-latest runner used Ubuntu26.04 and stalled downloading browser system packages; build/repeatability checks had passed. Live replacement CI result is reported in PR. Original deploy workflow unchanged. |
 | Performance vs pinned baseline | PASS | Same Chrome/1440×960/reduced motion, five new contexts each: median ready 1445ms → 405ms; requests27 → 16; bytes1487727 → 944044. Local observation, not production SLA. |
 
 ## Browser/device scope
