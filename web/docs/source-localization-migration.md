@@ -24,10 +24,20 @@ The previous token-matching unit tests described a mechanism intentionally remov
 
 ## Validation status
 
-Strict TypeScript, the 31-test Node suite and the full web build pass. The reproducible `pnpm test:browser` run passed 318 assertions, including 99 language/viewport/route combinations (eleven languages × three widths × both readers and contents), plus navigation, mode switching, dialogs, search, bookmarks, canonical position, clipboard and music-volume controls. The run found no browser exceptions, page overflow or toolbar controls outside the viewport.
+Strict TypeScript, the 32-test Node suite and the full web build pass. The reproducible `pnpm test:browser` run passed 318 assertions, including 99 language/viewport/route combinations (eleven languages × three widths × both readers and contents), plus navigation, mode switching, dialogs, search, bookmarks, canonical position, clipboard and music-volume controls. The run found no browser exceptions, page overflow or toolbar controls outside the viewport.
 
-With image/font requests deliberately delayed by 200ms, the 320/768/1440px startup probes recorded zero painted empty-book frames. First readable content appeared at 816/772/754ms; final readiness was 2022/1933/1880ms in this local headless Chrome run. These are local observations, not a production or physical-device performance claim.
+With image/font requests deliberately delayed by 200ms, the 320/768/1440px startup probes recorded zero painted empty-book frames. First readable content appeared at 853/745/749ms; final readiness was 2079/1891/1890ms in this local headless Chrome run. These are local observations, not a production or physical-device performance claim.
 
 The untouched original publishing build was also attempted; its local full run is unavailable because `mdbook-linkcheck` is not installed here. The web build exercises native mdBook HTML and JSON with pinned admonish/KaTeX. The existing GitHub Pages workflow still installs pinned linkcheck and remains unchanged. Physical-device audio, production deployment and platform share caches are outside this local regression.
 
-Independent review and final PR submission are in progress. Review findings and dispositions will be recorded below; no merge or production deployment is authorized.
+Three independent read-only code reviews used the Frank, Tomislav and Yilu review lenses; these are not approvals by those maintainers. The source-contract, UI-state and behavior/preservation scopes were reviewed separately, with the migrated prose covered by the baseline comparisons rather than a claimed manual read of all 280 files.
+
+| Finding | Disposition and verification |
+| --- | --- |
+| iframe titles absent from the protected media facts | **Fixed in `aca4f04`**. Media tuples now cover titles and URLs; the reviewer confirmed the fix and mutation test. |
+| Responsive images and video/audio/source/poster references missing from the guard | **Fixed in `aca4f04`**. A dedicated mutation fixture exercises these attributes; the behavior reviewer confirmed the fix. |
+| Language state duplicated between i18n globals and the Solid app | **Fixed in `aca4f04`**. One Solid edition signal owns locale/book/messages; all helpers and the app derive from it. Targeted review found no remaining issue. |
+| World entry resets audio to Magic on / Real off | **Kept**. This is the established product behavior; manual play/pause is retained across chapters within the same world. Changing world-entry defaults would alter the approved behavior. |
+| Separate iframe/image `src` mutation cases absent | **Fixed** in the test follow-up alongside this record; both source changes now join the existing attribute mutation fixture. |
+
+All blocking findings are closed. The PR remains for maintainer review; no merge or production deployment is authorized.

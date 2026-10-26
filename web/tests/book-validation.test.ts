@@ -56,6 +56,8 @@ test('media sources, responsive images, video posters and iframe titles are prot
     validateReaderEdition(structuredClone(canonical), canonical, 'zh')
   );
   for (const original of [
+    'https://example.com/embed',
+    'small.png',
     'Original clip',
     'poster.png',
     'movie.mp4',
