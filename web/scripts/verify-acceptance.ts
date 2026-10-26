@@ -25,13 +25,13 @@ try{
   const context=await browser.newContext({...profile.options,reducedMotion:'no-preference'}),page=await context.newPage();
   const errors:string[]=[],failed:string[]=[],measured:string[]=[],contentRequests:string[]=[],checks:string[]=[];
   const check=(name:string,value:unknown)=>{assert.ok(value,profile.name+': '+name);checks.push(name);};
-  page.on('pageerror',error=>errors.push(error.message));
+  page.on('pageerror',error=>errors.push(error.stack||error.message));
   page.on('response',response=>{if(response.url().startsWith(origin)&&response.status()>=400)failed.push(response.status()+' '+response.url());});
   page.on('requestfailed',request=>{if(request.url().startsWith(origin)&&request.failure()?.errorText!=='net::ERR_ABORTED'&&!request.failure()?.errorText.includes('CANCELLED'))failed.push(request.url()+': '+request.failure()?.errorText);});
   page.on('request',request=>{if(request.url().includes('/content/'))contentRequests.push(new URL(request.url()).pathname);});
-  await page.exposeFunction('recordMeasured',(id:string)=>measured.push(id));
+  await page.exposeFunction('recordMeasured',(id:string,pathname:string)=>{measured.push(id);if(!pathname.endsWith('/'+id.replace(/\.md$/,'.html')))errors.push('Unrelated pagination: '+id+' on '+pathname);});
   await page.addInitScript(()=>{
-   new PerformanceObserver(list=>{for(const entry of list.getEntries())if(entry.name==='alux:pagination')void(window as unknown as {recordMeasured:(id:string)=>Promise<void>}).recordMeasured((entry as PerformanceMark).detail.chapter);}).observe({entryTypes:['mark']});
+   new PerformanceObserver(list=>{for(const entry of list.getEntries())if(entry.name==='alux:pagination')void(window as unknown as {recordMeasured:(id:string,pathname:string)=>Promise<void>}).recordMeasured((entry as PerformanceMark).detail.chapter,location.pathname);}).observe({entryTypes:['mark']});
   });
   let failure:unknown;
   try{
@@ -51,8 +51,12 @@ try{
    await page.locator('#bookmark').click();check('bookmark toggles',await page.locator('#bookmark').getAttribute('aria-pressed')==='true');
    await page.locator('#reading-mode').click();await page.locator('.continuous-prose').waitFor();await page.locator('#reading-mode').click();await settled(page);check('scroll/book round trip',before===await snapshot());
    await page.locator('select[data-language]').selectOption('en');await page.locator('html[lang="en"]').waitFor();await settled(page);check('language keeps canonical route and section',page.url().includes('/concepts/operational_semantics.html')&&new URL(page.url()).hash.length>1);
+   if(await page.locator('.reader-music-button').getAttribute('aria-pressed')!=='true')await page.locator('.reader-music-button').click();
+   await page.waitForFunction(()=>{const media=document.querySelector<HTMLAudioElement>('audio[src*="forest-breath"]');return media&&!media.paused&&media.currentTime>0;});
+   check('native audio playback clock advances',true);
    await page.locator('[data-realm-switch]').click();await page.locator('.real-prose h1').waitFor();await closeMusic(page);
    check('world switch keeps chapter',page.url().includes('/real/concepts/operational_semantics.html'));
+   check('real-world entry interrupts music',await page.locator('audio[src*="forest-breath"]').evaluate((media:HTMLAudioElement)=>media.paused));
    await page.locator('[data-search]').first().click();await page.locator('#search-input').fill('semantics');await page.locator('.search-result').first().waitFor();check('selected-language search results',await page.locator('.search-result').count()>0);await page.keyboard.press('Escape');
    await page.locator('[data-realm-switch]').click();await settled(page);check('bookmark persists through language/world changes',await page.locator('#bookmark').getAttribute('aria-pressed')==='true');
    // Real internal link clicks exercise the router, not a direct state/test backdoor.
@@ -83,6 +87,8 @@ try{
    check('no leftover animation or measurement hosts',await page.locator('.chapter-flip-host,.folio-measure').count()===0);
    check('single active reader and audio element',await page.locator('#page-book').count()===1&&await page.locator('audio').count()<=1);
    await page.screenshot({path:path.join(output,profile.name+'.png')});
+   await follow('/');await page.locator('.world-choice').first().waitFor();await page.locator('.reader-app[aria-busy="false"]').waitFor();
+   check('leaving readers pauses reading audio',await page.locator('audio[src*="forest-breath"]').evaluate((media:HTMLAudioElement)=>media.paused));
    check('no failed internal requests',failed.length===0);check('no uncaught exceptions',errors.length===0);
    reports.push({profile:profile.name,browser:browser.version(),simulation:profile.simulation,status:'PASS',readyMs,checks,errors,failed,measured,contentRequests});
   }catch(error){failure=error;reports.push({profile:profile.name,browser:browser.version(),simulation:profile.simulation,status:'FAIL',checks,errors,failed,detail:String(error)});await page.screenshot({path:path.join(output,profile.name+'-failure.png')}).catch(()=>{});}

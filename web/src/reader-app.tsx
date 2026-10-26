@@ -128,6 +128,7 @@ export function ReaderApp() {
       );
       setPath(location.pathname);
       await nextFrame();
+      if(task.signal.aborted)return;
       restore();
     } catch {
       if(task.signal.aborted)return;
@@ -174,6 +175,7 @@ export function ReaderApp() {
     const update = async () => {
       commit();
       await nextFrame();
+      if(task.signal.aborted)return;
       restore(true);
     };
     try {

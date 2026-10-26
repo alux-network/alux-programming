@@ -1,42 +1,71 @@
 # PR #2 measurable merge acceptance
 
-Source: [Tomislav's review](https://github.com/alux-network/alux-programming/pull/2#issuecomment-6420843360), 2026-10-27 00:06 Beijing time. Baseline: `ba2274db4520be6d34d039ab0e49d04a8005b02d`.
+Review: [Tomislav, comment 6420843360](https://github.com/alux-network/alux-programming/pull/2#issuecomment-6420843360). Local evidence: 2026-10-27, Windows, Node 24.19.0, pnpm 11.25.0, Playwright 1.64.1. Baseline: `ba2274db4520be6d34d039ab0e49d04a8005b02d`. No further architecture rewrite, redesign, merge or production deployment is authorized.
 
-This pass fixes merge blockers and records evidence. It does not authorize another architecture rewrite, a redesign, a merge or production deployment.
+## Decisions and fixes
 
-## Authorized changes and decisions
+- Owner selected **on-demand pagination**: measure only the viewed chapter and decode only its images. Show labelled chapter progress until exact-layout counts for every chapter have already been learned from actual visits. Never guess totals or measure unseen chapters, including background work, to obtain them. Language, dimensions, text size and font invalidation constrain reuse.
+- Abort obsolete layout/navigation work; preserve canonical sections through font/size/orientation and scroll/book changes. History resolves unprefixed English correctly.
+- Pinned page-flip 2.0.7 retained render frames and resize listeners after destroy; delayed initialization could survive immediate destruction. The checked-in pnpm patch fixes source and distributed bundles, retains its license, and needs no manual node_modules edits.
+- World transitions commit synchronously. Awaiting rAF inside a View Transition update callback deadlocked mobile Chromium until timeout. Restore after the transition and check cancellation.
+- Windows supports probes now terminate naturally: forced process.exit aborted Node handles and let mdBook skip localization. A subprocess regression and translated-source-title guard prevent localized UI from silently accompanying English chapters.
+- `sourceHash` identifies normalized-line-ending SHA-256 of canonical English Markdown. Missing/mismatched hashes warn without blocking, changing prose or automatically acknowledging translations. All 280 initial hashes identify the migration baseline, not a new linguistic review. Git comparison confirmed metadata-only changes.
 
-- Pagination/page-turn lifecycle, history and reading-position restoration, focused diagnostics and regression tests.
-- Non-blocking translated-source freshness warnings; no automatic translation or acknowledgement.
-- Fresh tracked checkout, frozen installation, repeated-build determinism, links/anchors/assets and frontend CI. Preserve the original publishing workflow.
-- Root/web Agent guides and this ledger. Preserve existing prose, technical examples, media, typography, palettes, language identities and storage keys.
-- The owner selected **on-demand pagination**: measure only the viewed chapter. Use continuous whole-book numbering only when exact-layout counts have already been learned from actual visits; otherwise explicitly label chapter progress. Never guess totals or measure unseen chapters to obtain them.
-- The owner has Android but no iPhone/iPad and requested simulation. Distinguish mobile-profile Chromium and WebKit emulation from physical Android Chrome and iOS Safari.
+## Local acceptance ledger
 
-## Acceptance ledger
+These are local results. CI and physical devices are separate. Reproducible logs/JSON/screenshots: `output/merge-acceptance/` and `output/reader-regression/`.
 
-Final rows must use **PASS / FAIL / NOT TESTED**, commands, browser versions and evidence. These initial states identify work to perform, not final claims.
-
-| Criterion | Initial status | Evidence / remaining work |
+| Criterion | Status | Evidence |
 | --- | --- | --- |
-| No pagination/loading for unrelated chapters | FAIL | Baseline layout measures the full book and decodes unrelated images. |
-| Resize/fonts/languages preserve content and boundaries | NOT TESTED | Re-run current-head content and orientation checks. |
-| Repeated chapter/mode changes release resources | NOT TESTED | Measure warmed cycles: listeners, observers, timers and detached DOM. |
-| Page-turn completion/cancellation on navigation | NOT TESTED | Normal-motion navigation and history interruption. |
-| Eleven-language structure, links, fallback, code/math/media | NOT TESTED | Current build/tests and generated-route audit. |
-| English edits identify potentially stale translations | FAIL | Baseline has no source fingerprint warning. |
-| Fresh checkout/frozen install/build/test, no hidden files | NOT TESTED | Isolated tracked-file checkout with pinned tools. |
-| Repeat-build generated-content determinism | NOT TESTED | Compare sorted SHA-256 inventories, not timestamps. |
-| Original mdBook build | NOT TESTED | Unchanged publishing workflow and available native tools. |
-| Internal assets, routes and fragments resolve | NOT TESTED | Static audit plus browser request/error capture. |
-| Desktop Chromium and Firefox | NOT TESTED | Record actual versions and scenarios. |
-| Android-profile Chromium simulation | NOT TESTED | Record profile/touch/orientation; not a physical-device result. |
-| iPhone-profile WebKit simulation | NOT TESTED | Record engine/profile; not actual iOS Safari. |
-| Physical Android Chrome | NOT TESTED | No phone is connected to the agent environment. |
-| Physical iOS Safari | NOT TESTED | Owner has no iPhone/iPad. Emulation does not prove this required merge gate. |
-| CI lint, strict types, frontend build/tests | FAIL | Existing publishing CI does not run frontend checks. |
-| Performance relative to the pinned baseline | NOT TESTED | Same local conditions; no eager unseen-chapter work. |
+| Current-chapter-only pagination | PASS | Runtime User Timing records measured canonical IDs. Four-profile checks cover initial and subsequent routes; only selected language data requested. |
+| Content/boundaries after size, orientation, language and mode changes | PASS | Exact normalized text comparisons, canonical section continuity, existing 99 language/viewport/route cases. |
+| Lifecycle resource cleanup | PASS | Five destroyed PageFlip instances: baseline 5 active frames/5 resize listeners; patched 0 frames/0 listeners/0 hosts, no exceptions. Four warmed round trips after GC each show 3 documents, 5597 nodes, 75 JS listeners; global counts stable. |
+| Page-turn completion/cancellation | PASS | Normal-motion navigation, back interruption, forward restoration; no animation/measurement hosts left. Clipboard completion guards unmount. |
+| Eleven-language structure and protected content | PASS | 11 native editions × 28 chapters; exact code/math/link/image/media checks and mutation tests retained; canonical hierarchy/anchors; 36 Node tests. Existing Chromium regression: 318 assertions, 99 route/viewport/language cases. |
+| Missing translation English fallback | PASS | Build-level source-selection fixtures. Not a simulated missing network response. |
+| English edit freshness warning | PASS | Matching hash silent, English edit warns, translation bytes unchanged, CRLF/LF equivalent. No unexpected baseline warnings in actual build. |
+| Strict types and lint | PASS | pnpm typecheck; pnpm lint uses TypeScript unused/unreachable/fallthrough checks, not an ESLint claim. |
+| Fresh frozen install/build/test | PASS | Isolated local Git checkout of signed tracked source, initially without dependencies/generated reader data. No manual generated files copied in. |
+| Repeated build determinism | PASS | Sorted SHA-256 inventory of every dist file, including scripts/styles/fonts/media; no timestamp exclusions. |
+| Internal routes/anchors/resources | PASS | 737 HTML pages, 11594 links, 5522 fragments, 3784 resource references, zero missing targets; browser captures internal failures. |
+| Original mdBook publishing | NOT TESTED locally | Native web HTML/JSON passes with mdBook0.4.52/admonish1.20.0/KaTeX0.9.4. Local linkcheck absent. Unchanged publishing CI installs linkcheck0.7.7 and remains the full check. |
+| Frontend CI | NOT TESTED in local snapshot | Separate reader.yml adds frozen install/lint/types/build/tests, repeat hashes, links and four engine/profile configurations. Live CI result will be reported in PR. Original deploy workflow unchanged. |
+| Performance vs pinned baseline | PASS | Same Chrome/1440×960/reduced motion, five new contexts each: median ready 1445ms → 405ms; requests27 → 16; bytes1487727 → 944044. Local observation, not production SLA. |
 
-## Closure rule
+## Browser/device scope
 
-Fix demonstrated failures, retain useful existing tests, and document limitations. Optional cleanup and sophisticated freshness/performance optimization belong in follow-up work. A green local/emulated matrix does not erase an untested real-device merge criterion.
+| Environment | Status | Scope |
+| --- | --- | --- |
+| Desktop Chromium156.0.8078.47 | PASS | Magic/Real, navigation/history, language, bookmark/search, code/math, resize, lifecycle and native audio clock/state. |
+| Desktop Firefox157.0 | PASS | Same acceptance scenarios. |
+| Pixel7 profile, Chromium156.0.8078.47 | PASS — simulation | Touch/mobile viewport/orientation. Desktop engine with profile, not Android hardware. |
+| iPhone13 profile, WebKit27.2 | PASS — simulation | Playwright WebKit, not actual iOS Safari. |
+| Physical Android Chrome | NOT TESTED | Owner has Android hardware; no phone connected to test environment. |
+| Physical iOS Safari | NOT TESTED | Owner has **no iPhone or iPad** and requested simulation. Hardware merge gate unproven. |
+
+Native media-clock advancement and pause on Real entry/leaving readers are automated checks, not audible hardware proof. Third-party embedded playback is outside the internal-resource audit. An intermittent WebKit `writeEmbed` error occurred during live embedded-player navigation; the final PR update must state investigation/results, not treat a rerun as proof it never occurred.
+
+## Reproduce
+
+Pinned mdBook tools on PATH; from web/:
+
+```sh
+pnpm install --frozen-lockfile
+pnpm lint
+pnpm typecheck
+pnpm build
+pnpm test
+pnpm test:generated
+# Save generated-inventory.json, build again, rerun test:generated,
+# and compare the complete inventories byte-for-byte.
+pnpm exec playwright install chromium firefox webkit
+pnpm test:browser
+pnpm test:acceptance
+node scripts/measure-startup.ts /path/to/checked-out/web startup.json
+```
+
+Windows may use PLAYWRIGHT_CHROMIUM_EXECUTABLE for Chrome and PLAYWRIGHT_BROWSERS_PATH for downloaded engines. Temporary ports:4175/4176; benchmark4177. Commands do not publish or merge.
+
+Three independent read-only Frank/Tomislav/Yilu lens reviews are not approvals by those maintainers. Findings fixed: clipboard completion after unmount, aborted restoration, whole-dist hashes, explicit outer-host assertion and pagination observations across routes. No blocking code-review finding remains. The selected diagnostic chapters use normal .md→.html paths; expanding the fixture to index.md must use its introduction.html alias.
+
+The PR remains for maintainer review. Local/emulated success does not convert an untested physical-device criterion into PASS.

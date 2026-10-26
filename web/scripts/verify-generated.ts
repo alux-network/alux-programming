@@ -22,6 +22,6 @@ for(const file of known){
  }
 }
 // Content and every generated route are deterministic inputs to the delivery.
-const hashes:Record<string,string>={};for(const file of known)if(file.endsWith('.html')||file==='content.json'||file.startsWith('content/')&&file.endsWith('.json'))hashes[file]=createHash('sha256').update(await fs.readFile(path.join(root,file))).digest('hex');
+const hashes:Record<string,string>={};for(const file of known)hashes[file]=createHash('sha256').update(await fs.readFile(path.join(root,file))).digest('hex');
 await fs.mkdir(output,{recursive:true});await fs.writeFile(path.join(output,'generated-inventory.json'),JSON.stringify(hashes,null,2));await fs.writeFile(path.join(output,'generated-audit.json'),JSON.stringify({html:documents.size,links,fragments,resources,failures},null,2));
 console.log(JSON.stringify({html:documents.size,links,fragments,resources,failures:failures.length,samples:failures.slice(0,12)}));assert.equal(failures.length,0,'See generated-audit.json');

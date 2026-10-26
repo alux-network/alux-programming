@@ -21,14 +21,14 @@ try{
   type Flip={loadFromHTML(nodes:HTMLElement[]):void;flipNext(corner:string):void;destroy():void};
   const ctor=(window as Window&{St?:{PageFlip:new(element:HTMLElement,settings:Record<string,unknown>)=>Flip}}).St?.PageFlip;if(!ctor)throw Error('PageFlip did not load');
   for(let i=0;i<5;i++){
-   const host=document.createElement('div');host.style.width='360px';host.style.height='240px';document.body.append(host);
+   const host=document.createElement('div');host.dataset.flipProbeHost='true';host.style.width='360px';host.style.height='240px';document.body.append(host);
    const sheets=Array.from({length:4},(_,n)=>{const sheet=document.createElement('section');sheet.textContent='Sheet '+n;host.append(sheet);return sheet;});
    const flip=new ctor(host,{width:180,height:240,useMouseEvents:false,usePortrait:false,autoSize:false,flippingTime:560});flip.loadFromHTML(sheets);
    if(i%2)await new Promise(resolve=>setTimeout(resolve,25));flip.flipNext('bottom');flip.destroy();
   }
   const probe=(window as Window&{flipProbe?:{frames:Set<number>;resize:Set<unknown>;raf:typeof requestAnimationFrame}}).flipProbe!;
   await new Promise<void>(resolve=>probe.raf(()=>probe.raf(()=>resolve())));
-  return {activeFrames:probe.frames.size,resizeListeners:probe.resize.size,remainingHosts:document.querySelectorAll('.stf__parent,.stf__wrapper').length};
+  return {activeFrames:probe.frames.size,resizeListeners:probe.resize.size,remainingHosts:document.querySelectorAll('[data-flip-probe-host],.stf__parent,.stf__wrapper').length};
  });
  await fs.writeFile(path.join(output,'page-flip-lifecycle.json'),JSON.stringify({browser:browser.version(),result,errors},null,2));
  console.log(JSON.stringify({browser:browser.version(),result,errors}));assert.deepEqual(result,{activeFrames:0,resizeListeners:0,remainingHosts:0});assert.deepEqual(errors,[]);

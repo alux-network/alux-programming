@@ -525,9 +525,11 @@ export function attachBookLayout({
         query<HTMLElement>('.code-block', button)
       );
       await navigator.clipboard.writeText(code.textContent ?? '');
+      if(disposed)return;
       button.textContent = ui('Copied');
       const timer=setTimeout(()=>{copyTimers.delete(timer);if(button.isConnected)button.textContent=ui('Copy code');},1800);copyTimers.add(timer);
     } catch {
+      if(disposed)return;
       button.textContent = ui('Select code to copy');
     }
   }

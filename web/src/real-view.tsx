@@ -99,6 +99,7 @@ export function RealView(props: ReaderViewProps) {
       }, 1800);
       copyTimers.add(timer);
     } catch {
+      if(disposed)return;
       props.announce(ui('Copy is unavailable. Select the code to copy it.'));
     }
   }
