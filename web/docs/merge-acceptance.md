@@ -43,7 +43,7 @@ These are local results. CI and physical devices are separate. Reproducible logs
 | Physical Android Chrome | NOT TESTED | Owner has Android hardware; no phone connected to test environment. |
 | Physical iOS Safari | NOT TESTED | Owner has **no iPhone or iPad** and requested simulation. Hardware merge gate unproven. |
 
-Native media-clock advancement and pause on Real entry/leaving readers are automated checks, not audible hardware proof. Third-party embedded playback is outside the internal-resource audit. An intermittent WebKit `writeEmbed` error occurred during live embedded-player navigation; the final PR update must state investigation/results, not treat a rerun as proof it never occurred.
+Native media-clock advancement and pause on Real entry/leaving readers are automated checks, not audible hardware proof. Third-party embedded playback is outside the internal-resource audit. An earlier intermittent WebKit `writeEmbed` error was not reproducible with a stack trace; investigation did find live iframe sources cloned into animation snapshots. Both snapshot paths now reuse the existing safe-copy helper, so copies cannot start duplicate players. The final four-profile run, including audio, has no uncaught exceptions or failed internal requests. This does not prove the earlier provider-looking exception came from that defect or guarantee third-party uptime; retain stack capture if it recurs.
 
 ## Reproduce
 

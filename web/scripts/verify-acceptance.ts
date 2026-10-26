@@ -63,7 +63,9 @@ try{
    const follow=async(href:string)=>page.evaluate(href=>{const a=document.createElement('a');a.href=href;document.body.append(a);a.click();a.remove();},href);
    await follow('/rust-dd/capability-algebras.html');await settled(page);
    check('code survives route turn',await page.locator('#page-book pre code').count()>0);
-   await follow('/concepts/operational_semantics.html');await page.waitForURL('**/concepts/operational_semantics.html');await page.waitForTimeout(60);await page.goBack();await settled(page);
+   await follow('/concepts/operational_semantics.html');await page.waitForURL('**/concepts/operational_semantics.html');
+   check('animation copies never load duplicate embedded players',await page.locator('.reader-backdrop iframe[src],.chapter-flip-host iframe[src]').count()===0);
+   await page.waitForTimeout(60);await page.goBack();await settled(page);
    check('history interrupts animation cleanly: '+page.url(),page.url().includes('capability-algebras.html')&&await page.locator('.chapter-flip-host').count()===0);
    await page.goForward();await settled(page);check('forward restores destination',page.url().includes('operational_semantics.html'));
    // Warm cycles must leave one active layout, no detached measurement/animation hosts.

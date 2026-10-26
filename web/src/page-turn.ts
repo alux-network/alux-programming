@@ -1,15 +1,14 @@
 import {PageFlip} from 'page-flip';
+import {copyBookSurface} from './reader-surface.ts';
 
 function visibleSheets(book: HTMLElement): HTMLElement[] {
   return [...book.querySelectorAll<HTMLElement>('.folio-page')]
     .filter(element => getComputedStyle(element).display !== 'none' && element.getBoundingClientRect().width > 0)
     .sort((a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left)
     .map(element => {
-      const copy = element.cloneNode(true) as HTMLElement;
+      const copy = copyBookSurface(element);
       copy.className = 'folio-page';
       copy.removeAttribute('style');
-      copy.removeAttribute('id');
-      copy.querySelectorAll('[id]').forEach(node => node.removeAttribute('id'));
       return copy;
     });
 }
@@ -32,9 +31,7 @@ export async function turnRoute(app: HTMLElement, update: () => Promise<unknown>
   veil.inert = true;
   veil.setAttribute('aria-hidden', 'true');
   Object.assign(veil.style, {position:'fixed',left:`${rect.left}px`,top:`${rect.top}px`,width:`${rect.width}px`,height:`${rect.height}px`,overflow:'hidden',pointerEvents:'none',zIndex:9});
-  const snapshot = old.cloneNode(true) as HTMLElement;
-  snapshot.removeAttribute('id');
-  snapshot.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
+  const snapshot = copyBookSurface(old);
   veil.append(snapshot);
   document.body.append(veil);
   let flip: PageFlip | null = null;
