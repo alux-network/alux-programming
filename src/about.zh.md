@@ -1,4 +1,4 @@
-<!-- reader: {"title":"关于本书"} -->
+<!-- reader: {"title":"关于本书","sourceHash":"sha256:dc574b72cd9d99b223d155921c54f7cf34eb8ee02ac5655eb0c184c2c520199a"} -->
 
 # 关于 {#about}
 

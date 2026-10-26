@@ -1,4 +1,4 @@
-<!-- reader: {"title":"자유 모나드"} -->
+<!-- reader: {"title":"자유 모나드","sourceHash":"sha256:1d74262c1053f3cc50c6a3c49b8b9b7eddfb3c6ab6f247530387d19b335f4626"} -->
 
 # 자유 모나드 {#free-monad}
 

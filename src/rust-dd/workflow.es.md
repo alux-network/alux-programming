@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Un flujo de trabajo guiado por el significado"} -->
+<!-- reader: {"title":"Un flujo de trabajo guiado por el significado","sourceHash":"sha256:4e52a8067c665db3ce38a802a1615b5d660d1aeee86656c13b53a33c6ebd2dff"} -->
 
 # Un flujo de trabajo guiado por el significado {#a-meaning-first-workflow}
 

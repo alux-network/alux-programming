@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Bài toán biểu thức trở lại"} -->
+<!-- reader: {"title":"Bài toán biểu thức trở lại","sourceHash":"sha256:4700e3db9f897416ecd8effa743648b9f65fe37268af14187948ecf790df44fe"} -->
 
 # Bài toán biểu thức trở lại {#expression-problem-reloaded}
 

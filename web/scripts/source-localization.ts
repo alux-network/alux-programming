@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import {createHash} from 'node:crypto';
 import type { MdBook, MdBookItem } from './mdbook-model.ts';
 import { languages } from '../src/locale-routing.ts';
 import type { LanguageCode } from '../src/locale-routing.ts';
@@ -7,6 +8,7 @@ import type { LanguageCode } from '../src/locale-routing.ts';
 export interface SourceMetadata {
   title?: string;
   parts?: Record<string, string>;
+  sourceHash?:string;
 }
 /** Optional source-level navigation labels; chapter prose stays ordinary Markdown. */
 export function sourceMetadata(markdown: string): SourceMetadata {
@@ -16,7 +18,7 @@ export function sourceMetadata(markdown: string): SourceMetadata {
   if (!value || typeof value !== 'object' || Array.isArray(value))
     throw Error('Reader source metadata must be an object');
   const data = value as Record<string, unknown>;
-  if (Object.keys(data).some((key) => key !== 'title' && key !== 'parts'))
+  if (Object.keys(data).some((key) => !['title','parts','sourceHash'].includes(key)))
     throw Error('Unknown reader source metadata field');
   if (
     data.title !== undefined &&
@@ -33,8 +35,11 @@ export function sourceMetadata(markdown: string): SourceMetadata {
       ))
   )
     throw Error('Reader part titles must be nonempty strings');
+  if(data.sourceHash!==undefined&&(typeof data.sourceHash!=='string'||!/^sha256:[a-f0-9]{64}$/.test(data.sourceHash)))throw Error('Invalid English source fingerprint');
   return data as SourceMetadata;
 }
+
+export function sourceFingerprint(markdown:string):string{return 'sha256:'+createHash('sha256').update(markdown.replace(/\r\n?/g,'\n')).digest('hex');}
 
 export function translatedSourcePath(
   canonical: string,
@@ -51,7 +56,8 @@ export function translatedSourcePath(
 export async function localizeSources(
   book: MdBook,
   sourceRoot: string,
-  locale: LanguageCode
+  locale: LanguageCode,
+  warn:(message:string)=>void=message=>console.error(message)
 ): Promise<MdBook> {
   if (!languages.some((language) => language.code === locale))
     throw Error('Unsupported book language: ' + locale);
@@ -80,6 +86,8 @@ export async function localizeSources(
         try {
           const content = await fs.readFile(filename, 'utf8'),
             metadata = sourceMetadata(content);
+          const fingerprint=sourceFingerprint(original.content);
+          if(metadata.sourceHash!==fingerprint)warn(`[translation freshness] ${locale} ${canonical}: ${metadata.sourceHash?'English source changed; translation may be stale':'translation has no reviewed English fingerprint'}. Review the translation before setting sourceHash to ${fingerprint}.`);
           const firstHeading = content.match(
             /^#\s+(.+?)(?:\s+\{#[^}]+\})?\s*$/m
           )?.[1];

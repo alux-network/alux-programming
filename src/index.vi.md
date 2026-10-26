@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Lập trình ALUX","parts":{"Welcome":"Chào mừng","The Semantic View":"Góc nhìn ngữ nghĩa","Design by Meaning in Rust":"Thiết kế theo ngữ nghĩa trong Rust","Concepts":"Khái niệm","Insights":"Nhận định","Contributing":"Đóng góp"}} -->
+<!-- reader: {"title":"Lập trình ALUX","parts":{"Welcome":"Chào mừng","The Semantic View":"Góc nhìn ngữ nghĩa","Design by Meaning in Rust":"Thiết kế theo ngữ nghĩa trong Rust","Concepts":"Khái niệm","Insights":"Nhận định","Contributing":"Đóng góp"},"sourceHash":"sha256:801d6c5e7d3e5862395c094158caadb1df71cec65054c97d146882cf39bd00dc"} -->
 
 ```admonish warning title="Dự án ALUX"
 Mã nguồn ALUX đang được phát triển tích cực và chưa được công bố rộng rãi.

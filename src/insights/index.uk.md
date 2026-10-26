@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Вступ"} -->
+<!-- reader: {"title":"Вступ","sourceHash":"sha256:040b893a7952727852a085c97964ddf748e9c8167cf07dbaee438642f23c0b59"} -->
 
 # Вступ до «Осяянь» {#insights-introduction}
 

@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Quy trình lấy ý nghĩa làm trọng tâm"} -->
+<!-- reader: {"title":"Quy trình lấy ý nghĩa làm trọng tâm","sourceHash":"sha256:4e52a8067c665db3ce38a802a1615b5d660d1aeee86656c13b53a33c6ebd2dff"} -->
 
 # Quy trình lấy ý nghĩa làm trọng tâm {#a-meaning-first-workflow}
 

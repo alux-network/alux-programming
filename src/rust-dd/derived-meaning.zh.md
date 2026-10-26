@@ -1,4 +1,4 @@
-<!-- reader: {"title":"派生含义与组合"} -->
+<!-- reader: {"title":"派生含义与组合","sourceHash":"sha256:c7473063df63eb2d15fda98f9a500fae54294e9185911fd432265986a9f87f56"} -->
 
 # 派生含义与组合 {#derived-meaning-and-composition}
 

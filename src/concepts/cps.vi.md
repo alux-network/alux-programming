@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Phong cách truyền tiếp nối"} -->
+<!-- reader: {"title":"Phong cách truyền tiếp nối","sourceHash":"sha256:cf423534a1315531133363dea3ff20097731dacb0c4efc6db7e28806acf97237"} -->
 
 # Phong cách truyền tiếp nối (CPS) {#continuation-passing-style-cps}
 

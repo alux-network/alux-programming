@@ -1,4 +1,4 @@
-<!-- reader: {"title":"연속 전달 스타일"} -->
+<!-- reader: {"title":"연속 전달 스타일","sourceHash":"sha256:cf423534a1315531133363dea3ff20097731dacb0c4efc6db7e28806acf97237"} -->
 
 # 연속 전달 스타일(CPS) {#continuation-passing-style-cps}
 

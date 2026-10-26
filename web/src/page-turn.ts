@@ -15,7 +15,8 @@ function visibleSheets(book: HTMLElement): HTMLElement[] {
 }
 
 // Only paper turns. The cover and bookmark remain owned by the new reader.
-export async function turnRoute(app: HTMLElement, update: () => Promise<unknown> | unknown, direction = 1): Promise<void> {
+export async function turnRoute(app: HTMLElement, update: () => Promise<unknown> | unknown, direction = 1, signal?:AbortSignal): Promise<void> {
+  if(signal?.aborted)return;
   const old = app.querySelector<HTMLElement>('.page-book');
   if (!old || document.body.classList.contains('continuous-reading')) {
     await update();
@@ -38,10 +39,18 @@ export async function turnRoute(app: HTMLElement, update: () => Promise<unknown>
   document.body.append(veil);
   let flip: PageFlip | null = null;
   let host: HTMLDivElement | null = null;
+  const frames=new Set<number>();
+  let timer:ReturnType<typeof setTimeout>|undefined;
+  let finish:()=>void=()=>{};
+  const abort=()=>finish();
+  signal?.addEventListener('abort',abort,{once:true});
+  const frame=(callback:()=>void)=>{const id=requestAnimationFrame(()=>{frames.delete(id);if(!signal?.aborted)callback();});frames.add(id);};
+  const paint=()=>new Promise<void>(resolve=>{finish=resolve;if(signal?.aborted)resolve();else frame(()=>frame(resolve));});
   try {
     await update();
     // PageFlip paints its initial spread on the next animation frame.
-    await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+    await paint();
+    if(signal?.aborted)return;
     const book = app.querySelector<HTMLElement>('.page-book');
     const volume = app.querySelector<HTMLElement>('.bound-volume');
     if (!book || !volume) return;
@@ -69,8 +78,10 @@ export async function turnRoute(app: HTMLElement, update: () => Promise<unknown>
     flip = new PageFlip(host, {width:w,height:h,size:'fixed',autoSize:false,usePortrait:portrait,showCover:false,startPage:backward?after.length:0,flippingTime:560,drawShadow:true,maxShadowOpacity:document.body.classList.contains('night')?.55:.2,useMouseEvents:false,disableFlipByClick:false,mobileScrollSupport:false,showPageCorners:false});
     flip.loadFromHTML(sheets);
     await new Promise<void>(resolve => {
+      finish=resolve;
+      if(signal?.aborted){resolve();return;}
       let started = false;
-      const timer = setTimeout(resolve, 1000);
+      timer = setTimeout(resolve, 1000);
       flip?.on('changeState', event => {
         if (event.data === 'flipping') started = true;
         if (started && event.data === 'read') {
@@ -78,12 +89,15 @@ export async function turnRoute(app: HTMLElement, update: () => Promise<unknown>
           resolve();
         }
       });
-      requestAnimationFrame(() => requestAnimationFrame(() => {
+      frame(() => frame(() => {
         if (backward) flip?.flipPrev('bottom');
         else flip?.flipNext('bottom');
       }));
     });
   } finally {
+    signal?.removeEventListener('abort',abort);
+    clearTimeout(timer);
+    for(const id of frames)cancelAnimationFrame(id);
     veil.remove();
     flip?.destroy();
     host?.remove();

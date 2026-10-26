@@ -1,4 +1,4 @@
-<!-- reader: {"title":"الأنواع التابعة والبراهين"} -->
+<!-- reader: {"title":"الأنواع التابعة والبراهين","sourceHash":"sha256:b7b61b22019652d49f915eb1a5420238e6332dc16889f5910c35bf487d5ab080"} -->
 
 # الأنواع التابعة والبراهين {#dependent-types-and-proofs}
 

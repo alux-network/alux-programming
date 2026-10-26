@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Референційна прозорість"} -->
+<!-- reader: {"title":"Референційна прозорість","sourceHash":"sha256:cf7ad00c5e2f7e6e1da3d3f18d03b6ec9ec16d836e412d29a99f0fa801064234"} -->
 
 # Референційна прозорість {#referential-transparency}
 

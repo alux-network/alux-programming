@@ -9,6 +9,7 @@ import type { LanguageCode } from '../src/locale-routing.ts';
 import type { MessageKey } from '../src/ui-messages.ts';
 import type { ReaderBook } from '../src/book.ts';
 import { validateReaderEdition, validateMessages } from './book-validation.ts';
+import {sourceMetadata,translatedSourcePath} from './source-localization.ts';
 
 export async function compileReaderBook(
   locale: LanguageCode
@@ -34,6 +35,15 @@ export async function compileReaderBook(
   );
   validateMessages(messages, locale);
   const reader = transformBook(book, rendered, messages);
+  // A failed mdBook support probe can otherwise silently yield English chapters
+  // alongside localized UI. Check the selected source's identity before publishing.
+  if(locale!=='en')for(const page of reader.pages){
+    const filename=path.join(projectRoot,'src',translatedSourcePath(page.source,locale));
+    let source:string;
+    try{source=await fs.readFile(filename,'utf8');}catch(error){if(error instanceof Error&&'code'in error&&error.code==='ENOENT')continue;throw error;}
+    const metadata=sourceMetadata(source);
+    if(metadata.title&&page.title!==metadata.title)throw Error(`${locale} ${page.source}: mdBook did not select the translated source`);
+  }
   addHeadingAliases(reader);
   if (locale === 'en') {
     const displayTitle = (title: string): string =>

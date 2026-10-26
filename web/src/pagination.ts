@@ -16,7 +16,7 @@ interface PaginationOptions {
   locale?: LanguageCode;
 }
 
-// One layout algorithm supplies both the rendered chapter and whole-book page counts.
+// One layout algorithm measures the viewed chapter; other chapters are never measured for totals.
 const escape = (value: string): string =>
   value.replace(
     /[&<>"']/g,
@@ -85,6 +85,9 @@ export function paginateChapter({
   label = (key) => englishMessages[key],
   locale = 'en'
 }: PaginationOptions): HTMLElement[] {
+  // A bounded User Timing entry makes eager measurement observable without retaining chapter DOM.
+  performance.clearMarks('alux:pagination');
+  performance.mark('alux:pagination',{detail:{chapter:page.id}});
   const idx = pages.indexOf(page);
   function pageElement(number: number): HTMLElement {
     const sheet = document.createElement('section');

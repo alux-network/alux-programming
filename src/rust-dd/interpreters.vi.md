@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Bộ diễn giải và hiệu ứng"} -->
+<!-- reader: {"title":"Bộ diễn giải và hiệu ứng","sourceHash":"sha256:4ca52b24121e8361c8cc8983e3807794110bade03c63105c1609e60eb9554b93"} -->
 
 # Bộ diễn giải và hiệu ứng {#interpreters-and-effects}
 

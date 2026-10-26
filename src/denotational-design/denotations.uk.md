@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Денотації та композиційність"} -->
+<!-- reader: {"title":"Денотації та композиційність","sourceHash":"sha256:f23d995771d04278d7ee0f0a93000f60dfc435559082912084c4a6f5828256b2"} -->
 
 # Денотації та композиційність {#denotations-and-compositionality}
 

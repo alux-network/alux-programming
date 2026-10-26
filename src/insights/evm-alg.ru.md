@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Алгебра EVM"} -->
+<!-- reader: {"title":"Алгебра EVM","sourceHash":"sha256:da120bbcd539c9554e41570500a952022780145a38a60d99226ed7f248d561ca"} -->
 
 # Алгебра EVM {#evm-algebra}
 

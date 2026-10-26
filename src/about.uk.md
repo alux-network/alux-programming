@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Про книжку"} -->
+<!-- reader: {"title":"Про книжку","sourceHash":"sha256:dc574b72cd9d99b223d155921c54f7cf34eb8ee02ac5655eb0c184c2c520199a"} -->
 
 # Про книжку {#about}
 

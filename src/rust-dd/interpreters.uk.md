@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Інтерпретатори й ефекти"} -->
+<!-- reader: {"title":"Інтерпретатори й ефекти","sourceHash":"sha256:4ca52b24121e8361c8cc8983e3807794110bade03c63105c1609e60eb9554b93"} -->
 
 # Інтерпретатори й ефекти {#interpreters-and-effects}
 

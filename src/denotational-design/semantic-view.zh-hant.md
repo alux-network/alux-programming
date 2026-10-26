@@ -1,4 +1,4 @@
-<!-- reader: {"title":"為何含義優先"} -->
+<!-- reader: {"title":"為何含義優先","sourceHash":"sha256:f316bc5e61f5570df8820fe1d5d9eb783f05f51b36294ddf29e34e1a9fa6617d"} -->
 
 # 為何含義優先 {#why-meaning-comes-first}
 

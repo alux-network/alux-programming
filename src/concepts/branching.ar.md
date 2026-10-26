@@ -1,4 +1,4 @@
-<!-- reader: {"title":"التفرع والتلاقي"} -->
+<!-- reader: {"title":"التفرع والتلاقي","sourceHash":"sha256:5f5f2bd836aff683d4aeb745963ca7b9e19c5f2a9ed3cdd1f2b1038bacda97fa"} -->
 
 # التفرع والتلاقي {#branching-and-confluence}
 

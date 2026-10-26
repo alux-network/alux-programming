@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Rust 中的语义类型"} -->
+<!-- reader: {"title":"Rust 中的语义类型","sourceHash":"sha256:f260bada57ff228ad424bf6ea7f98dc225853e8a47e5611be37891f06f97e8af"} -->
 
 # Rust 中的语义类型 {#semantic-types-in-rust}
 

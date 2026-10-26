@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Estilo de paso de continuaciones"} -->
+<!-- reader: {"title":"Estilo de paso de continuaciones","sourceHash":"sha256:cf423534a1315531133363dea3ff20097731dacb0c4efc6db7e28806acf97237"} -->
 
 # Estilo de paso de continuaciones (CPS) {#continuation-passing-style-cps}
 

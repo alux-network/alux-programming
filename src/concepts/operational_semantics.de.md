@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Operationale Semantik"} -->
+<!-- reader: {"title":"Operationale Semantik","sourceHash":"sha256:ac0d98925f230224cd8aee84741bb9ef24b9a477b131eafa8d0367b730ea077d"} -->
 
 # Operationale Semantik {#operational-semantics}
 

@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import {
   localizeSources,
   sourceMetadata,
+  sourceFingerprint,
   translatedSourcePath
 } from '../scripts/source-localization.ts';
 import type { MdBook, MdBookChapter } from '../scripts/mdbook-model.ts';
@@ -18,6 +19,19 @@ const chapter = (source = 'chapter.md'): MdBookChapter => ({
   number: [1],
   parent_names: [],
   sub_items: []
+});
+
+test('English edits warn about stale translations without blocking or acknowledging them',async t=>{
+ const directory=await fs.mkdtemp(path.join(os.tmpdir(),'alux-freshness-'));t.after(()=>fs.rm(directory,{recursive:true,force:true}));
+ const original=chapter(),input:MdBook={sections:[{Chapter:original}]},warnings:string[]=[];
+ const translation='<!-- reader: '+JSON.stringify({title:'中文',sourceHash:sourceFingerprint(original.content)})+' -->\n\n# 中文 {#stable}';
+ const filename=path.join(directory,'chapter.zh.md');await fs.writeFile(filename,translation);
+ await localizeSources(input,directory,'zh',warning=>warnings.push(warning));assert.equal(warnings.length,0);
+ original.content+='\n\nNew English paragraph';
+ const localized=await localizeSources(input,directory,'zh',warning=>warnings.push(warning));assert.equal(warnings.length,1);assert.match(warnings[0]!,/zh chapter.md.*may be stale/);
+ assert.equal(await fs.readFile(filename,'utf8'),translation,'builds never acknowledge the warning by modifying sources');
+ const item=localized.sections[0];assert.ok(typeof item==='object'&&'Chapter'in item);assert.ok(item.Chapter.content.includes('中文'));
+ assert.equal(sourceFingerprint('a\r\nb\r\n'),sourceFingerprint('a\nb\n'),'line endings do not create false freshness warnings');
 });
 
 test('source-level translations keep canonical identity and hierarchy with English fallback', async (t) => {

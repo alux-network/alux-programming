@@ -1,4 +1,4 @@
-<!-- reader: {"title":"참조 투명성 다시 보기"} -->
+<!-- reader: {"title":"참조 투명성 다시 보기","sourceHash":"sha256:3f37fd77a20744f5881d426de372b671f438c12c29fc26e32f79a6cf91e6ab6a"} -->
 
 # 참조 투명성 다시 보기 {#referential-transparency-reloaded}
 

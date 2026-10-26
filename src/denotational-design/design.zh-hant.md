@@ -1,4 +1,4 @@
-<!-- reader: {"title":"指稱設計"} -->
+<!-- reader: {"title":"指稱設計","sourceHash":"sha256:bac0e12637b9f63a8fa1002e44ca58f04237a81e1bc18da343cf22e360a85e8e"} -->
 
 # 指稱設計 {#denotational-design}
 

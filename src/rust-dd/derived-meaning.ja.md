@@ -1,4 +1,4 @@
-<!-- reader: {"title":"導出される意味と合成"} -->
+<!-- reader: {"title":"導出される意味と合成","sourceHash":"sha256:c7473063df63eb2d15fda98f9a500fae54294e9185911fd432265986a9f87f56"} -->
 
 # 導出される意味と合成 {#derived-meaning-and-composition}
 

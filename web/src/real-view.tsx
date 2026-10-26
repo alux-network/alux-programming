@@ -15,6 +15,9 @@ import { readingSize, applyReadingSize } from './reading-preferences.ts';
 import type { ReaderViewProps } from './book-view.tsx';
 
 export function RealView(props: ReaderViewProps) {
+  let disposed=false;
+  const copyTimers=new Set<ReturnType<typeof setTimeout>>();
+  onCleanup(()=>{disposed=true;for(const timer of copyTimers)clearTimeout(timer);copyTimers.clear();});
   let article!: HTMLElement, toolbar!: HTMLElement;
   const [wide, setWide] = createSignal(innerWidth > 1000),
     [menu, setMenu] = createSignal(innerWidth > 1000);
@@ -84,14 +87,17 @@ export function RealView(props: ReaderViewProps) {
       await navigator.clipboard.writeText(
         button.closest('pre')?.querySelector('code')?.textContent || ''
       );
+      if(disposed)return;
       button.innerHTML = icon('check');
       button.setAttribute('aria-label', ui('Code copied'));
-      setTimeout(() => {
+      const timer=setTimeout(() => {
+        copyTimers.delete(timer);
         if (button.isConnected) {
           button.innerHTML = icon('copy');
           button.setAttribute('aria-label', ui('Copy code'));
         }
       }, 1800);
+      copyTimers.add(timer);
     } catch {
       props.announce(ui('Copy is unavailable. Select the code to copy it.'));
     }

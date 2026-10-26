@@ -1,4 +1,4 @@
-<!-- reader: {"title":"ALUX 프로그래밍","parts":{"Welcome":"환영합니다","The Semantic View":"의미론적 관점","Design by Meaning in Rust":"Rust에서 의미 중심 설계","Concepts":"개념","Insights":"통찰","Contributing":"기여하기"}} -->
+<!-- reader: {"title":"ALUX 프로그래밍","parts":{"Welcome":"환영합니다","The Semantic View":"의미론적 관점","Design by Meaning in Rust":"Rust에서 의미 중심 설계","Concepts":"개념","Insights":"통찰","Contributing":"기여하기"},"sourceHash":"sha256:801d6c5e7d3e5862395c094158caadb1df71cec65054c97d146882cf39bd00dc"} -->
 
 ```admonish warning title="ALUX 프로젝트"
 ALUX 코드베이스는 현재 활발히 개발 중이며 아직 공개되지 않았습니다.

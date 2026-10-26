@@ -1,4 +1,4 @@
-<!-- reader: {"title":"ALUX 程式設計","parts":{"Welcome":"歡迎","The Semantic View":"語義視角","Design by Meaning in Rust":"Rust 中的語義驅動設計","Concepts":"概念","Insights":"洞見","Contributing":"參與貢獻"}} -->
+<!-- reader: {"title":"ALUX 程式設計","parts":{"Welcome":"歡迎","The Semantic View":"語義視角","Design by Meaning in Rust":"Rust 中的語義驅動設計","Concepts":"概念","Insights":"洞見","Contributing":"參與貢獻"},"sourceHash":"sha256:801d6c5e7d3e5862395c094158caadb1df71cec65054c97d146882cf39bd00dc"} -->
 
 ```admonish warning title="ALUX 專案"
 ALUX 程式碼庫仍在積極開發中，尚未公開。

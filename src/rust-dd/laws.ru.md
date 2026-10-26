@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Законы, сценарии и свидетельства"} -->
+<!-- reader: {"title":"Законы, сценарии и свидетельства","sourceHash":"sha256:0e0b9c287cb808a9461b5c166cd42c27ed33514e8f6cafdbb803b8a6d2bdf1a5"} -->
 
 # Законы, сценарии и свидетельства {#laws-scenarios-and-evidence}
 

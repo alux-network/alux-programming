@@ -1,4 +1,4 @@
-<!-- reader: {"title":"المعنى المشتق والتركيب"} -->
+<!-- reader: {"title":"المعنى المشتق والتركيب","sourceHash":"sha256:c7473063df63eb2d15fda98f9a500fae54294e9185911fd432265986a9f87f56"} -->
 
 # المعنى المشتق والتركيب {#derived-meaning-and-composition}
 

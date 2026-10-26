@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Significado derivado y composición"} -->
+<!-- reader: {"title":"Significado derivado y composición","sourceHash":"sha256:c7473063df63eb2d15fda98f9a500fae54294e9185911fd432265986a9f87f56"} -->
 
 # Significado derivado y composición {#derived-meaning-and-composition}
 

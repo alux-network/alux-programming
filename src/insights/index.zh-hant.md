@@ -1,4 +1,4 @@
-<!-- reader: {"title":"簡介"} -->
+<!-- reader: {"title":"簡介","sourceHash":"sha256:040b893a7952727852a085c97964ddf748e9c8167cf07dbaee438642f23c0b59"} -->
 
 # 洞見導讀 {#insights-introduction}
 

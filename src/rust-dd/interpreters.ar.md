@@ -1,4 +1,4 @@
-<!-- reader: {"title":"المفسرات والآثار"} -->
+<!-- reader: {"title":"المفسرات والآثار","sourceHash":"sha256:4ca52b24121e8361c8cc8983e3807794110bade03c63105c1609e60eb9554b93"} -->
 
 # المفسرات والآثار {#interpreters-and-effects}
 

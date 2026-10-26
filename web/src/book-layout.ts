@@ -1,6 +1,7 @@
 import { resolveAnchor } from './anchors.ts';
-import { ui, language } from './i18n.ts';
+import { ui, language, fmt } from './i18n.ts';
 import { PageFlip } from 'page-flip';
+import {recordChapterCount,invalidateChapterCounts} from './chapter-counts.ts';
 import { prepareChapterSource, paginateChapter } from './pagination.ts';
 import { readingSize, applyReadingSize } from './reading-preferences.ts';
 import { query } from './dom.ts';
@@ -24,6 +25,7 @@ export interface BookLayoutState {
   next: string;
   previousDisabled: boolean;
   ready: boolean;
+  numbering: 'chapter'|'book';
 }
 export interface BookLayout extends ReaderController {
   turn(direction: number): void;
@@ -42,16 +44,9 @@ interface LayoutOptions {
   scale: number;
   continuous: boolean;
 }
-const pageCountCache = new WeakMap<ReaderPage[], Map<string, number[]>>();
 const decodedImages = new Map<string, Promise<void>>();
-function bookImagesReady(pages: ReaderPage[]): Promise<void[]> {
-  const sources = new Set(
-    pages.flatMap((chapter) =>
-      [...chapter.html.matchAll(/<img[^>]+src="([^"]+)"/g)].map(
-        (match) => match[1]
-      )
-    )
-  );
+function bookImagesReady(page: ReaderPage): Promise<void[]> {
+  const sources=new Set([...page.html.matchAll(/<img[^>]+src="([^"]+)"/g)].map(match=>match[1]!));
   return Promise.all(
     [...sources].map((src) => {
       let ready = decodedImages.get(src);
@@ -121,6 +116,9 @@ export function attachBookLayout({
     bookTotal = 0,
     paginationRevision = 0,
     ready = false;
+  let paginationTask:AbortController|null=null;
+  const copyTimers=new Set<ReturnType<typeof setTimeout>>();
+  const frameIds=new Set<number>();
   let imagesReady: Promise<void[]> | null = null;
   const reduced = (): boolean =>
     matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -137,10 +135,11 @@ export function attachBookLayout({
       continuous,
       size,
       ready,
+      numbering:bookTotal?'book':'chapter',
       position: continuous
         ? ui('Continuous reading')
         : ready
-          ? `${pageOffset + p + 1}${innerWidth > 1000 && p + 1 < total ? '–' + (pageOffset + Math.min(p + 2, total)) : ''} / ${bookTotal}`
+          ? bookTotal ? `${pageOffset+p+1}${!portraitBook&&p+1<total?'–'+(pageOffset+Math.min(p+2,total)):''} / ${bookTotal}` : fmt({key:'chapterProgress',start:p+1,end:Math.min(p+(portraitBook?1:2),total),total})
           : ui('Preparing the pages…'),
       previous: p === 0 ? ui('Previous chapter') : ui('Previous page'),
       next: last
@@ -226,9 +225,11 @@ export function attachBookLayout({
     }
     return target;
   }
-  async function paginate(keep = 0) {
+  async function paginate(keep = 0, anchor?:string) {
     if (!isCurrent()) return;
     const revision = ++paginationRevision;
+    paginationTask?.abort();
+    const task=paginationTask=new AbortController();
     ready = false;
     applyReadingSize(size);
     document.body.classList.toggle('continuous-reading', continuous);
@@ -240,78 +241,29 @@ export function attachBookLayout({
       total = 1;
       ready = true;
       footer();
+      if(anchor)goToAnchor(anchor,false);
       return;
     }
-    const readyImages = (imagesReady ??= bookImagesReady(pages));
-    const previewSheets = !flip ? initialPages(keep) : undefined;
-    // Keep the current paper visible while fonts, images and new page counts prepare.
-    const { w, h, portrait } = sheetLayout();
-    layoutKey = `${w}/${h}/${size}`;
-    const cacheKey = `${document.documentElement.lang}/${layoutKey}/${portrait}`;
-    let layouts = pageCountCache.get(pages);
-    if (!layouts) {
-      layouts = new Map();
-      pageCountCache.set(pages, layouts);
-    }
-    // A cached layout already has settled fonts/images; its preview is the final pagination.
-    let counts = layouts.get(cacheKey),
-      sheets = counts ? previewSheets : undefined;
-    if (!counts) {
-      // Math and language subsets may not have appeared in the opening chapter.
-      // Load every used font before measuring any chapter, so offsets remain exact.
-      const fontProbe = document.createElement('div');
-      fontProbe.className = 'folio-measure';
-      fontProbe.style.width = w + 'px';
-      fontProbe.style.height = h + 'px';
-      const fontPage = document.createElement('section');
-      fontPage.className = 'folio-page';
-      const fontContent = document.createElement('article');
-      fontContent.className = 'folio-content prose';
-      for (const chapter of pages) {
-        const prepared = prepareChapterSource(chapter, ui, language());
-        prepared
-          .querySelectorAll('[id]')
-          .forEach((el) => el.removeAttribute('id'));
-        fontContent.append(...prepared.childNodes);
-      }
-      fontPage.append(fontContent);
-      fontProbe.append(fontPage);
-      volume.append(fontProbe);
-      fontContent.getBoundingClientRect();
-      await Promise.all([document.fonts.ready, readyImages]);
-      fontProbe.remove();
-      if (!isCurrent() || revision !== paginationRevision) return;
-      counts = [];
-      for (const chapter of pages) {
-        const measured = paginateChapter({
-          page: chapter,
-          pages,
-          icon,
-          host: volume,
-          w,
-          h,
-          portrait,
-          label: ui,
-          locale: language()
-        });
-        counts.push(measured.length);
-        if (chapter === page) sheets = measured;
-        await new Promise((resolve) => setTimeout(resolve, 0));
-        if (!isCurrent() || revision !== paginationRevision) return;
-      }
-      layouts.set(cacheKey, counts);
-    }
-    sheets ??= paginateChapter({
-      page,
-      pages,
-      icon,
-      host: volume,
-      w,
-      h,
-      portrait,
-      label: ui,
-      locale: language()
-    });
+    const readyImages = (imagesReady ??= bookImagesReady(page));
+    if(!flip)initialPages(keep);
+    onState(state());
+    const {w,h,portrait}=sheetLayout();
+    layoutKey=`${w}/${h}/${size}`;
+    const cacheKey=`${document.documentElement.lang}/${layoutKey}/${portrait}`;
+    const probe=document.createElement('div');probe.className='folio-measure';probe.style.width=w+'px';probe.style.height=h+'px';
+    const probePage=document.createElement('section');probePage.className='folio-page';
+    const probeContent=document.createElement('article');probeContent.className='folio-content prose';probeContent.innerHTML=originalHTML;
+    probeContent.querySelectorAll('[id]').forEach(element=>element.removeAttribute('id'));probePage.append(probeContent);probe.append(probePage);volume.append(probe);
+    let cancel:()=>void=()=>{};
+    try{
+      probeContent.getBoundingClientRect();
+      const cancelled=new Promise<void>(resolve=>{cancel=()=>resolve();task.signal.addEventListener('abort',cancel,{once:true});});
+      await Promise.race([Promise.all([document.fonts.ready,readyImages]),cancelled]);
+    }finally{task.signal.removeEventListener('abort',cancel);probe.remove();}
+    if(!isCurrent()||task.signal.aborted||revision!==paginationRevision)return;
+    // Only this chapter is measured after its fonts/images settle.
+    const sheets=paginateChapter({page,pages,icon,host:volume,w,h,portrait,label:ui,locale:language()});
+    const numbering=recordChapterCount(pages,cacheKey,page,sheets.length);
     const previous = ownedBookSurface(volume);
     const backdrop = previous?.textContent?.trim()
       ? copyBookSurface(previous)
@@ -339,8 +291,8 @@ export function attachBookLayout({
     portraitBook = portrait;
     target.style.width = (portrait ? w : 2 * w) + 'px';
     target.style.height = h + 'px';
-    pageOffset = counts.slice(0, idx).reduce((sum, n) => sum + n, 0);
-    bookTotal = counts.reduce((sum, n) => sum + n, 0);
+    pageOffset=numbering?.offset||0;
+    bookTotal=numbering?.total||0;
     target.dataset.pageOffset = String(pageOffset);
     target.dataset.bookPages = String(bookTotal);
     for (const sheet of sheets) {
@@ -392,15 +344,17 @@ export function attachBookLayout({
       flip.getPage(i).setDensity('soft');
       flip.getPage(i).setDrawingDensity('soft');
     }
-    requestAnimationFrame(() => {
+    const frame=requestAnimationFrame(() => {
+      frameIds.delete(frame);
       backdrop?.remove();
       if (!isCurrent() || revision !== paginationRevision) return;
       footer();
-      if (location.hash) goToAnchor(location.hash.slice(1), false);
+      if(anchor)goToAnchor(anchor,false);
     });
+    frameIds.add(frame);
   }
   function turn(direction: number): void {
-    if (!isCurrent() || continuous || !flip) return;
+    if (!isCurrent() || !ready || continuous || !flip) return;
     const p = currentPage();
     const last = p + (innerWidth > 1000 ? 2 : 1) >= total;
     if (direction > 0 && last) {
@@ -425,7 +379,7 @@ export function attachBookLayout({
     );
     if (!el) return;
     if (continuous) {
-      el.scrollIntoView({ behavior: 'smooth' });
+      el.scrollIntoView({ behavior: animate&&!reduced()?'smooth':'instant' });
       return;
     }
     const s = el.closest<HTMLElement>('.folio-page');
@@ -572,7 +526,7 @@ export function attachBookLayout({
       );
       await navigator.clipboard.writeText(code.textContent ?? '');
       button.textContent = ui('Copied');
-      setTimeout(() => (button.textContent = ui('Copy code')), 1800);
+      const timer=setTimeout(()=>{copyTimers.delete(timer);if(button.isConnected)button.textContent=ui('Copy code');},1800);copyTimers.add(timer);
     } catch {
       button.textContent = ui('Select code to copy');
     }
@@ -580,12 +534,14 @@ export function attachBookLayout({
   function resized(): void {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
-      if (isCurrent()) paginate(folio);
+      if (isCurrent()) void paginate(folio,getCurrentAnchor());
     }, 250);
   }
+  const fontsChanged=()=>{invalidateChapterCounts(pages);if(ready)resized();};
+  document.fonts.addEventListener('loadingdone',fontsChanged);
   addEventListener('resize', resized);
   const savedFolio = Number(storage.get('alux-folio-' + page.slug) || 0);
-  if (isCurrent()) void paginate(savedFolio);
+  if (isCurrent()) void paginate(savedFolio,location.hash.slice(1)||undefined);
   function getCurrentAnchor(): string | undefined {
     const headings = [
       ...app.querySelectorAll<HTMLElement>(
@@ -620,14 +576,19 @@ export function attachBookLayout({
     turn,
     resize: resized,
     reflow(nextScale, nextContinuous) {
+      const anchor=getCurrentAnchor();
       scale = nextScale;
       size = readingSize(scale);
       continuous = nextContinuous;
-      void paginate(folio);
+      void paginate(folio,anchor);
     },
     dispose() {
       disposed = true;
       paginationRevision++;
+      paginationTask?.abort();
+      for(const timer of copyTimers)clearTimeout(timer);copyTimers.clear();
+      for(const frame of frameIds)cancelAnimationFrame(frame);frameIds.clear();
+      document.fonts.removeEventListener('loadingdone',fontsChanged);
       clearTimeout(resizeTimer);
       removeEventListener('resize', resized);
       removeEventListener('keydown', key);

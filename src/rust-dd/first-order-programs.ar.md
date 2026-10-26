@@ -1,4 +1,4 @@
-<!-- reader: {"title":"برامج من الرتبة الأولى"} -->
+<!-- reader: {"title":"برامج من الرتبة الأولى","sourceHash":"sha256:963dfa4d3aafbcfe83acf16b8c79baeceaab0bf4e0106b971e32a212ecb279af"} -->
 
 # برامج من الرتبة الأولى {#first-order-programs}
 

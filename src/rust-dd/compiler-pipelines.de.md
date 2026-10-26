@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Sprach- und Compiler-Pipelines"} -->
+<!-- reader: {"title":"Sprach- und Compiler-Pipelines","sourceHash":"sha256:6ea1059eeaf723738c4e5ac542c9655cd8810817064c0ae84ef41b42ab894190"} -->
 
 # Sprach- und Compiler-Pipelines {#language-and-compiler-pipelines}
 

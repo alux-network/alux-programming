@@ -1,4 +1,4 @@
-<!-- reader: {"title":"왜 의미가 먼저인가"} -->
+<!-- reader: {"title":"왜 의미가 먼저인가","sourceHash":"sha256:f316bc5e61f5570df8820fe1d5d9eb783f05f51b36294ddf29e34e1a9fa6617d"} -->
 
 # 왜 의미가 먼저인가 {#why-meaning-comes-first}
 

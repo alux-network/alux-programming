@@ -1,4 +1,4 @@
-<!-- reader: {"title":"مقدمة"} -->
+<!-- reader: {"title":"مقدمة","sourceHash":"sha256:aea0854cd288084035720b57d882094019b47b9cb967dc1c0115a6acb9d122a3"} -->
 
 # مقدمة المفاهيم {#concepts-introduction}
 

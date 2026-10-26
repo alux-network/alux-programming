@@ -1,4 +1,4 @@
-<!-- reader: {"title":"継続渡し形式"} -->
+<!-- reader: {"title":"継続渡し形式","sourceHash":"sha256:cf423534a1315531133363dea3ff20097731dacb0c4efc6db7e28806acf97237"} -->
 
 # 継続渡し形式（CPS） {#continuation-passing-style-cps}
 

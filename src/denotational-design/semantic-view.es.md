@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Por qué el significado va primero"} -->
+<!-- reader: {"title":"Por qué el significado va primero","sourceHash":"sha256:f316bc5e61f5570df8820fe1d5d9eb783f05f51b36294ddf29e34e1a9fa6617d"} -->
 
 # Por qué el significado va primero {#why-meaning-comes-first}
 

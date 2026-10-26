@@ -1,4 +1,4 @@
-<!-- reader: {"title":"去函数化"} -->
+<!-- reader: {"title":"去函数化","sourceHash":"sha256:eb2496c232c1ef2750b59b1d678f25bd0220c3b91a597bbaa8714bcdfb620c6f"} -->
 
 # 去函数化 {#defunctionalization}
 

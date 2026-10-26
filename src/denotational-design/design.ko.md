@@ -1,4 +1,4 @@
-<!-- reader: {"title":"표시적 설계"} -->
+<!-- reader: {"title":"표시적 설계","sourceHash":"sha256:bac0e12637b9f63a8fa1002e44ca58f04237a81e1bc18da343cf22e360a85e8e"} -->
 
 # 표시적 설계 {#denotational-design}
 

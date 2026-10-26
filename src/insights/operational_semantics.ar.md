@@ -1,4 +1,4 @@
-<!-- reader: {"title":"من الدلالات إلى الآلات"} -->
+<!-- reader: {"title":"من الدلالات إلى الآلات","sourceHash":"sha256:9fe5a0f66907af757d4b29691bf2aa8dcdda8c09246818d79d57434456ba33ab"} -->
 
 # من الدلالات إلى الآلات {#semantics-to-machines}
 

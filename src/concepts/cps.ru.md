@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Стиль передачи продолжений"} -->
+<!-- reader: {"title":"Стиль передачи продолжений","sourceHash":"sha256:cf423534a1315531133363dea3ff20097731dacb0c4efc6db7e28806acf97237"} -->
 
 # Стиль передачи продолжений (CPS) {#continuation-passing-style-cps}
 

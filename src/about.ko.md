@@ -1,4 +1,4 @@
-<!-- reader: {"title":"책 소개"} -->
+<!-- reader: {"title":"책 소개","sourceHash":"sha256:dc574b72cd9d99b223d155921c54f7cf34eb8ee02ac5655eb0c184c2c520199a"} -->
 
 # 소개 {#about}
 

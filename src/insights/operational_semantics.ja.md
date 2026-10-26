@@ -1,4 +1,4 @@
-<!-- reader: {"title":"意味論から機械へ"} -->
+<!-- reader: {"title":"意味論から機械へ","sourceHash":"sha256:9fe5a0f66907af757d4b29691bf2aa8dcdda8c09246818d79d57434456ba33ab"} -->
 
 # 意味論から機械へ {#semantics-to-machines}
 

@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Похідне значення та композиція"} -->
+<!-- reader: {"title":"Похідне значення та композиція","sourceHash":"sha256:c7473063df63eb2d15fda98f9a500fae54294e9185911fd432265986a9f87f56"} -->
 
 # Похідне значення та композиція {#derived-meaning-and-composition}
 

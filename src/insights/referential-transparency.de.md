@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Referenzielle Transparenz neu betrachtet"} -->
+<!-- reader: {"title":"Referenzielle Transparenz neu betrachtet","sourceHash":"sha256:3f37fd77a20744f5881d426de372b671f438c12c29fc26e32f79a6cf91e6ab6a"} -->
 
 # Referenzielle Transparenz neu betrachtet {#referential-transparency-reloaded}
 

@@ -1,4 +1,4 @@
-<!-- reader: {"title":"종속 타입과 증명"} -->
+<!-- reader: {"title":"종속 타입과 증명","sourceHash":"sha256:b7b61b22019652d49f915eb1a5420238e6332dc16889f5910c35bf487d5ab080"} -->
 
 # 종속 타입과 증명 {#dependent-types-and-proofs}
 

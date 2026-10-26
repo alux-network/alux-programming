@@ -7,10 +7,11 @@ if (
   process.argv[1] &&
   path.resolve(process.argv[1]) === path.resolve(import.meta.filename)
 ) {
-  if (process.argv[2] === 'supports')
-    process.exit(
-      ['html', 'reader-json'].includes(process.argv[3] || '') ? 0 : 1
-    );
+  if (process.argv[2] === 'supports') {
+    // Let Node close its Windows handles normally; forced process.exit can abort
+    // the support probe and make mdBook silently skip source localization.
+    process.exitCode=['html','reader-json'].includes(process.argv[3]||'')?0:1;
+  } else {
   process.stdin.setEncoding('utf8');
   let input = '';
   for await (const chunk of process.stdin) input += String(chunk);
@@ -33,8 +34,10 @@ if (
       await localizeSources(
         book,
         path.resolve(String(context.root), settings.src),
-        locale
+        locale,
+        context.renderer==='reader-json'?message=>console.error(message):()=>{}
       )
     )
   );
+  }
 }

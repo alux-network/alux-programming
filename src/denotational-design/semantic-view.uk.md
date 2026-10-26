@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Чому значення має бути першим"} -->
+<!-- reader: {"title":"Чому значення має бути першим","sourceHash":"sha256:f316bc5e61f5570df8820fe1d5d9eb783f05f51b36294ddf29e34e1a9fa6617d"} -->
 
 # Чому значення має бути першим {#why-meaning-comes-first}
 

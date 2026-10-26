@@ -1,4 +1,4 @@
-<!-- reader: {"title":"依赖类型与证明"} -->
+<!-- reader: {"title":"依赖类型与证明","sourceHash":"sha256:b7b61b22019652d49f915eb1a5420238e6332dc16889f5910c35bf487d5ab080"} -->
 
 # 依赖类型与证明 {#dependent-types-and-proofs}
 

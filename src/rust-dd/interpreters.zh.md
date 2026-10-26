@@ -1,4 +1,4 @@
-<!-- reader: {"title":"解释器与效应"} -->
+<!-- reader: {"title":"解释器与效应","sourceHash":"sha256:4ca52b24121e8361c8cc8983e3807794110bade03c63105c1609e60eb9554b93"} -->
 
 # 解释器与效应 {#interpreters-and-effects}
 

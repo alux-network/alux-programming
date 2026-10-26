@@ -1,0 +1,47 @@
+name: Reader acceptance
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+permissions:
+  contents: read
+jobs:
+  reader:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+      - uses: ./.github/actions/setup-rust
+      - name: Install pinned mdBook tools
+        run: |
+          cargo install mdbook --version 0.4.52 --locked
+          cargo install mdbook-admonish --version 1.20.0 --locked
+          cargo install mdbook-katex --version 0.9.4 --locked
+      - name: Frozen dependencies and compiler lint
+        working-directory: web
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm lint
+          pnpm typecheck
+      - name: Build, unit tests, generated links and repeatability
+        working-directory: web
+        run: |
+          pnpm build
+          pnpm test:generated
+          cp ../output/merge-acceptance/generated-inventory.json /tmp/reader-inventory.json
+          pnpm test
+          pnpm build
+          pnpm test:generated
+          cmp /tmp/reader-inventory.json ../output/merge-acceptance/generated-inventory.json
+      - name: Desktop engines and mobile profile simulations
+        working-directory: web
+        run: |
+          pnpm exec playwright install --with-deps chromium firefox webkit
+          pnpm test:browser
+          pnpm test:acceptance

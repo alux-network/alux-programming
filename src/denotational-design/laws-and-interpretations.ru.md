@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Законы и интерпретации"} -->
+<!-- reader: {"title":"Законы и интерпретации","sourceHash":"sha256:c280e677041694aed05e95e7b909c371e6213dfeebfc0f67dc50611262ea2dd5"} -->
 
 # Законы и интерпретации {#laws-and-interpretations}
 

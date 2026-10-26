@@ -1,4 +1,4 @@
-<!-- reader: {"title":"파생 의미와 합성"} -->
+<!-- reader: {"title":"파생 의미와 합성","sourceHash":"sha256:c7473063df63eb2d15fda98f9a500fae54294e9185911fd432265986a9f87f56"} -->
 
 # 파생 의미와 합성 {#derived-meaning-and-composition}
 

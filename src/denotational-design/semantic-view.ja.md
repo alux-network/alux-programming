@@ -1,4 +1,4 @@
-<!-- reader: {"title":"なぜ意味を先に考えるのか"} -->
+<!-- reader: {"title":"なぜ意味を先に考えるのか","sourceHash":"sha256:f316bc5e61f5570df8820fe1d5d9eb783f05f51b36294ddf29e34e1a9fa6617d"} -->
 
 # なぜ意味を先に考えるのか {#why-meaning-comes-first}
 

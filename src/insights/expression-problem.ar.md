@@ -1,4 +1,4 @@
-<!-- reader: {"title":"إعادة طرح مسألة التعبير"} -->
+<!-- reader: {"title":"إعادة طرح مسألة التعبير","sourceHash":"sha256:4700e3db9f897416ecd8effa743648b9f65fe37268af14187948ecf790df44fe"} -->
 
 # إعادة طرح مسألة التعبير {#expression-problem-reloaded}
 

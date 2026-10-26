@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Програми першого порядку"} -->
+<!-- reader: {"title":"Програми першого порядку","sourceHash":"sha256:963dfa4d3aafbcfe83acf16b8c79baeceaab0bf4e0106b971e32a212ecb279af"} -->
 
 # Програми першого порядку {#first-order-programs}
 

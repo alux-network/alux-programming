@@ -8,7 +8,6 @@ import {
   languagePath,
   htmlLanguage
 } from '../src/locale-routing.ts';
-import type { LanguageCode } from '../src/locale-routing.ts';
 import {
   siteTitles,
   siteDescriptions,
@@ -26,16 +25,8 @@ const dir = path.resolve(import.meta.dirname, '../dist');
 const content = JSON.parse(
   await fs.readFile(path.join(dir, 'content.json'), 'utf8')
 ) as ReaderBook;
-const { pages, groups } = content;
+const { pages } = content;
 const template = await fs.readFile(path.join(dir, 'index.html'), 'utf8');
-const escape = (value: string): string =>
-  value.replace(
-    /[&<>"']/g,
-    (char) =>
-      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[
-        char
-      ] ?? char
-  );
 const known = new Set(pages.map((page) => page.slug));
 const extras: ReadonlyArray<readonly [string, string]> = [
   ['atlas.html', 'The chapter atlas'],

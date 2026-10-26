@@ -9,7 +9,7 @@ import {
 } from 'solid-js';
 import { BookView } from './book-view.tsx';
 import { RealView } from './real-view.tsx';
-import { Brand, Icon, LanguagePicker } from './reader-ui.tsx';
+import { Icon, LanguagePicker } from './reader-ui.tsx';
 import {
   edition,
   language,
@@ -21,6 +21,7 @@ import {
   fmt
 } from './i18n.ts';
 import type { LanguageCode } from './locale-routing.ts';
+import { pathLanguage } from './locale-routing.ts';
 import { bookmarks, removeBookmark } from './bookmarks.ts';
 import { readingScale, readingSize } from './reading-preferences.ts';
 import { searchBook } from './search.ts';
@@ -79,6 +80,7 @@ export function ReaderApp() {
   const [musicHost, setMusicHost] = createSignal<HTMLElement | null>(null);
   const [notice, setNotice] = createSignal('');
   let noticeTimer: ReturnType<typeof setTimeout> | undefined;
+  let navigation: AbortController|undefined;
   const announce: Announce = (text, anchor) => {
     setNotice(text);
     clearTimeout(noticeTimer);
@@ -108,10 +110,11 @@ export function ReaderApp() {
   async function chooseLanguage(locale: LanguageCode, manual = true) {
     if (busy()) return;
     setBusy(true);
+    const task=navigation=new AbortController();
     setFailure(false);
     const anchor = manual ? controller?.getCurrentAnchor() : undefined;
     try {
-      await setLanguage(locale, manual);
+      await setLanguage(locale, manual,task.signal);
       const href =
         stripLanguage(location.pathname) === '/magic.html'
           ? '/introduction.html' + location.search + location.hash
@@ -127,11 +130,12 @@ export function ReaderApp() {
       await nextFrame();
       restore();
     } catch {
+      if(task.signal.aborted)return;
       if (edition())
         announce(ui('This language is unavailable. Please try again.'));
       else setFailure(true);
     } finally {
-      setBusy(false);
+      if(navigation===task)setBusy(false);
     }
   }
   function restore(focus = false) {
@@ -151,6 +155,7 @@ export function ReaderApp() {
   const navigate: Navigate = async (href) => {
     if (busy()) return;
     setBusy(true);
+    const task=navigation=new AbortController();
     const target = new URL(languageURL(href), location.origin),
       oldPath = stripLanguage(location.pathname),
       newPath = stripLanguage(target.pathname);
@@ -162,45 +167,44 @@ export function ReaderApp() {
         edition()?.book.pages.findIndex(
           (page) => '/' + page.slug === newPath
         ) ?? -1;
-    const update = async () => {
+    const commit = () => {
       history.pushState({}, '', target.pathname + target.search + target.hash);
       setPath(target.pathname);
+    };
+    const update = async () => {
+      commit();
       await nextFrame();
       restore(true);
     };
     try {
       if (!reduced() && before >= 0 && after >= 0)
-        await turnRoute(host, update, after < before ? -1 : 1);
+        await turnRoute(host, update, after < before ? -1 : 1,task.signal);
       else if (!reduced() && document.startViewTransition) {
         document.documentElement.dataset.transition = 'world';
-        await document.startViewTransition(update).finished;
+        // Rendering is suppressed during the update callback. Waiting for rAF
+        // inside it deadlocks mobile Chromium until the transition times out.
+        const transition=document.startViewTransition(commit);
+        const cancel=()=>transition.skipTransition();
+        task.signal.addEventListener('abort',cancel,{once:true});
+        try{await transition.finished.catch(error=>{if(!task.signal.aborted&&!(error instanceof DOMException&&error.name==='AbortError'))throw error;});}finally{task.signal.removeEventListener('abort',cancel);}
+        if(!task.signal.aborted){await nextFrame();restore(true);}
       } else await update();
     } finally {
       delete document.documentElement.dataset.transition;
-      setBusy(false);
+      if(navigation===task)setBusy(false);
     }
   };
   onMount(() => {
     const disposeAudio = startReaderAudio();
     void resolveLanguage().then((locale) => chooseLanguage(locale, false));
     const pop = () => {
-      const code = location.pathname.split('/')[1];
+      navigation?.abort();
+      navigation=undefined;
+      setBusy(false);
+      const code = pathLanguage(location.pathname)||'en';
       if (
         edition() &&
-        code !== edition()?.locale &&
-        [
-          'en',
-          'zh',
-          'zh-hant',
-          'ja',
-          'ko',
-          'vi',
-          'de',
-          'es',
-          'ru',
-          'uk',
-          'ar'
-        ].includes(code || '')
+        code !== edition()?.locale
       )
         void chooseLanguage(code as LanguageCode, false);
       else {
@@ -270,6 +274,7 @@ export function ReaderApp() {
     document.addEventListener('click', click);
     document.addEventListener('pointerdown', neutralMediaMenu, true);
     onCleanup(() => {
+      navigation?.abort();
       clearTimeout(noticeTimer);
       removeEventListener('popstate', pop);
       document.removeEventListener('click', click);
@@ -278,7 +283,7 @@ export function ReaderApp() {
     });
   });
   return (
-    <div ref={host}>
+    <div ref={host} class="reader-app" aria-busy={busy()}>
       <Show
         when={edition()}
         keyed

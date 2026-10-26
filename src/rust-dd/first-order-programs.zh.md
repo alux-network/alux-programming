@@ -1,4 +1,4 @@
-<!-- reader: {"title":"一阶程序"} -->
+<!-- reader: {"title":"一阶程序","sourceHash":"sha256:963dfa4d3aafbcfe83acf16b8c79baeceaab0bf4e0106b971e32a212ecb279af"} -->
 
 # 一阶程序 {#first-order-programs}
 

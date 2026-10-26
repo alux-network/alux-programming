@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Ngữ nghĩa vận hành"} -->
+<!-- reader: {"title":"Ngữ nghĩa vận hành","sourceHash":"sha256:ac0d98925f230224cd8aee84741bb9ef24b9a477b131eafa8d0367b730ea077d"} -->
 
 # Ngữ nghĩa vận hành {#operational-semantics}
 

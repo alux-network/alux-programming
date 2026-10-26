@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Abhängige Typen und Beweise"} -->
+<!-- reader: {"title":"Abhängige Typen und Beweise","sourceHash":"sha256:b7b61b22019652d49f915eb1a5420238e6332dc16889f5910c35bf487d5ab080"} -->
 
 # Abhängige Typen und Beweise {#dependent-types-and-proofs}
 

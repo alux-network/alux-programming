@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Ngữ nghĩa chỉ định và tính hợp thành"} -->
+<!-- reader: {"title":"Ngữ nghĩa chỉ định và tính hợp thành","sourceHash":"sha256:f23d995771d04278d7ee0f0a93000f60dfc435559082912084c4a6f5828256b2"} -->
 
 # Ngữ nghĩa chỉ định và tính hợp thành {#denotations-and-compositionality}
 

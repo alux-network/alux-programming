@@ -3,14 +3,18 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "packageManager": "pnpm@11.25.0",
   "scripts": {
     "content": "node scripts/book.ts",
     "dev": "pnpm content && vite",
     "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit --noUnusedLocals --noUnusedParameters --noFallthroughCasesInSwitch --allowUnreachableCode false --allowUnusedLabels false",
     "build": "pnpm content && node scripts/check-locales.ts && pnpm typecheck && vite build && node scripts/routes.ts",
     "preview": "vite preview",
     "test": "pnpm content && pnpm typecheck && node --test tests/*.test.ts",
     "test:browser": "node scripts/verify-reader.ts",
+    "test:acceptance": "node scripts/verify-page-flip.ts && node scripts/verify-acceptance.ts",
+    "test:generated": "node scripts/verify-generated.ts",
     "share-preview": "node scripts/share-preview.ts"
   },
   "dependencies": {

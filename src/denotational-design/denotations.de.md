@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Denotationen und Kompositionalität"} -->
+<!-- reader: {"title":"Denotationen und Kompositionalität","sourceHash":"sha256:f23d995771d04278d7ee0f0a93000f60dfc435559082912084c4a6f5828256b2"} -->
 
 # Denotationen und Kompositionalität {#denotations-and-compositionality}
 

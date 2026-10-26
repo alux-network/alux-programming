@@ -1,4 +1,4 @@
-<!-- reader: {"title":"أسلوب تمرير الاستمرار"} -->
+<!-- reader: {"title":"أسلوب تمرير الاستمرار","sourceHash":"sha256:cf423534a1315531133363dea3ff20097731dacb0c4efc6db7e28806acf97237"} -->
 
 # أسلوب تمرير الاستمرار (CPS) {#continuation-passing-style-cps}
 

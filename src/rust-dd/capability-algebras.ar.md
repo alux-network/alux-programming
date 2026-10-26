@@ -1,4 +1,4 @@
-<!-- reader: {"title":"جبر القدرات"} -->
+<!-- reader: {"title":"جبر القدرات","sourceHash":"sha256:707e5f96df94e673ccee892af8ce5f089dc44abc2d5361d5888348db72d22664"} -->
 
 # جبر القدرات {#capability-algebras}
 

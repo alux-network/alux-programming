@@ -1,4 +1,4 @@
-<!-- reader: {"title":"从语义到机器"} -->
+<!-- reader: {"title":"从语义到机器","sourceHash":"sha256:9fe5a0f66907af757d4b29691bf2aa8dcdda8c09246818d79d57434456ba33ab"} -->
 
 # 从语义到机器 {#semantics-to-machines}
 

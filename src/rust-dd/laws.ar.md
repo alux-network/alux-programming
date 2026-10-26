@@ -1,4 +1,4 @@
-<!-- reader: {"title":"القوانين والسيناريوهات والأدلة"} -->
+<!-- reader: {"title":"القوانين والسيناريوهات والأدلة","sourceHash":"sha256:0e0b9c287cb808a9461b5c166cd42c27ed33514e8f6cafdbb803b8a6d2bdf1a5"} -->
 
 # القوانين والسيناريوهات والأدلة {#laws-scenarios-and-evidence}
 

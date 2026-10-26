@@ -1,4 +1,4 @@
-<!-- reader: {"title":"От семантики к машинам"} -->
+<!-- reader: {"title":"От семантики к машинам","sourceHash":"sha256:9fe5a0f66907af757d4b29691bf2aa8dcdda8c09246818d79d57434456ba33ab"} -->
 
 # От семантики к машинам {#semantics-to-machines}
 

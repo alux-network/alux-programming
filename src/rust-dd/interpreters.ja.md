@@ -1,4 +1,4 @@
-<!-- reader: {"title":"インタープリターと副作用"} -->
+<!-- reader: {"title":"インタープリターと副作用","sourceHash":"sha256:4ca52b24121e8361c8cc8983e3807794110bade03c63105c1609e60eb9554b93"} -->
 
 # インタープリターと副作用 {#interpreters-and-effects}
 

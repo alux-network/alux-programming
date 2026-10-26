@@ -1,4 +1,4 @@
-<!-- reader: {"title":"ALUXプログラミング","parts":{"Welcome":"ようこそ","The Semantic View":"意味論の視点","Design by Meaning in Rust":"Rustで意味から設計する","Concepts":"概念","Insights":"洞察","Contributing":"貢献する"}} -->
+<!-- reader: {"title":"ALUXプログラミング","parts":{"Welcome":"ようこそ","The Semantic View":"意味論の視点","Design by Meaning in Rust":"Rustで意味から設計する","Concepts":"概念","Insights":"洞察","Contributing":"貢献する"},"sourceHash":"sha256:801d6c5e7d3e5862395c094158caadb1df71cec65054c97d146882cf39bd00dc"} -->
 
 ```admonish warning title="ALUXプロジェクト"
 ALUXのコードベースは現在開発中であり、まだ一般公開されていません。

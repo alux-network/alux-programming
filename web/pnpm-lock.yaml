@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  page-flip@2.0.7: 7c9637358d2df31df3c007deea58f55b7c91b30400f9f92623d4aba9c9b9cfb6
+
 importers:
 
   .:
@@ -22,7 +25,7 @@ importers:
         version: 0.468.0
       page-flip:
         specifier: ^2.0.7
-        version: 2.0.7
+        version: 2.0.7(patch_hash=7c9637358d2df31df3c007deea58f55b7c91b30400f9f92623d4aba9c9b9cfb6)
       solid-js:
         specifier: 1.9.17
         version: 1.9.17
@@ -1352,7 +1355,7 @@ snapshots:
     dependencies:
       boolbase: 2.0.0
 
-  page-flip@2.0.7: {}
+  page-flip@2.0.7(patch_hash=7c9637358d2df31df3c007deea58f55b7c91b30400f9f92623d4aba9c9b9cfb6): {}
 
   parse5@7.3.0:
     dependencies:

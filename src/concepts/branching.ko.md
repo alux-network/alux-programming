@@ -1,4 +1,4 @@
-<!-- reader: {"title":"분기와 합류성"} -->
+<!-- reader: {"title":"분기와 합류성","sourceHash":"sha256:5f5f2bd836aff683d4aeb745963ca7b9e19c5f2a9ed3cdd1f2b1038bacda97fa"} -->
 
 # 분기와 합류성 {#branching-and-confluence}
 

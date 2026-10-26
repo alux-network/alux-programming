@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Phân nhánh và hội tụ"} -->
+<!-- reader: {"title":"Phân nhánh và hội tụ","sourceHash":"sha256:5f5f2bd836aff683d4aeb745963ca7b9e19c5f2a9ed3cdd1f2b1038bacda97fa"} -->
 
 # Phân nhánh và hội tụ {#branching-and-confluence}
 

@@ -1,4 +1,4 @@
-<!-- reader: {"title":"定律与解释"} -->
+<!-- reader: {"title":"定律与解释","sourceHash":"sha256:c280e677041694aed05e95e7b909c371e6213dfeebfc0f67dc50611262ea2dd5"} -->
 
 # 定律与解释 {#laws-and-interpretations}
 

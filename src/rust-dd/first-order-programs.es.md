@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Programas de primer orden"} -->
+<!-- reader: {"title":"Programas de primer orden","sourceHash":"sha256:963dfa4d3aafbcfe83acf16b8c79baeceaab0bf4e0106b971e32a212ecb279af"} -->
 
 # Programas de primer orden {#first-order-programs}
 

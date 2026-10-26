@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Interpreter und Effekte"} -->
+<!-- reader: {"title":"Interpreter und Effekte","sourceHash":"sha256:4ca52b24121e8361c8cc8983e3807794110bade03c63105c1609e60eb9554b93"} -->
 
 # Interpreter und Effekte {#interpreters-and-effects}
 

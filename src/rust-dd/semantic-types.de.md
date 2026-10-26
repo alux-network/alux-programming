@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Semantische Typen in Rust"} -->
+<!-- reader: {"title":"Semantische Typen in Rust","sourceHash":"sha256:f260bada57ff228ad424bf6ea7f98dc225853e8a47e5611be37891f06f97e8af"} -->
 
 # Semantische Typen in Rust {#semantic-types-in-rust}
 

@@ -1,4 +1,4 @@
-<!-- reader: {"title":"表示と合成性"} -->
+<!-- reader: {"title":"表示と合成性","sourceHash":"sha256:f23d995771d04278d7ee0f0a93000f60dfc435559082912084c4a6f5828256b2"} -->
 
 # 表示と合成性 {#denotations-and-compositionality}
 

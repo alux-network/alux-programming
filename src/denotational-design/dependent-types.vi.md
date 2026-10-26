@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Kiểu phụ thuộc và chứng minh"} -->
+<!-- reader: {"title":"Kiểu phụ thuộc và chứng minh","sourceHash":"sha256:b7b61b22019652d49f915eb1a5420238e6332dc16889f5910c35bf487d5ab080"} -->
 
 # Kiểu phụ thuộc và chứng minh {#dependent-types-and-proofs}
 

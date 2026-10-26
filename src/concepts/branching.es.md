@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Ramificación y confluencia"} -->
+<!-- reader: {"title":"Ramificación y confluencia","sourceHash":"sha256:5f5f2bd836aff683d4aeb745963ca7b9e19c5f2a9ed3cdd1f2b1038bacda97fa"} -->
 
 # Ramificación y confluencia {#branching-and-confluence}
 

@@ -1,4 +1,4 @@
-<!-- reader: {"title":"ALUX-Programmierung","parts":{"Welcome":"Willkommen","The Semantic View":"The Semantic View","Design by Meaning in Rust":"Design by Meaning in Rust","Concepts":"Concepts","Insights":"Insights","Contributing":"Mitwirken"}} -->
+<!-- reader: {"title":"ALUX-Programmierung","parts":{"Welcome":"Willkommen","The Semantic View":"The Semantic View","Design by Meaning in Rust":"Design by Meaning in Rust","Concepts":"Concepts","Insights":"Insights","Contributing":"Mitwirken"},"sourceHash":"sha256:801d6c5e7d3e5862395c094158caadb1df71cec65054c97d146882cf39bd00dc"} -->
 
 ```admonish warning title="ALUX-Projekt"
 Die ALUX-Codebasis befindet sich in aktiver Entwicklung und ist noch nicht öffentlich verfügbar.

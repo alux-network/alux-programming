@@ -1,4 +1,4 @@
-<!-- reader: {"title":"語言與編譯器流水線"} -->
+<!-- reader: {"title":"語言與編譯器流水線","sourceHash":"sha256:6ea1059eeaf723738c4e5ac542c9655cd8810817064c0ae84ef41b42ab894190"} -->
 
 # 語言與編譯器流水線 {#language-and-compiler-pipelines}
 

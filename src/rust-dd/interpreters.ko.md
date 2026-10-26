@@ -1,4 +1,4 @@
-<!-- reader: {"title":"인터프리터와 효과"} -->
+<!-- reader: {"title":"인터프리터와 효과","sourceHash":"sha256:4ca52b24121e8361c8cc8983e3807794110bade03c63105c1609e60eb9554b93"} -->
 
 # 인터프리터와 효과 {#interpreters-and-effects}
 

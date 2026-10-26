@@ -1,5 +1,6 @@
 import type { LanguageCode } from './locale-routing.ts';
 export type VariableMessage =
+  | {key:'chapterProgress';start:number;end:number;total:number}
   | {
       key: 'minutes' | 'results' | 'chapterCount' | 'readingSize';
       value: number;
@@ -24,6 +25,11 @@ export function formatMessage(
   locale: LanguageCode,
   message: VariableMessage
 ): string {
+  if(message.key==='chapterProgress'){
+    const range=message.start===message.end?String(message.start):message.start+'–'+message.end;
+    const labels:Record<LanguageCode,string>={en:'Chapter',zh:'本章','zh-hant':'本章',ja:'この章',ko:'이 장',ar:'هذا الفصل',vi:'Chương này',ru:'Глава',uk:'Розділ',de:'Kapitel',es:'Capítulo'};
+    return labels[locale]+' '+range+' / '+message.total;
+  }
   const value = String(message.value),
     column = columns[locale];
   const plural = (words: Record<string, string>): string =>

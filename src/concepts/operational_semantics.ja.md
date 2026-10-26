@@ -1,4 +1,4 @@
-<!-- reader: {"title":"操作的意味論"} -->
+<!-- reader: {"title":"操作的意味論","sourceHash":"sha256:ac0d98925f230224cd8aee84741bb9ef24b9a477b131eafa8d0367b730ea077d"} -->
 
 # 操作的意味論 {#operational-semantics}
 

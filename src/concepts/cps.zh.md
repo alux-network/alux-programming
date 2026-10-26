@@ -1,4 +1,4 @@
-<!-- reader: {"title":"延续传递风格"} -->
+<!-- reader: {"title":"延续传递风格","sourceHash":"sha256:cf423534a1315531133363dea3ff20097731dacb0c4efc6db7e28806acf97237"} -->
 
 # 延续传递风格（CPS） {#continuation-passing-style-cps}
 

@@ -1,4 +1,4 @@
-<!-- reader: {"title":"케이퍼빌리티 대수"} -->
+<!-- reader: {"title":"케이퍼빌리티 대수","sourceHash":"sha256:707e5f96df94e673ccee892af8ce5f089dc44abc2d5361d5888348db72d22664"} -->
 
 # 케이퍼빌리티 대수 {#capability-algebras}
 

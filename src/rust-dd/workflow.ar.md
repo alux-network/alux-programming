@@ -1,4 +1,4 @@
-<!-- reader: {"title":"منهجية تبدأ بالمعنى"} -->
+<!-- reader: {"title":"منهجية تبدأ بالمعنى","sourceHash":"sha256:4e52a8067c665db3ce38a802a1615b5d660d1aeee86656c13b53a33c6ebd2dff"} -->
 
 # سير عمل يبدأ بالمعنى {#a-meaning-first-workflow}
 

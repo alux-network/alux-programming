@@ -139,12 +139,14 @@ export async function resolveLanguage() {
 }
 export async function setLanguage(
   next: LanguageCode,
-  manual = false
+  manual = false,
+  signal?:AbortSignal
 ): Promise<void> {
   if (!codes.includes(next)) throw Error('Unsupported language');
   const load = dictionaries[`../locales/ui/${next}.json`];
   if (!load) throw Error('Interface language unavailable');
   const [book, ui] = await Promise.all([loadBook(next), load()]);
+  signal?.throwIfAborted();
   document.documentElement.lang = htmlLanguage(next);
   document.documentElement.dir = next === 'ar' ? 'rtl' : 'ltr';
   document.documentElement.dataset.locale = next;

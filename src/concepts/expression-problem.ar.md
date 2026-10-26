@@ -1,4 +1,4 @@
-<!-- reader: {"title":"مسألة التعبير"} -->
+<!-- reader: {"title":"مسألة التعبير","sourceHash":"sha256:095010cccfe7dcb155f2ad304d334ffd7d3d56212b3b67168e4f5b04da397ee6"} -->
 
 # مسألة التعبير {#expression-problem}
 

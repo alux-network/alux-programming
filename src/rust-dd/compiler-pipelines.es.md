@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Lenguaje y procesos de compilación"} -->
+<!-- reader: {"title":"Lenguaje y procesos de compilación","sourceHash":"sha256:6ea1059eeaf723738c4e5ac542c9655cd8810817064c0ae84ef41b42ab894190"} -->
 
 # Canalizaciones de lenguaje y compilador {#language-and-compiler-pipelines}
 

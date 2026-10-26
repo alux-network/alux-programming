@@ -1,4 +1,4 @@
-<!-- reader: {"title":"参照透過性再考"} -->
+<!-- reader: {"title":"参照透過性再考","sourceHash":"sha256:3f37fd77a20744f5881d426de372b671f438c12c29fc26e32f79a6cf91e6ab6a"} -->
 
 # 参照透過性再考 {#referential-transparency-reloaded}
 

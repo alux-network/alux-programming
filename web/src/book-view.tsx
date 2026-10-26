@@ -54,7 +54,8 @@ export function BookView(props: ReaderViewProps) {
     previous: ui('Previous page'),
     next: ui('Next page'),
     previousDisabled: true,
-    ready: false
+    ready: false,
+    numbering:'chapter'
   });
   const saved = () => {
     props.count;
@@ -249,6 +250,8 @@ export function BookView(props: ReaderViewProps) {
               <span class="current-chapter-title">{props.page.title}</span>
               <span
                 id="folio-position"
+                data-numbering={state().numbering}
+                data-ready={String(state().ready)}
                 aria-live="polite"
                 dir={continuous() ? 'auto' : 'ltr'}
               >

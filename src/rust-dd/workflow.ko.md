@@ -1,4 +1,4 @@
-<!-- reader: {"title":"의미 우선 작업 흐름"} -->
+<!-- reader: {"title":"의미 우선 작업 흐름","sourceHash":"sha256:4e52a8067c665db3ce38a802a1615b5d660d1aeee86656c13b53a33c6ebd2dff"} -->
 
 # 의미 우선 작업 흐름 {#a-meaning-first-workflow}
 

@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Проблема виразів: новий погляд"} -->
+<!-- reader: {"title":"Проблема виразів: новий погляд","sourceHash":"sha256:4700e3db9f897416ecd8effa743648b9f65fe37268af14187948ecf790df44fe"} -->
 
 # Проблема виразів: новий погляд {#expression-problem-reloaded}
 

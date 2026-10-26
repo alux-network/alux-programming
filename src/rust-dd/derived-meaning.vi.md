@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Ý nghĩa suy ra và phép hợp thành"} -->
+<!-- reader: {"title":"Ý nghĩa suy ra và phép hợp thành","sourceHash":"sha256:c7473063df63eb2d15fda98f9a500fae54294e9185911fd432265986a9f87f56"} -->
 
 # Ý nghĩa suy ra và phép hợp thành {#derived-meaning-and-composition}
 
