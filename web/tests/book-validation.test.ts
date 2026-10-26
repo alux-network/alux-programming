@@ -47,3 +47,28 @@ test('editions can change prose but not protected code, formulae, links or canon
   moved.pages[0]!.slug = 'changed.html';
   assert.throws(() => validateReaderEdition(moved, book, 'zh'), /identity/);
 });
+
+test('media sources, responsive images, video posters and iframe titles are protected together', () => {
+  const canonical = structuredClone(book);
+  canonical.pages[0]!.html +=
+    '<iframe src="https://example.com/embed" title="Original clip"></iframe><video poster="poster.png"><source src="movie.mp4"></video><audio src="recording.mp3"></audio><img src="small.png" srcset="large.png 2x">';
+  assert.doesNotThrow(() =>
+    validateReaderEdition(structuredClone(canonical), canonical, 'zh')
+  );
+  for (const original of [
+    'Original clip',
+    'poster.png',
+    'movie.mp4',
+    'recording.mp3',
+    'large.png'
+  ]) {
+    const broken = structuredClone(canonical);
+    assert.ok(broken.pages[0]!.html.includes(original));
+    broken.pages[0]!.html = broken.pages[0]!.html.replace(original, 'changed');
+    assert.throws(
+      () => validateReaderEdition(broken, canonical, 'zh'),
+      /protected technical content/,
+      original
+    );
+  }
+});

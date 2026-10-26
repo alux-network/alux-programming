@@ -11,7 +11,7 @@ import { BookView } from './book-view.tsx';
 import { RealView } from './real-view.tsx';
 import { Brand, Icon, LanguagePicker } from './reader-ui.tsx';
 import {
-  currentBook,
+  edition,
   language,
   languageURL,
   resolveLanguage,
@@ -73,11 +73,7 @@ const decode = (value: string) => {
 export function ReaderApp() {
   let host!: HTMLDivElement,
     controller: ReaderController | null = null;
-  const [edition, setEdition] = createSignal<{
-      book: ReaderBook;
-      locale: LanguageCode;
-    }>(),
-    [path, setPath] = createSignal(location.pathname),
+  const [path, setPath] = createSignal(location.pathname),
     [busy, setBusy] = createSignal(false),
     [failure, setFailure] = createSignal(false);
   const [musicHost, setMusicHost] = createSignal<HTMLElement | null>(null);
@@ -128,7 +124,6 @@ export function ReaderApp() {
         target.pathname + target.search + target.hash
       );
       setPath(location.pathname);
-      setEdition({ book: currentBook(), locale });
       await nextFrame();
       restore();
     } catch {

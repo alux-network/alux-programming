@@ -1,4 +1,5 @@
 import type { ReaderBook } from './book.ts';
+import { createSignal } from 'solid-js';
 import { loadBook } from './content-loader.ts';
 import { englishMessages } from './ui-messages.ts';
 import type { UIMessages, MessageKey } from './ui-messages.ts';
@@ -19,9 +20,13 @@ const codes: LanguageCode[] = languages.map((x) => x.code);
 const dictionaries = import.meta.glob<UIMessages>('../locales/ui/*.json', {
   import: 'default'
 });
-let active: LanguageCode = 'en';
-let messages: UIMessages = englishMessages;
-let selectedBook: ReaderBook | undefined;
+interface LocalizedEdition {
+  locale: LanguageCode;
+  book: ReaderBook;
+  messages: UIMessages;
+}
+const [edition, setEdition] = createSignal<LocalizedEdition>();
+export { edition };
 const get = (key: string, session = false): string | null => {
   try {
     return (session ? sessionStorage : localStorage).getItem(key);
@@ -34,14 +39,14 @@ const put = (key: string, value: string, session = false): void => {
     (session ? sessionStorage : localStorage).setItem(key, value);
   } catch {}
 };
-export const language = () => active;
+export const language = (): LanguageCode => edition()?.locale || 'en';
 export function fmt(message: VariableMessage): string {
-  return formatMessage(active, message);
+  return formatMessage(language(), message);
 }
 export function languageURL(href: string): string {
   const url = new URL(href, location.origin);
   if (url.origin !== location.origin) return href;
-  url.pathname = languagePath(url.pathname, active);
+  url.pathname = languagePath(url.pathname, language());
   url.searchParams.delete('lang');
   return url.pathname + url.search + url.hash;
 }
@@ -140,18 +145,12 @@ export async function setLanguage(
   const load = dictionaries[`../locales/ui/${next}.json`];
   if (!load) throw Error('Interface language unavailable');
   const [book, ui] = await Promise.all([loadBook(next), load()]);
-  messages = ui;
-  selectedBook = book;
-  active = next;
   document.documentElement.lang = htmlLanguage(next);
   document.documentElement.dir = next === 'ar' ? 'rtl' : 'ltr';
   document.documentElement.dataset.locale = next;
   if (manual) put('alux-programming-language', next);
-}
-export function currentBook(): ReaderBook {
-  if (!selectedBook) throw Error('Book language has not loaded');
-  return selectedBook;
+  setEdition({ locale: next, book, messages: ui });
 }
 export function ui(key: MessageKey): string {
-  return messages[key];
+  return (edition()?.messages || englishMessages)[key];
 }

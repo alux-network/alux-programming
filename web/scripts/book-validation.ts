@@ -36,8 +36,25 @@ function technicalFacts(html: string) {
     inline: texts('code:not(pre code)'),
     math: texts('annotation[encoding="application/x-tex"]'),
     links: attributes('a[href]', 'href'),
-    images: attributes('img[src]', 'src'),
-    media: attributes('iframe[src]', 'src')
+    images: [...document.querySelectorAll('img')]
+      .map((node) =>
+        JSON.stringify([
+          node.getAttribute('src') || '',
+          node.getAttribute('srcset') || ''
+        ])
+      )
+      .sort(),
+    media: [...document.querySelectorAll('iframe,video,audio,source,track')]
+      .map((node) =>
+        JSON.stringify([
+          node.localName,
+          node.getAttribute('src') || '',
+          node.getAttribute('srcset') || '',
+          node.getAttribute('poster') || '',
+          node.localName === 'iframe' ? node.getAttribute('title') || '' : ''
+        ])
+      )
+      .sort()
   };
 }
 /** Validate the complete edition before replacing any published reader JSON. */
