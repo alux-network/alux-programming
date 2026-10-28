@@ -63,6 +63,7 @@ npm test
 - **Site** (`web/test/site.test.ts`): the expected site comes from mdBook's own book for every edition (a renderer, `web/test/book-json.ts`, saves the book mdBook parsed, after the translation preprocessor). Every chapter page must exist in every edition with its `lang`, `dir` and title, no unexpected page may exist, and every link, anchor and asset must resolve. Negative tests check that a removed or extra page, a renamed chapter, a broken anchor, a missing asset and a wrong title are each reported.
 - **Translations** (`web/test/translations.test.ts`): every `chapter.<lang>.md` keeps its English chapter's code blocks, math, link targets, embedded media and heading levels.
 - **Build** (`web/test/build.test.ts`): two clean builds of every edition are identical.
+- **Browser** (`web/test/browser.test.ts`): basic reader specs in Puppeteer's headless Chrome against the built site: the gateway, page turns within and across chapters, right-to-left turning, the real world, the language picker, bookmarks, and every edition loading in both worlds without errors or failed requests. The browser comes with `npm install`; if install scripts are blocked, run `npx puppeteer browsers install chrome-headless-shell`.
 
 The site must be served from the server root, because the files in `public/` are linked from it (`/wizard-standing.webp`, `/audio/…`).
 
@@ -96,7 +97,7 @@ src/            book content (Markdown), with SUMMARY.md as the table of content
 src/**/*.<lang>.md  translations, next to their English chapter
 theme/          page template (index.hbs), reader.css, CSS, mdbook-admonish assets
 web/            TypeScript: languages.ts, reader.ts and i18n.ts (bundled to /reader.js), localize.ts (translation preprocessor), mdbook.ts (builds every edition)
-web/test/       site, translation and build tests (`npm test`)
+web/test/       site, translation, build and browser tests (`npm test`)
 public/         images, fonts, art, audio and social cards, copied once to the site root
 vite.config.ts  build: mdBook editions, then the reader bundle; dev server with rebuild and reload
 book.toml       mdBook config: preprocessors (localize, admonish, katex), linkcheck, HTML output

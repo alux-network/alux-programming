@@ -140,6 +140,7 @@ Every file is a template for the next change, so comments carry the reasoning a 
 - `site.test.ts`: the built site against the editions derived from mdBook's book JSON (`book-json.ts` renderer): pages, `lang`/`dir`, titles, links, assets and anchors, plus broken-copy negative tests.
 - `translations.test.ts`: each translation keeps its English chapter's code, math, link targets, media and heading levels.
 - `build.test.ts`: two clean builds are identical.
+- `browser.test.ts`: basic reader specs in one browser (Puppeteer's headless Chrome) against `vite preview` of the built site. Each test name states what the reader does; routes come from `expectedSite()`. Visual design is not asserted.
 
 A new check goes into `verifySite` or `protectedContent` together with a negative test. Derive expected routes from `expectedSite()`; never hardcode a page list.
 

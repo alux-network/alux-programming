@@ -49,6 +49,7 @@ jobs:
     - name: 🔨 Build
       run: |
         npm ci
+        npx puppeteer browsers install chrome-headless-shell
         npm run check
         npm run build
         npm test
