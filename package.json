@@ -1,0 +1,19 @@
+{
+  "name": "alux-programming",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "check": "tsc",
+    "test": "node --test web/test/*.test.ts"
+  },
+  "devDependencies": {
+    "@types/node": "24",
+    "typescript": "7",
+    "vite": "8"
+  },
+  "engines": {
+    "node": ">=22.18"
+  }
+}
