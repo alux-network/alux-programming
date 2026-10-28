@@ -119,7 +119,11 @@ for (const profile of selected) {
       page.on('pageerror', (e) => problems.push('error: ' + e.message));
       page.on('console', (m) => {
         const cancelledFont = m.text().includes('downloadable font: download failed') && m.text().includes('status=2152398850');
-        if (m.type() === 'error' && !(moving.has(page) && cancelledFont)) problems.push('console: ' + m.location().url + ' ' + m.text());
+        // Embedded players run external scripts; their cookie policies are not reader failures.
+        // Keep strict monitoring for the site's own console, scripts and resource requests.
+        const source = m.location().url;
+        const internal = !source || source.startsWith(base + '/');
+        if (m.type() === 'error' && internal && !(moving.has(page) && cancelledFont)) problems.push('console: ' + source + ' ' + m.text());
       });
       page.on('response', (r) => {
         if (r.url().startsWith(base + '/') && r.status() >= 400) problems.push(r.status() + ': ' + r.url());
