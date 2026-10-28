@@ -83,19 +83,32 @@ for (const profile of selected) {
   describe(profile.name, { concurrency: false }, () => {
     let browser: Browser;
     const problems: string[] = [];
+    const moving = new WeakSet<Page>();
     before(async () => {
       browser = await profile.engine.launch({ headless: true });
       console.log(profile.name + ': ' + browser.version() + (profile.options.isMobile ? ' (simulation)' : ''));
     });
     after(async () => { await browser?.close(); });
     afterEach(async () => {
-      try { assert.deepEqual(problems, [], profile.name + ' browser errors'); }
+      try {
+        for (const context of browser.contexts()) {
+          for (const page of context.pages()) if (!page.isClosed()) await ready(page);
+        }
+        assert.deepEqual([...problems], [], profile.name + ' browser errors');
+      }
       finally {
         problems.length = 0;
         // Serial disposal avoids cross-window session-store races in Firefox on Windows.
         for (const context of browser.contexts()) await context.close();
       }
     });
+
+    /** Marks intentional document changes so cancelled old-page fonts are not resource failures. */
+    async function navigate(page: Page, operation: () => Promise<unknown>) {
+      moving.add(page);
+      try { await operation(); await ready(page); }
+      finally { moving.delete(page); }
+    }
 
     /** Opens an isolated chapter, watching every scenario for script and internal resource errors. */
     async function open(file: string, world?: 'magic' | 'real') {
@@ -104,13 +117,18 @@ for (const profile of selected) {
       page.setDefaultTimeout(10_000);
       page.on('pageerror', (e) => problems.push('error: ' + e.message));
       page.on('console', (m) => {
-        if (m.type() === 'error') problems.push('console: ' + m.text());
+        const cancelledFont = m.text().includes('downloadable font: download failed') && m.text().includes('status=2152398850');
+        if (m.type() === 'error' && !(moving.has(page) && cancelledFont)) problems.push('console: ' + m.location().url + ' ' + m.text());
       });
       page.on('response', (r) => {
         if (r.url().startsWith(base + '/') && r.status() >= 400) problems.push(r.status() + ': ' + r.url());
       });
       page.on('requestfailed', (r) => {
-        if (r.url().startsWith(base + '/')) problems.push('failed: ' + r.url() + ' ' + r.failure()?.errorText);
+        // Firefox reports fonts cancelled by document navigation as errors, not missing assets.
+        const cancelledFont = r.resourceType() === 'font' && /NS_BINDING_ABORTED|ERR_ABORTED/.test(r.failure()?.errorText ?? '');
+        if (r.url().startsWith(base + '/') && !(moving.has(page) && cancelledFont)) {
+          problems.push('failed: ' + r.url() + ' ' + r.failure()?.errorText);
+        }
       });
       if (world) {
         await context.addInitScript((w) => {
@@ -120,7 +138,7 @@ for (const profile of selected) {
           sessionStorage.setItem('alux-entered', '1');
         }, world);
       }
-      await page.goto(base + '/' + file);
+      await navigate(page, () => page.goto(base + '/' + file));
       await ready(page);
       return page;
     }
@@ -154,10 +172,10 @@ for (const profile of selected) {
       await activate(page, '#gateway [data-world="magic"]');
       assert.equal(await page.locator('html').getAttribute('data-world'), 'magic');
       assert.equal(await page.locator('html').getAttribute('data-gateway'), null);
-      await page.reload();
+      await navigate(page, () => page.reload());
       await ready(page);
       assert.equal(await page.locator('html').getAttribute('data-world'), 'magic');
-      await page.goto(base + '/index.html#worlds');
+      await navigate(page, () => page.goto(base + '/index.html#worlds'));
       await activate(page, '#gateway [data-world="real"]');
       assert.equal(await page.locator('html').getAttribute('data-world'), 'real');
     });
@@ -184,9 +202,9 @@ for (const profile of selected) {
       assert.ok(next, 'the long chapter has a next chapter');
       const step = count.last - count.first + 1;
       for (let first = count.first; first + step <= count.total; first += step) await activate(page, '#page-next');
-      await Promise.all([page.waitForURL(base + '/' + next), activate(page, '#page-next')]);
+      await navigate(page, () => Promise.all([page.waitForURL(base + '/' + next), activate(page, '#page-next')]));
       await ready(page);
-      await Promise.all([page.waitForURL(base + '/' + file + '#last-page'), activate(page, '#page-prev')]);
+      await navigate(page, () => Promise.all([page.waitForURL(base + '/' + file + '#last-page'), activate(page, '#page-prev')]));
       await ready(page);
       const end = await folio(page);
       assert.equal(end.last, end.total);
@@ -215,13 +233,15 @@ for (const profile of selected) {
       const page = await open(chapter, 'real');
       assert.deepEqual(await page.locator('.language-picker').first().locator('option').evaluateAll(
         (options) => options.map((o) => (o as HTMLOptionElement).value)), editions.map((e) => e.lang));
-      await Promise.all([
+      await navigate(page, () => Promise.all([
         page.waitForURL(base + '/' + route(target, chapter)),
         page.locator('.language-picker').first().selectOption(target.lang),
-      ]);
+      ]));
       assert.equal(await page.locator('html').getAttribute('lang'), target.lang);
-      await page.goto(base + '/index.html');
-      await page.waitForURL(base + '/' + route(target, 'index.html'));
+      await navigate(page, async () => {
+        await page.goto(base + '/index.html');
+        await page.waitForURL(base + '/' + route(target, 'index.html'));
+      });
     });
 
     test('bookmarks are added, reopened, visited and removed', async () => {
@@ -236,14 +256,14 @@ for (const profile of selected) {
       assert.equal(new URL(bookmark, page.url()).pathname, '/' + chapter);
       await page.keyboard.press('Escape');
       assert.equal(await page.locator('#bookmarks').evaluate((d) => (d as HTMLDialogElement).open), false);
-      await page.reload();
+      await navigate(page, () => page.reload());
       await ready(page);
       assert.equal(await page.locator('#bookmark-count').innerText(), '1');
       const other = chapters.find((file) => file !== chapter)!;
-      await page.goto(base + '/' + other);
+      await navigate(page, () => page.goto(base + '/' + other));
       await ready(page);
       await openBookmarks(page);
-      await Promise.all([page.waitForURL(base + '/' + chapter), page.locator('#bookmark-list a').click()]);
+      await navigate(page, () => Promise.all([page.waitForURL(base + '/' + chapter), page.locator('#bookmark-list a').click()]));
       await ready(page);
       assert.equal(pathname(page), '/' + chapter);
       await openBookmarks(page);
@@ -256,17 +276,17 @@ for (const profile of selected) {
       const { file, page } = await longChapter();
       await activate(page, '#page-next');
       const progress = await folio(page);
-      await page.reload();
+      await navigate(page, () => page.reload());
       await ready(page);
       assert.deepEqual(await folio(page), progress);
       const next = chapters[chapters.indexOf(file) + 1]!;
-      await page.goto(base + '/' + next);
+      await navigate(page, () => page.goto(base + '/' + next));
       await ready(page);
-      await page.goBack();
+      await navigate(page, () => page.goBack());
       await ready(page);
       assert.equal(pathname(page), '/' + file);
       assert.deepEqual(await folio(page), progress);
-      await page.goForward();
+      await navigate(page, () => page.goForward());
       await ready(page);
       assert.equal(pathname(page), '/' + next);
     });
@@ -284,6 +304,7 @@ for (const profile of selected) {
       assert.deepEqual(await folio(page), progress);
       await activate(page, '#reading-mode');
       await page.waitForFunction(() => document.documentElement.dataset.reading === 'scroll');
+      await ready(page);
       assert.equal(await page.locator('html').getAttribute('data-reading'), 'scroll');
       assert.equal(await page.locator('main.leaves').textContent(), contents);
       await activate(page, '#reading-mode');
@@ -293,8 +314,25 @@ for (const profile of selected) {
       await activate(page, '#reading-mode');
       await page.waitForFunction(() => document.documentElement.dataset.reading === 'scroll');
       const previous = chapters[chapters.indexOf(file) - 1]!;
-      await Promise.all([page.waitForURL(base + '/' + previous), activate(page, '#page-prev')]);
+      await navigate(page, () => Promise.all([page.waitForURL(base + '/' + previous), activate(page, '#page-prev')]));
     });
+
+    if (profile.options.hasTouch) {
+      test('touch scroll-reader heading links stay below the toolbar', async () => {
+        const { page } = await longChapter(english, 1);
+        await activate(page, '#reading-mode');
+        await page.waitForFunction(() => document.documentElement.dataset.reading === 'scroll');
+        const heading = page.locator('main.leaves h2').last();
+        const id = await heading.getAttribute('id');
+        assert.ok(id, 'the source chapter has an anchored heading');
+        await navigate(page, () => page.goto(page.url() + '#' + encodeURIComponent(id)));
+        await ready(page);
+        const target = await heading.boundingBox();
+        const toolbar = await page.locator('#menu-bar').boundingBox();
+        assert.ok(target && toolbar);
+        assert.ok(target.y >= toolbar.y + toolbar.height - 1, 'heading stays visible below the touch toolbar');
+      });
+    }
 
     test('resize and orientation changes retain content and usable control bounds', async () => {
       const { page } = await longChapter();
@@ -314,6 +352,22 @@ for (const profile of selected) {
       await folio(page);
     });
 
+    test('missing fonts still fail the resource monitor during navigation', async () => {
+      const page = await open(chapters[1]!, 'real');
+      const fixture = '/__missing-font.woff2';
+      await page.route('**' + fixture, (request) => request.fulfill({ status: 404, body: 'missing' }));
+      const start = problems.length;
+      await navigate(page, () => page.evaluate(async (url) => {
+        const face = new FontFace('Missing fixture', 'url("' + url + '")');
+        document.fonts.add(face);
+        await face.load().catch(() => {});
+      }, fixture));
+      // Consume only the deliberate fixture failure; any unrelated problem must still fail.
+      const observed = problems.splice(start);
+      assert.ok(observed.some((p) => p.startsWith('404:') && p.includes(fixture)), 'a missing font must be reported');
+      assert.ok(observed.every((p) => p.includes(fixture)), JSON.stringify(observed));
+    });
+
     test('CJK searches retain native results, cache and history', async () => {
       assert.ok(chinese, 'the source editions include Chinese');
       const file = route(chinese, chapters[1]!);
@@ -329,10 +383,10 @@ for (const profile of selected) {
       await search.fill('不存在的搜索词xyz987');
       await search.press('End');
       await page.waitForFunction(() => document.querySelectorAll('#searchresults li').length === 0);
-      await page.goto(base + '/' + file + '?search=' + encodeURIComponent('含义'));
+      await navigate(page, () => page.goto(base + '/' + file + '?search=' + encodeURIComponent('含义')));
       await searchResults(page, '含义');
-      await page.goto(base + '/' + file + '?search=Rust');
-      await page.goBack();
+      await navigate(page, () => page.goto(base + '/' + file + '?search=Rust'));
+      await navigate(page, () => page.goBack());
       await searchResults(page, '含义');
       assert.equal(await search.inputValue(), '含义');
     });
@@ -343,7 +397,7 @@ for (const profile of selected) {
         await new Promise((resolve) => setTimeout(resolve, 800));
         await request.continue();
       });
-      await page.goto(base + '/' + route(chinese, chapters[1]!) + '?search=' + encodeURIComponent('语义'));
+      await navigate(page, () => page.goto(base + '/' + route(chinese, chapters[1]!) + '?search=' + encodeURIComponent('语义')));
       await searchResults(page, '语义');
       assert.equal(await page.locator('#searchbar').inputValue(), '语义');
       assert.match(await page.locator('#searchresults-header').innerText(), /搜索/);
@@ -364,7 +418,7 @@ for (const profile of selected) {
       await page.evaluate(() => addEventListener('pagehide', () => {
         sessionStorage.setItem('test-audio-paused', String((document.getElementById('music') as HTMLAudioElement).paused));
       }));
-      await page.goto(base + '/' + chapters[1]!);
+      await navigate(page, () => page.goto(base + '/' + chapters[1]!));
       assert.equal(await page.evaluate(() => sessionStorage.getItem('test-audio-paused')), 'true');
     });
 
