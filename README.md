@@ -61,13 +61,14 @@ npm run check    # type-check web/ and vite.config.ts
 After `npm run build` (and not while `npm start` is running, since both write `book/html`):
 
 ```sh
+npx playwright install chromium firefox webkit   # once per Playwright version
 npm test
 ```
 
 - **Site** (`web/test/site.test.ts`): the expected site comes from mdBook's own book for every edition (a renderer, `web/test/book-json.ts`, saves the book mdBook parsed, after the translation preprocessor). Every chapter page must exist in every edition with its `lang`, `dir` and title, no unexpected page may exist, and every link, anchor and asset must resolve. Negative tests check that a removed or extra page, a renamed chapter, a broken anchor, a missing asset and a wrong title are each reported.
 - **Translations** (`web/test/translations.test.ts`): every `chapter.<lang>.md` keeps its English chapter's code blocks, math, link targets, embedded media and heading levels.
 - **Build** (`web/test/build.test.ts`): two clean builds of every edition are identical.
-- **Browser** (`web/test/browser.test.ts`): basic reader specs in Puppeteer's headless Chrome against the built site: the gateway, page turns within and across chapters, right-to-left turning, the real world, the language picker, bookmarks, and every edition loading in both worlds without errors or failed requests. The browser comes with `npm install`; if install scripts are blocked, run `npx puppeteer browsers install chrome-headless-shell`.
+- **Browser** (`web/test/browser.test.ts`): the same reader scenarios on desktop Chromium, Firefox and WebKit, plus Pixel 7/Chromium and iPhone 13/WebKit simulations. Covers both worlds, all editions, navigation/history, chapter progress, RTL, bookmarks, CJK search (including delayed scripts), resize/orientation, rendered technical content and navigation audio. Routes come from mdBook's expected site. Missing engines fail the run. These profiles do not replace physical Android Chrome or iOS Safari acceptance. Set `ALUX_BROWSER_PROFILE` to a profile name (`chromium-desktop`, `firefox-desktop`, `webkit-desktop`, `android-chromium`, `iphone-webkit`) to diagnose just that profile; omit it for the full matrix.
 
 The site must be served from the server root, because the files in `public/` are linked from it (`/wizard-standing.webp`, `/audio/…`).
 
@@ -117,7 +118,7 @@ book/           generated output (git-ignored)
 
 ## Publishing
 
-On every push to `master`, GitHub Actions ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)) runs `npm ci`, `npm run check`, `npm run build` and `npm test`, and publishes `book/html` to the `github-pages` branch. Pull requests build the book as a check but do not publish.
+On every push to `master`, GitHub Actions ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)) runs `npm ci`, `npm run check`, `npm run build` and `npm test`, and publishes `book/html` to the `github-pages` branch. Pull requests targeting `master` or `npm-ws`, and pushes to `fix/**`, run the same checks without publishing. CI installs all three Playwright engines and their system dependencies; only pushes to `master` publish.
 
 ## Status and license
 

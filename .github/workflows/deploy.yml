@@ -2,9 +2,9 @@ name: 📚 Deploy mdBook to GitHub Pages
 
 on:
   push:
-    branches: [master]
+    branches: [master, "fix/**"]
   pull_request:
-    branches: [master]
+    branches: [master, npm-ws]
 
 permissions:
   contents: write
@@ -49,7 +49,7 @@ jobs:
     - name: 🔨 Build
       run: |
         npm ci
-        npx puppeteer browsers install chrome-headless-shell
+        npx playwright install --with-deps chromium firefox webkit
         npm run check
         npm run build
         npm test
