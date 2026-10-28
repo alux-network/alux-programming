@@ -1,0 +1,460 @@
+<!DOCTYPE HTML>
+<html lang="{{ language }}" class="{{ default_theme }} sidebar-visible" dir="{{ text_direction }}">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>{{ title }}</title>
+        {{#if is_print }}
+        <meta name="robots" content="noindex">
+        {{/if}}
+        {{#if base_url}}
+        <base href="{{ base_url }}">
+        {{/if}}
+
+
+        <!-- Custom HTML head -->
+        {{> head}}
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="{{ title }}">
+        <meta property="og:description" content="{{ description }}">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-{{ language }}.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+            {{#if is_index}}
+            try {
+                if (location.hash === '#worlds' || !sessionStorage.getItem('alux-entered')) {
+                    document.documentElement.dataset.gateway = '';
+                }
+            } catch (e) { }
+            {{/if}}
+        </script>
+
+        <meta name="description" content="{{ description }}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        {{#if favicon_svg}}
+        <link rel="icon" href="{{ resource "favicon.svg" }}">
+        {{/if}}
+        {{#if favicon_png}}
+        <link rel="shortcut icon" href="{{ resource "favicon.png" }}">
+        {{/if}}
+        <link rel="stylesheet" href="{{ resource "css/variables.css" }}">
+        <link rel="stylesheet" href="{{ resource "css/general.css" }}">
+        <link rel="stylesheet" href="{{ resource "css/chrome.css" }}">
+        {{#if print_enable}}
+        <link rel="stylesheet" href="{{ resource "css/print.css" }}" media="print">
+        {{/if}}
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="{{ resource "FontAwesome/css/font-awesome.css" }}">
+        {{#if copy_fonts}}
+        <link rel="stylesheet" href="{{ resource "fonts/fonts.css" }}">
+        {{/if}}
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="{{ resource "highlight.css" }}">
+        <link rel="stylesheet" id="tomorrow-night-css" href="{{ resource "tomorrow-night.css" }}">
+        <link rel="stylesheet" id="ayu-highlight-css" href="{{ resource "ayu-highlight.css" }}">
+
+        <!-- Custom theme stylesheets -->
+        {{#each additional_css}}
+        <link rel="stylesheet" href="{{ resource this }}">
+        {{/each}}
+
+        {{#if mathjax_support}}
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        {{/if}}
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "{{ path_to_root }}";
+            const default_light_theme = "{{ default_theme }}";
+            const default_dark_theme = "{{ preferred_dark_theme }}";
+        {{#if search_js}}
+            window.path_to_searchindex_js = "{{ resource "searchindex.js" }}";
+        {{/if}}
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="{{ resource "toc.js" }}"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                {{#if search_enabled}}
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                {{/if}}
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('{{ default_theme }}')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="{{ path_to_root }}index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-logo.png" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="{{ path_to_root }}toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        {{#if is_index}}
+        <section id="gateway" class="gateway" aria-label="Choose your world" data-i18n>
+            <button id="welcome-play" class="gateway-welcome" type="button">
+                <i class="fa fa-play" aria-hidden="true"></i> <span data-i18n>Listen to the welcome</span>
+            </button>
+            <label class="language">
+                <i class="fa fa-globe" aria-hidden="true"></i>
+                <select class="language-picker" title="Language" aria-label="Language" data-i18n></select>
+            </label>
+            <button class="world-choice magic" type="button" data-world="magic">
+                <i class="fa fa-magic" aria-hidden="true"></i>
+                <strong data-i18n>Magic world</strong>
+                <span class="world-enter"><span data-i18n>Click to enter</span> ↗</span>
+            </button>
+            <img class="gateway-wizard" src="/wizard-standing.webp" alt="">
+            <button class="world-choice real" type="button" data-world="real">
+                <i class="fa fa-code" aria-hidden="true"></i>
+                <strong data-i18n>Real world</strong>
+                <span class="world-enter"><span data-i18n>Click to enter</span> ↗</span>
+            </button>
+            <audio id="welcome-audio" src="/audio/welcome/{{ language }}.mp3" preload="none"></audio>
+        </section>
+        {{/if}}
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                {{> header}}
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        {{#if search_enabled}}
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        {{/if}}
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        {{#if git_repository_url}}
+                        <a href="{{git_repository_url}}" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa {{git_repository_icon}}"></i>
+                        </a>
+                        {{/if}}
+                        <label class="language">
+                            <i class="fa fa-globe" aria-hidden="true"></i>
+                            <select class="language-picker" title="Language" aria-label="Language" data-i18n></select>
+                        </label>
+                    </div>
+                </div>
+
+                {{#if search_enabled}}
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                {{/if}}
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            {{{ content }}}
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        {{#previous}}
+                            <a rel="prev" href="{{ path_to_root }}{{link}}" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        {{/previous}}
+
+                        {{#next}}
+                            <a rel="next prefetch" href="{{ path_to_root }}{{link}}" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        {{/next}}
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                {{#previous}}
+                    <a rel="prev" href="{{ path_to_root }}{{link}}" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                {{/previous}}
+
+                {{#next}}
+                    <a rel="next prefetch" href="{{ path_to_root }}{{link}}" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                {{/next}}
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+        {{#if live_reload_endpoint}}
+        <!-- Livereload script (if served using the cli tool) -->
+        <script>
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "{{{live_reload_endpoint}}}";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
+        {{/if}}
+
+        {{#if google_analytics}}
+        <!-- Google Analytics Tag -->
+        <script>
+            const localAddrs = ["localhost", "127.0.0.1", ""];
+
+            // make sure we don't activate google analytics if the developer is
+            // inspecting the book locally...
+            if (localAddrs.indexOf(document.location.hostname) === -1) {
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+                ga('create', '{{google_analytics}}', 'auto');
+                ga('send', 'pageview');
+            }
+        </script>
+        {{/if}}
+
+        {{#if playground_line_numbers}}
+        <script>
+            window.playground_line_numbers = true;
+        </script>
+        {{/if}}
+
+        {{#if playground_copyable}}
+        <script>
+            window.playground_copyable = true;
+        </script>
+        {{/if}}
+
+        {{#if playground_js}}
+        <script src="{{ resource "ace.js" }}"></script>
+        <script src="{{ resource "mode-rust.js" }}"></script>
+        <script src="{{ resource "editor.js" }}"></script>
+        <script src="{{ resource "theme-dawn.js" }}"></script>
+        <script src="{{ resource "theme-tomorrow_night.js" }}"></script>
+        {{/if}}
+
+        {{#if search_js}}
+        <script src="{{ resource "elasticlunr.min.js" }}"></script>
+        <script src="{{ resource "mark.min.js" }}"></script>
+        <script src="{{ resource "searcher.js" }}"></script>
+        {{/if}}
+
+        <script src="{{ resource "clipboard.min.js" }}"></script>
+        <script src="{{ resource "highlight.js" }}"></script>
+        <script src="{{ resource "book.js" }}"></script>
+
+        <!-- Custom JS scripts -->
+        {{#each additional_js}}
+        <script src="{{ resource this}}"></script>
+        {{/each}}
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+
+        {{#if is_print}}
+        {{#if mathjax_support}}
+        <script>
+        window.addEventListener('load', function() {
+            MathJax.Hub.Register.StartupHook('End', function() {
+                window.setTimeout(window.print, 100);
+            });
+        });
+        </script>
+        {{else}}
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+        {{/if}}
+        {{/if}}
+
+        {{#if fragment_map}}
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const fragmentMap =
+                    {{{fragment_map}}}
+                ;
+                const target = fragmentMap[window.location.hash];
+                if (target) {
+                    let url = new URL(target, window.location.href);
+                    window.location.replace(url.href);
+                }
+            });
+        </script>
+        {{/if}}
+
+    </div>
+    </body>
+</html>
