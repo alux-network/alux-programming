@@ -1,6 +1,6 @@
 # Capability algebras
 
-<img class="section-image" src="../assets/design-by-meaning-rust.png" alt="Design by meaning in Rust — building software from small capability traits">
+<img class="section-image" src="/design-by-meaning-rust.png" alt="Design by meaning in Rust — building software from small capability traits">
 
 ```admonish tip title="Related"
 The Semantic View: [Denotational Design](../denotational-design/design.md), [Denotations and compositionality](../denotational-design/denotations.md)  

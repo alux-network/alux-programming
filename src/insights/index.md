@@ -1,6 +1,6 @@
 # Insights introduction
 
-<img class="section-image" src="../assets/insights.png" alt="Insights — connecting concepts back to the semantic view">
+<img class="section-image" src="/insights.png" alt="Insights — connecting concepts back to the semantic view">
 
 ```admonish tip title="Related"
 The Semantic View: [Why meaning comes first](../denotational-design/semantic-view.md)  

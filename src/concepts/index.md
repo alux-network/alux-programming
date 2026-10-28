@@ -1,6 +1,6 @@
 # Concepts introduction
 
-<img class="section-image" src="../assets/concepts.png" alt="Concepts — the programming machinery">
+<img class="section-image" src="/concepts.png" alt="Concepts — the programming machinery">
 
 ```admonish tip title="Related"
 The Semantic View: [Why meaning comes first](../denotational-design/semantic-view.md)  

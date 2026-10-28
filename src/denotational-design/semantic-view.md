@@ -1,6 +1,6 @@
 # Why meaning comes first
 
-<img class="section-image" src="../assets/semantic-view.png" alt="The semantic view — choosing what a program means before how it runs">
+<img class="section-image" src="/semantic-view.png" alt="The semantic view — choosing what a program means before how it runs">
 
 ```admonish tip title="Related"
 The Semantic View: [Denotations and compositionality](denotations.md), [Denotational Design](design.md)  

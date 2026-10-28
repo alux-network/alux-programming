@@ -4,6 +4,10 @@ authors = ["Tomislav Grospic <grospic@gmail.com>"]
 language = "en"
 src = "src"
 
+[preprocessor.localize]
+command = "node web/localize.ts"
+before = ["links", "admonish", "katex"]
+
 [preprocessor.admonish]
 command = "mdbook-admonish"
 assets_version = "3.0.3" # do not edit: managed by `mdbook-admonish install`
@@ -14,13 +18,14 @@ renderers = ["html"]
 [output]
 
 [output.linkcheck]
+# Root-absolute links point into public/, which the site test checks in the built site.
+exclude = ["^/"]
 
 # [output.katex]
 
 [output.html]
 git-repository-url = "https://github.com/alux-network/alux-programming"
 edit-url-template = "https://github.com/alux-network/alux-programming/edit/master/{path}"
-additional-css = ["theme/index.css", "theme/mdbook-admonish.css"]
-additional-js = ["theme/version.js"]
+additional-css = ["theme/index.css", "theme/mdbook-admonish.css", "theme/reader.css"]
 no-section-label = true
 # fold.enable = false
