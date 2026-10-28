@@ -25,6 +25,7 @@
             try {
                 const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
                 document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.dataset.reading = reader.mode || 'book';
                 document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
             } catch (e) {
                 document.documentElement.dataset.world = 'real';
@@ -153,7 +154,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <a class="brand" href="{{ path_to_root }}index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
-                <img class="brand-logo" src="/alux-logo.png" alt="">
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
                 <span class="brand-name">ALUX</span>
                 <span class="brand-subtitle" data-i18n>Programming</span>
             </a>
@@ -228,6 +229,7 @@
                         <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
                             <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
                         </button>
+                        <button id="reading-mode" class="bookmark-button" type="button" aria-pressed="false"><i class="fa fa-file-text-o" aria-hidden="true"></i> <span id="reading-mode-label" data-i18n>Scroll reading</span></button>
                         <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
                         <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
                     </div>
@@ -408,7 +410,6 @@
         {{#if search_js}}
         <script src="{{ resource "elasticlunr.min.js" }}"></script>
         <script src="{{ resource "mark.min.js" }}"></script>
-        <script src="{{ resource "searcher.js" }}"></script>
         {{/if}}
 
         <script src="{{ resource "clipboard.min.js" }}"></script>
@@ -421,6 +422,10 @@
         {{/each}}
         <!-- ALUX reader, bundled by Vite from web/reader.ts -->
         <script type="module" src="/reader.js"></script>
+        {{#if search_js}}
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="{{ resource "searcher.js" }}"></script>
+        {{/if}}
 
         {{#if is_print}}
         {{#if mathjax_support}}

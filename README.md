@@ -26,6 +26,10 @@ cargo install mdbook-katex --version 0.9.4 --locked
 cargo install mdbook-linkcheck --version 0.7.7 --locked
 ```
 
+### Reading
+
+The magic world offers book pages and continuous scrolling. Reading mode, text size, manual language choice and normalized progress within each edition's chapter are remembered locally. Folios explicitly describe chapter progress. CJK search uses the same lazy-loaded mdBook edition index, with substring matching for scripts that mdBook's default word tokenizer does not segment.
+
 ### Develop
 
 Install the Node packages once, then start the dev server (opens on <http://localhost:3478>):

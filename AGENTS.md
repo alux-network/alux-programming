@@ -4,7 +4,7 @@ This file is the compact engineering authority for humans and coding agents work
 
 ## Product
 
-The ALUX programming guidelines: one mdBook, published in 11 languages, with a reader that adds a magic world (a paged two-column book) and a real world (the plain mdBook page), a gateway to choose between them, text size, bookmarks and reading music.
+The ALUX programming guidelines: one mdBook, published in 11 languages, with a reader that adds a magic world (a paged two-column book or continuous scrolling) and a real world (the plain mdBook page), a gateway to choose between them, text size, bookmarks and reading music.
 
 mdBook defines the book. Application configuration defines additional pages. Everything else is a derivation of those two, verification included. Do not turn this repository into a web application, a static-site generator or a second book model beside mdBook.
 
@@ -176,3 +176,7 @@ A new check goes into `verifySite` or `protectedContent` together with a negativ
 
 - Use Conventional Commits 1.0.0: `<type>(<scope>): <imperative summary>`.
 - A PR description says what changed and why, one short paragraph per topic. No verification sections (local test counts, build output) and no narration of mistakes fixed along the way: CI passing is the verification. Keep only reviewer-actionable notes.
+
+## Reader continuity
+
+Keep book and scroll modes in the existing reader module. The alux-reader preferences retain the manual language and normalized progress keyed by edition and chapter. Explicit fragments take precedence on entry; changing views restores the current progress. Folios are chapter-local. CJK substring search reads mdBook's existing lazy edition index; do not create a second content index. Keep native control keyboard behavior when handling paging shortcuts.

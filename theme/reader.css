@@ -429,3 +429,93 @@ html[data-gateway] body { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .world-choice { transition: none; }
 }
+
+
+/* Continue the approved forest-and-brass treatment within mdBook's template. */
+:root { --sidebar-width: clamp(280px, 26.4vw, 380px); }
+.brand { color: var(--reader-ink); padding-block: 28px 24px; }
+.brand-logo { height: auto; aspect-ratio: 256 / 239; object-fit: contain; }
+.brand-subtitle { font-size: 1.9rem; }
+.chapter li.part-title { font-size: 2.1rem; font-weight: 500; }
+.chapter li.chapter-item { font-size: 2.05rem; margin-block: 12px; }
+.chapter li.chapter-item > a { padding-block: 3px; }
+#bookmark-label { display: none; }
+#reading-mode { white-space: nowrap; font-family: var(--reader-serif) !important; }
+html[data-world="real"] #reading-mode { display: none; }
+:root:is(.coal, .navy, .ayu)[data-world="magic"] .brand-logo { content: url("/alux-bronze-night.webp"); }
+html[data-world="magic"] main.leaves,
+html[data-world="magic"] main.leaves :is(blockquote, .admonition, .admonition-content),
+html[data-world="magic"] main.leaves :is(h1,h2,h3,h4,h5,h6) > a.header {
+  color: var(--reader-ink);
+}
+html[data-world="magic"] main.leaves blockquote {
+  margin-inline: 0;
+  border-inline-start: 1px solid var(--reader-rule);
+  background: color-mix(in srgb, var(--reader-trim) 6%, transparent);
+}
+html[data-world="magic"] .volume { background-size: cover; }
+html[data-world="magic"] .volume {
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 5px var(--reader-cover), inset 0 0 0 7px var(--reader-trim),
+    inset 0 0 0 12px var(--reader-cover), 0 5px 0 -2px #77715a, 0 16px 30px #0003;
+}
+@media (min-width: 900px) {
+  .menu-bar { display: flex; flex-wrap: wrap; row-gap: 8px; padding: 12px 24px; }
+  .menu-bar .right-buttons { order: 1; width: 100%; justify-content: flex-end; }
+  .menu-bar .left-buttons { order: 2; width: 100%; justify-content: flex-end; gap: 10px; }
+  .menu-title { display: none; }
+  .menu-bar .icon-button { min-width: 36px; }
+  html[data-world="magic"] #content { --book-height: max(440px, calc(100dvh - 270px)); }
+}
+html[data-world="magic"][data-reading="scroll"] #content { --book-width: min(100%, 1080px); }
+html[data-world="magic"][data-reading="scroll"] .volume { padding: 54px clamp(24px, 5vw, 80px); }
+html[data-world="magic"][data-reading="scroll"] .volume::before,
+html[data-world="magic"][data-reading="scroll"] .volume > :is(.page-head, .page-foot),
+html[data-world="magic"][data-reading="scroll"] .folio-center { display: none; }
+html[data-world="magic"][data-reading="scroll"] #content main.leaves {
+  height: auto;
+  columns: auto;
+  overflow: visible;
+  font-size: calc(2.2rem * var(--reader-scale, 1));
+  view-transition-name: none;
+}
+html[data-world="magic"][data-reading="scroll"] .folio-bar { grid-template-columns: 1fr 1fr; }
+@media (max-width: 899px) {
+  :root { --sidebar-width: min(300px, calc(100vw - 48px)); }
+  .brand-logo { width: 54px; }
+  .brand-name { font-size: 3.2rem; }
+  .menu-bar .icon-button { min-width: 36px; min-height: 40px; }
+  #reading-mode { font-size: 1.6rem !important; padding: 6px; }
+  #reading-mode i { display: none; }
+  .left-buttons { flex-wrap: wrap; justify-content: flex-start; gap: 4px; }
+  .gateway-welcome, .gateway .language { top: 16px; padding: 8px; }
+  .gateway-welcome { font-size: 1.4rem; max-width: 42vw; }
+  .gateway .language { max-width: 44vw; }
+  .gateway .language-picker { max-width: 36vw; font-size: 1.5rem; }
+  .world-choice strong { font-size: clamp(2.4rem, 6vw, 3.4rem); }
+  .world-enter { font-size: 1.8rem; }
+  html[data-world="magic"] #content { padding-inline: 12px; }
+  html[data-world="magic"] .volume { padding: 68px 24px 54px; }
+  html[data-world="magic"] #content main.leaves { height: max(280px, calc(100dvh - 390px)); }
+  html[data-world="magic"] :is(.page-head, .page-foot) {
+    width: calc(100% - 48px); inset-inline-start: 24px;
+  }
+  html[data-world="magic"][data-reading="scroll"] #content main.leaves {
+    font-size: calc(1.9rem * var(--reader-scale, 1));
+  }
+}
+
+/* Section artwork keeps the approved small illustration scale in both worlds. */
+#content main img:is([src$="semantic-view.png"], [src$="design-by-meaning-rust.png"], [src$="concepts.png"], [src$="insights.png"]) { display: block; width: auto; max-width: 100%; max-height: 150px; margin: 24px auto; object-fit: contain; }
+
+
+@media (max-width: 899px) {
+  .left-buttons { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 3px; }
+  .left-buttons > :is(.icon-button, .bookmark-button) { width: 100%; min-height: 44px; margin: 0; box-sizing: border-box; justify-content: center; }
+  html[data-world="magic"] .volume > :is(.page-head, .page-foot):nth-of-type(n) {
+    inset-inline-start: 24px; inset-inline-end: auto; width: calc(100% - 48px); gap: 8px;
+  }
+  .running-part { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .running-book { max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+html[data-gateway] .gateway :is(.language, .language-picker) { color: #efe3c4; }
