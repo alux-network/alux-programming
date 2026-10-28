@@ -519,3 +519,8 @@ html[data-world="magic"][data-reading="scroll"] .folio-bar { grid-template-colum
   .running-book { max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }
 html[data-gateway] .gateway :is(.language, .language-picker) { color: #efe3c4; }
+
+/* mdBook's hover-driven sticky state can move a touch target between touchend and click. */
+@media (hover: none) {
+  html[data-world="magic"] #menu-bar { position: sticky; top: 0 !important; }
+}
