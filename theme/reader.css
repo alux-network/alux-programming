@@ -523,4 +523,7 @@ html[data-gateway] .gateway :is(.language, .language-picker) { color: #efe3c4; }
 /* mdBook's hover-driven sticky state can move a touch target between touchend and click. */
 @media (hover: none) {
   html[data-world="magic"] #menu-bar { position: sticky; top: 0 !important; }
+  html[data-world="magic"][data-reading="scroll"] #content :is(h1, h2, h3, h4, h5, h6) {
+    scroll-margin-top: calc(var(--reader-toolbar-height, 200px) + 1rem);
+  }
 }

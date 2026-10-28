@@ -190,8 +190,14 @@ function turn(delta: number) {
   }
 }
 
+/** Measures the responsive toolbar for unobscured touch-reader fragment navigation. */
+function measureToolbar() {
+  html.style.setProperty('--reader-toolbar-height', $('menu-bar').offsetHeight + 'px');
+}
+
 /** Re-places the reader after layout changes: on #last-page, on a #heading's spread, or where it was. */
 function settle() {
+  measureToolbar();
   if (!paged()) return;
   if (fragmentPending && location.hash === '#last-page') return show(spreads() - 1);
   let target: HTMLElement | null = null;
@@ -231,6 +237,7 @@ function renderMode() {
     $<HTMLButtonElement>('page-prev').disabled = !chapterLink('prev');
     $<HTMLButtonElement>('page-next').disabled = !chapterLink('next');
   }
+  measureToolbar();
 }
 renderMode();
 $('reading-mode').addEventListener('click', () => {
@@ -260,7 +267,7 @@ $('page-next').addEventListener('click', () => turn(1));
 // Column count depends on fonts and images, so settle again once they have loaded.
 document.fonts.ready.then(settle);
 addEventListener('load', settle);
-addEventListener('resize', () => paged() && show(spread));
+addEventListener('resize', () => { measureToolbar(); if (paged()) show(spread); });
 addEventListener('hashchange', () => { fragmentPending = true; restorePending = false; settle(); });
 addEventListener('pagehide', () => { remember(); turnTransition?.skipTransition(); });
 addEventListener('load', restoreScroll);
