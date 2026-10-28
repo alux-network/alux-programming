@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Álgebras de capacidades","sourceHash":"sha256:707e5f96df94e673ccee892af8ce5f089dc44abc2d5361d5888348db72d22664"} -->
+<!-- reader: {"title":"Álgebras de capacidades","sourceHash":"sha256:0c3fefabad08ae4d7f39d28d5855e2983e2c46d3acba947e186a304d1e91139e"} -->
 
 # Álgebras de capacidades {#capability-algebras}
 

@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Introducción","sourceHash":"sha256:040b893a7952727852a085c97964ddf748e9c8167cf07dbaee438642f23c0b59"} -->
+<!-- reader: {"title":"Introducción","sourceHash":"sha256:5a21adaf8b7ea615ed37f19844d7c0fe2c85cfba9e2893923c2ae34f3469f89d"} -->
 
 # Introducción a Perspectivas {#insights-introduction}
 

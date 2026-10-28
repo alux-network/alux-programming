@@ -39,7 +39,7 @@ npm install
 npm start
 ```
 
-[Vite] serves the full site from `book/html`: English at the root, each translation under `/<lang>/`, and the files in `public/` at the root. It builds every edition on start, rebuilds when the book's sources (`src/`, `theme/`, `book.toml`) change and reloads the page once the build is done. The reader is served from its TypeScript source in `web/`, so a change there only reloads the page.
+[Vite] serves the full site from `book/html`: English at the root, each translation under `/<lang>/`, and the files in `public/` at the root. It waits for every edition before accepting requests, rebuilds when the book's sources (`src/`, `theme/`, `book.toml`) change and reloads the page once the build is done. The reader is served from its TypeScript source in `web/`, so a change there only reloads the page.
 
 To work on one language with mdBook's own faster live reload (without `public/`, so fonts, art and audio are missing):
 

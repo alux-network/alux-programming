@@ -14,6 +14,7 @@
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
+import { chapterAssets } from './public-assets.ts';
 
 // The parts of mdBook's book JSON this preprocessor reads or writes.
 interface Chapter {
@@ -26,6 +27,7 @@ interface Chapter {
 type BookItem = { Chapter: Chapter } | { PartTitle: string } | 'Separator';
 interface Context {
   root: string;
+  renderer: string;
   config: { book: { language?: string; src?: string } };
 }
 interface Metadata {
@@ -71,6 +73,11 @@ if (lang !== 'en') {
     chapter.content = content;
     chapter.name = meta.title || heading || chapter.name;
     if (source === 'index.md') parts = meta.parts ?? {};
+  }
+}
+if (context.renderer === 'html') {
+  for (const chapter of chapters(book.sections)) {
+    if (chapter.path) chapter.content = chapterAssets(chapter.content, chapter.path, lang);
   }
 }
 // Part titles are top-level items of the book, not chapters.

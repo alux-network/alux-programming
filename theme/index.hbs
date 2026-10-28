@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="{{ language }}" class="{{ default_theme }} sidebar-visible" dir="{{ text_direction }}">
+<html lang="{{ language }}" class="{{ default_theme }} sidebar-visible" dir="{{ text_direction }}"{{#if is_print}} data-print{{/if}}>
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -24,7 +24,7 @@
         <script>
             try {
                 const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
-                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.dataset.world = {{#if is_print}}'real'{{else}}reader.world || 'real'{{/if}};
                 document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
             } catch (e) {
                 document.documentElement.dataset.world = 'real';
@@ -91,14 +91,14 @@
     <body>
     <div id="mdbook-help-container">
         <div id="mdbook-help-popup">
-            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
             <div>
-                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
                 {{#if search_enabled}}
-                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
                 {{/if}}
-                <p>Press <kbd>?</kbd> to show this help</p>
-                <p>Press <kbd>Esc</kbd> to hide this help</p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
             </div>
         </div>
     </div>

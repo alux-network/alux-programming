@@ -1,4 +1,4 @@
-<!-- reader: {"title":"ALUX 编程","parts":{"Welcome":"欢迎","The Semantic View":"语义视角","Design by Meaning in Rust":"Rust 中的语义驱动设计","Concepts":"概念","Insights":"洞见","Contributing":"参与贡献"},"sourceHash":"sha256:801d6c5e7d3e5862395c094158caadb1df71cec65054c97d146882cf39bd00dc"} -->
+<!-- reader: {"title":"ALUX 编程","parts":{"Welcome":"欢迎","The Semantic View":"语义视角","Design by Meaning in Rust":"Rust 中的语义驱动设计","Concepts":"概念","Insights":"洞见","Contributing":"参与贡献"},"sourceHash":"sha256:81b904efbe52746e7c430050f24b67bda84b62fab618ace269ce404c69b04146"} -->
 
 ```admonish warning title="ALUX 项目"
 ALUX 代码库仍在积极开发中，尚未公开。

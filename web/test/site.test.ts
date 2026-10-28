@@ -91,6 +91,18 @@ describe('the verifier reports', () => {
     rmSync(path.join(dir, 'reader.js'));
     assert.ok(verify(dir).some((p) => p.includes('broken link /reader.js')));
   });
+  for (const generated of ['404.html', 'print.html', 'toc.html']) {
+    test('broken links, assets and anchors in ' + generated, () => {
+      const dir = copy();
+      const file = path.join(dir, generated);
+      const broken = '<a href="missing-generated.html">x</a><img src="missing-generated.png"><a href="#missing-generated-heading">x</a>';
+      writeFileSync(file, readFileSync(file, 'utf8').replace('</body>', broken + '</body>'));
+      const problems = verify(dir);
+      for (const suffix of ['broken link missing-generated.html', 'broken link missing-generated.png', 'broken anchor #missing-generated-heading']) {
+        assert.ok(problems.includes(`en/${generated}: ${suffix}`), suffix);
+      }
+    });
+  }
   test('a wrong title', () => {
     const retitled = { ...english, pages: english.pages.map((p) => (p.file === chapter ? { ...p, title: 'Another title' } : p)) };
     assert.ok(verify(copy(), retitled).some((p) => p.startsWith(`en/${chapter}: title`)));

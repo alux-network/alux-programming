@@ -6,6 +6,10 @@ import type { Language } from './languages.ts';
 
 export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
   "ar": {
+    "Keyboard shortcuts": "اختصارات لوحة المفاتيح",
+    "Turn pages or chapters": "التنقل بين الصفحات أو الفصول",
+    "Show keyboard help": "إظهار مساعدة لوحة المفاتيح",
+    "Close keyboard help": "إغلاق مساعدة لوحة المفاتيح",
     "This chapter": "هذا الفصل",
 
     "Choose your world": "اختر عالمك",
@@ -37,6 +41,10 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "مرحبًا"
   },
   "de": {
+    "Keyboard shortcuts": "Tastenkürzel",
+    "Turn pages or chapters": "Seiten oder Kapitel umblättern",
+    "Show keyboard help": "Tastaturhilfe anzeigen",
+    "Close keyboard help": "Tastaturhilfe schließen",
     "This chapter": "Dieses Kapitel",
 
     "Choose your world": "Wähle deine Welt",
@@ -68,6 +76,10 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Willkommen"
   },
   "es": {
+    "Keyboard shortcuts": "Atajos de teclado",
+    "Turn pages or chapters": "Pasar páginas o capítulos",
+    "Show keyboard help": "Mostrar la ayuda del teclado",
+    "Close keyboard help": "Cerrar la ayuda del teclado",
     "This chapter": "Este capítulo",
 
     "Choose your world": "Elige tu mundo",
@@ -99,6 +111,10 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Bienvenida"
   },
   "ja": {
+    "Keyboard shortcuts": "キーボードショートカット",
+    "Turn pages or chapters": "ページや章を移動",
+    "Show keyboard help": "キーボード操作のヘルプを表示",
+    "Close keyboard help": "キーボード操作のヘルプを閉じる",
     "This chapter": "この章",
 
     "Choose your world": "世界を選んでください",
@@ -130,6 +146,10 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "ようこそ"
   },
   "ko": {
+    "Keyboard shortcuts": "키보드 단축키",
+    "Turn pages or chapters": "페이지 또는 장 이동",
+    "Show keyboard help": "키보드 도움말 표시",
+    "Close keyboard help": "키보드 도움말 닫기",
     "This chapter": "이 장",
 
     "Choose your world": "세계를 선택하세요",
@@ -161,6 +181,10 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "환영합니다"
   },
   "ru": {
+    "Keyboard shortcuts": "Сочетания клавиш",
+    "Turn pages or chapters": "Переход между страницами или главами",
+    "Show keyboard help": "Показать справку по клавишам",
+    "Close keyboard help": "Закрыть справку по клавишам",
     "This chapter": "Эта глава",
 
     "Choose your world": "Выберите свой мир",
@@ -192,6 +216,10 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Добро пожаловать"
   },
   "uk": {
+    "Keyboard shortcuts": "Сполучення клавіш",
+    "Turn pages or chapters": "Перехід між сторінками або розділами",
+    "Show keyboard help": "Показати довідку про клавіші",
+    "Close keyboard help": "Закрити довідку про клавіші",
     "This chapter": "Цей розділ",
 
     "Choose your world": "Виберіть свій світ",
@@ -223,6 +251,10 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Вітаємо"
   },
   "vi": {
+    "Keyboard shortcuts": "Phím tắt",
+    "Turn pages or chapters": "Chuyển trang hoặc chương",
+    "Show keyboard help": "Hiện hướng dẫn phím tắt",
+    "Close keyboard help": "Đóng hướng dẫn phím tắt",
     "This chapter": "Chương này",
 
     "Choose your world": "Chọn thế giới của bạn",
@@ -254,6 +286,10 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Chào mừng"
   },
   "zh-hant": {
+    "Keyboard shortcuts": "鍵盤快捷鍵",
+    "Turn pages or chapters": "翻頁或切換章節",
+    "Show keyboard help": "顯示快捷鍵說明",
+    "Close keyboard help": "關閉快捷鍵說明",
     "This chapter": "本章",
 
     "Choose your world": "選擇你的世界",
@@ -285,6 +321,10 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "歡迎"
   },
   "zh": {
+    "Keyboard shortcuts": "键盘快捷键",
+    "Turn pages or chapters": "翻页或切换章节",
+    "Show keyboard help": "显示快捷键帮助",
+    "Close keyboard help": "关闭快捷键帮助",
     "This chapter": "本章",
 
     "Choose your world": "选择你的世界",

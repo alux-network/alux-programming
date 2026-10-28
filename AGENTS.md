@@ -139,6 +139,8 @@ Every file is a template for the next change, so comments carry the reasoning a 
 
 ## Tests
 
+- `dev.test.ts`: startup waits for a complete initial edition build; a real watched edit triggers a rebuild, including Windows paths.
+- `public-assets.test.ts`: chapter-relative media paths for native print rendering, preserving code examples.
 - `site.test.ts`: the built site against the editions derived from mdBook's book JSON (`book-json.ts` renderer): pages, `lang`/`dir`, titles, links, assets and anchors, plus broken-copy negative tests.
 - `translations.test.ts`: each translation keeps its English chapter's code, math, link targets, media and heading levels.
 - `build.test.ts`: two complete mdBook + Vite builds are identical; a failed reader bundle preserves the previous site. `mdbook.test.ts` checks directory replacement and rollback.
@@ -181,7 +183,7 @@ A new check goes into `verifySite` or `protectedContent` together with a negativ
 
 ## Reader continuity
 
-The alux-reader preferences retain the manual language and normalized progress keyed by edition and chapter. Explicit fragments take precedence on entry; changing views restores the current progress. Folios are chapter-local. CJK substring search reads mdBook's existing lazy edition index; do not create a second content index. Keep native control keyboard behavior when handling paging shortcuts.
+The alux-reader preferences retain the manual language and normalized progress keyed by edition and chapter. Explicit fragments take precedence on entry; changing views restores the current progress. Folios are chapter-local. Responsive relayout preserves normalized progress; aggregate print pages use the real layout without changing the saved world. CJK substring search reads mdBook's existing lazy edition index; do not create a second content index. Keep native control keyboard behavior when handling paging shortcuts.
 
 ## Attribution
 

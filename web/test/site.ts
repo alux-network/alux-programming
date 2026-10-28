@@ -123,7 +123,7 @@ export function verifySite(root: string, editions: Edition[]): string[] {
     for (const file of expected.keys()) if (!actual.has(file)) problems.push(`${edition.lang}: missing page ${file}`);
     for (const file of actual) if (!expected.has(file)) problems.push(`${edition.lang}: unexpected page ${file}`);
 
-    for (const page of edition.pages) {
+    for (const page of expected.values()) {
       const file = path.join(base, page.file);
       if (!existsSync(file)) continue;
       const html = readFileSync(file, 'utf8');

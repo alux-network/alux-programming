@@ -11,6 +11,7 @@ import type { Browser, BrowserContextOptions, BrowserType, Page } from 'playwrig
 import { preview } from 'vite';
 import type { PreviewServer } from 'vite';
 import { expectedSite } from './site.ts';
+import { uiStrings } from '../i18n.ts';
 import type { Edition } from './site.ts';
 
 const editions = await expectedSite();
@@ -324,22 +325,53 @@ for (const profile of selected) {
       assert.equal(await page.locator('#sidebar-resize-handle').isVisible(), false, 'no sidebar resize handle');
     });
 
-    test('resize and orientation changes retain content and usable control bounds', async () => {
-      const { page } = await longChapter();
+    test('resize and orientation changes retain progress, content and usable controls', async () => {
+      const { page } = await longChapter(english, 1);
+      if (await page.locator('html').evaluate((html) => html.classList.contains('sidebar-visible'))) {
+        await activate(page, '#sidebar-toggle');
+        await ready(page);
+      }
+      await activate(page, '#page-next');
+      const progress = await folio(page);
+      assert.ok(progress.first > 1, 'the resize starts from a nonzero reading position');
       const contents = await page.locator('main.leaves').textContent();
       const viewport = page.viewportSize()!;
-      await page.setViewportSize({ width: viewport.height, height: viewport.width });
-      await ready(page);
-      await folio(page);
-      assert.equal(await page.locator('main.leaves').textContent(), contents);
-      for (const selector of ['#page-prev', '#page-next', '#bookmark-toggle', '#text-larger']) {
-        const box = await page.locator(selector).boundingBox();
-        assert.ok(box && box.x >= -1 && box.x + box.width <= page.viewportSize()!.width + 1, selector);
-        assert.ok((await page.locator(selector).getAttribute('aria-label')) || (await page.locator(selector).innerText()).trim(), selector + ' accessible name');
+      const acrossBreakpoint = { width: viewport.width < 900 ? 1200 : 600, height: viewport.height };
+      for (const size of [acrossBreakpoint, { width: viewport.height, height: viewport.width }, viewport]) {
+        await page.setViewportSize(size);
+        await ready(page);
+        const resized = await folio(page);
+        const beforePer = progress.last - progress.first + 1, afterPer = resized.last - resized.first + 1;
+        const ratio = (progress.first - 1) / Math.max(1, progress.total - beforePer);
+        const expected = Math.round(ratio * (resized.total / afterPer - 1)) * afterPer + 1;
+        assert.equal(resized.first, expected, 'normalized progress survives a new column count');
+        assert.equal(await page.locator('main.leaves').textContent(), contents);
+        for (const selector of ['#page-prev', '#page-next', '#bookmark-toggle', '#text-larger']) {
+          const box = await page.locator(selector).boundingBox();
+          assert.ok(box && box.x >= -1 && box.x + box.width <= size.width + 1, selector);
+          assert.ok((await page.locator(selector).getAttribute('aria-label')) || (await page.locator(selector).innerText()).trim(), selector + ' accessible name');
+        }
       }
-      await page.setViewportSize(viewport);
-      await ready(page);
-      await folio(page);
+    });
+
+    test('print pages retain the complete book without changing the saved world', async () => {
+      const page = await open(chapters[1]!, 'magic');
+      await page.addInitScript(() => { window.print = () => {}; });
+      await navigate(page, () => page.goto(base + '/print.html'));
+      await page.emulateMedia({ media: 'print' });
+      assert.equal(await page.locator('html').getAttribute('data-world'), 'real');
+      assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('alux-reader')!).world), 'magic');
+      assert.ok(await page.locator('main.leaves h1').count() > 1, 'aggregate book retains chapters');
+      assert.ok(await page.locator('main.leaves').evaluate((main) => main.scrollHeight <= main.clientHeight + 2), 'print content is not clipped');
+    });
+
+    test('keyboard help opens and closes in the edition language', async () => {
+      const page = await open(route(chinese, chapters[1]!), 'real');
+      await page.keyboard.press('?');
+      await page.locator('#mdbook-help-popup').waitFor({ state: 'visible' });
+      assert.equal(await page.locator('.mdbook-help-title').innerText(), '键盘快捷键');
+      await page.keyboard.press('Escape');
+      await page.locator('#mdbook-help-container').waitFor({ state: 'hidden' });
     });
 
     test('missing fonts still fail the resource monitor during navigation', async () => {
@@ -441,6 +473,7 @@ for (const profile of selected) {
           const page = await open(route(edition, edition.pages[1]!.file), world);
           assert.equal(await page.locator('html').getAttribute('data-world'), world);
           assert.equal(await page.locator('html').getAttribute('lang'), edition.lang);
+          assert.equal(await page.locator('.mdbook-help-title').textContent(), uiStrings[edition.lang]?.['Keyboard shortcuts'] ?? 'Keyboard shortcuts');
           assert.equal(await page.locator('html').getAttribute('dir'), edition.rtl ? 'rtl' : 'ltr');
           assert.ok((await page.locator('main.leaves').innerText()).trim().length > 40);
           const bounds = await page.evaluate(() => ({

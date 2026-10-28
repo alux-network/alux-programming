@@ -33,6 +33,7 @@ interface Prefs {
 }
 
 const html = document.documentElement;
+const printing = html.hasAttribute('data-print');
 // Elements by id; the template guarantees they exist on every page.
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const lang = (languages.find((l) => l.code === html.lang)?.code ?? 'en') as Language;
@@ -173,12 +174,15 @@ const spreads = () => Math.max(1, Math.round((main.scrollWidth + gap()) / step()
 const perSpread = () => (getComputedStyle(main).columnCount === '1' ? 1 : 2);
 // The spread on screen, 0-based.
 let spread = 0;
+// Keep the last settled position independently of geometry that resize has already changed.
+let readingRatio = 0;
 let turnTransition: ViewTransition | undefined;
 let pendingSpread: number | undefined;
 
 /** Scrolls to spread `index` (clamped) and updates the folio, page numbers and turn buttons. */
 function show(index: number) {
   spread = Math.max(0, Math.min(index, spreads() - 1));
+  readingRatio = spread / Math.max(1, spreads() - 1);
   // Right-to-left columns flow leftwards, with negative scrollLeft.
   main.scrollLeft = (rtl ? -1 : 1) * spread * step();
   const per = perSpread(), first = spread * per + 1, total = spreads() * per;
@@ -247,12 +251,17 @@ function settle() {
   }
   if (target) show(spreadOf(target));
   else if (restorePending) show(Math.round((prefs.positions?.[positionKey] ?? 0) * (spreads() - 1)));
-  else show(spread);
+  else {
+    const ratio = readingRatio;
+    show(Math.round(ratio * (spreads() - 1)));
+    readingRatio = ratio;
+  }
 }
 
 /** Saves normalized progress in the edition and chapter before navigation or world changes. */
 function remember() {
-  const ratio = paged() ? spread / Math.max(1, spreads() - 1)
+  if (printing) return;
+  const ratio = paged() ? readingRatio
     : scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight);
   prefs.positions = { ...prefs.positions, [positionKey]: Math.min(1, Math.max(0, ratio)) };
   save();
@@ -267,8 +276,12 @@ function restoreScroll() {
 
 /** Switches world; reader.css lays out the page from html[data-world]. */
 function setWorld(world: World) {
-  prefs.world = world;
-  save();
+  // Aggregate print pages must neither paginate nor replace the visitor's saved world.
+  if (printing) world = 'real';
+  else {
+    prefs.world = world;
+    save();
+  }
   html.dataset.world = world;
   $('world-toggle-label').textContent = t(world === 'magic' ? 'Real world' : 'Magic world');
   spread = 0;
@@ -282,7 +295,8 @@ $('page-next').addEventListener('click', () => turn(1));
 // Column count depends on fonts and images, so settle again once they have loaded.
 document.fonts.ready.then(settle);
 addEventListener('load', settle);
-addEventListener('resize', () => { measureToolbar(); if (paged()) show(spread); });
+addEventListener('resize', settle);
+new ResizeObserver(settle).observe(main);
 addEventListener('hashchange', () => { fragmentPending = true; restorePending = false; settle(); });
 addEventListener('pagehide', () => { remember(); turnTransition?.skipTransition(); });
 addEventListener('load', restoreScroll);

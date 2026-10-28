@@ -4,50 +4,57 @@
 import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { basename, dirname, join, resolve } from 'node:path';
 import type { Plugin, ViteDevServer } from 'vite';
-import { defineConfig } from 'vite';
+import { defineConfig, normalizePath } from 'vite';
 import { buildBook, replaceDirectory } from './web/mdbook.ts';
 
 const out = resolve('book/html');
 const reader = resolve('web/reader.ts');
-const bookSources = ['src', 'theme', 'book.toml', 'web/localize.ts', 'web/mdbook.ts'].map((path) => resolve(path));
+const bookSources = ['src', 'theme', 'book.toml', 'web/localize.ts', 'web/public-assets.ts', 'web/mdbook.ts'].map((path) => normalizePath(resolve(path)));
 
 /** Vite plugin that owns the mdBook part of the site. */
 function mdbook(): Plugin {
   let destination = out;
+  let serving = false;
   let staged: string | undefined;
   let written = false;
   let building: Promise<void> | null = null;
   let again = false;
   // One book build at a time; changes during a build queue a single further build.
-  async function rebuild(server: ViteDevServer) {
+  async function rebuild(server: ViteDevServer, initial = false) {
     if (building) return void (again = true);
-    building = buildBook().then(
-      () => {
-        // book/html is not watched, so cached transforms of its files (theme CSS) are stale now.
-        server.moduleGraph.invalidateAll();
-        server.ws.send({ type: 'full-reload' });
-      },
-      (error: Error) => server.config.logger.error(error.message),
-    );
-    await building;
-    building = null;
+    building = buildBook(destination);
+    try {
+      await building;
+      // The output is not watched, so cached transforms of its files are stale now.
+      server.moduleGraph.invalidateAll();
+      server.ws.send({ type: 'full-reload' });
+    } catch (error) {
+      if (initial) throw error;
+      server.config.logger.error(error instanceof Error ? error.message : String(error));
+    } finally {
+      building = null;
+    }
     if (again) {
       again = false;
-      await rebuild(server);
+      await rebuild(server, initial);
     }
   }
   return {
     name: 'mdbook',
     async config(config, { command }) {
-      if (command !== 'build') return;
+      serving = command === 'serve';
+      if (serving) return;
       destination = resolve(config.root ?? '.', config.build?.outDir ?? out);
       await mkdir(dirname(destination), { recursive: true });
       staged = await mkdtemp(join(dirname(destination), `.${basename(destination)}-site-`));
       return { build: { outDir: staged } };
     },
+    configResolved(config) {
+      if (config.command === 'serve') destination = config.root;
+    },
     // `vite build`: the book first, then Vite bundles the reader and copies public/ into it.
     async buildStart() {
-      if (this.meta.watchMode) return;
+      if (serving || this.meta.watchMode) return;
       await buildBook(staged ?? destination);
     },
     // Publish only after both the book and Vite's bundle/public files have finished.
@@ -70,12 +77,13 @@ function mdbook(): Plugin {
       if (id === '/reader.js') return reader;
     },
     // `vite` (npm start): build the book now and again whenever a book source changes.
-    configureServer(server) {
+    async configureServer(server) {
       server.watcher.add(bookSources);
       server.watcher.on('all', (_, file) => {
+        file = normalizePath(file);
         if (bookSources.some((source) => file === source || file.startsWith(source + '/'))) void rebuild(server);
       });
-      void rebuild(server);
+      await rebuild(server, true);
     },
   };
 }

@@ -1,4 +1,4 @@
-<!-- reader: {"title":"Программирование на ALUX","parts":{"Welcome":"Добро пожаловать","The Semantic View":"Семантический взгляд","Design by Meaning in Rust":"Проектирование на основе смысла в Rust","Concepts":"Понятия","Insights":"Идеи","Contributing":"Участие в разработке"},"sourceHash":"sha256:801d6c5e7d3e5862395c094158caadb1df71cec65054c97d146882cf39bd00dc"} -->
+<!-- reader: {"title":"Программирование на ALUX","parts":{"Welcome":"Добро пожаловать","The Semantic View":"Семантический взгляд","Design by Meaning in Rust":"Проектирование на основе смысла в Rust","Concepts":"Понятия","Insights":"Идеи","Contributing":"Участие в разработке"},"sourceHash":"sha256:81b904efbe52746e7c430050f24b67bda84b62fab618ace269ce404c69b04146"} -->
 
 ```admonish warning title="Проект ALUX"
 Кодовая база ALUX активно разрабатывается и пока недоступна публично.
