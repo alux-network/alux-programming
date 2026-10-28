@@ -47,7 +47,7 @@ export async function bookOf(lang: Language): Promise<BookItem[]> {
     await mdbook({
       MDBOOK_BOOK__LANGUAGE: lang,
       MDBOOK_BUILD__BUILD_DIR: dir,
-      MDBOOK_OUTPUT: JSON.stringify({ 'book-json': { command: `node ${renderer}` } }),
+      MDBOOK_OUTPUT: JSON.stringify({ 'book-json': { command: `node "${renderer.replaceAll('\\', '/')}"` } }),
     });
     return JSON.parse(await readFile(path.join(dir, 'book.json'), 'utf8')).sections;
   } finally {

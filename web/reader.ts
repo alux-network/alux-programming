@@ -7,6 +7,7 @@
 // Element ids used here are defined in theme/index.hbs; renaming one means changing both. State:
 // - localStorage 'alux-reader' (Prefs): world, text scale, music on/off and bookmarks; shared by all
 //   editions, since they are served from one origin.
+// - Prefs also keeps the manual language and per-edition chapter progress.
 // - sessionStorage 'alux-entered': the gateway was passed in this tab.
 // - sessionStorage 'alux-music-time': music position handed to the next page.
 // - <html data-world | data-gateway | data-turn> and --reader-scale: what theme/reader.css reads.
@@ -24,6 +25,8 @@ interface Bookmark {
 }
 interface Prefs {
   world?: World;
+  language?: Language;
+  positions?: Record<string, number>;
   scale?: number;
   music?: boolean;
   bookmarks: Bookmark[];
@@ -69,12 +72,61 @@ function label(el: HTMLElement, key: string) {
   el.setAttribute('aria-label', t(key));
 }
 
-// The language picker: the same page in another edition (chapter paths are equal in all editions).
+// The gateway's language picker: the same page in another edition (chapter paths are equal in all
+// editions).
 for (const picker of document.querySelectorAll<HTMLSelectElement>('.language-picker')) {
   picker.append(...languages.map((l) => new Option(l.name, l.code, false, l.code === lang)));
   picker.addEventListener('change', () => {
+    prefs.language = picker.value as Language;
+    save();
     location.href = site + (picker.value === 'en' ? '' : picker.value + '/') + page + location.hash;
   });
+}
+
+// The toolbar's language menu, built like mdBook's theme menu: links to this page in every
+// edition. The href is refreshed on click so it carries the current fragment.
+const languageToggle = document.getElementById('language-toggle');
+if (languageToggle) {
+  const list = $('language-list');
+  const editionUrl = (code: Language) => site + (code === 'en' ? '' : code + '/') + page + location.hash;
+  const open = (on: boolean) => {
+    list.style.display = on ? 'block' : 'none';
+    languageToggle.setAttribute('aria-expanded', String(on));
+  };
+  $('language-name').textContent = languages.find((l) => l.code === lang)!.name;
+  list.append(...languages.map((l) => {
+    const item = document.createElement('li');
+    item.setAttribute('role', 'none');
+    const link = document.createElement('a');
+    link.setAttribute('role', 'menuitem');
+    link.className = l.code === lang ? 'theme theme-selected' : 'theme';
+    link.lang = l.code;
+    link.href = editionUrl(l.code);
+    link.textContent = l.name;
+    link.addEventListener('click', () => {
+      link.href = editionUrl(l.code);
+      prefs.language = l.code;
+      save();
+    });
+    item.append(link);
+    return item;
+  }));
+  languageToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    open(list.style.display !== 'block');
+  });
+  document.addEventListener('click', (e) => { if (!list.contains(e.target as Node)) open(false); });
+  list.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    open(false);
+    languageToggle.focus();
+  });
+}
+
+// Respect a manual language at the neutral entrance; deep links keep their edition.
+if (lang === 'en' && page === 'index.html' && prefs.language && prefs.language !== 'en' &&
+    languages.some((edition) => edition.code === prefs.language)) {
+  location.replace(site + prefs.language + '/index.html' + location.hash);
 }
 
 // The gateway (index page only) asks for a world once per tab; #worlds brings it back.
@@ -84,6 +136,7 @@ if (gateway) {
     choice.addEventListener('click', () => {
       try { sessionStorage.setItem('alux-entered', '1'); } catch {}
       delete html.dataset.gateway;
+      $<HTMLAudioElement>('welcome-audio').pause();
       if (location.hash === '#worlds') history.replaceState(null, '', location.pathname);
       setWorld(choice.dataset.world as World);
     });
@@ -105,6 +158,11 @@ for (const head of document.querySelectorAll('.running-part')) {
   head.textContent = part?.textContent ?? t('Welcome');
 }
 const magic = () => html.dataset.world === 'magic';
+// The magic world is always paged: no scroll reading there (AGENTS.md).
+const paged = magic;
+const positionKey = lang + ':' + page;
+let fragmentPending = true;
+let restorePending = true;
 const chapterLink = (rel: string) =>
   document.querySelector<HTMLAnchorElement>(`.nav-wide-wrapper a[rel~="${rel}"]`)?.href;
 // Paging geometry, measured from the laid-out columns. A spread is one viewport of `main`: two
@@ -115,6 +173,8 @@ const spreads = () => Math.max(1, Math.round((main.scrollWidth + gap()) / step()
 const perSpread = () => (getComputedStyle(main).columnCount === '1' ? 1 : 2);
 // The spread on screen, 0-based.
 let spread = 0;
+let turnTransition: ViewTransition | undefined;
+let pendingSpread: number | undefined;
 
 /** Scrolls to spread `index` (clamped) and updates the folio, page numbers and turn buttons. */
 function show(index: number) {
@@ -122,10 +182,12 @@ function show(index: number) {
   // Right-to-left columns flow leftwards, with negative scrollLeft.
   main.scrollLeft = (rtl ? -1 : 1) * spread * step();
   const per = perSpread(), first = spread * per + 1, total = spreads() * per;
-  folio.textContent = per === 1 ? `${first} / ${total}` : `${first}–${first + 1} / ${total}`;
+  folio.textContent = t('This chapter') + ' · ' + (per === 1 ? String(first) : first + '–' + (first + 1)) + ' / ' + total;
   pageNumbers.forEach((number, i) => { number.textContent = String(first + i); });
   $('page-prev-label').textContent = t(spread === 0 ? 'Previous chapter' : 'Previous page');
+  label($('page-prev'), spread === 0 ? 'Previous chapter' : 'Previous page');
   $('page-next-label').textContent = t(spread === spreads() - 1 ? 'Next chapter' : 'Next page');
+  label($('page-next'), spread === spreads() - 1 ? 'Next chapter' : 'Next page');
   $<HTMLButtonElement>('page-prev').disabled = spread === 0 && !chapterLink('prev');
   $<HTMLButtonElement>('page-next').disabled = spread === spreads() - 1 && !chapterLink('next');
 }
@@ -138,7 +200,15 @@ function spreadOf(el: Element) {
 
 /** Turns `delta` spreads; past either end it goes to the neighboring chapter (#last-page = its end). */
 function turn(delta: number) {
-  const next = spread + delta;
+  if (!paged()) {
+    const href = chapterLink(delta > 0 ? 'next' : 'prev');
+    if (href) location.href = href;
+    return;
+  }
+  fragmentPending = false;
+  restorePending = false;
+  const next = (pendingSpread ?? spread) + delta;
+  turnTransition?.skipTransition();
   if (next >= spreads()) {
     const href = chapterLink('next');
     if (href) location.href = href;
@@ -147,18 +217,52 @@ function turn(delta: number) {
     if (href) location.href = href + '#last-page';
   } else if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     html.dataset.turn = delta > 0 ? 'forward' : 'back';
-    document.startViewTransition(() => show(next)).finished.finally(() => delete html.dataset.turn);
+    pendingSpread = next;
+    const transition = document.startViewTransition(() => show(next));
+    turnTransition = transition;
+    transition.finished.catch(() => {}).finally(() => {
+      if (turnTransition !== transition) return;
+      turnTransition = undefined;
+      pendingSpread = undefined;
+      delete html.dataset.turn;
+    });
   } else {
     show(next);
   }
 }
 
+/** Measures the responsive toolbar for unobscured touch-reader fragment navigation. */
+function measureToolbar() {
+  html.style.setProperty('--reader-toolbar-height', $('menu-bar').offsetHeight + 'px');
+}
+
 /** Re-places the reader after layout changes: on #last-page, on a #heading's spread, or where it was. */
 function settle() {
-  if (!magic()) return;
-  if (location.hash === '#last-page') return show(spreads() - 1);
-  const target = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
-  show(target ? spreadOf(target) : spread);
+  measureToolbar();
+  if (!paged()) return;
+  if (fragmentPending && location.hash === '#last-page') return show(spreads() - 1);
+  let target: HTMLElement | null = null;
+  if (fragmentPending && location.hash) {
+    try { target = document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch {}
+  }
+  if (target) show(spreadOf(target));
+  else if (restorePending) show(Math.round((prefs.positions?.[positionKey] ?? 0) * (spreads() - 1)));
+  else show(spread);
+}
+
+/** Saves normalized progress in the edition and chapter before navigation or world changes. */
+function remember() {
+  const ratio = paged() ? spread / Math.max(1, spreads() - 1)
+    : scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight);
+  prefs.positions = { ...prefs.positions, [positionKey]: Math.min(1, Math.max(0, ratio)) };
+  save();
+}
+
+/** Restores scroll progress after the chapter's layout resources have settled. */
+function restoreScroll() {
+  if (paged() || (fragmentPending && location.hash)) return;
+  scrollTo(0, (prefs.positions?.[positionKey] ?? 0) *
+    Math.max(0, document.documentElement.scrollHeight - innerHeight));
 }
 
 /** Switches world; reader.css lays out the page from html[data-world]. */
@@ -172,19 +276,22 @@ function setWorld(world: World) {
 }
 
 setWorld(html.dataset.world as World);
-$('world-toggle').addEventListener('click', () => setWorld(magic() ? 'real' : 'magic'));
+$('world-toggle').addEventListener('click', () => { remember(); restorePending = true; fragmentPending = false; setWorld(magic() ? 'real' : 'magic'); requestAnimationFrame(restoreScroll); });
 $('page-prev').addEventListener('click', () => turn(-1));
 $('page-next').addEventListener('click', () => turn(1));
 // Column count depends on fonts and images, so settle again once they have loaded.
 document.fonts.ready.then(settle);
 addEventListener('load', settle);
-addEventListener('resize', () => magic() && show(spread));
-addEventListener('hashchange', settle);
+addEventListener('resize', () => { measureToolbar(); if (paged()) show(spread); });
+addEventListener('hashchange', () => { fragmentPending = true; restorePending = false; settle(); });
+addEventListener('pagehide', () => { remember(); turnTransition?.skipTransition(); });
+addEventListener('load', restoreScroll);
+document.fonts.ready.then(restoreScroll);
 
 // Capture phase: in the magic world arrows turn a page, not mdBook's whole chapter.
 document.addEventListener('keydown', (e) => {
-  if (!magic() || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
-  if ((e.target as Element).closest('input, textarea, select, dialog')) return;
+  if (!paged() || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+  if ((e.target as Element).closest('input, textarea, select, button, a, dialog, [contenteditable]')) return;
   const forward = rtl ? 'ArrowLeft' : 'ArrowRight', back = rtl ? 'ArrowRight' : 'ArrowLeft';
   if (e.key === forward || e.key === 'PageDown' || e.key === ' ') turn(1);
   else if (e.key === back || e.key === 'PageUp') turn(-1);
@@ -193,9 +300,9 @@ document.addEventListener('keydown', (e) => {
   e.stopImmediatePropagation();
 }, true);
 
-/** Changes the text size by `delta`, within 0.8 to 1.6; reader.css multiplies font sizes by it. */
+/** Changes the text size by `delta`, within 0.7 to 1.5; reader.css scales the root font size by it. */
 function scale(delta: number) {
-  prefs.scale = Math.round(Math.min(1.6, Math.max(0.8, (prefs.scale ?? 1) + delta)) * 10) / 10;
+  prefs.scale = Math.round(Math.min(1.5, Math.max(0.7, (prefs.scale ?? 1) + delta)) * 10) / 10;
   save();
   html.style.setProperty('--reader-scale', String(prefs.scale));
   settle();
@@ -208,6 +315,7 @@ const bookmarkButton = $('bookmark-toggle');
 const marked = () => prefs.bookmarks.some((b) => b.page === page);
 /** Redraws the bookmark button, count and dialog list from prefs. */
 function renderBookmarks() {
+  label(bookmarkButton, marked() ? 'Bookmarked' : 'Add bookmark');
   bookmarkButton.setAttribute('aria-pressed', String(marked()));
   bookmarkButton.querySelector('i')!.className = marked() ? 'fa fa-bookmark' : 'fa fa-bookmark-o';
   $('bookmark-label').textContent = t(marked() ? 'Bookmarked' : 'Add bookmark');
@@ -246,6 +354,12 @@ const dialog = $<HTMLDialogElement>('bookmarks');
 dialog.addEventListener('keydown', (e) => e.stopPropagation());
 $('bookmarks-open').addEventListener('click', () => dialog.showModal());
 $('bookmarks-close').addEventListener('click', () => dialog.close());
+
+// Search is mdBook's panel shown as a modal (reader.css); a click on its backdrop closes it
+// through mdBook's own toggle, which keeps the open state and URL in mdBook's hands.
+document.getElementById('search-wrapper')?.addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) $('search-toggle').click();
+});
 dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
 renderBookmarks();
 
@@ -262,11 +376,15 @@ music.addEventListener('pause', renderMusic);
 musicButton.addEventListener('click', () => {
   prefs.music = music.paused;
   save();
-  if (prefs.music) music.play();
+  if (prefs.music) music.play().catch(renderMusic);
   else music.pause();
 });
 addEventListener('pagehide', () => {
   try { sessionStorage.setItem('alux-music-time', String(music.currentTime)); } catch {}
+  music.pause();
+});
+addEventListener('pageshow', (event) => {
+  if (event.persisted && prefs.music) music.play().catch(renderMusic);
 });
 if (prefs.music) {
   let resume = 0;
@@ -274,6 +392,45 @@ if (prefs.music) {
   music.addEventListener('loadedmetadata', () => { music.currentTime = resume; }, { once: true });
   // Browsers may refuse to start audio before the reader interacts with the page.
   music.play().catch(() => {
-    addEventListener('pointerdown', () => prefs.music && music.play(), { once: true });
+    addEventListener('pointerdown', () => { if (prefs.music) music.play().catch(renderMusic); }, { once: true });
   });
 }
+
+// mdBook delegates matching to elasticlunr. Extend that single search operation for
+// CJK substrings so its result rendering, cache, keyboard handling and history stay native.
+interface SearchDocument { title?: string; body?: string; breadcrumbs?: string }
+interface SearchIndex {
+  documentStore: { docs: Record<string, SearchDocument> };
+  search(query: string, options?: unknown): { ref: string; score: number; doc: SearchDocument }[];
+}
+const cjkQuery = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u;
+const searchLibrary = (window as typeof window & {
+  elasticlunr?: { Index: { prototype: SearchIndex } };
+}).elasticlunr;
+if (searchLibrary) {
+  const nativeSearch = searchLibrary.Index.prototype.search;
+  searchLibrary.Index.prototype.search = function (query, options) {
+    if (!cjkQuery.test(query)) return nativeSearch.call(this, query, options);
+    const tokens = query.normalize('NFKC').toLocaleLowerCase().trim().split(/\s+/u);
+    return Object.entries(this.documentStore.docs).flatMap(([ref, doc]) => {
+      const title = (doc.title ?? '').normalize('NFKC').toLocaleLowerCase();
+      const text = (title + ' ' + (doc.body ?? '') + ' ' + (doc.breadcrumbs ?? ''))
+        .normalize('NFKC').toLocaleLowerCase();
+      return tokens.every((token) => text.includes(token))
+        ? [{ ref, doc, score: tokens.every((token) => title.includes(token)) ? 2 : 1 }] : [];
+    }).sort((a, b) => b.score - a.score);
+  };
+}
+
+/** Localizes the dedicated search count after mdBook has rendered its results. */
+function searchCount() {
+  const input = document.getElementById('searchbar') as HTMLInputElement | null;
+  if (input?.value.trim()) {
+    $('searchresults-header').textContent = t('Search the book') + ' · ' + $('searchresults').children.length;
+  }
+}
+document.getElementById('searchbar')?.addEventListener('keyup', () => queueMicrotask(searchCount));
+addEventListener('popstate', () => queueMicrotask(searchCount));
+document.addEventListener('load', (event) => {
+  if ((event.target as HTMLElement)?.id === 'search-index') setTimeout(searchCount, 0);
+}, true);

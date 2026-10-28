@@ -114,6 +114,8 @@ CI runs `npm ci`, `npm run check`, `npm run build`, `npm test`, in that order. R
 - Static files go in `public/` and are linked root-absolute (`/concepts.png`). Nothing static lives in `src/`.
 - TypeScript only, ESM, imports with `.ts` extensions. No Python, no shell scripts in the build.
 - No frameworks in the reader. It is one module binding the template's markup by element id.
+- The magic world is always a paged book: no scroll reading mode in it. Continuous scrolling is the real world.
+- The magic world's sidebar has a fixed width: no resize handle there. The real world keeps mdBook's resizable sidebar.
 - Builds are deterministic and atomic: the same sources give byte-identical output, and a failed build leaves the previous site untouched.
 
 Reject these shapes:
@@ -140,7 +142,7 @@ Every file is a template for the next change, so comments carry the reasoning a 
 - `site.test.ts`: the built site against the editions derived from mdBook's book JSON (`book-json.ts` renderer): pages, `lang`/`dir`, titles, links, assets and anchors, plus broken-copy negative tests.
 - `translations.test.ts`: each translation keeps its English chapter's code, math, link targets, media and heading levels.
 - `build.test.ts`: two clean builds are identical.
-- `browser.test.ts`: basic reader specs in one browser (Puppeteer's headless Chrome) against `vite preview` of the built site. Each test name states what the reader does; routes come from `expectedSite()`. Visual design is not asserted.
+- `browser.test.ts`: the same reader specs in Chromium, Firefox and WebKit, plus Android/iPhone simulations, against `vite preview`. Routes come from `expectedSite()`; no copied page list. `npm test` requires all three pinned Playwright engines (`npx playwright install chromium firefox webkit`); missing engines fail instead of skipping. `ALUX_BROWSER_PROFILE` optionally selects one named profile for diagnosis. Visual design and physical-device acceptance are not asserted.
 
 A new check goes into `verifySite` or `protectedContent` together with a negative test. Derive expected routes from `expectedSite()`; never hardcode a page list.
 
@@ -176,3 +178,7 @@ A new check goes into `verifySite` or `protectedContent` together with a negativ
 
 - Use Conventional Commits 1.0.0: `<type>(<scope>): <imperative summary>`.
 - A PR description says what changed and why, one short paragraph per topic. No verification sections (local test counts, build output) and no narration of mistakes fixed along the way: CI passing is the verification. Keep only reviewer-actionable notes.
+
+## Reader continuity
+
+The alux-reader preferences retain the manual language and normalized progress keyed by edition and chapter. Explicit fragments take precedence on entry; changing views restores the current progress. Folios are chapter-local. CJK substring search reads mdBook's existing lazy edition index; do not create a second content index. Keep native control keyboard behavior when handling paging shortcuts.

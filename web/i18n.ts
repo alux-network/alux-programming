@@ -6,6 +6,8 @@ import type { Language } from './languages.ts';
 
 export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
   "ar": {
+    "This chapter": "هذا الفصل",
+
     "Choose your world": "اختر عالمك",
     "Magic world": "عالم السحر",
     "Real world": "العالم الواقعي",
@@ -35,6 +37,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "مرحبًا"
   },
   "de": {
+    "This chapter": "Dieses Kapitel",
+
     "Choose your world": "Wähle deine Welt",
     "Magic world": "Magische Welt",
     "Real world": "Reale Welt",
@@ -64,6 +68,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Willkommen"
   },
   "es": {
+    "This chapter": "Este capítulo",
+
     "Choose your world": "Elige tu mundo",
     "Magic world": "Mundo mágico",
     "Real world": "Mundo real",
@@ -93,6 +99,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Bienvenida"
   },
   "ja": {
+    "This chapter": "この章",
+
     "Choose your world": "世界を選んでください",
     "Magic world": "魔法の世界",
     "Real world": "現実の世界",
@@ -122,6 +130,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "ようこそ"
   },
   "ko": {
+    "This chapter": "이 장",
+
     "Choose your world": "세계를 선택하세요",
     "Magic world": "마법 세계",
     "Real world": "현실 세계",
@@ -151,6 +161,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "환영합니다"
   },
   "ru": {
+    "This chapter": "Эта глава",
+
     "Choose your world": "Выберите свой мир",
     "Magic world": "Волшебный мир",
     "Real world": "Реальный мир",
@@ -180,6 +192,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Добро пожаловать"
   },
   "uk": {
+    "This chapter": "Цей розділ",
+
     "Choose your world": "Виберіть свій світ",
     "Magic world": "Чарівний світ",
     "Real world": "Реальний світ",
@@ -209,6 +223,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Вітаємо"
   },
   "vi": {
+    "This chapter": "Chương này",
+
     "Choose your world": "Chọn thế giới của bạn",
     "Magic world": "Thế giới kỳ diệu",
     "Real world": "Thế giới thực",
@@ -238,6 +254,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Chào mừng"
   },
   "zh-hant": {
+    "This chapter": "本章",
+
     "Choose your world": "選擇你的世界",
     "Magic world": "魔法世界",
     "Real world": "現實世界",
@@ -267,6 +285,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "歡迎"
   },
   "zh": {
+    "This chapter": "本章",
+
     "Choose your world": "选择你的世界",
     "Magic world": "魔法世界",
     "Real world": "现实世界",
