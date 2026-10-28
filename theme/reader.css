@@ -115,7 +115,10 @@ html { font-family: var(--reader-sans); }
 .language-picker option { color: #242424; background: #fff; }
 #music-toggle[aria-pressed="true"] { border: 1px solid var(--theme-popup-border); border-radius: 4px; background: var(--theme-hover); color: var(--icons-hover); }
 
-#content main { font-size: calc(2rem * var(--reader-scale, 1)); line-height: 1.95; }
+/* Text size: mdBook sizes text in rem against html's 62.5%, so scaling the root scales all text,
+   the sidebar and toolbar included. Rules below use plain rem and must not scale again. */
+:root { font-size: calc(62.5% * var(--reader-scale, 1)); }
+#content main { font-size: 2rem; line-height: 1.95; }
 #content main h1 { font-size: 2.4em; line-height: 1.2; }
 #content main > h1:first-of-type img, #content main > p:first-child > img:only-child { display: none; }
 .admonition, .admonition.admonish-note, .admonition.admonish-quote, .admonition.admonish-warning {
@@ -126,8 +129,11 @@ html { font-family: var(--reader-sans); }
   border-radius: 0;
   box-shadow: none;
   background: color-mix(in srgb, var(--fg) 4%, transparent);
+  /* mdbook-admonish gives the Rust theme its dark sidebar colors; the tint above is light. */
+  color: inherit;
   font-size: 1em;
 }
+.admonition .admonition-anchor-link:is(:link, :visited) { color: inherit; }
 .admonition > :is(.admonition-title, summary.admonition-title) {
   margin: 0;
   padding: 0 0 0.3em;
@@ -143,11 +149,11 @@ html[data-world="real"] .volume > :is(.page-head, .page-foot), html[data-world="
 
 /* Magic world: two CSS columns are two pages; overflow columns are the next spreads. */
 html[data-world="magic"], html[data-world="magic"] :is(body, .page-wrapper, .page, .menu-bar, .sidebar, #search-wrapper) { background: var(--reader-desk); }
-/* The book's height is the window's less the toolbar and the turn bar; its width keeps a two-page
-   proportion of that height, up to the room beside the sidebar. */
+/* The book's height is the window's less the toolbar and the turn bar; its width is up to 1.75 times
+   that height (two pages a little wider than tall), and at most the room beside the sidebar. */
 html[data-world="magic"] #content {
   --book-height: max(400px, calc(100vh - 230px));
-  --book-width: min(100%, calc(var(--book-height) * 1.42));
+  --book-width: min(100%, calc(var(--book-height) * 1.75));
 }
 html[data-world="magic"] .sidebar { color: var(--reader-ink); border-inline-end: 1px solid var(--reader-rule); }
 html[data-world="magic"] :is(.brand, .sidebar-bookmarks, .chapter li a, .chapter li.part-title) { color: var(--reader-ink); font-family: var(--reader-serif); }
@@ -165,7 +171,7 @@ html[data-world="magic"] .menu-bar { border: 0; }
 html[data-world="magic"] :is(.menu-bar .icon-button, .menu-bar a, .bookmark-button, .world-link, .text-size, .language, .language-picker) { color: var(--reader-ink); }
 html[data-world="magic"] :is(.bookmark-button, #music-toggle[aria-pressed="true"]) { border-color: var(--reader-rule); background: color-mix(in srgb, var(--reader-trim) 18%, transparent); }
 html[data-world="magic"] :is(.nav-wide-wrapper, .nav-wrapper) { display: none; }
-html[data-world="magic"] #content { padding: 0 20px; }
+html[data-world="magic"] #content { padding: 0 12px; }
 html[data-world="magic"] .volume {
   position: relative;
   box-sizing: border-box;
@@ -233,7 +239,7 @@ html[data-world="magic"] #content main.leaves {
   overflow: hidden;
   font-family: var(--reader-serif);
   /* Type grows with the book, so a page holds about the same number of lines on any screen. */
-  font-size: calc(clamp(1.9rem, var(--book-height) / 42, 3rem) * var(--reader-scale, 1));
+  font-size: clamp(1.9rem, var(--book-height) / 42 * var(--reader-scale, 1), 3rem);
   line-height: 1.85;
   view-transition-name: leaves;
 }
@@ -416,7 +422,7 @@ html[data-gateway] body { overflow: hidden; }
   html[data-world="magic"] .page-head { top: 32px; }
   html[data-world="magic"] .page-foot { bottom: 26px; }
   html[data-world="magic"] .volume { padding: 76px 40px 60px; }
-  html[data-world="magic"] #content main.leaves { columns: 1; height: max(280px, calc(100vh - 360px)); font-size: calc(1.9rem * var(--reader-scale, 1)); }
+  html[data-world="magic"] #content main.leaves { columns: 1; height: max(280px, calc(100vh - 360px)); font-size: 1.9rem; }
   .folio-bar { padding: 10px 4px 16px; }
   .page-turn { font-size: 2.4rem; }
   .folio-book, #page-prev-label, #page-next-label { display: none; }
@@ -432,7 +438,9 @@ html[data-gateway] body { overflow: hidden; }
 
 
 /* Continue the approved forest-and-brass treatment within mdBook's template. */
-:root { --sidebar-width: clamp(280px, 26.4vw, 380px); }
+/* The default width only: mdBook derives --sidebar-width from --sidebar-target-width, which its
+   resize handle sets, so overriding --sidebar-width itself would freeze the sidebar. */
+:root { --sidebar-target-width: clamp(280px, 26.4vw, 380px); }
 .brand { color: var(--reader-ink); padding-block: 28px 24px; }
 .brand-logo { height: auto; aspect-ratio: 256 / 239; object-fit: contain; }
 .brand-subtitle { font-size: 1.9rem; }
@@ -440,8 +448,6 @@ html[data-gateway] body { overflow: hidden; }
 .chapter li.chapter-item { font-size: 2.05rem; margin-block: 12px; }
 .chapter li.chapter-item > a { padding-block: 3px; }
 #bookmark-label { display: none; }
-#reading-mode { white-space: nowrap; font-family: var(--reader-serif) !important; }
-html[data-world="real"] #reading-mode { display: none; }
 :root:is(.coal, .navy, .ayu)[data-world="magic"] .brand-logo { content: url("/alux-bronze-night.webp"); }
 html[data-world="magic"] main.leaves,
 html[data-world="magic"] main.leaves :is(blockquote, .admonition, .admonition-content),
@@ -467,26 +473,11 @@ html[data-world="magic"] .volume {
   .menu-bar .icon-button { min-width: 36px; }
   html[data-world="magic"] #content { --book-height: max(440px, calc(100dvh - 270px)); }
 }
-html[data-world="magic"][data-reading="scroll"] #content { --book-width: min(100%, 1080px); }
-html[data-world="magic"][data-reading="scroll"] .volume { padding: 54px clamp(24px, 5vw, 80px); }
-html[data-world="magic"][data-reading="scroll"] .volume::before,
-html[data-world="magic"][data-reading="scroll"] .volume > :is(.page-head, .page-foot),
-html[data-world="magic"][data-reading="scroll"] .folio-center { display: none; }
-html[data-world="magic"][data-reading="scroll"] #content main.leaves {
-  height: auto;
-  columns: auto;
-  overflow: visible;
-  font-size: calc(2.2rem * var(--reader-scale, 1));
-  view-transition-name: none;
-}
-html[data-world="magic"][data-reading="scroll"] .folio-bar { grid-template-columns: 1fr 1fr; }
 @media (max-width: 899px) {
-  :root { --sidebar-width: min(300px, calc(100vw - 48px)); }
+  :root { --sidebar-width: min(var(--sidebar-target-width), 300px, calc(100vw - 48px)); }
   .brand-logo { width: 54px; }
   .brand-name { font-size: 3.2rem; }
   .menu-bar .icon-button { min-width: 36px; min-height: 40px; }
-  #reading-mode { font-size: 1.6rem !important; padding: 6px; }
-  #reading-mode i { display: none; }
   .left-buttons { flex-wrap: wrap; justify-content: flex-start; gap: 4px; }
   .gateway-welcome, .gateway .language { top: 16px; padding: 8px; }
   .gateway-welcome { font-size: 1.4rem; max-width: 42vw; }
@@ -500,10 +491,7 @@ html[data-world="magic"][data-reading="scroll"] .folio-bar { grid-template-colum
   html[data-world="magic"] :is(.page-head, .page-foot) {
     width: calc(100% - 48px); inset-inline-start: 24px;
   }
-  html[data-world="magic"][data-reading="scroll"] #content main.leaves {
-    font-size: calc(1.9rem * var(--reader-scale, 1));
   }
-}
 
 /* Section artwork keeps the approved small illustration scale in both worlds. */
 #content main img:is([src$="semantic-view.png"], [src$="design-by-meaning-rust.png"], [src$="concepts.png"], [src$="insights.png"]) { display: block; width: auto; max-width: 100%; max-height: 150px; margin: 24px auto; object-fit: contain; }
@@ -523,7 +511,110 @@ html[data-gateway] .gateway :is(.language, .language-picker) { color: #efe3c4; }
 /* mdBook's hover-driven sticky state can move a touch target between touchend and click. */
 @media (hover: none) {
   html[data-world="magic"] #menu-bar { position: sticky; top: 0 !important; }
-  html[data-world="magic"][data-reading="scroll"] #content :is(h1, h2, h3, h4, h5, h6) {
-    scroll-margin-top: calc(var(--reader-toolbar-height, 200px) + 1rem);
-  }
+}
+
+/* Theme menu: anchored to its toggle and drawn in the reader's colors. mdBook positions the popup
+   against the whole menu bar, which breaks once the toolbar is rearranged. */
+.theme-menu { position: relative; display: flex; }
+.menu-bar .theme-menu .theme-popup {
+  left: auto; right: auto; inset-inline-start: 0; top: calc(100% + 6px);
+  min-width: 150px; padding: 6px 0; font-size: 1.6rem;
+  color: var(--reader-ink); background: var(--reader-paper);
+  border: 1px solid var(--reader-rule); border-radius: 6px; box-shadow: 0 10px 28px #0003;
+}
+.menu-bar .theme-menu .theme-popup .theme { padding: 6px 18px; color: inherit; font-size: inherit; }
+.menu-bar .theme-menu .theme-popup .theme:hover,
+.menu-bar .theme-menu .theme-popup .theme:focus-visible { background: color-mix(in srgb, var(--reader-accent) 14%, transparent); }
+@media (max-width: 899px) {
+  .left-buttons > .theme-menu > .icon-button { width: 100%; min-height: 44px; margin: 0; justify-content: center; }
+}
+
+/* Search opens as a modal over the blurred page. mdBook still owns the panel and its open state
+   (the .hidden class); reader.ts only closes it on a backdrop click. */
+html[data-world] #search-wrapper:not(.hidden) {
+  position: fixed; inset: 0; z-index: 1100;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 12vh 16px 16px; box-sizing: border-box;
+  background: color-mix(in srgb, var(--reader-desk) 55%, transparent);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+#search-wrapper :is(.searchbar-outer, .searchresults-outer) {
+  width: min(720px, 100%); max-width: none; margin: 0; box-sizing: border-box;
+  color: var(--reader-ink); background: var(--reader-paper);
+  border: 1px solid var(--reader-rule); border-radius: 8px; box-shadow: 0 16px 40px #0003;
+}
+#search-wrapper .searchbar-outer { padding: 10px; }
+#search-wrapper .searchresults-outer { max-height: 60vh; overflow: auto; padding: 8px 16px; }
+#search-wrapper #searchbar {
+  height: auto; padding: 12px 18px; box-sizing: border-box;
+  font-family: var(--reader-serif); font-size: 2.6rem;
+  color: var(--reader-ink); background: transparent;
+  border: 0; border-bottom: 1px solid var(--reader-rule); border-radius: 0;
+}
+#search-wrapper #searchbar::placeholder { color: var(--reader-muted); font-style: italic; }
+#search-wrapper #searchbar:focus { outline: none; border-bottom-color: var(--reader-accent); box-shadow: none; }
+#search-wrapper .searchresults-header { font-family: var(--reader-serif); font-size: 1.9rem; font-weight: 500; color: var(--reader-muted); }
+#search-wrapper #searchresults a { font-family: var(--reader-serif); font-size: 2.1rem; color: var(--reader-accent); }
+#search-wrapper #searchbar::-webkit-search-cancel-button {
+  -webkit-appearance: none; appearance: none; width: 18px; height: 18px; cursor: pointer;
+  background: var(--reader-muted);
+  mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'><path d='M3 3l12 12M15 3L3 15' stroke='black' stroke-width='1.6'/></svg>") center / contain no-repeat;
+}
+
+/* Theme menu items carry an icon (Font Awesome 4, shipped by mdBook); the ✓ of the selected theme
+   stays in mdBook's ::before. In the magic world the menu is a small bound card like the book. */
+.menu-bar .theme-menu .theme-popup .theme { display: flex; align-items: center; gap: 10px; font-family: inherit; }
+.menu-bar .theme-menu .theme-popup .theme::after {
+  order: -1; width: 1.2em; text-align: center;
+  font: normal 1em/1 FontAwesome; color: var(--reader-accent);
+}
+#default_theme::after { content: "\f042"; } /* adjust */
+#light::after { content: "\f185"; }         /* sun */
+#rust::after { content: "\f0f4"; }          /* coffee */
+#coal::after { content: "\f186"; }          /* moon */
+#navy::after { content: "\f13d"; }          /* anchor */
+#ayu::after { content: "\f06c"; }           /* leaf */
+.menu-bar .theme-menu .theme-popup .theme-selected::before { order: 1; margin-inline: auto 0; color: var(--reader-accent); }
+html[data-world="magic"] .menu-bar .theme-menu .theme-popup {
+  padding: 10px 4px; font-family: var(--reader-serif); font-size: 2rem;
+  border: 1px solid var(--reader-trim); border-radius: 8px;
+  box-shadow: inset 0 0 0 3px var(--reader-paper), inset 0 0 0 4px var(--reader-rule), 0 14px 30px #0004;
+}
+html[data-world="magic"] .menu-bar .theme-menu .theme-popup .theme { padding: 7px 22px; }
+
+/* Scrollbars in the reader's colors: thin bronze on the sidebar, quiet elsewhere. Standard
+   properties for Chrome and Firefox, ::-webkit-scrollbar for Safari. */
+html { scrollbar-color: var(--reader-rule) transparent; }
+#search-wrapper .searchresults-outer, #bookmarks, main.leaves {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--reader-trim) 70%, transparent) transparent;
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--reader-trim) 60%, transparent);
+  border: 3px solid transparent; border-radius: 10px; background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover { background-color: var(--reader-trim); }
+/* The sidebar's scrollbar: hairline thin, in the selected mdBook theme's scrollbar color moved
+   toward the sidebar background, so it is darker in dark themes and lighter in light ones. */
+.sidebar { --sidebar-scrollbar: color-mix(in srgb, var(--scrollbar) 40%, var(--sidebar-bg)); }
+html[data-world="magic"] .sidebar { --sidebar-scrollbar: color-mix(in srgb, var(--scrollbar) 40%, var(--reader-desk)); }
+@supports not selector(::-webkit-scrollbar) {
+  .sidebar .sidebar-scrollbox { scrollbar-width: thin; scrollbar-color: var(--sidebar-scrollbar) transparent; }
+}
+.sidebar .sidebar-scrollbox::-webkit-scrollbar { width: 4px; }
+.sidebar .sidebar-scrollbox::-webkit-scrollbar-track { background: transparent; }
+.sidebar .sidebar-scrollbox::-webkit-scrollbar-thumb { background: var(--sidebar-scrollbar); border: 0; border-radius: 4px; }
+@supports selector(::-webkit-scrollbar) {
+  /* scrollbar-color is inherited from html, and any value turns the ::-webkit-scrollbar rules off. */
+  .sidebar .sidebar-scrollbox { scrollbar-color: auto; scrollbar-width: auto; }
+}
+
+/* Magic world: the sidebar has a fixed width (AGENTS.md). Its width is set directly, past the
+   --sidebar-target-width that mdBook's resize handle drives, and the handle is hidden. */
+html[data-world="magic"] { --sidebar-width: clamp(280px, 26.4vw, 380px); }
+html[data-world="magic"] #sidebar-resize-handle { display: none; }
+@media (max-width: 899px) {
+  html[data-world="magic"] { --sidebar-width: min(300px, calc(100vw - 48px)); }
 }

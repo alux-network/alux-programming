@@ -7,7 +7,7 @@
 // Element ids used here are defined in theme/index.hbs; renaming one means changing both. State:
 // - localStorage 'alux-reader' (Prefs): world, text scale, music on/off and bookmarks; shared by all
 //   editions, since they are served from one origin.
-// - Prefs also keeps reading mode, manual language and per-edition chapter progress.
+// - Prefs also keeps the manual language and per-edition chapter progress.
 // - sessionStorage 'alux-entered': the gateway was passed in this tab.
 // - sessionStorage 'alux-music-time': music position handed to the next page.
 // - <html data-world | data-gateway | data-turn> and --reader-scale: what theme/reader.css reads.
@@ -25,7 +25,6 @@ interface Bookmark {
 }
 interface Prefs {
   world?: World;
-  mode?: 'book' | 'scroll';
   language?: Language;
   positions?: Record<string, number>;
   scale?: number;
@@ -118,7 +117,8 @@ for (const head of document.querySelectorAll('.running-part')) {
   head.textContent = part?.textContent ?? t('Welcome');
 }
 const magic = () => html.dataset.world === 'magic';
-const paged = () => magic() && prefs.mode !== 'scroll';
+// The magic world is always paged: no scroll reading there (AGENTS.md).
+const paged = magic;
 const positionKey = lang + ':' + page;
 let fragmentPending = true;
 let restorePending = true;
@@ -209,7 +209,7 @@ function settle() {
   else show(spread);
 }
 
-/** Saves normalized progress in the edition and chapter before navigation or mode changes. */
+/** Saves normalized progress in the edition and chapter before navigation or world changes. */
 function remember() {
   const ratio = paged() ? spread / Math.max(1, spreads() - 1)
     : scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight);
@@ -223,32 +223,6 @@ function restoreScroll() {
   scrollTo(0, (prefs.positions?.[positionKey] ?? 0) *
     Math.max(0, document.documentElement.scrollHeight - innerHeight));
 }
-
-/** Applies the saved reading mode to the layout and its accessible control. */
-function renderMode() {
-  html.dataset.reading = prefs.mode ?? 'book';
-  $('reading-mode').setAttribute('aria-pressed', String(prefs.mode === 'scroll'));
-  $('reading-mode-label').textContent = t(prefs.mode === 'scroll' ? 'Book reading' : 'Scroll reading');
-  if (prefs.mode === 'scroll') {
-    $('page-prev-label').textContent = t('Previous chapter');
-    $('page-next-label').textContent = t('Next chapter');
-    label($('page-prev'), 'Previous chapter');
-    label($('page-next'), 'Next chapter');
-    $<HTMLButtonElement>('page-prev').disabled = !chapterLink('prev');
-    $<HTMLButtonElement>('page-next').disabled = !chapterLink('next');
-  }
-  measureToolbar();
-}
-renderMode();
-$('reading-mode').addEventListener('click', () => {
-  remember();
-  prefs.mode = prefs.mode === 'scroll' ? 'book' : 'scroll';
-  save();
-  renderMode();
-  restorePending = true;
-  fragmentPending = false;
-  requestAnimationFrame(() => { settle(); restoreScroll(); });
-});
 
 /** Switches world; reader.css lays out the page from html[data-world]. */
 function setWorld(world: World) {
@@ -285,9 +259,9 @@ document.addEventListener('keydown', (e) => {
   e.stopImmediatePropagation();
 }, true);
 
-/** Changes the text size by `delta`, within 0.8 to 1.6; reader.css multiplies font sizes by it. */
+/** Changes the text size by `delta`, within 0.7 to 1.5; reader.css scales the root font size by it. */
 function scale(delta: number) {
-  prefs.scale = Math.round(Math.min(1.6, Math.max(0.8, (prefs.scale ?? 1) + delta)) * 10) / 10;
+  prefs.scale = Math.round(Math.min(1.5, Math.max(0.7, (prefs.scale ?? 1) + delta)) * 10) / 10;
   save();
   html.style.setProperty('--reader-scale', String(prefs.scale));
   settle();
@@ -339,6 +313,12 @@ const dialog = $<HTMLDialogElement>('bookmarks');
 dialog.addEventListener('keydown', (e) => e.stopPropagation());
 $('bookmarks-open').addEventListener('click', () => dialog.showModal());
 $('bookmarks-close').addEventListener('click', () => dialog.close());
+
+// Search is mdBook's panel shown as a modal (reader.css); a click on its backdrop closes it
+// through mdBook's own toggle, which keeps the open state and URL in mdBook's hands.
+document.getElementById('search-wrapper')?.addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) $('search-toggle').click();
+});
 dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
 renderBookmarks();
 

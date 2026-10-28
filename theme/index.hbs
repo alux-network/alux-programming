@@ -25,7 +25,6 @@
             try {
                 const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
                 document.documentElement.dataset.world = reader.world || 'real';
-                document.documentElement.dataset.reading = reader.mode || 'book';
                 document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
             } catch (e) {
                 document.documentElement.dataset.world = 'real';
@@ -207,6 +206,8 @@
                         <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
                         </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
                         <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-moon-o"></i>
                         </button>
@@ -218,6 +219,7 @@
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                         </ul>
+                        </div>
                         {{#if search_enabled}}
                         <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
@@ -229,7 +231,6 @@
                         <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
                             <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
                         </button>
-                        <button id="reading-mode" class="bookmark-button" type="button" aria-pressed="false"><i class="fa fa-file-text-o" aria-hidden="true"></i> <span id="reading-mode-label" data-i18n>Scroll reading</span></button>
                         <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
                         <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
                     </div>

@@ -4,7 +4,7 @@ This file is the compact engineering authority for humans and coding agents work
 
 ## Product
 
-The ALUX programming guidelines: one mdBook, published in 11 languages, with a reader that adds a magic world (a paged two-column book or continuous scrolling) and a real world (the plain mdBook page), a gateway to choose between them, text size, bookmarks and reading music.
+The ALUX programming guidelines: one mdBook, published in 11 languages, with a reader that adds a magic world (a paged two-column book) and a real world (the plain mdBook page), a gateway to choose between them, text size, bookmarks and reading music.
 
 mdBook defines the book. Application configuration defines additional pages. Everything else is a derivation of those two, verification included. Do not turn this repository into a web application, a static-site generator or a second book model beside mdBook.
 
@@ -114,6 +114,8 @@ CI runs `npm ci`, `npm run check`, `npm run build`, `npm test`, in that order. R
 - Static files go in `public/` and are linked root-absolute (`/concepts.png`). Nothing static lives in `src/`.
 - TypeScript only, ESM, imports with `.ts` extensions. No Python, no shell scripts in the build.
 - No frameworks in the reader. It is one module binding the template's markup by element id.
+- The magic world is always a paged book: no scroll reading mode in it. Continuous scrolling is the real world.
+- The magic world's sidebar has a fixed width: no resize handle there. The real world keeps mdBook's resizable sidebar.
 - Builds are deterministic and atomic: the same sources give byte-identical output, and a failed build leaves the previous site untouched.
 
 Reject these shapes:
@@ -179,4 +181,4 @@ A new check goes into `verifySite` or `protectedContent` together with a negativ
 
 ## Reader continuity
 
-Keep book and scroll modes in the existing reader module. The alux-reader preferences retain the manual language and normalized progress keyed by edition and chapter. Explicit fragments take precedence on entry; changing views restores the current progress. Folios are chapter-local. CJK substring search reads mdBook's existing lazy edition index; do not create a second content index. Keep native control keyboard behavior when handling paging shortcuts.
+The alux-reader preferences retain the manual language and normalized progress keyed by edition and chapter. Explicit fragments take precedence on entry; changing views restores the current progress. Folios are chapter-local. CJK substring search reads mdBook's existing lazy edition index; do not create a second content index. Keep native control keyboard behavior when handling paging shortcuts.

@@ -33,7 +33,8 @@ export async function buildBook(out = 'book/html'): Promise<void> {
       });
     }
     // Publish only once every edition has built, so a failure never leaves a mixed site.
-    await rm(out, { recursive: true, force: true });
+    // Retries: a reader of the old site (the dev server) can briefly hold its directories.
+    await rm(out, { recursive: true, force: true, maxRetries: 5 });
     await cp(path.join(stage, 'en', 'html'), out, { recursive: true });
     for (const { code } of languages.slice(1)) {
       await cp(path.join(stage, code, 'html'), path.join(out, code), { recursive: true });

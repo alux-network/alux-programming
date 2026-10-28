@@ -28,7 +28,7 @@ cargo install mdbook-linkcheck --version 0.7.7 --locked
 
 ### Reading
 
-The magic world offers book pages and continuous scrolling. Reading mode, text size, manual language choice and normalized progress within each edition's chapter are remembered locally. Folios explicitly describe chapter progress. CJK search uses the same lazy-loaded mdBook edition index, with substring matching for scripts that mdBook's default word tokenizer does not segment.
+The magic world is a paged book with a fixed-width sidebar. Text size, manual language choice and normalized progress within each edition's chapter are remembered locally. Folios explicitly describe chapter progress. CJK search uses the same lazy-loaded mdBook edition index, with substring matching for scripts that mdBook's default word tokenizer does not segment.
 
 ### Develop
 

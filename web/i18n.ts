@@ -6,8 +6,6 @@ import type { Language } from './languages.ts';
 
 export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
   "ar": {
-    "Scroll reading": "قراءة بالتمرير",
-    "Book reading": "قراءة ككتاب",
     "This chapter": "هذا الفصل",
 
     "Choose your world": "اختر عالمك",
@@ -39,8 +37,6 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "مرحبًا"
   },
   "de": {
-    "Scroll reading": "Scrollansicht",
-    "Book reading": "Buchansicht",
     "This chapter": "Dieses Kapitel",
 
     "Choose your world": "Wähle deine Welt",
@@ -72,8 +68,6 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Willkommen"
   },
   "es": {
-    "Scroll reading": "Lectura continua",
-    "Book reading": "Lectura en libro",
     "This chapter": "Este capítulo",
 
     "Choose your world": "Elige tu mundo",
@@ -105,8 +99,6 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Bienvenida"
   },
   "ja": {
-    "Scroll reading": "スクロール表示",
-    "Book reading": "見開き表示",
     "This chapter": "この章",
 
     "Choose your world": "世界を選んでください",
@@ -138,8 +130,6 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "ようこそ"
   },
   "ko": {
-    "Scroll reading": "스크롤 읽기",
-    "Book reading": "책으로 읽기",
     "This chapter": "이 장",
 
     "Choose your world": "세계를 선택하세요",
@@ -171,8 +161,6 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "환영합니다"
   },
   "ru": {
-    "Scroll reading": "Прокрутка",
-    "Book reading": "Книжный вид",
     "This chapter": "Эта глава",
 
     "Choose your world": "Выберите свой мир",
@@ -204,8 +192,6 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Добро пожаловать"
   },
   "uk": {
-    "Scroll reading": "Прокручування",
-    "Book reading": "Книжковий вигляд",
     "This chapter": "Цей розділ",
 
     "Choose your world": "Виберіть свій світ",
@@ -237,8 +223,6 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Вітаємо"
   },
   "vi": {
-    "Scroll reading": "Đọc cuộn",
-    "Book reading": "Đọc dạng sách",
     "This chapter": "Chương này",
 
     "Choose your world": "Chọn thế giới của bạn",
@@ -270,8 +254,6 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Chào mừng"
   },
   "zh-hant": {
-    "Scroll reading": "捲動閱讀",
-    "Book reading": "書頁閱讀",
     "This chapter": "本章",
 
     "Choose your world": "選擇你的世界",
@@ -303,8 +285,6 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "歡迎"
   },
   "zh": {
-    "Scroll reading": "滚动阅读",
-    "Book reading": "书页阅读",
     "This chapter": "本章",
 
     "Choose your world": "选择你的世界",
