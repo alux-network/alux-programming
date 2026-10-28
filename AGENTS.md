@@ -182,3 +182,7 @@ A new check goes into `verifySite` or `protectedContent` together with a negativ
 ## Reader continuity
 
 The alux-reader preferences retain the manual language and normalized progress keyed by edition and chapter. Explicit fragments take precedence on entry; changing views restores the current progress. Folios are chapter-local. CJK substring search reads mdBook's existing lazy edition index; do not create a second content index. Keep native control keyboard behavior when handling paging shortcuts.
+
+## Attribution
+
+The book author is Tomislav Grospić (@tgrospic); preserve the Croatian ć. README's Contributors distinguishes book and architecture authorship from Shixi Lin's interface and reader contributions. Preserve each contributor's existing Git authorship.

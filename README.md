@@ -120,6 +120,12 @@ book/           generated output (git-ignored)
 
 On every push to `master`, GitHub Actions ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)) runs `npm ci`, `npm run check`, `npm run build` and `npm test`, and publishes `book/html` to the `github-pages` branch. Pull requests targeting `master` or `npm-ws`, and pushes to `fix/**`, run the same checks without publishing. CI installs all three Playwright engines and their system dependencies; only pushes to `master` publish.
 
+## Contributors
+
+[Tomislav Grospić (@tgrospic)](https://github.com/tgrospic) authored the book's original content, built the initial website, and refactored the site's mdBook-based architecture and build pipeline.
+
+[Shixi Lin (@shixi-11)](https://github.com/shixi-11) designed the website's interface and contributed to the development of its multilingual reading features, cross-browser testing, and compatibility improvements.
+
 ## Status and license
 
 The book is pre-release and evolving alongside ALUX. Licensing follows the ALUX project; a license file will be added when the project is open-sourced.

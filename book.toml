@@ -1,6 +1,6 @@
 [book]
 title = "ALUX programming guidelines"
-authors = ["Tomislav Grospic <grospic@gmail.com>"]
+authors = ["Tomislav Grospić <grospic@gmail.com>"]
 language = "en"
 src = "src"
 
