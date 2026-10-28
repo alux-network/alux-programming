@@ -215,10 +215,11 @@ for (const profile of selected) {
       assert.equal(await page.locator('html').getAttribute('dir'), 'rtl');
       await page.keyboard.press('ArrowLeft');
       assert.equal((await folio(page)).first, count.last + 1);
-      await page.locator('#reading-mode').focus();
+      const turned = await folio(page);
+      await page.locator('#bookmark-toggle').focus();
       await page.keyboard.press('Space');
-      assert.equal(await page.locator('html').getAttribute('data-reading'), 'scroll');
-      assert.equal(await page.locator('main.leaves').evaluate((m) => getComputedStyle(m).columnCount), 'auto');
+      assert.equal(await page.locator('#bookmark-toggle').getAttribute('aria-pressed'), 'true');
+      assert.deepEqual(await folio(page), turned, 'Space on a focused button does not turn the page');
     });
 
     test('the real world is one scrolling column', async () => {
@@ -231,11 +232,13 @@ for (const profile of selected) {
       const target = editions.find((e) => e.lang !== 'en')!;
       const chapter = chapters[1]!;
       const page = await open(chapter, 'real');
-      assert.deepEqual(await page.locator('.language-picker').first().locator('option').evaluateAll(
-        (options) => options.map((o) => (o as HTMLOptionElement).value)), editions.map((e) => e.lang));
+      await activate(page, '#language-toggle');
+      assert.equal(await page.locator('#language-toggle').getAttribute('aria-expanded'), 'true');
+      assert.deepEqual(await page.locator('#language-list a').evaluateAll(
+        (links) => links.map((a) => (a as HTMLAnchorElement).lang)), editions.map((e) => e.lang));
       await navigate(page, () => Promise.all([
         page.waitForURL(base + '/' + route(target, chapter)),
-        page.locator('.language-picker').first().selectOption(target.lang),
+        activate(page, `#language-list a[lang="${target.lang}"]`),
       ]));
       assert.equal(await page.locator('html').getAttribute('lang'), target.lang);
       await navigate(page, async () => {
@@ -291,48 +294,34 @@ for (const profile of selected) {
       assert.equal(pathname(page), '/' + next);
     });
 
-    test('world and scroll-mode switches preserve content and reading progress', async () => {
-      const { file, page } = await longChapter(english, 1);
+    test('world switches preserve content and reading progress', async () => {
+      const { page } = await longChapter(english, 1);
       await activate(page, '#page-next');
       const progress = await folio(page);
       const contents = await page.locator('main.leaves').textContent();
       await activate(page, '#world-toggle');
       await page.waitForFunction(() => document.documentElement.dataset.world === 'real');
+      assert.equal(await page.locator('main.leaves').textContent(), contents);
       await activate(page, '#world-toggle');
       await page.waitForFunction(() => document.documentElement.dataset.world === 'magic');
       await ready(page);
       assert.deepEqual(await folio(page), progress);
-      await activate(page, '#reading-mode');
-      await page.waitForFunction(() => document.documentElement.dataset.reading === 'scroll');
-      await ready(page);
-      assert.equal(await page.locator('html').getAttribute('data-reading'), 'scroll');
-      assert.equal(await page.locator('main.leaves').textContent(), contents);
-      await activate(page, '#reading-mode');
-      await page.waitForFunction(() => document.documentElement.dataset.reading === 'book');
-      await ready(page);
-      assert.deepEqual(await folio(page), progress);
-      await activate(page, '#reading-mode');
-      await page.waitForFunction(() => document.documentElement.dataset.reading === 'scroll');
-      const previous = chapters[chapters.indexOf(file) - 1]!;
-      await navigate(page, () => Promise.all([page.waitForURL(base + '/' + previous), activate(page, '#page-prev')]));
     });
 
-    if (profile.options.hasTouch) {
-      test('touch scroll-reader heading links stay below the toolbar', async () => {
-        const { page } = await longChapter(english, 1);
-        await activate(page, '#reading-mode');
-        await page.waitForFunction(() => document.documentElement.dataset.reading === 'scroll');
-        const heading = page.locator('main.leaves h2').last();
-        const id = await heading.getAttribute('id');
-        assert.ok(id, 'the source chapter has an anchored heading');
-        await navigate(page, () => page.goto(page.url() + '#' + encodeURIComponent(id)));
-        await ready(page);
-        const target = await heading.boundingBox();
-        const toolbar = await page.locator('#menu-bar').boundingBox();
-        assert.ok(target && toolbar);
-        assert.ok(target.y >= toolbar.y + toolbar.height - 1, 'heading stays visible below the touch toolbar');
+    test('the magic world always pages, with a fixed sidebar', async () => {
+      const chapter = chapters[1]!;
+      const context = await browser.newContext({ ...profile.options, reducedMotion: 'reduce' });
+      // A scroll mode saved by an earlier reader version must not apply.
+      await context.addInitScript(() => {
+        localStorage.setItem('alux-reader', JSON.stringify({ world: 'magic', mode: 'scroll', bookmarks: [] }));
+        sessionStorage.setItem('alux-entered', '1');
       });
-    }
+      const page = await context.newPage();
+      await navigate(page, () => page.goto(base + '/' + chapter));
+      assert.equal(await page.locator('#reading-mode').count(), 0, 'no scroll reading control');
+      assert.notEqual(await page.locator('main.leaves').evaluate((m) => getComputedStyle(m).columnCount), 'auto');
+      assert.equal(await page.locator('#sidebar-resize-handle').isVisible(), false, 'no sidebar resize handle');
+    });
 
     test('resize and orientation changes retain content and usable control bounds', async () => {
       const { page } = await longChapter();
@@ -342,7 +331,7 @@ for (const profile of selected) {
       await ready(page);
       await folio(page);
       assert.equal(await page.locator('main.leaves').textContent(), contents);
-      for (const selector of ['#page-prev', '#page-next', '#reading-mode', '#text-larger']) {
+      for (const selector of ['#page-prev', '#page-next', '#bookmark-toggle', '#text-larger']) {
         const box = await page.locator(selector).boundingBox();
         assert.ok(box && box.x >= -1 && box.x + box.width <= page.viewportSize()!.width + 1, selector);
         assert.ok((await page.locator(selector).getAttribute('aria-label')) || (await page.locator(selector).innerText()).trim(), selector + ' accessible name');
