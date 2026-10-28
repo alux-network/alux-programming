@@ -124,9 +124,10 @@ for (const profile of selected) {
         if (r.url().startsWith(base + '/') && r.status() >= 400) problems.push(r.status() + ': ' + r.url());
       });
       page.on('requestfailed', (r) => {
-        // Firefox reports fonts cancelled by document navigation as errors, not missing assets.
-        const cancelledFont = r.resourceType() === 'font' && /NS_BINDING_ABORTED|ERR_ABORTED/.test(r.failure()?.errorText ?? '');
-        if (r.url().startsWith(base + '/') && !(moving.has(page) && cancelledFont)) {
+        // A navigation aborts the old page's pending requests (Firefox: fonts, the favicon). That is a
+        // cancellation, not a missing asset; missing assets still fail through their 404 response.
+        const cancelled = /NS_BINDING_ABORTED|ERR_ABORTED/.test(r.failure()?.errorText ?? '');
+        if (r.url().startsWith(base + '/') && !(moving.has(page) && cancelled)) {
           problems.push('failed: ' + r.url() + ' ' + r.failure()?.errorText);
         }
       });
