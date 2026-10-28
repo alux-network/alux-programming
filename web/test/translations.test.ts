@@ -23,7 +23,7 @@ function markdownFiles(dir: string): string[] {
 
 /** Splits Markdown into code blocks and the prose around them; admonitions are prose with code inside. */
 function split(markdown: string, code: string[] = []): { prose: string; code: string[] } {
-  const lines = markdown.split('\n');
+  const lines = markdown.split(/\r?\n/);
   let prose = '';
   for (let i = 0; i < lines.length; i++) {
     const open = lines[i]!.match(/^\s*(`{3,}|~{3,})(.*)$/);
@@ -52,7 +52,7 @@ function dedent(block: string) {
 /** Link and media targets as the files or URLs they point to, in sorted order. */
 function targets(found: string[], file: string) {
   return found
-    .map((t) => (/^(?:[a-z]+:|#)/i.test(t) ? t : path.posix.normalize(path.posix.join(path.posix.dirname(file), t))))
+    .map((t) => (/^(?:[a-z]+:|#)/i.test(t) ? t : path.posix.normalize(path.posix.join(path.posix.dirname(file.replaceAll('\\', '/')), t))))
     .sort();
 }
 
@@ -103,6 +103,8 @@ test('a changed translation is reported', () => {
     'heading levels': source.replace(/^## /m, '### '),
   };
   const expected = protectedContent(source, english);
+  // Windows checkouts must agree with LF/POSIX sources before testing real mutations.
+  assert.deepEqual(protectedContent(source.replace(/\r?\n/g, '\r\n'), english.replaceAll('/', '\\')), expected);
   for (const [what, changed] of Object.entries(changes)) {
     assert.notEqual(changed, source, what);
     assert.notDeepEqual(protectedContent(changed, english), expected, what);
