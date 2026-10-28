@@ -72,13 +72,54 @@ function label(el: HTMLElement, key: string) {
   el.setAttribute('aria-label', t(key));
 }
 
-// The language picker: the same page in another edition (chapter paths are equal in all editions).
+// The gateway's language picker: the same page in another edition (chapter paths are equal in all
+// editions).
 for (const picker of document.querySelectorAll<HTMLSelectElement>('.language-picker')) {
   picker.append(...languages.map((l) => new Option(l.name, l.code, false, l.code === lang)));
   picker.addEventListener('change', () => {
     prefs.language = picker.value as Language;
     save();
     location.href = site + (picker.value === 'en' ? '' : picker.value + '/') + page + location.hash;
+  });
+}
+
+// The toolbar's language menu, built like mdBook's theme menu: links to this page in every
+// edition. The href is refreshed on click so it carries the current fragment.
+const languageToggle = document.getElementById('language-toggle');
+if (languageToggle) {
+  const list = $('language-list');
+  const editionUrl = (code: Language) => site + (code === 'en' ? '' : code + '/') + page + location.hash;
+  const open = (on: boolean) => {
+    list.style.display = on ? 'block' : 'none';
+    languageToggle.setAttribute('aria-expanded', String(on));
+  };
+  $('language-name').textContent = languages.find((l) => l.code === lang)!.name;
+  list.append(...languages.map((l) => {
+    const item = document.createElement('li');
+    item.setAttribute('role', 'none');
+    const link = document.createElement('a');
+    link.setAttribute('role', 'menuitem');
+    link.className = l.code === lang ? 'theme theme-selected' : 'theme';
+    link.lang = l.code;
+    link.href = editionUrl(l.code);
+    link.textContent = l.name;
+    link.addEventListener('click', () => {
+      link.href = editionUrl(l.code);
+      prefs.language = l.code;
+      save();
+    });
+    item.append(link);
+    return item;
+  }));
+  languageToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    open(list.style.display !== 'block');
+  });
+  document.addEventListener('click', (e) => { if (!list.contains(e.target as Node)) open(false); });
+  list.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    open(false);
+    languageToggle.focus();
   });
 }
 

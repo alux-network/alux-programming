@@ -72,7 +72,14 @@ html { font-family: var(--reader-sans); }
   font: 2.2rem var(--reader-sans);
   cursor: pointer;
 }
-.bookmark-count { margin-inline-start: auto; font-size: 1.6rem; opacity: 0.8; }
+/* The bookmark count: readable but quiet, a muted number in a hairline pill. */
+.bookmark-count {
+  margin-inline-start: auto; min-width: 1.7em; padding: 0.05em 0.5em; box-sizing: border-box;
+  font-size: 0.85em; line-height: 1.4; text-align: center; font-variant-numeric: lining-nums tabular-nums;
+  color: color-mix(in srgb, var(--sidebar-fg) 65%, var(--sidebar-bg));
+  border: 1px solid color-mix(in srgb, var(--sidebar-fg) 25%, var(--sidebar-bg)); border-radius: 999px;
+}
+html[data-world="magic"] .bookmark-count { color: var(--reader-muted); border-color: var(--reader-rule); }
 /* Parts are numbered I, II, …; chapters restart in each part: 1.1, 1.2, … (01, 02 in the book). */
 .chapter { counter-reset: part; }
 .chapter li.part-title { counter-increment: part; counter-reset: chapter; font-size: 2.4rem; margin: 26px 0 12px; }
@@ -80,7 +87,8 @@ html { font-family: var(--reader-sans); }
 .chapter li.chapter-item { font-size: 1.9rem; line-height: 1.5; margin-block: 10px; }
 .chapter li.chapter-item:not(.affix) { counter-increment: chapter; }
 .chapter li.chapter-item:not(.affix) > a::before { content: counter(part) "." counter(chapter) ". "; font-weight: 700; }
-.chapter li.chapter-item.expanded.affix > a { font-size: 2rem; }
+/* index.css sizes the prefix chapter on its own; it reads like the other chapters. */
+.chapter li.chapter-item.expanded.affix > a { font-size: inherit; }
 .chapter li.spacer { display: none; }
 
 .menu-bar { height: auto; padding: 14px 20px; border-bottom: 1px solid var(--theme-popup-border); }
@@ -99,7 +107,17 @@ html { font-family: var(--reader-sans); }
   font: 1.7rem var(--reader-sans) !important;
   cursor: pointer;
 }
-.bookmark-button { border-color: var(--theme-popup-border); }
+/* Music and bookmark are icon buttons of one size; a frame shows only while they are on. */
+:is(#music-toggle, #bookmark-toggle, #theme-toggle, #sidebar-toggle) {
+  box-sizing: border-box; height: var(--menu-bar-height); width: 50px; padding: 0;
+  justify-content: center; border: 1px solid transparent; border-radius: 4px;
+}
+#language-toggle {
+  box-sizing: border-box; height: var(--menu-bar-height); padding: 0 12px;
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid transparent; border-radius: 4px; font: 2rem var(--reader-sans);
+}
+#bookmark-toggle { font-size: 2rem !important; }
 .world-link { font-size: 2rem !important; }
 .text-size { font: 2rem var(--reader-sans) !important; }
 .language { display: inline-flex; align-items: center; gap: 8px; color: var(--icons); font-size: 2rem; }
@@ -113,7 +131,10 @@ html { font-family: var(--reader-sans); }
   cursor: pointer;
 }
 .language-picker option { color: #242424; background: #fff; }
-#music-toggle[aria-pressed="true"] { border: 1px solid var(--theme-popup-border); border-radius: 4px; background: var(--theme-hover); color: var(--icons-hover); }
+/* A toolbar button lights up while what it controls is on or open. */
+:is(#music-toggle, #bookmark-toggle)[aria-pressed="true"],
+:is(#theme-toggle, #language-toggle)[aria-expanded="true"],
+html.sidebar-visible #sidebar-toggle { border-color: var(--theme-popup-border); background: var(--theme-hover); color: var(--icons-hover); }
 
 /* Text size: mdBook sizes text in rem against html's 62.5%, so scaling the root scales all text,
    the sidebar and toolbar included. Rules below use plain rem and must not scale again. */
@@ -151,10 +172,15 @@ html[data-world="real"] .volume > :is(.page-head, .page-foot), html[data-world="
 html[data-world="magic"], html[data-world="magic"] :is(body, .page-wrapper, .page, .menu-bar, .sidebar, #search-wrapper) { background: var(--reader-desk); }
 /* The book's height is the window's less the toolbar and the turn bar; its width is up to 1.75 times
    that height (two pages a little wider than tall), and at most the room beside the sidebar. */
-html[data-world="magic"] #content {
+html[data-world="magic"] {
   --book-height: max(400px, calc(100vh - 230px));
-  --book-width: min(100%, calc(var(--book-height) * 1.75));
+  /* The book's type grows with it, so a page holds about the same number of lines on any screen. */
+  --book-font: clamp(1.9rem, var(--book-height) / 42 * var(--reader-scale, 1), 3rem);
 }
+html[data-world="magic"] #content { --book-width: min(100%, calc(var(--book-height) * 1.75)); }
+/* The sidebar reads a little larger than the book beside it. */
+html[data-world="magic"] .chapter li:is(.chapter-item, .part-title),
+html[data-world="magic"] .sidebar-bookmarks { font-size: calc(var(--book-font) * 1.1); }
 html[data-world="magic"] .sidebar { color: var(--reader-ink); border-inline-end: 1px solid var(--reader-rule); }
 html[data-world="magic"] :is(.brand, .sidebar-bookmarks, .chapter li a, .chapter li.part-title) { color: var(--reader-ink); font-family: var(--reader-serif); }
 html[data-world="magic"] .chapter li.part-title { color: var(--reader-accent); padding-top: 22px; border-top: 1px solid var(--reader-rule); }
@@ -169,7 +195,9 @@ html[data-world="magic"] .chapter li.chapter-item:not(.affix) > a::before {
 html[data-world="magic"] .chapter li.part-title::before { font-size: 0.75em; margin-inline-end: 18px; }
 html[data-world="magic"] .menu-bar { border: 0; }
 html[data-world="magic"] :is(.menu-bar .icon-button, .menu-bar a, .bookmark-button, .world-link, .text-size, .language, .language-picker) { color: var(--reader-ink); }
-html[data-world="magic"] :is(.bookmark-button, #music-toggle[aria-pressed="true"]) { border-color: var(--reader-rule); background: color-mix(in srgb, var(--reader-trim) 18%, transparent); }
+html[data-world="magic"] :is(#music-toggle, #bookmark-toggle)[aria-pressed="true"],
+html[data-world="magic"] :is(#theme-toggle, #language-toggle)[aria-expanded="true"],
+html[data-world="magic"].sidebar-visible #sidebar-toggle { border-color: var(--reader-rule); background: color-mix(in srgb, var(--reader-trim) 18%, transparent); }
 html[data-world="magic"] :is(.nav-wide-wrapper, .nav-wrapper) { display: none; }
 html[data-world="magic"] #content { padding: 0 12px; }
 html[data-world="magic"] .volume {
@@ -238,8 +266,7 @@ html[data-world="magic"] #content main.leaves {
   column-fill: auto;
   overflow: hidden;
   font-family: var(--reader-serif);
-  /* Type grows with the book, so a page holds about the same number of lines on any screen. */
-  font-size: clamp(1.9rem, var(--book-height) / 42 * var(--reader-scale, 1), 3rem);
+  font-size: var(--book-font);
   line-height: 1.85;
   view-transition-name: leaves;
 }
@@ -471,7 +498,7 @@ html[data-world="magic"] .volume {
   .menu-bar .left-buttons { order: 2; width: 100%; justify-content: flex-end; gap: 10px; }
   .menu-title { display: none; }
   .menu-bar .icon-button { min-width: 36px; }
-  html[data-world="magic"] #content { --book-height: max(440px, calc(100dvh - 270px)); }
+  html[data-world="magic"] { --book-height: max(440px, calc(100dvh - 270px)); }
 }
 @media (max-width: 899px) {
   :root { --sidebar-width: min(var(--sidebar-target-width), 300px, calc(100vw - 48px)); }
@@ -518,7 +545,8 @@ html[data-gateway] .gateway :is(.language, .language-picker) { color: #efe3c4; }
 .theme-menu { position: relative; display: flex; }
 .menu-bar .theme-menu .theme-popup {
   left: auto; right: auto; inset-inline-start: 0; top: calc(100% + 6px);
-  min-width: 150px; padding: 6px 0; font-size: 1.6rem;
+  /* max-content: sized by its items, not by the narrow wrapper it is positioned from. */
+  width: max-content; min-width: 150px; padding: 6px 0; font-size: 1.6rem;
   color: var(--reader-ink); background: var(--reader-paper);
   border: 1px solid var(--reader-rule); border-radius: 6px; box-shadow: 0 10px 28px #0003;
 }
@@ -530,40 +558,53 @@ html[data-gateway] .gateway :is(.language, .language-picker) { color: #efe3c4; }
 }
 
 /* Search opens as a modal over the blurred page. mdBook still owns the panel and its open state
-   (the .hidden class); reader.ts only closes it on a backdrop click. */
+   (the .hidden class); reader.ts only closes it on a backdrop click. The real world draws it in
+   the mdBook theme's colors and fonts, the magic world in the book's. */
+#search-wrapper {
+  --search-desk: var(--bg); --search-paper: var(--bg); --search-ink: var(--fg);
+  --search-rule: var(--theme-popup-border); --search-muted: var(--icons); --search-accent: var(--links);
+  --search-font: inherit;
+}
+html[data-world="magic"] #search-wrapper {
+  --search-desk: var(--reader-desk); --search-paper: var(--reader-paper); --search-ink: var(--reader-ink);
+  --search-rule: var(--reader-rule); --search-muted: var(--reader-muted); --search-accent: var(--reader-accent);
+  --search-font: var(--reader-serif);
+}
 html[data-world] #search-wrapper:not(.hidden) {
   position: fixed; inset: 0; z-index: 1100;
   display: flex; flex-direction: column; align-items: center; gap: 8px;
   padding: 12vh 16px 16px; box-sizing: border-box;
-  background: color-mix(in srgb, var(--reader-desk) 55%, transparent);
+  background: color-mix(in srgb, var(--search-desk) 55%, transparent);
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
 }
 #search-wrapper :is(.searchbar-outer, .searchresults-outer) {
   width: min(720px, 100%); max-width: none; margin: 0; box-sizing: border-box;
-  color: var(--reader-ink); background: var(--reader-paper);
-  border: 1px solid var(--reader-rule); border-radius: 8px; box-shadow: 0 16px 40px #0003;
+  color: var(--search-ink); background: var(--search-paper);
+  border: 1px solid var(--search-rule); border-radius: 8px; box-shadow: 0 16px 40px #0003;
 }
 #search-wrapper .searchbar-outer { padding: 10px; }
 #search-wrapper .searchresults-outer { max-height: 60vh; overflow: auto; padding: 8px 16px; }
 #search-wrapper #searchbar {
   height: auto; padding: 12px 18px; box-sizing: border-box;
-  font-family: var(--reader-serif); font-size: 2.6rem;
-  color: var(--reader-ink); background: transparent;
-  border: 0; border-bottom: 1px solid var(--reader-rule); border-radius: 0;
+  font-family: var(--search-font); font-size: 2.6rem;
+  color: var(--search-ink); background: transparent;
+  border: 0; border-bottom: 1px solid var(--search-rule); border-radius: 0;
 }
-#search-wrapper #searchbar::placeholder { color: var(--reader-muted); font-style: italic; }
-#search-wrapper #searchbar:focus { outline: none; border-bottom-color: var(--reader-accent); box-shadow: none; }
-#search-wrapper .searchresults-header { font-family: var(--reader-serif); font-size: 1.9rem; font-weight: 500; color: var(--reader-muted); }
-#search-wrapper #searchresults a { font-family: var(--reader-serif); font-size: 2.1rem; color: var(--reader-accent); }
+#search-wrapper #searchbar::placeholder { color: var(--search-muted); font-style: italic; }
+#search-wrapper #searchbar:focus { outline: none; border-bottom-color: var(--search-accent); box-shadow: none; }
+#search-wrapper .searchresults-header { font-family: var(--search-font); font-size: 1.9rem; font-weight: 500; color: var(--search-muted); }
+#search-wrapper #searchresults a { font-family: var(--search-font); font-size: 2.4rem; color: var(--search-accent); }
+#search-wrapper #searchresults .teaser { font-family: var(--search-font); font-size: 1.9rem; line-height: 1.55; color: var(--search-ink); }
+#search-wrapper .searchresults-header { font-size: 2rem; }
 #search-wrapper #searchbar::-webkit-search-cancel-button {
   -webkit-appearance: none; appearance: none; width: 18px; height: 18px; cursor: pointer;
-  background: var(--reader-muted);
+  background: var(--search-muted);
   mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'><path d='M3 3l12 12M15 3L3 15' stroke='black' stroke-width='1.6'/></svg>") center / contain no-repeat;
 }
 
 /* Theme menu items carry an icon (Font Awesome 4, shipped by mdBook); the ✓ of the selected theme
    stays in mdBook's ::before. In the magic world the menu is a small bound card like the book. */
-.menu-bar .theme-menu .theme-popup .theme { display: flex; align-items: center; gap: 10px; font-family: inherit; }
+.menu-bar .theme-menu .theme-popup .theme { display: flex; align-items: center; gap: 10px; font-family: inherit; box-sizing: border-box; }
 .menu-bar .theme-menu .theme-popup .theme::after {
   order: -1; width: 1.2em; text-align: center;
   font: normal 1em/1 FontAwesome; color: var(--reader-accent);
@@ -618,3 +659,9 @@ html[data-world="magic"] #sidebar-resize-handle { display: none; }
 @media (max-width: 899px) {
   html[data-world="magic"] { --sidebar-width: min(300px, calc(100vw - 48px)); }
 }
+
+/* The language menu reuses the theme menu's look; it sits at the toolbar's end, so it opens
+   leftwards from its button. Its items are links. */
+.menu-bar .language-menu .theme-popup { inset-inline-start: auto; inset-inline-end: 0; }
+.menu-bar .theme-menu .theme-popup a.theme { text-decoration: none; white-space: nowrap; }
+html[data-world="magic"] #language-toggle { color: var(--reader-ink); font-family: var(--reader-serif); }

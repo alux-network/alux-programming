@@ -246,10 +246,13 @@
                             <i id="git-repository-button" class="fa {{git_repository_icon}}"></i>
                         </a>
                         {{/if}}
-                        <label class="language">
-                            <i class="fa fa-globe" aria-hidden="true"></i>
-                            <select class="language-picker" title="Language" aria-label="Language" data-i18n></select>
-                        </label>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
                     </div>
                 </div>
 
