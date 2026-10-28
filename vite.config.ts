@@ -1,10 +1,11 @@
 // Builds the site: mdBook renders every edition into book/html, then Vite adds the reader bundle
 // (/reader.js from web/reader.ts) and public/ (/…). In dev, Vite serves the reader from source
 // and rebuilds the book when its sources change.
-import { resolve } from 'node:path';
+import { mkdir, mkdtemp, rm } from 'node:fs/promises';
+import { basename, dirname, join, resolve } from 'node:path';
 import type { Plugin, ViteDevServer } from 'vite';
 import { defineConfig } from 'vite';
-import { buildBook } from './web/mdbook.ts';
+import { buildBook, replaceDirectory } from './web/mdbook.ts';
 
 const out = resolve('book/html');
 const reader = resolve('web/reader.ts');
@@ -12,6 +13,9 @@ const bookSources = ['src', 'theme', 'book.toml', 'web/localize.ts', 'web/mdbook
 
 /** Vite plugin that owns the mdBook part of the site. */
 function mdbook(): Plugin {
+  let destination = out;
+  let staged: string | undefined;
+  let written = false;
   let building: Promise<void> | null = null;
   let again = false;
   // One book build at a time; changes during a build queue a single further build.
@@ -34,10 +38,32 @@ function mdbook(): Plugin {
   }
   return {
     name: 'mdbook',
+    async config(config, { command }) {
+      if (command !== 'build') return;
+      destination = resolve(config.root ?? '.', config.build?.outDir ?? out);
+      await mkdir(dirname(destination), { recursive: true });
+      staged = await mkdtemp(join(dirname(destination), `.${basename(destination)}-site-`));
+      return { build: { outDir: staged } };
+    },
     // `vite build`: the book first, then Vite bundles the reader and copies public/ into it.
     async buildStart() {
       if (this.meta.watchMode) return;
-      await buildBook();
+      await buildBook(staged ?? destination);
+    },
+    // Publish only after both the book and Vite's bundle/public files have finished.
+    writeBundle() {
+      written = true;
+    },
+    async buildEnd(error) {
+      if (error && staged) await rm(staged, { recursive: true, force: true });
+    },
+    async closeBundle() {
+      if (!staged) return;
+      try {
+        if (written) await replaceDirectory(staged, destination);
+      } finally {
+        await rm(staged, { recursive: true, force: true });
+      }
     },
     // The pages load /reader.js; in dev that is the TypeScript source.
     resolveId(id) {

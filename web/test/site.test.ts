@@ -44,6 +44,26 @@ describe('the verifier reports', () => {
   test('nothing for an intact copy', () => {
     assert.deepEqual(verify(copy()), []);
   });
+  test('a wrong HTML language', () => {
+    const dir = copy();
+    const file = path.join(dir, chapter);
+    writeFileSync(file, readFileSync(file, 'utf8').replace('<html lang="en"', '<html lang="zh"'));
+    assert.ok(verify(dir).includes(`en/${chapter}: lang is zh, expected en`));
+  });
+  test('a wrong HTML direction', () => {
+    const dir = copy();
+    const file = path.join(dir, chapter);
+    writeFileSync(file, readFileSync(file, 'utf8').replace('dir="ltr"', 'dir="rtl"'));
+    assert.ok(verify(dir).includes(`en/${chapter}: dir is rtl`));
+  });
+  test('a missing edition', () => {
+    const dir = copy();
+    const arabic = editions.find((edition) => edition.lang === 'ar')!;
+    cpSync(path.join(site, 'ar'), path.join(dir, 'ar'), { recursive: true });
+    assert.deepEqual(verify(dir, arabic), [], 'edition is valid before removal');
+    rmSync(path.join(dir, 'ar'), { recursive: true });
+    assert.deepEqual(verify(dir, arabic), ['ar: edition is missing']);
+  });
   test('a removed chapter page', () => {
     const dir = copy();
     rmSync(path.join(dir, chapter));
