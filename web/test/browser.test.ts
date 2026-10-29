@@ -155,7 +155,7 @@ for (const profile of selected) {
       page.on('requestfailed', (r) => {
         // A navigation aborts the old page's pending requests (Firefox: fonts, the favicon). That is a
         // cancellation, not a missing asset; missing assets still fail through their 404 response.
-        const cancelled = /^(?:NS_BINDING_ABORTED|ERR_ABORTED|Load request cancelled)$/.test(r.failure()?.errorText ?? '');
+        const cancelled = /^(?:NS_BINDING_ABORTED|(?:net::)?ERR_ABORTED|Load request cancelled)$/.test(r.failure()?.errorText ?? '');
         // World choice may also pause the reader's forest bed; both are intentional media aborts.
         const pausedReaderAudio = cancelled &&
           (/\/audio\/welcome\/[^/]+\.mp3$/.test(r.url()) || /\/audio\/forest-breath\.mp3$/.test(r.url()));
