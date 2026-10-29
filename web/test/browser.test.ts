@@ -421,6 +421,7 @@ for (const profile of selected) {
         await click;
         await page.waitForFunction(() => !document.querySelector('.turn-leaf'));
         assert.ok((await folio(page)).first > before.first, `normal turn ${turn + 1} advances the folio`);
+        if (turn === 0) await page.waitForTimeout(1200);
       }
     });
 
@@ -446,9 +447,10 @@ for (const profile of selected) {
           fontSeen,
           page.waitForTimeout(1500).then(() => { throw new Error('destination did not request a gated font'); }),
         ]);
+        await page.waitForFunction(() => !!document.querySelector('#folio')?.textContent && document.fonts.status === 'loading');
         const size = page.viewportSize()!;
         await page.setViewportSize({ width: size.width - 80, height: size.height + 40 });
-        await page.waitForFunction(() => !document.querySelector('#content[data-navigation-handoff]') && !document.querySelector('[data-navigation-handoff-veil]') && !document.querySelector('[data-navigation-handoff-style]'));
+        await page.waitForFunction(() => !document.querySelector('#content[data-navigation-handoff]') && !document.querySelector('[data-navigation-handoff-veil]') && !document.querySelector('[data-navigation-handoff-style]'), { timeout: 1000 });
         releaseFont();
         await page.waitForFunction(() => !!document.querySelector('#folio')?.textContent);
         assert.ok(await page.locator('#page-next').isEnabled(), 'paging controls remain usable after a pending-font resize');
