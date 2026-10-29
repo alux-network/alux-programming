@@ -188,3 +188,9 @@ The alux-reader preferences retain the manual language and normalized progress k
 ## Attribution
 
 The book author is Tomislav Grospić (@tgrospic); preserve the Croatian ć. README's Contributors distinguishes book and architecture authorship from Shixi Lin's interface and reader contributions. Preserve each contributor's existing Git authorship.
+
+## Localized repository introductions
+
+The root English README links to `docs/README.<lang>.md` for every non-English edition in `web/languages.ts`. Keep introductions, edition links, chapter-local pagination descriptions and contributor credits consistent across all eleven languages. Build and maintenance instructions stay canonical in the English README; localized introductions link to them rather than copy commands.
+
+Localized share cards are rendered from `web/social-cards.ts` into `public/social/` at 1200 × 630. Preserve the full author name, original artwork and matching language copy; regenerate from the source rather than editing baked text.

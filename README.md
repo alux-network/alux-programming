@@ -1,5 +1,9 @@
 # <img src="public/alux-logo.png" style="margin-right: 10px; width: 60px;"> ALUX programming guidelines
 
+**English** · [العربية](docs/README.ar.md) · [Deutsch](docs/README.de.md) · [Español](docs/README.es.md) · [日本語](docs/README.ja.md) · [한국어](docs/README.ko.md) · [Русский](docs/README.ru.md) · [Українська](docs/README.uk.md) · [Tiếng Việt](docs/README.vi.md) · [简体中文](docs/README.zh.md) · [繁體中文](docs/README.zh-hant.md)
+
+![ALUX programming guidelines](public/social/alux-programming-en.jpg)
+
 A book about **designing programs by meaning first** — specifying *what* a program means before deciding *how* it runs — in the style of Conal Elliott's Denotational Design, with a concrete path into Rust.
 
 It provides the foundation for understanding and contributing to ALUX’s meaning-first codebase.
@@ -85,6 +89,8 @@ A translation starts with a metadata comment:
 `title` names the chapter, `parts` (in `index.<lang>.md` only) names the part titles, and `sourceHash` fingerprints the English chapter the translation was reviewed against. When the English chapter changes, the build prints `translation may be stale` with the new fingerprint; review the translation, then set `sourceHash` to it.
 
 UI labels for each language are in `web/i18n.ts`, keyed by the English label. To add a language, add it to `web/languages.ts` (the build, the language picker and the tests read it) and its labels to `web/i18n.ts`, plus `public/audio/welcome/<lang>.mp3` and `public/social/alux-programming-<lang>.jpg`.
+
+Localized repository introductions live in `docs/README.<lang>.md` and are linked from this README. They share the book scope, reader behavior and contributor credits; build instructions stay here. Social cards use the same language codes and are rendered from `web/social-cards.ts` with `node web/social-cards.ts` (requires Playwright Chromium), retaining the original artwork and native 1200 × 630 layout.
 
 ## Reader
 
