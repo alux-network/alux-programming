@@ -510,17 +510,25 @@ for (const profile of selected) {
       const table = page.locator('main.leaves .table-wrapper').first();
       assert.equal(await table.count(), 1, 'the multi-page world-switch fixture contains a table wrapper');
       const tableViewport = await table.evaluate((wrapper) => {
+        const beforeText = wrapper.textContent;
         wrapper.scrollTop = wrapper.scrollHeight;
-        const lastRow = wrapper.querySelector('tbody tr:last-child, tr:last-child');
+        const lastRow = wrapper.querySelector('tbody tr:last-child') ?? wrapper.querySelector('tr:last-child');
         const box = wrapper.getBoundingClientRect();
         const row = lastRow?.getBoundingClientRect();
+        const rowHeight = row?.height ?? 0;
+        const viewportHeight = wrapper.clientHeight;
         return {
           atBottom: wrapper.scrollTop >= wrapper.scrollHeight - wrapper.clientHeight - 1,
-          lastRowVisible: !!row && row.bottom <= box.bottom + 1 && row.top >= box.top - 1,
+          textUnchanged: wrapper.textContent === beforeText,
+          lastRowVisible: !!row && row.bottom > box.top && row.top < box.bottom,
+          lastRowFits: rowHeight <= viewportHeight + 1,
+          lastRowComplete: !!row && row.bottom <= box.bottom + 1 && row.top >= box.top - 1,
         };
       });
       assert.equal(tableViewport.atBottom, true, 'table wrapper scroll reaches its complete content');
+      assert.equal(tableViewport.textUnchanged, true, 'table wrapper scrolling does not change its text');
       assert.equal(tableViewport.lastRowVisible, true, 'table wrapper keeps the final row visible');
+      if (tableViewport.lastRowFits) assert.equal(tableViewport.lastRowComplete, true, 'a page-fitting final row remains complete');
     });
 
     test('the magic world always pages, with a fixed sidebar', async () => {
