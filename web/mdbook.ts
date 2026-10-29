@@ -41,7 +41,14 @@ export async function replaceDirectory(staged: string, out: string): Promise<voi
     }
     throw error;
   }
-  if (previous) await rm(backup, { recursive: true, force: true, maxRetries: 5 });
+  if (previous) {
+    try {
+      await rm(backup, { recursive: true, force: true, maxRetries: 5 });
+    } catch (error) {
+      // Publication has committed; cleanup must not suppress the dev caller's reload.
+      console.warn(`Site published; could not remove previous output at ${backup}`, error);
+    }
+  }
 }
 
 /** Builds and assembles every edition before replacing `out` on the same filesystem. */

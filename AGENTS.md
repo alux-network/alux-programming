@@ -116,7 +116,7 @@ CI runs `npm ci`, `npm run check`, `npm run build`, `npm test`, in that order. R
 - No frameworks in the reader. It is one module binding the template's markup by element id.
 - The magic world is always a paged book: no scroll reading mode in it. Continuous scrolling is the real world.
 - The magic world's sidebar has a fixed width: no resize handle there. The real world keeps mdBook's resizable sidebar.
-- Builds are deterministic and atomic: the same sources give byte-identical output, and a failed build leaves the previous site untouched.
+- Builds are deterministic and atomic: the same sources give byte-identical output, and a failed build leaves the previous site untouched. Once the replacement succeeds, backup cleanup is best effort: report any retained backup without treating publication as failed or suppressing the dev reload.
 
 Reject these shapes:
 
