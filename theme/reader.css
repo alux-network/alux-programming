@@ -225,6 +225,7 @@ html[data-world="magic"].sidebar-visible #sidebar-toggle { border-color: var(--r
 html[data-world="magic"] :is(.nav-wide-wrapper, .nav-wrapper) { display: none; }
 html[data-world="magic"] #content { padding: 0 12px; }
 html[data-world="magic"] .volume {
+  --leaf-height: calc(var(--book-height) - 134px);
   position: relative;
   box-sizing: border-box;
   width: var(--book-width);
@@ -283,7 +284,7 @@ html[data-world="magic"] .page-head:nth-of-type(2), html[data-world="magic"] .pa
 html[data-world="magic"] #content main.leaves {
   max-width: none;
   margin: 0;
-  height: calc(var(--book-height) - 134px);
+  height: var(--leaf-height);
   columns: 2;
   column-gap: var(--reader-gap);
   column-fill: auto;
@@ -463,7 +464,7 @@ html[data-gateway] body { overflow: hidden; }
   html[data-world="magic"] .page-head { top: 32px; }
   html[data-world="magic"] .page-foot { bottom: 26px; }
   html[data-world="magic"] .volume { padding: 76px 40px 60px; }
-  html[data-world="magic"] #content main.leaves { columns: 1; height: max(280px, calc(100vh - 360px)); font-size: var(--book-font); }
+  html[data-world="magic"] #content main.leaves { columns: 1; height: var(--leaf-height); font-size: var(--book-font); }
   .folio-bar { padding: 10px 4px 16px; }
   .page-turn { font-size: 2.4rem; }
   .folio-book, #page-prev-label, #page-next-label { display: none; }
@@ -534,8 +535,8 @@ html[data-world="magic"] .volume {
   .world-choice strong { font-size: clamp(2.4rem, 6vw, 3.4rem); }
   .world-enter { font-size: 1.8rem; }
   html[data-world="magic"] #content { padding-inline: 12px; }
-  html[data-world="magic"] .volume { padding: 68px 24px 54px; }
-  html[data-world="magic"] #content main.leaves { height: max(280px, calc(100dvh - 390px)); }
+  html[data-world="magic"] .volume { --leaf-height: max(280px, calc(100dvh - 390px)); padding: 68px 24px 54px; }
+  html[data-world="magic"] #content main.leaves { height: var(--leaf-height); }
   html[data-world="magic"] :is(.page-head, .page-foot) {
     width: calc(100% - 48px); inset-inline-start: 24px;
   }
@@ -563,6 +564,8 @@ html[data-world="magic"] {
   --table-alternate-bg: color-mix(in srgb, var(--reader-trim) 6%, var(--reader-paper));
   --table-border-color: color-mix(in srgb, var(--reader-trim) 32%, var(--reader-paper));
 }
+/* Keep a tall table in one scrollport: WebKit otherwise fragments its rows differently after a world switch. */
+html[data-world="magic"] main.leaves .table-wrapper { display: inline-block; vertical-align: top; width: 100%; max-height: var(--leaf-height); overflow: auto; break-inside: avoid; }
 html[data-world="magic"] main.leaves table { color: var(--reader-ink); line-height: 1.65; font-size: .92em; }
 html[data-world="magic"] main.leaves :is(td, th) { padding: .5em .65em; }
 /* Upright type labels match the book; mathematical operators retain their KaTeX glyphs. */
@@ -790,3 +793,8 @@ linear-gradient(var(--reader-trim),var(--reader-trim)) right bottom/1px 24px no-
 html[data-world="magic"] pre > .buttons .clip-button { width:auto; display:inline-flex; align-items:center; gap:6px; padding:6px 9px; font:15px/1.4 var(--reader-sans); }
 html[data-world="magic"] .clip-button::after { content:attr(data-copy-label); white-space:nowrap; }
 html[data-world="magic"] pre:hover > .buttons, html[data-world="magic"] pre:focus-within > .buttons { opacity:1; visibility:visible; }
+
+/* Copy remains discoverable on paper and touch screens; its control row never covers code. */
+html[data-world="magic"] main.leaves pre > .buttons { opacity:1; visibility:visible; }
+html[data-world="magic"] main.leaves pre:has(> .buttons) > code { padding-block-start:48px; }
+@media (hover:none) { pre > .buttons { opacity:1; visibility:visible; } html[data-world="real"] main.leaves pre:has(> .buttons) > code { padding-block-start:48px; } }

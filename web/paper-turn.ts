@@ -22,6 +22,15 @@ function snapshot(source: HTMLElement): HTMLElement {
     img.removeAttribute('sizes');
   });
   copy.querySelectorAll('picture source').forEach((source) => source.remove());
+  // Nested table scroll positions must survive the engine's own cloneNode of the reverse leaf.
+  const tables = source.querySelectorAll<HTMLElement>('.table-wrapper');
+  copy.querySelectorAll<HTMLElement>('.table-wrapper').forEach((port,index) => {
+    const original = tables[index]!;
+    if (!original.scrollLeft && !original.scrollTop) return;
+    port.style.cssText += `width:${original.clientWidth}px;height:${original.clientHeight}px;overflow:hidden;`;
+    const table = port.querySelector<HTMLElement>('table');
+    if (table) table.style.transform = `translate(${-original.scrollLeft}px,${-original.scrollTop}px)`;
+  });
   copy.removeAttribute('id');
   copy.querySelectorAll('[id]').forEach((element) => element.removeAttribute('id'));
   return copy;

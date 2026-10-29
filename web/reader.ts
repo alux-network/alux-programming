@@ -93,7 +93,7 @@ function label(el: HTMLElement, key: string) {
 }
 
 // Localize the native clipboard feedback without replacing mdBook's clipboard handler.
-for (const button of document.querySelectorAll<HTMLButtonElement>('pre .clip-button')) {
+for (const button of document.querySelectorAll<HTMLButtonElement>('#content > .volume:not(.navigation-veil) > main pre .clip-button')) {
   const [action, success, failure] = copyLabels[lang];
   button.dataset.copyLabel = action;
   button.title = action;
@@ -242,12 +242,12 @@ if (gateway) {
 
 const main = document.querySelector<HTMLElement>('#content > .volume:not(.navigation-veil) > main.leaves')!;
 const folio = $('folio');
-const pageNumbers = document.querySelectorAll('.page-number');
+const pageNumbers = main.parentElement!.querySelectorAll(':scope > .page-foot .page-number');
 // The running head names the part the chapter belongs to, as the table of contents lists it.
 const active = document.querySelector('#sidebar a.active')?.closest('li.chapter-item');
 let part = active?.previousElementSibling;
 while (part && !part.matches('.part-title')) part = part.previousElementSibling;
-for (const head of document.querySelectorAll('.running-part')) {
+for (const head of main.parentElement!.querySelectorAll(':scope > .page-head .running-part')) {
   head.textContent = part?.textContent ?? t('Welcome');
 }
 const magic = () => html.dataset.world === 'magic';
@@ -426,7 +426,7 @@ $('page-next').addEventListener('click', () => turn(1));
 main.parentElement!.addEventListener('click', (event) => {
   if (!paged() || event.defaultPrevented || event.button !== 0) return;
   const target = event.target as Element;
-  if (target.closest('a,button,input,select,textarea,summary,video,audio,iframe,pre,code,[contenteditable]')) return;
+  if (target.closest('a,button,input,select,textarea,summary,video,audio,iframe,pre,code,.table-wrapper,[contenteditable]')) return;
   if (getSelection()?.toString()) return;
   // Text nodes may span a column break; test the individual painted line boxes, not a union box.
   const walker = document.createTreeWalker(target, NodeFilter.SHOW_TEXT);
@@ -455,6 +455,9 @@ document.fonts.ready.then(async () => {
     () => veil.remove());
 });
 addEventListener('load', () => { if (!document.querySelector('#content[data-navigation-handoff]')) settle(); });
+// Changing worlds can request different math/UI fonts without resizing the column viewport.
+// Recompute its overflow pagination when those fonts finish, preserving normalized progress.
+document.fonts.addEventListener('loadingdone', settle);
 addEventListener('resize', settle);
 new ResizeObserver(settle).observe(main);
 addEventListener('hashchange', () => { fragmentPending = true; restorePending = false; settle(); });

@@ -56,6 +56,14 @@ async function folio(page: Page) {
 
 /** Waits for the reader's font-dependent geometry to settle. */
 async function ready(page: Page) {
+  const settleFrame = () => page.evaluate(() => {
+    document.documentElement.getBoundingClientRect();
+    document.querySelector('main.leaves')?.getBoundingClientRect();
+    return new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+  });
+  // Force the first layout before awaiting fonts: WebKit can expose an already-resolved
+  // document.fonts.ready before layout has requested the page font.
+  await settleFrame();
   await page.evaluate(() => document.fonts.ready);
   // mdBook's sidebar/page wrapper uses CSS transitions during viewport changes;
   // wait for those and one extra ResizeObserver delivery before reading geometry.
@@ -63,7 +71,8 @@ async function ready(page: Page) {
     const running = document.getAnimations().filter((animation) => animation.playState === 'running');
     await Promise.allSettled(running.map((animation) => animation.finished.catch(() => undefined)));
   });
-  await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+  await page.evaluate(() => document.fonts.ready);
+  await settleFrame();
   await page.waitForFunction(() => {
     const h = document.documentElement;
     return h.dataset.world !== 'magic' || h.dataset.reading === 'scroll' ||
@@ -146,7 +155,7 @@ for (const profile of selected) {
       page.on('requestfailed', (r) => {
         // A navigation aborts the old page's pending requests (Firefox: fonts, the favicon). That is a
         // cancellation, not a missing asset; missing assets still fail through their 404 response.
-        const cancelled = /NS_BINDING_ABORTED|ERR_ABORTED/.test(r.failure()?.errorText ?? '');
+        const cancelled = /NS_BINDING_ABORTED|ERR_ABORTED|Load request cancelled/.test(r.failure()?.errorText ?? '');
         // World choice may also pause the reader's forest bed; both are intentional media aborts.
         const pausedReaderAudio = cancelled && r.resourceType() === 'media' &&
           (/\/audio\/welcome\/[^/]+\.mp3$/.test(r.url()) || /\/audio\/forest-breath\.mp3$/.test(r.url()));
@@ -313,12 +322,28 @@ for (const profile of selected) {
           assert.notEqual(pathname(page), from);
           await page.waitForSelector('[data-navigation-handoff-veil]');
           assert.equal(await page.locator('#content > .volume > main.leaves').evaluate((main) => getComputedStyle(main).visibility), 'hidden', 'the destination keeps real content hidden before reader.js settles');
+          const turnLeafSeen = page.evaluate(() => new Promise<string>((resolve) => {
+            const visibility = () => getComputedStyle(document.querySelector('#content > .volume:not(.navigation-veil) > main.leaves')!).visibility;
+            if (document.querySelector('.turn-leaf')) { resolve(visibility()); return; }
+            const observer = new MutationObserver(() => {
+              if (document.querySelector('.turn-leaf')) { observer.disconnect(); resolve(visibility()); }
+            });
+            observer.observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
+          }));
           releaseReader();
-          await page.waitForSelector('.turn-leaf');
-          assert.equal(await page.locator('#content > .volume > main.leaves').evaluate((main) => getComputedStyle(main).visibility), 'hidden', 'the destination keeps real content hidden during the fold');
+          assert.equal(await turnLeafSeen, 'hidden', 'the destination keeps real content hidden during the fold');
           await page.waitForFunction(() => !document.querySelector('#content[data-navigation-handoff]') && !document.querySelector('.turn-leaf'));
           assert.ok(await page.locator('#content > .volume > main.leaves').isVisible());
           assert.equal(await page.locator('[data-navigation-handoff-veil]').count(), 0);
+          const destinationFolio = await folio(page);
+          const destinationNumbers = await page.locator('#content > .volume:not(.navigation-veil) > .page-foot .page-number').evaluateAll((numbers) => numbers
+            .filter((number) => {
+              const style = getComputedStyle(number), rect = number.getBoundingClientRect();
+              return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0;
+            })
+            .map((number) => Number(number.textContent)));
+          const expectedNumbers = destinationFolio.last === destinationFolio.first ? [destinationFolio.first] : [destinationFolio.first, destinationFolio.last];
+          assert.deepEqual(destinationNumbers, expectedNumbers, 'canonical page numbers match the visible folio after handoff');
         });
       } finally {
         await page.unroute('**/reader.js');
@@ -482,6 +507,20 @@ for (const profile of selected) {
       await page.waitForFunction(() => document.documentElement.dataset.world === 'magic');
       await ready(page);
       assert.deepEqual(await folio(page), progress);
+      const table = page.locator('main.leaves .table-wrapper').first();
+      assert.equal(await table.count(), 1, 'the multi-page world-switch fixture contains a table wrapper');
+      const tableViewport = await table.evaluate((wrapper) => {
+        wrapper.scrollTop = wrapper.scrollHeight;
+        const lastRow = wrapper.querySelector('tbody tr:last-child, tr:last-child');
+        const box = wrapper.getBoundingClientRect();
+        const row = lastRow?.getBoundingClientRect();
+        return {
+          atBottom: wrapper.scrollTop >= wrapper.scrollHeight - wrapper.clientHeight - 1,
+          lastRowVisible: !!row && row.bottom <= box.bottom + 1 && row.top >= box.top - 1,
+        };
+      });
+      assert.equal(tableViewport.atBottom, true, 'table wrapper scroll reaches its complete content');
+      assert.equal(tableViewport.lastRowVisible, true, 'table wrapper keeps the final row visible');
     });
 
     test('the magic world always pages, with a fixed sidebar', async () => {
