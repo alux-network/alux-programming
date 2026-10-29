@@ -66,7 +66,8 @@ Data flows one way:
 
 ```text
 book.toml + src/ + languages.ts
-    -> mdBook per edition (localize.ts swaps in translations)
+    -> mdBook per edition (localize.ts swaps in translations; native admonish and katex expand content)
+    -> mdbook-assets.ts normalizes parsed image destinations for the HTML renderer only
     -> theme/index.hbs renders pages
     -> Vite adds /reader.js (reader.ts) and public/
     -> book/html
@@ -111,7 +112,7 @@ CI runs `npm ci`, `npm run check`, `npm run build`, `npm test`, in that order. R
 - Use mdBook's own mechanisms first: `book.toml`, `MDBOOK_*` environment overrides, a preprocessor, a renderer, the template. Add code only where none of these states the meaning.
 - One source per fact. Languages live only in `languages.ts`; UI labels only in `i18n.ts`; chapter structure only in `SUMMARY.md`. Everything else reads them.
 - Every edition has the same chapter paths. A translation changes text, never URLs, code, math, link targets, media or heading levels.
-- Static files go in `public/` and are linked root-absolute (`/concepts.png`). Nothing static lives in `src/`.
+- Static files go in `public/` and are linked root-absolute (`/concepts.png`). Nothing static lives in `src/`. The HTML-only asset preprocessor runs after native admonish and katex, using parser source positions to change actual image destinations. Do not rewrite Markdown with line/fence heuristics or serialize whole chapters; preserve literal code, image labels, titles and shared link definitions.
 - TypeScript only, ESM, imports with `.ts` extensions. No Python, no shell scripts in the build.
 - No frameworks in the reader. It is one module binding the template's markup by element id.
 - The magic world is always a paged book: no scroll reading mode in it. Continuous scrolling is the real world.
@@ -140,7 +141,7 @@ Every file is a template for the next change, so comments carry the reasoning a 
 ## Tests
 
 - `dev.test.ts`: startup waits for a complete initial edition build; a real watched edit triggers a rebuild, including Windows paths.
-- `public-assets.test.ts`: chapter-relative media paths for native print rendering, preserving code examples.
+- `public-assets.test.ts`: chapter-relative image paths for native print rendering, literal code preservation, exact HTML source attributes and reference images; a native preprocessor fixture checks admonitions in chapter and print pages.
 - `site.test.ts`: the built site against the editions derived from mdBook's book JSON (`book-json.ts` renderer): pages, `lang`/`dir`, titles, links, assets and anchors, plus broken-copy negative tests.
 - `translations.test.ts`: each translation keeps its English chapter's code, math, link targets, media and heading levels.
 - `build.test.ts`: two complete mdBook + Vite builds are identical; a failed reader bundle preserves the previous site. `mdbook.test.ts` checks directory replacement and rollback.

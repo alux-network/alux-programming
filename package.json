@@ -10,6 +10,10 @@
   },
   "devDependencies": {
     "@types/node": "24",
+    "mdast-util-from-markdown": "^2.1.0",
+    "mdast-util-to-markdown": "^2.2.1",
+    "micromark": "^4.0.3",
+    "parse5": "^8.0.1",
     "playwright": "1.62.1",
     "typescript": "7",
     "vite": "8"

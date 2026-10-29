@@ -9,7 +9,7 @@ import { buildBook, replaceDirectory } from './web/mdbook.ts';
 
 const out = resolve('book/html');
 const reader = resolve('web/reader.ts');
-const bookSources = ['src', 'theme', 'book.toml', 'web/localize.ts', 'web/public-assets.ts', 'web/mdbook.ts'].map((path) => normalizePath(resolve(path)));
+const bookSources = ['src', 'theme', 'book.toml', 'web/localize.ts', 'web/public-assets.ts', 'web/mdbook-assets.ts', 'web/mdbook.ts'].map((path) => normalizePath(resolve(path)));
 
 /** Vite plugin that owns the mdBook part of the site. */
 function mdbook(): Plugin {

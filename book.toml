@@ -8,6 +8,11 @@ src = "src"
 command = "node web/localize.ts"
 before = ["links", "admonish", "katex"]
 
+[preprocessor.public-assets]
+command = "node web/mdbook-assets.ts"
+renderers = ["html"]
+after = ["admonish", "katex"]
+
 [preprocessor.admonish]
 command = "mdbook-admonish"
 assets_version = "3.0.3" # do not edit: managed by `mdbook-admonish install`
