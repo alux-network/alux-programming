@@ -547,7 +547,8 @@ html[data-world="magic"] .volume {
   display: grid; grid-template-columns: 32px minmax(0, 1fr); align-items: baseline;
   column-gap: 0; line-height: 1.5; overflow-wrap: break-word;
 }
-.chapter li.chapter-item:not(.affix) > a::before { display: block; width: auto; grid-column: 1; }
+.chapter li.chapter-item:not(.affix) > a::before { display: block; width: auto; grid-column: 1; white-space: nowrap; }
+html[data-world="real"] .chapter li.chapter-item:not(.affix) > a { grid-template-columns: 4ch minmax(0, 1fr); column-gap: .45em; }
 .chapter li.part-title { display: grid; grid-template-columns: 32px minmax(0, 1fr); align-items: baseline; line-height: 1.5; }
 .chapter li.part-title::before { margin: 0; }
 html[data-world="magic"] .chapter li.part-title::before { margin: 0; }
