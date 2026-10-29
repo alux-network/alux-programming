@@ -2,7 +2,7 @@
 ALUX codebase is under active development and is not yet publicly available.
 ```
 
-# <img src="assets/alux-logo.png" style="margin-right: 10px; width: 60px;"> ALUX programming guidelines
+# <img src="/alux-logo.png" style="margin-right: 10px; width: 60px;"> ALUX programming guidelines
 
 ```admonish note
 This book develops the foundation needed to understand and contribute to ALUX’s meaning-first codebase, beginning with a central principle of [Denotational Design](denotational-design/design.md): define what programs mean before deciding how they work.

@@ -2,9 +2,9 @@ name: 📚 Deploy mdBook to GitHub Pages
 
 on:
   push:
-    branches: [master]
+    branches: [master, "fix/**"]
   pull_request:
-    branches: [master]
+    branches: [master, npm-ws]
 
 permissions:
   contents: write
@@ -19,12 +19,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0
 
     - name: Setup Rust
       uses: ./.github/actions/setup-rust
+
+    - name: Setup Node
+      uses: actions/setup-node@v7
+      with:
+        node-version: 24
+        cache: npm
 
     - name: Install mdBook and plugins
       run: |
@@ -42,7 +48,11 @@ jobs:
 
     - name: 🔨 Build
       run: |
-        mdbook build
+        npm ci
+        npx playwright install --with-deps chromium firefox webkit
+        npm run check
+        npm run build
+        npm test
         cp CNAME book/html/CNAME
 
     - name: 🚀 Publish to github-pages branch
