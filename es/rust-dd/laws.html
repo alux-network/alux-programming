@@ -1,0 +1,495 @@
+<!DOCTYPE HTML>
+<html lang="es" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Leyes, escenarios y evidencia - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="Leyes, escenarios y evidencia - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-es.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"Leyes, escenarios y evidencia","sourceHash":"sha256:0e0b9c287cb808a9461b5c166cd42c27ed33514e8f6cafdbb803b8a6d2bdf1a5"} -->
+<h1 id="laws-scenarios-and-evidence"><a class="header" href="#laws-scenarios-and-evidence">Leyes, escenarios y evidencia</a></h1>
+<div id="admonition-relacionado" class="admonition admonish-tip" role="note" aria-labelledby="admonition-relacionado-title">
+<div class="admonition-title">
+<div id="admonition-relacionado-title">
+<p>Relacionado</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-relacionado"></a>
+</div>
+<div>
+<p>La perspectiva semántica: <a href="../denotational-design/laws-and-interpretations.html">Leyes e interpretaciones</a><br />
+Diseño por significado en Rust: <a href="interpreters.html">Intérpretes y efectos</a>, <a href="capability-algebras.html">Álgebras de capacidades</a><br />
+Conceptos: <a href="../concepts/branching.html">Ramificación y confluencia</a>, <a href="../concepts/referential_transparency.html">Transparencia referencial</a></p>
+</div>
+</div>
+<div id="admonition-orientación" class="admonition admonish-note" role="note" aria-labelledby="admonition-orientación-title">
+<div class="admonition-title">
+<div id="admonition-orientación-title">
+<p>Orientación</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-orientación"></a>
+</div>
+<div>
+<p>Los tests son evidencia para una especificación. Comprueba las observaciones públicas y las leyes que admite el dominio elegido, no los pasos privados de ejecución, y expresa esas leyes de forma genérica sobre la capacidad para que rijan todos los intérpretes.</p>
+</div>
+</div>
+<p>El código centrado en el significado necesita tests centrados en el significado. Comprueba las observaciones públicas y las leyes, no los pasos privados de ejecución.</p>
+<h2 id="test-the-specification-surface"><a class="header" href="#test-the-specification-surface">Prueba la superficie de la especificación</a></h2>
+<div id="admonition-test-acoplado-a-la-representación" class="admonition admonish-warning" role="note" aria-labelledby="admonition-test-acoplado-a-la-representación-title">
+<div class="admonition-title">
+<div id="admonition-test-acoplado-a-la-representación-title">
+<p>Test acoplado a la representación</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-test-acoplado-a-la-representación"></a>
+</div>
+<div>
+<p>Esta aserción accede a los campos de un portador, así que ningún otro intérprete puede reutilizarla:</p>
+<pre><code class="language-rust noplayground">// not recommended: asserts a bit layout, not a semantic observation
+assert_eq!(branch.bits, vec![false, true]);</code></pre>
+</div>
+</div>
+<p>Test semántico:</p>
+<pre><code class="language-rust noplayground">let root = alg.branch_root();
+let left = alg.branch_left(&amp;root);
+let left_right = alg.branch_right(&amp;left);
+
+assert_eq!(alg.branch_path(&amp;root, &amp;left_right), Some(vec![Direction::Left, Direction::Right]));</code></pre>
+<p>El primer test puede ser apropiado para un módulo de serialización cuyo objeto sea la codificación de bits. Es evidencia débil para el álgebra de ramificación, porque las representaciones alternativas no pueden compartirlo.</p>
+<h2 id="reusable-law-extensions"><a class="header" href="#reusable-law-extensions">Extensiones de leyes reutilizables</a></h2>
+<p>Cuando una propiedad se aplica a todos los intérpretes compatibles, escríbela una sola vez:</p>
+<pre><code class="language-rust noplayground">use anyhow::{Result, bail, ensure};
+use extend::ext;
+
+#[ext(name = BranchLawsExt)]
+pub impl&lt;This&gt; This
+where
+    This: BranchAlg,
+    This::Branch: Clone + Eq,
+{
+    fn check_branch_root_round_trip(&amp;self, directions: &amp;[Direction]) -&gt; Result&lt;()&gt; {
+        let root = self.branch_root();
+        let branch = directions.iter().copied().fold(root.clone(), |branch, direction| self.branch_grow(&amp;branch, direction));
+
+        let Some(path) = self.branch_path(&amp;root, &amp;branch) else {
+            bail!("grown branch has no path from root");
+        };
+        ensure!(path == directions, "root path did not round-trip");
+        Ok(())
+    }
+}</code></pre>
+<p>Todos los intérpretes ejecutan el mismo comprobador. <code>anyhow::Result</code> transporta el resultado; <code>bail!</code> informa de la observación ausente, mientras <code>ensure!</code> comprueba la ley de ida y vuelta. El comprobador distingue los dos fallos sin depender de una representación de ramificación concreta.</p>
+<h2 id="useful-law-families"><a class="header" href="#useful-law-families">Familias de leyes útiles</a></h2>
+<p>Busca propiedades que ya sugiera la estructura semántica:</p>
+<ul>
+<li>identidad</li>
+<li>asociatividad</li>
+<li>conmutatividad, cuando realmente se pretenda</li>
+<li>idempotencia</li>
+<li>ida y vuelta</li>
+<li>canonización</li>
+<li>refinamiento</li>
+<li>monotonía</li>
+<li>sustitución</li>
+<li>acuerdo entre interpretaciones</li>
+</ul>
+<div id="admonition-afirma-solo-las-leyes-que-admite-el-dominio" class="admonition admonish-warning" role="note" aria-labelledby="admonition-afirma-solo-las-leyes-que-admite-el-dominio-title">
+<div class="admonition-title">
+<div id="admonition-afirma-solo-las-leyes-que-admite-el-dominio-title">
+<p>Afirma solo las leyes que admite el dominio</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-afirma-solo-las-leyes-que-admite-el-dominio"></a>
+</div>
+<div>
+<p>No añadas términos algebraicos conocidos solo porque suenen matemáticos. Enuncia únicamente las leyes que admite el dominio elegido.</p>
+</div>
+</div>
+<h2 id="laws-versus-representation-invariants"><a class="header" href="#laws-versus-representation-invariants">Leyes frente a invariantes de representación</a></h2>
+<p>Manténlos diferenciados:</p>
+<ul>
+<li>
+<p><strong>Ley semántica:</strong> reconstruir una rama a partir de su camino desde la raíz denota la misma rama.</p>
+</li>
+<li>
+<p><strong>Invariante de representación:</strong> los bits altos no utilizados son cero.</p>
+</li>
+<li>
+<p><strong>Ley de serialización:</strong></p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop"><span class="mord mathrm">decode</span></span><span class="mopen">(</span><span class="mop"><span class="mord mathrm">encode</span></span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mclose">))</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span></span></p>
+</li>
+<li>
+<p><strong>Ley de formato canónico:</strong></p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop"><span class="mord mathrm">encode</span></span><span class="mopen">(</span><span class="mop"><span class="mord mathrm">decode</span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">))</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:2em;"></span><span class="mord text"><span class="mord">for canonical byte sequences </span></span><span class="mord mathnormal">x</span></span></span></span></span></p>
+</li>
+</ul>
+<p>Todas pueden ser importantes. Pertenecen a especificaciones distintas.</p>
+<h2 id="shared-scenarios"><a class="header" href="#shared-scenarios">Escenarios compartidos</a></h2>
+<p>Un escenario es una interacción reutilizable escrita contra capacidades públicas. El framework de pruebas de ALUX representa los escenarios así: el código autor construye un valor mediante las capacidades <code>Scenario</code>, <code>DeployerIds</code>, <code>PlayAst</code> y <code>ScenarioSchedule</code> sin nombrar un ejecutor concreto.</p>
+<pre><code class="language-rust noplayground">#[ext(name = HelloScenarioExt)]
+pub impl&lt;This&gt; This
+where
+    This: StandaloneScenario,
+    This::Step: PlayAst&lt;Ast = RProc&gt;,
+{
+    fn hello(self) -&gt; This::Scenario {
+        self.scenario()
+            .under_comprehensive(100)
+            .step(
+                self.play_ast(
+                    self.deployer(0),
+                    tolang! {
+                        let x in {
+                            x ! "hello" |
+                            ? (a &lt;- x) a.log()
+                        }
+                    },
+                )
+                .expect_log(r#""hello""#),
+            )
+    }
+}</code></pre>
+<p>Cada llamada describe el significado definido por el autor, no los mecanismos del ejecutor. <code>under_comprehensive(100)</code> exige el registro esperado en una ejecución secuencial, 100 ejecuciones concurrentes sin restricciones y hasta 100 ejecuciones con permutaciones. El escenario fija la observación mientras el ejecutor varía el orden de ejecución.</p>
+<p>El mismo principio se aplica entre intérpretes: si varios ejecutores implementan las capacidades que usa un escenario, cada uno puede interpretar la misma interacción escrita. La configuración específica del ejecutor y la inspección de límites quedan fuera del escenario.</p>
+<h2 id="cross-interpreter-agreement"><a class="header" href="#cross-interpreter-agreement">Concordancia entre intérpretes</a></h2>
+<p>Cuando dos intérpretes exponen la misma observación, compáralos:</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.06em;vertical-align:-0.31em;"></span><span class="mop"><span class="mord mathrm">interpret_text</span></span><span class="mopen">(</span><span class="mord mathnormal">p</span><span class="mclose">)</span><span class="mord">.</span><span class="mord"><span class="mord mathit">route_names</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.06em;vertical-align:-0.31em;"></span><span class="mop"><span class="mord mathrm">interpret_server</span></span><span class="mopen">(</span><span class="mord mathnormal">p</span><span class="mclose">)</span><span class="mord">.</span><span class="mord"><span class="mord mathit">registered_route_names</span></span></span></span></span></span></p>
+<p>Esto detecta desviaciones que pasan inadvertidas en instantáneas independientes. Resulta especialmente valioso para definiciones de API, fases del compilador y representaciones de datos alternativas.</p>
+<h2 id="finite-evidence-is-not-proof"><a class="header" href="#finite-evidence-is-not-proof">La evidencia finita no es una prueba</a></h2>
+<p>Un test aprobado demuestra el comportamiento para las entradas y las implementaciones probadas. No demuestra una ley para todos los valores.</p>
+<p>Aumenta deliberadamente el nivel de garantía:</p>
+<ol>
+<li>tests de ejemplo</li>
+<li>tests de escenarios reutilizables</li>
+<li>tests de propiedades generados</li>
+<li>comprobaciones exhaustivas sobre dominios finitos</li>
+<li>comparación de modelos</li>
+<li>artefactos de prueba formal</li>
+</ol>
+<p>Elige el nivel según el riesgo y la fuerza de la afirmación.</p>
+<h2 id="test-names-should-state-meaning"><a class="header" href="#test-names-should-state-meaning">Los nombres de los tests deben expresar significado</a></h2>
+<p>Prefiere:</p>
+<ul>
+<li><code>reconstructs_every_generated_branch_from_its_root_path</code></li>
+<li><code>preserves_child_programs_when_routes_are_merged</code></li>
+<li><code>normalization_is_invariant_under_alpha_renaming</code></li>
+</ul>
+<p>Evita nombres que solo narren la implementación:</p>
+<ul>
+<li><code>pushes_three_bits</code></li>
+<li><code>calls_helper_twice</code></li>
+<li><code>visits_left_node_first</code></li>
+</ul>
+<p>Los tests operacionales siguen siendo válidos cuando el orden de las operaciones está especificado. Nombra la observación que hace significativo ese orden.</p>
+<h2 id="review-checks"><a class="header" href="#review-checks">Comprobaciones de revisión</a></h2>
+<ul>
+<li>¿Cada operación semántica nueva tiene una ley o aserción específica?</li>
+<li>¿Las obligaciones reutilizables son genéricas respecto a las capacidades públicas?</li>
+<li>¿Los escenarios están separados de los ejecutores concretos?</li>
+<li>¿Se distinguen las leyes semánticas de los invariantes de representación?</li>
+<li>¿Se comparan varios intérpretes cuando es práctico?</li>
+<li>¿La documentación evita llamar pruebas a los tests finitos?</li>
+</ul>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../rust-dd/interpreters.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../rust-dd/first-order-programs.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../rust-dd/interpreters.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../rust-dd/first-order-programs.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

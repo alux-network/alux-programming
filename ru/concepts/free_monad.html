@@ -1,0 +1,546 @@
+<!DOCTYPE HTML>
+<html lang="ru" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Свободная монада - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="Свободная монада - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-ru.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"Свободная монада","sourceHash":"sha256:1d74262c1053f3cc50c6a3c49b8b9b7eddfb3c6ab6f247530387d19b335f4626"} -->
+<h1 id="free-monad"><a class="header" href="#free-monad">Свободная монада</a></h1>
+<div id="admonition-Связанные-материалы" class="admonition admonish-tip" role="note" aria-labelledby="admonition-Связанные-материалы-title">
+<div class="admonition-title">
+<div id="admonition-Связанные-материалы-title">
+<p>Связанные материалы</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Связанные-материалы"></a>
+</div>
+<div>
+<p>«Проектирование на основе смысла в Rust»: <a href="../rust-dd/first-order-programs.html">Программы первого порядка</a>, <a href="../rust-dd/interpreters.html">Интерпретаторы и эффекты</a><br />
+«Понятия»: <a href="cps.html">Стиль передачи продолжений</a>, <a href="defunctionalization.html">Дефункционализация</a><br />
+«Идеи»: <a href="../insights/evm-alg.html">Алгебра EVM</a></p>
+</div>
+</div>
+<div id="admonition-Семантическое-место" class="admonition admonish-note" role="note" aria-labelledby="admonition-Семантическое-место-title">
+<div class="admonition-title">
+<div id="admonition-Семантическое-место-title">
+<p>Семантическое место</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Семантическое-место"></a>
+</div>
+<div>
+<p>Свободная монада — это представление синтаксиса инструкций со свободно порождаемой последовательностью их выполнения. Функтор инструкций уже задаёт словарь; затем интерпретатор отображает этот синтаксис в семантическую область. Это один из мощных способов кодирования, но не определение денотационного проектирования.</p>
+</div>
+</div>
+<h2 id="what-is-a-free-monad-rust-version"><a class="header" href="#what-is-a-free-monad-rust-version">Что такое свободная монада (версия на Rust)</a></h2>
+<p><strong>Свободная монада</strong> позволяет:</p>
+<ul>
+<li><strong>Описать</strong> программу как <em>данные</em> — не выполняя её сразу.</li>
+<li>Позднее <strong>интерпретировать</strong> эту программу одним или несколькими способами.</li>
+</ul>
+<p>Представьте себе:</p>
+<blockquote>
+<p>AST эффектных операций + <code>bind</code>/<code>flat_map</code> для их цепочки.</p>
+</blockquote>
+<p>Разделяются:</p>
+<ul>
+<li><strong>Синтаксис</strong> → перечисление инструкций.</li>
+<li><strong>Интерпретация</strong> → отображение в выбранную семантическую область, сохраняющее структуру.</li>
+</ul>
+<p>Слово «свободная» означает, что структура монады порождается функтором <code>F</code> без добавления уравнений, кроме законов монады. Выбор <code>F</code> уже задаёт синтаксис инструкций; интерпретация полученной программы задаёт конкретную денотацию.</p>
+<h2 id="rust-implementation"><a class="header" href="#rust-implementation">Реализация на Rust</a></h2>
+<div id="admonition-Схематичное-кодирование" class="admonition admonish-warning" role="note" aria-labelledby="admonition-Схематичное-кодирование-title">
+<div class="admonition-title">
+<div id="admonition-Схематичное-кодирование-title">
+<p>Схематичное кодирование</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Схематичное-кодирование"></a>
+</div>
+<div>
+<p>В Rust нет прямых параметров типов высшего рода, поэтому для промышленного кодирования свободной монады нужны дополнительные типовые механизмы или специализированный функтор инструкций. Следующий код иллюстрирует предполагаемую структуру, а не является готовой обобщённой реализацией.</p>
+</div>
+</div>
+<h3 id="free-monad-type"><a class="header" href="#free-monad-type">Тип свободной монады</a></h3>
+<pre><code class="language-rust noplayground">#[derive(Clone)]
+enum Free&lt;F, A&gt; {
+    Pure(A),
+    Suspend(F),
+    FlatMap(Box&lt;Free&lt;F, A&gt;&gt;, Box&lt;dyn Fn(A) -&gt; Free&lt;F, A&gt;&gt;),
+}
+
+impl&lt;F: Clone + 'static, A: 'static&gt; Free&lt;F, A&gt; {
+    fn pure(a: A) -&gt; Self {
+        Free::Pure(a)
+    }
+
+    fn flat_map&lt;B: 'static, G&gt;(self, f: G) -&gt; Free&lt;F, B&gt;
+    where
+        G: Fn(A) -&gt; Free&lt;F, B&gt; + 'static,
+        F: 'static,
+    {
+        match self {
+            Free::Pure(a) =&gt; f(a),
+            Free::Suspend(op) =&gt; {
+                Free::FlatMap(Box::new(Free::Suspend(op)), Box::new(f))
+            }
+            Free::FlatMap(inner, g) =&gt; {
+                Free::FlatMap(inner, Box::new(move |x| g(x).flat_map(f.clone())))
+            }
+        }
+    }
+}</code></pre>
+<h3 id="dsl-console-operations"><a class="header" href="#dsl-console-operations">DSL: операции консоли</a></h3>
+<pre><code class="language-rust noplayground">#[derive(Clone)]
+enum Console&lt;A&gt; {
+    Print(String, A),
+    ReadLine(fn(String) -&gt; A),
+}
+
+// Smart constructors
+fn print_line(s: &amp;str) -&gt; Free&lt;Console&lt;()&gt;, ()&gt; {
+    Free::Suspend(Console::Print(s.to_string(), ()))
+}
+
+fn read_line() -&gt; Free&lt;Console&lt;String&gt;, String&gt; {
+    Free::Suspend(Console::ReadLine(|input| Free::Pure(input)))
+}</code></pre>
+<h3 id="interpreter"><a class="header" href="#interpreter">Интерпретатор</a></h3>
+<pre><code class="language-rust noplayground">fn run_console&lt;A&gt;(mut prog: Free&lt;Console&lt;A&gt;, A&gt;) -&gt; A {
+    loop {
+        match prog {
+            Free::Pure(a) =&gt; return a,
+            Free::Suspend(Console::Print(s, next)) =&gt; {
+                println!("{}", s);
+                prog = Free::Pure(next);
+            }
+            Free::Suspend(Console::ReadLine(f)) =&gt; {
+                let mut buf = String::new();
+                std::io::stdin().read_line(&amp;mut buf).unwrap();
+                prog = f(buf.trim().to_string());
+            }
+            Free::FlatMap(inner, cont) =&gt; match *inner {
+                Free::Pure(a) =&gt; prog = cont(a),
+                Free::Suspend(op) =&gt; prog = Free::Suspend(op), // minimal handling
+                _ =&gt; unimplemented!(),
+            },
+        }
+    }
+}</code></pre>
+<h3 id="usage"><a class="header" href="#usage">Использование</a></h3>
+<pre><code class="language-rust noplayground">fn main() {
+    let program =
+        print_line("What is your name?")
+        .flat_map(|_| read_line())
+        .flat_map(|name| print_line(&amp;format!("Hello, {name}!")));
+
+    run_console(program);
+}</code></pre>
+<h2 id="takeaway"><a class="header" href="#takeaway">Вывод</a></h2>
+<ul>
+<li><strong>Синтаксис</strong> = <code>enum Console</code> (возможные инструкции)</li>
+<li><strong>Программа</strong> = <code>Free&lt;Console, A&gt;</code> (данные, описывающие шаги)</li>
+<li><strong>Конкретная интерпретация</strong> = <code>run_console</code></li>
+<li>Преимущество: одну программу можно запускать через разные интерпретаторы — например, выполнять реальные операции ввода-вывода, записывать их в файл или компилировать в другой язык.</li>
+</ul>
+<h2 id="correlation-to-continuations-and-cps"><a class="header" href="#correlation-to-continuations-and-cps">Связь с продолжениями и CPS</a></h2>
+<p><strong>Стиль передачи продолжений (CPS)</strong> — способ писать программы, в котором функции не возвращают значения напрямую, а передают результат другой функции (<em>продолжению</em>), представляющему «остаток программы».</p>
+<p><strong>Свободная монада</strong> — это по сути <strong>программа как последовательность шагов</strong>, где каждый шаг говорит:</p>
+<blockquote>
+<p>«Сделай это, затем продолжи оставшуюся часть».</p>
+</blockquote>
+<p>Именно эта «оставшаяся часть программы» и есть <strong>продолжение</strong> — функция, отображающая текущий результат в следующий шаг.</p>
+<ul>
+<li>
+<p>В нашей свободной монаде на Rust:</p>
+<pre><code class="language-rust noplayground">Free::FlatMap(Box&lt;Free&lt;F, A&gt;&gt;, Box&lt;dyn Fn(A) -&gt; Free&lt;F, A&gt;&gt;)</code></pre>
+<p><code>Box&lt;dyn Fn(A) -&gt; Free&lt;F, A&gt;&gt;</code> <strong>и есть продолжение</strong>.</p>
+</li>
+<li>
+<p>При интерпретации свободной монады вы <strong>выполняете программу в стиле CPS</strong>:</p>
+<ul>
+<li>Вместо прямого возврата значений вы передаёте их следующему продолжению.</li>
+<li>Получается цикл из: <code>current_instruction -&gt; feed result into continuation -&gt; next instruction</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Связь с CPS</strong>:</p>
+<ul>
+<li>Свободные монады <em>кодируют CPS в структуре данных</em>.</li>
+<li>CPS <em>представляет ту же идею как поток управления во время выполнения</em>.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Краткое соответствие</strong>:</p>
+<div class="table-wrapper"><table><thead><tr><th>Понятие</th><th>В CPS</th><th>В AST свободной монады</th></tr></thead><tbody>
+<tr><td>Результат шага</td><td>Аргумент продолжения</td><td><code>A</code> в <code>Fn(A) -&gt; Free</code></td></tr>
+<tr><td>Продолжение</td><td>Функция <code>(A) -&gt; R</code></td><td><code>Box&lt;dyn Fn(A) -&gt; Free&gt;</code></td></tr>
+<tr><td>Программа</td><td>Вложенные продолжения</td><td>Вложенные варианты <code>FlatMap</code></td></tr>
+<tr><td>Выполнение</td><td>Вызов функций</td><td>Сопоставление с образцом + вызов</td></tr>
+</tbody></table>
+</div>
+<h2 id="gof-gang-of-four-design-patterns-mapping"><a class="header" href="#gof-gang-of-four-design-patterns-mapping">Соответствия паттернам GoF (Gang of Four)</a></h2>
+<p>Свободные монады <strong>не</strong> относятся к паттернам GoF, поскольку происходят из теории функционального программирования, но они <strong>обобщают</strong> или <strong>имитируют</strong> несколько паттернов:</p>
+<div class="table-wrapper"><table><thead><tr><th>Паттерн GoF</th><th>Связь со свободной монадой</th></tr></thead><tbody>
+<tr><td><strong>Интерпретатор</strong></td><td>Вся конструкция «AST + запуск» буквально соответствует паттерну Интерпретатор: свободные монады просто предоставляют AST и комбинаторы.</td></tr>
+<tr><td><strong>Команда</strong></td><td>Каждый вариант <code>enum</code> в DSL — объект-команда. Свободная монада выстраивает их в цепочку, подобно макрокоманде.</td></tr>
+<tr><td><strong>Компоновщик</strong></td><td>Структура AST (вложенные инструкции) представляет собой компоновщик команд.</td></tr>
+<tr><td><strong>Строитель</strong></td><td>Цепочка <code>.flat_map</code> — удобный интерфейс для последовательного построения программ.</td></tr>
+<tr><td><strong>Посетитель</strong></td><td>Интерпретатор по сути является посетителем набора инструкций.</td></tr>
+</tbody></table>
+</div>
+<h2 id="why-free-monad--these-patterns"><a class="header" href="#why-free-monad--these-patterns">Почему свободные монады шире этих паттернов</a></h2>
+<ul>
+<li>
+<p>Паттерны GoF требуют <strong>ручной объектно-ориентированной работы</strong>: нужно определить интерфейсы и классы, а затем скомпоновать их.</p>
+</li>
+<li>
+<p>Свободные монады имеют <strong>алгебраическую природу</strong>: вы определяете <em>данные</em> для инструкций и <em>функции</em> для их интерпретации.</p>
+</li>
+<li>
+<p>Автоматически предоставляются:</p>
+<ul>
+<li>Последовательное выполнение (<code>flat_map</code>)</li>
+<li>Композиция</li>
+<li>Несколько интерпретаторов без изменений основной логики</li>
+</ul>
+</li>
+</ul>
+<p><strong>Сводная таблица</strong>:</p>
+<div class="table-wrapper"><table><thead><tr><th>Понятие ФП: свободная монада</th><th>Эквивалентный паттерн GoF/ООП</th></tr></thead><tbody>
+<tr><td>Перечисление инструкций</td><td>Команда</td></tr>
+<tr><td>AST программы</td><td>Компоновщик</td></tr>
+<tr><td>Цепочка-<code>flat_map</code></td><td>Строитель</td></tr>
+<tr><td>Функция-интерпретатор</td><td>Интерпретатор / Посетитель</td></tr>
+<tr><td>Несколько интерпретаторов</td><td>Стратегия</td></tr>
+</tbody></table>
+</div>
+<h2 id="relation-to-defunctionalization"><a class="header" href="#relation-to-defunctionalization">Связь с дефункционализацией</a></h2>
+<p><strong>Дефункционализация</strong> — преобразование программы, заменяющее функции высшего порядка структурой данных первого порядка, представляющей возможные функции, и интерпретатором, который их применяет.</p>
+<p>В CPS продолжения являются функциями высшего порядка. Дефункционализация программы в стиле CPS заменяет такие продолжения перечислением вариантов продолжения и функцией <code>apply</code> для их выполнения.</p>
+<p>При подходящем кодировании свободную монаду можно связать с дефункционализированными продолжениями внутри CPS-программы:</p>
+<ol>
+<li>Начните с версии программы в стиле CPS. «Остаток программы» хранится в функциях-продолжениях.</li>
+<li>Преобразуйте эти функции-продолжения в конечный набор вариантов типа данных.</li>
+<li>Полученный тип данных первого порядка может иметь ту же структуру инструкций и продолжений, что и представление свободной монады.</li>
+</ol>
+<p><strong>Основные сходства</strong></p>
+<ul>
+<li>И свободные монады, и дефункционализация создают представление вычисления в виде данных и требуют интерпретатора, чтобы придать этим данным смысл.</li>
+<li>Вариант <code>FlatMap</code> свободной монады содержит продолжение; дефункционализация заменяет замыкание соответствующим вариантом типа данных.</li>
+</ul>
+<p><strong>Основные различия</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>Аспект</th><th>Дефункционализация</th><th>Свободная монада</th></tr></thead><tbody>
+<tr><td>Назначение</td><td>Механический приём компилятора для устранения функций высшего порядка</td><td>Алгебраическое построение для разделения синтаксиса и семантики</td></tr>
+<tr><td>Вход</td><td>Любая программа высшего порядка, часто в форме CPS</td><td>Функтор F, описывающий возможные инструкции</td></tr>
+<tr><td>Результат</td><td>Перечисление вариантов функций и функция применения</td><td><code>Free&lt;F, A&gt;</code> AST и интерпретаторы</td></tr>
+<tr><td>Является ли монадой?</td><td>Не обязательно</td><td>По построению всегда является монадой</td></tr>
+<tr><td>Область применения</td><td>Общее преобразование</td><td>Конкретный паттерн функционального программирования</td></tr>
+</tbody></table>
+</div>
+<p><strong>Итог</strong> Дефункционализация — приём преобразования. Свободные монады — алгебраическое построение. В некоторых представлениях они тесно связаны, но в общем случае ни одно из построений не следует из другого без дополнительных предположений.</p>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../concepts/referential_transparency.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../concepts/cps.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../concepts/referential_transparency.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../concepts/cps.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,591 @@
+<!DOCTYPE HTML>
+<html lang="vi" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Bài toán biểu thức - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="Bài toán biểu thức - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-vi.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"Bài toán biểu thức","sourceHash":"sha256:095010cccfe7dcb155f2ad304d334ffd7d3d56212b3b67168e4f5b04da397ee6"} -->
+<h1 id="expression-problem"><a class="header" href="#expression-problem">Bài toán biểu thức</a></h1>
+<div id="admonition-liên-quan" class="admonition admonish-tip" role="note" aria-labelledby="admonition-liên-quan-title">
+<div class="admonition-title">
+<div id="admonition-liên-quan-title">
+<p>Liên quan</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-liên-quan"></a>
+</div>
+<div>
+<p>Góc nhìn ngữ nghĩa: <a href="../denotational-design/design.html">Thiết kế theo ngữ nghĩa</a>, <a href="../denotational-design/denotations.html">Ngữ nghĩa và tính hợp thành</a><br />
+Thiết kế theo ngữ nghĩa trong Rust: <a href="../rust-dd/capability-algebras.html">Các đại số năng lực</a>, <a href="../rust-dd/derived-meaning.html">Ý nghĩa suy ra và phép hợp thành</a><br />
+Nhận định: <a href="../insights/expression-problem.html">Bài toán biểu thức trở lại</a></p>
+</div>
+</div>
+<div id="admonition-vị-trí-ngữ-nghĩa" class="admonition admonish-note" role="note" aria-labelledby="admonition-vị-trí-ngữ-nghĩa-title">
+<div class="admonition-title">
+<div id="admonition-vị-trí-ngữ-nghĩa-title">
+<p>Vị trí ngữ nghĩa</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-vị-trí-ngữ-nghĩa"></a>
+</div>
+<div>
+<p>Bài toán biểu thức liên quan đến việc mở rộng mô-đun các cách biểu diễn và phép toán. Thiết kế theo ngữ nghĩa đặt ra sớm hơn một câu hỏi: ngay từ đầu, từ vựng ngữ nghĩa và những cách diễn giải nào đáng được biểu diễn?</p>
+</div>
+</div>
+<p>Bài toán biểu thức của Phil Wadler nói về việc mở rộng <strong>đồng thời</strong> một ngôn ngữ theo hai chiều mà không chỉnh sửa mã hiện có:</p>
+<ul>
+<li><strong>Thêm biến thể dữ liệu</strong> (dạng biểu thức mới, còn gọi là “cú pháp”).</li>
+<li><strong>Thêm phép toán mới</strong> (cách diễn giải mới, còn gọi là “ngữ nghĩa”).</li>
+</ul>
+<p>Mâu thuẫn cốt lõi:</p>
+<ul>
+<li>Theo phong cách <strong>hàm/ADT</strong>, thêm phép toán mới thì dễ, nhưng thêm biến thể mới lại xâm lấn.</li>
+<li>Theo phong cách <strong>hướng đối tượng</strong>, thêm biến thể mới thì dễ, nhưng thêm phép toán mới lại xâm lấn.</li>
+</ul>
+<p>Phần này minh họa cả hai phía bằng các ví dụ Haskell và Java nhỏ.</p>
+<h2 id="haskell-functional--adt"><a class="header" href="#haskell-functional--adt">Haskell (hàm / ADT)</a></h2>
+<p>Ta bắt đầu với một ADT kinh điển cho biểu thức và hai phép toán.</p>
+<pre><code class="language-haskell">data Expr
+  = Lit Int
+  | Add Expr Expr
+
+eval :: Expr -&gt; Int
+eval (Lit n)     = n
+eval (Add a b)   = eval a + eval b
+
+pretty :: Expr -&gt; String
+pretty (Lit n)   = show n
+pretty (Add a b) = "(" ++ pretty a ++ " + " ++ pretty b ++ ")"
+</code></pre>
+<p>Giờ đây, <strong>thêm phép toán mới</strong> thật dễ dàng:</p>
+<pre><code class="language-haskell">size :: Expr -&gt; Int
+size (Lit _)   = 1
+size (Add a b) = 1 + size a + size b
+</code></pre>
+<p>Nhưng <strong>thêm biến thể mới</strong> (ví dụ <code>Mul</code>) buộc phải sửa mọi hàm:</p>
+<pre><code class="language-haskell">data Expr
+  = Lit Int
+  | Add Expr Expr
+  | Mul Expr Expr
+
+eval :: Expr -&gt; Int
+eval (Lit n)     = n
+eval (Add a b)   = eval a + eval b
+eval (Mul a b)   = eval a * eval b  -- ✏️ UPDATE: new case
+
+pretty :: Expr -&gt; String
+pretty (Lit n)   = show n
+pretty (Add a b) = "(" ++ pretty a ++ " + " ++ pretty b ++ ")"
+pretty (Mul a b) = "(" ++ pretty a ++ " * " ++ pretty b ++ ")"  -- ✏️ UPDATE: new case
+
+size :: Expr -&gt; Int
+size (Lit _)   = 1
+size (Add a b) = 1 + size a + size b
+size (Mul a b) = 1 + size a + size b  -- ✏️ UPDATE: new case
+</code></pre>
+<p>Theo cách diễn đạt của Wadler, trong hướng ADT, <strong>mở rộng dữ liệu không có tính mô-đun</strong>.</p>
+<h2 id="java-object-oriented"><a class="header" href="#java-object-oriented">Java (hướng đối tượng)</a></h2>
+<p>Ta bắt đầu với một giao diện và các lớp cụ thể cho từng biến thể.</p>
+<pre><code class="language-java">// Expression variants
+interface Expr {
+    int eval();
+    String pretty();
+}
+
+final class Lit implements Expr {
+    private final int n;
+
+    Lit(int n) {
+        this.n = n;
+    }
+
+    public int eval() {
+        return n;
+    }
+
+    public String pretty() {
+        return Integer.toString(n);
+    }
+}
+
+final class Add implements Expr {
+    private final Expr a;
+    private final Expr b;
+
+    Add(Expr a, Expr b) {
+        this.a = a;
+        this.b = b;
+    }
+
+    public int eval() {
+        return a.eval() + b.eval();
+    }
+
+    public String pretty() {
+        return "(" + a.pretty() + " + " + b.pretty() + ")";
+    }
+}
+</code></pre>
+<p>Giờ đây, <strong>thêm biến thể mới</strong> thật dễ dàng:</p>
+<pre><code class="language-java">final class Mul implements Expr {
+    private final Expr a;
+    private final Expr b;
+
+    Mul(Expr a, Expr b) {
+        this.a = a;
+        this.b = b;
+    }
+
+    public int eval() {
+        return a.eval() * b.eval();
+    }
+
+    public String pretty() {
+        return "(" + a.pretty() + " * " + b.pretty() + ")";
+    }
+}
+</code></pre>
+<p>Nhưng <strong>thêm phép toán mới</strong> (ví dụ <code>size</code>) lại xâm lấn. Bạn phải sửa giao diện và mọi lớp:</p>
+<pre><code class="language-java">interface Expr {
+    int eval();
+    String pretty();
+    int size(); // ✏️ UPDATE: new operation added here
+}
+
+final class Lit implements Expr {
+    private final int n;
+
+    Lit(int n) { this.n = n; }
+
+    public int eval() { return n; }
+    public String pretty() { return Integer.toString(n); }
+    public int size() { return 1; } // ✏️ UPDATE: new method in every class
+}
+
+final class Add implements Expr {
+    private final Expr a;
+    private final Expr b;
+
+    Add(Expr a, Expr b) { this.a = a; this.b = b; }
+
+    public int eval() { return a.eval() + b.eval(); }
+    public String pretty() { return "(" + a.pretty() + " + " + b.pretty() + ")"; }
+    public int size() { return 1 + a.size() + b.size(); } // ✏️ UPDATE: new method in every class
+}
+
+final class Mul implements Expr {
+    private final Expr a;
+    private final Expr b;
+
+    Mul(Expr a, Expr b) { this.a = a; this.b = b; }
+
+    public int eval() { return a.eval() * b.eval(); }
+    public String pretty() { return "(" + a.pretty() + " * " + b.pretty() + ")"; }
+    public int size() { return 1 + a.size() + b.size(); } // ✏️ UPDATE: new method in every class
+}
+</code></pre>
+<p>Theo cách diễn đạt của Wadler, trong hướng OO, <strong>mở rộng phép toán không có tính mô-đun</strong>.</p>
+<h2 id="summary-wadlers-point"><a class="header" href="#summary-wadlers-point">Tóm tắt (ý của Wadler)</a></h2>
+<ul>
+<li>Phong cách hàm/ADT thuận lợi cho <strong>phép toán mới</strong> nhưng không thuận lợi cho <strong>biến thể mới</strong>.</li>
+<li>Phong cách OO thuận lợi cho <strong>biến thể mới</strong> nhưng không thuận lợi cho <strong>phép toán mới</strong>.</li>
+<li>Bài toán biểu thức tìm kiếm thiết kế cho phép mở rộng <strong>cả hai</strong> chiều mà không chỉnh sửa mã hiện có.</li>
+</ul>
+<h2 id="wadlers-explanation-and-solution-landscape-1998"><a class="header" href="#wadlers-explanation-and-solution-landscape-1998">Cách giải thích của Wadler và bức tranh các giải pháp (1998)</a></h2>
+<p>Wadler mô tả bài toán là: mở rộng một kiểu dữ liệu <strong>bằng các trường hợp</strong> (biến thể mới) và mở rộng <strong>các hàm trên kiểu dữ liệu đó</strong> (phép toán mới), <em>mà không biên dịch lại mã hiện có</em>, đồng thời giữ được <strong>tính an toàn kiểu tĩnh</strong> (không ép kiểu).</p>
+<p>Ông dùng phép ẩn dụ “bảng”:</p>
+<ul>
+<li><strong>Hàng</strong> = các trường hợp (biến thể / cấu trúc tạo)</li>
+<li><strong>Cột</strong> = hàm (phép toán / cách diễn giải)</li>
+</ul>
+<p>Trong bối cảnh <strong>hàm/ADT</strong>, các hàng cố định còn dễ thêm cột.<br />
+Trong bối cảnh <strong>OO</strong>, các cột cố định còn dễ thêm hàng.<br />
+Thách thức là làm cho <strong>cả hai hướng</strong> đều mở rộng được.</p>
+<h2 id="wadlers-proposed-solution-gj--virtual-types"><a class="header" href="#wadlers-proposed-solution-gj--virtual-types">Giải pháp Wadler đề xuất (GJ + kiểu ảo)</a></h2>
+<p>Wadler trình bày giải pháp trong GJ (Generic Java), sử dụng:</p>
+<ul>
+<li>Tham số có cận <code>This</code> (<code>This extends LangF&lt;This&gt;</code>) để mô phỏng <strong>ThisType</strong>.</li>
+<li><strong>Các lớp và giao diện bên trong</strong> được đánh chỉ mục theo <code>This</code> (kiểu ảo).</li>
+<li>A visitor-based structure that allows:
+<ul>
+<li>Các trường hợp mới (ví dụ <code>Plus</code>) bằng cách phân lớp “họ ngôn ngữ”</li>
+<li>Các phép toán mới (ví dụ <code>Show</code>) bằng cách thêm visitor mới</li>
+</ul>
+</li>
+</ul>
+<p>Mẹo là tham chiếu đến <code>This.Exp</code> và <code>This.Visitor</code> sao cho mỗi giai đoạn mở rộng vẫn an toàn kiểu và có thể biên dịch độc lập.</p>
+<h3 id="caveat-java-inner-interfaces"><a class="header" href="#caveat-java-inner-interfaces">Lưu ý (giao diện bên trong của Java)</a></h3>
+<p>Wadler lưu ý rằng Java xem giao diện bên trong là <strong>tĩnh</strong>, làm hỏng thủ thuật đánh chỉ mục.<br />
+Ông đề xuất nới lỏng hạn chế này để giải pháp khả thi; điều đó vẫn chưa thay đổi trong Java hiện đại (giao diện lồng nhau vẫn mặc định là tĩnh).</p>
+<h2 id="other-solution-directions-mentioned"><a class="header" href="#other-solution-directions-mentioned">Các hướng giải pháp khác được nhắc đến</a></h2>
+<ol>
+<li>
+<p>Cách tiếp cận của Corky Cartwright Cần <strong>mở rộng phản biến</strong>: cho phép kiểu biểu thức cơ sở thay thế kiểu đã mở rộng. Điều này giải thích vì sao dùng điểm bất động: họ ngôn ngữ mở rộng <em>không phải</em> kiểu con của họ gốc.</p>
+</li>
+<li>
+<p>Cách tiếp cận của Kim Bruce Cần <strong>bộ dựng kiểu bậc cao</strong> (tham số hóa một kiểu theo bộ dựng kiểu). GJ không hỗ trợ trực tiếp điều này, nhưng Wadler lập luận kiểu ảo có thể mô phỏng nó.</p>
+</li>
+<li>
+<p>Krishnamurthi và cộng sự (mẫu Extended Visitor) Hoạt động nhờ thiết kế visitor mở rộng. <strong>Không có kiểu tĩnh</strong> trong ngữ cảnh của họ (Pizza), nên cần ép kiểu động.</p>
+</li>
+<li>
+<p>Phần mở rộng ngôn ngữ chuyên biệt Wadler dẫn hai giải pháp dựa vào tính năng ngôn ngữ được thiết kế riêng cho bài toán. Chúng kém tổng quát hơn cách tiếp cận kiểu ảo.</p>
+</li>
+</ol>
+<h2 id="wadlers-two-points"><a class="header" href="#wadlers-two-points">Hai luận điểm của Wadler</a></h2>
+<p>Email của Wadler làm rõ hai điểm:</p>
+<ol>
+<li>Bài toán biểu thức là <strong>mâu thuẫn cấu trúc</strong> giữa việc mở rộng dữ liệu và mở rộng phép toán.</li>
+<li>Solutions are possible, but they tend to require either:
+<ul>
+<li>Các tính năng hệ kiểu mô phỏng <strong>kiểu ảo</strong>, hoặc</li>
+<li>Các phần mở rộng ngôn ngữ chuyên dụng, hoặc</li>
+<li>Sự thỏa hiệp về tính an toàn kiểu tĩnh hoặc biên dịch độc lập.</li>
+</ul>
+</li>
+</ol>
+<h2 id="featherweight-go-solution-2020"><a class="header" href="#featherweight-go-solution-2020">Giải pháp Featherweight Go (2020)</a></h2>
+<p>Wadler đưa ra và đặt tên cho bài toán vào năm 1998. Về sau, Featherweight Go (FG) và phần mở rộng tổng quát FGG (Featherweight Generic Go) đưa ra giải pháp cụ thể hoàn toàn tĩnh trong một ngôn ngữ kiểu Go với giao diện cấu trúc và generic.</p>
+<p>Giải pháp trong bài báo (Hình 8, dạng giản lược) có hai cấu trúc, <code>Num</code> và <code>Plus</code>, cùng hai phép toán, <code>Eval</code> và <code>String</code>:</p>
+<pre><code class="language-go">type Evaler interface { Eval() int }
+type Stringer interface { String() string }
+
+type Num struct { value int }
+type Plus(type a Any) struct { left a; right a }
+
+func (e Num) Eval() int { return e.value }
+func (e Plus(type a Evaler)) Eval() int { return e.left.Eval() + e.right.Eval() }
+
+func (e Num) String() string { return fmt.Sprintf("%d", e.value) }
+func (e Plus(type a Stringer)) String() string {
+    return fmt.Sprintf("(%s+%s)", e.left.String(), e.right.String())
+}
+
+type Expr interface { Evaler; Stringer }
+
+var e Expr = Plus(Expr){Num{1}, Num{2}}
+</code></pre>
+<p>Cơ chế:</p>
+<ul>
+<li><strong>Biểu diễn đệ quy tổng quát.</strong> Các nút con của <code>Plus</code> có tham số kiểu <code>a</code> chỉ bị giới hạn bởi <code>Any</code>. Cấu trúc không bị gắn với một giao diện đóng liệt kê mọi phép toán, nên vẫn có thể thêm phép toán về sau.</li>
+<li><strong>Ràng buộc riêng cho từng phép toán.</strong> Mỗi khai báo phương thức đặt cận độc lập cho <code>a</code>: <code>Plus(type a Evaler)</code> cho <code>Eval</code>, <code>Plus(type a Stringer)</code> cho <code>String</code>. Điều này dựa vào <em>bộ nhận hiệp biến</em> của FGG: cận bộ nhận của phương thức có thể mạnh hơn cận trong khai báo kiểu.</li>
+<li><strong>Giao diện cấu trúc.</strong> Một cấu trúc triển khai giao diện chỉ cần có các phương thức của giao diện, nên có thể khai báo <code>Expr</code> sau <code>Num</code> và <code>Plus</code> mà không đụng đến chúng. Tập phép toán đầy đủ chỉ được cố định tại nơi tạo giá trị (<code>Plus(Expr){...}</code>).</li>
+</ul>
+<p>Các trường hợp mới là cấu trúc mới; các phép toán mới là giao diện và phương thức mới. Không điều nào đòi hỏi thay đổi hoặc biên dịch lại khai báo hiện có, và cũng không cần khẳng định kiểu.</p>
+<h2 id="references"><a class="header" href="#references">Tài liệu tham khảo</a></h2>
+<ul>
+<li>
+<p>Wadler, P. (1998). <em>The Expression Problem</em>. Ghi chú trên danh sách thư Java-Genericity. Nêu công thức và đặt tên cho bài toán.<br />
+<a href="https://homepages.inf.ed.ac.uk/wadler/papers/expression/expression.txt">https://homepages.inf.ed.ac.uk/wadler/papers/expression/expression.txt</a></p>
+</li>
+<li>
+<p>Griesemer, R., Hu, R., Kokke, W., Lange, J., Taylor, I. L., Toninho, B., Wadler, P. và Yoshida, N. (2020). <em>Featherweight Go</em>. Proc. ACM Program. Lang. 4 (OOPSLA). Một giải pháp ngôn ngữ cụ thể về sau, Mục 2.3.<br />
+<a href="https://homepages.inf.ed.ac.uk/wadler/papers/fg/fg.pdf">https://homepages.inf.ed.ac.uk/wadler/papers/fg/fg.pdf</a></p>
+</li>
+</ul>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../concepts/operational_semantics.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../concepts/referential_transparency.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../concepts/operational_semantics.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../concepts/referential_transparency.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

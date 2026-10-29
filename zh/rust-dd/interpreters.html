@@ -1,0 +1,490 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>解释器与效应 - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="解释器与效应 - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-zh.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"解释器与效应","sourceHash":"sha256:4ca52b24121e8361c8cc8983e3807794110bade03c63105c1609e60eb9554b93"} -->
+<h1 id="interpreters-and-effects"><a class="header" href="#interpreters-and-effects">解释器与效应</a></h1>
+<div id="admonition-相关内容" class="admonition admonish-tip" role="note" aria-labelledby="admonition-相关内容-title">
+<div class="admonition-title">
+<div id="admonition-相关内容-title">
+<p>相关内容</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-相关内容"></a>
+</div>
+<div>
+<p>语义视角：<a href="../denotational-design/laws-and-interpretations.html">定律与解释</a><br />
+Rust 中的语义驱动设计：<a href="capability-algebras.html">能力代数</a>、<a href="laws.html">定律、场景与证据</a><br />
+概念：<a href="../concepts/free_monad.html">自由单子</a><br />
+洞见：<a href="../insights/evm-alg.html">EVM 代数</a></p>
+</div>
+</div>
+<div id="admonition-导读" class="admonition admonish-note" role="note" aria-labelledby="admonition-导读-title">
+<div class="admonition-title">
+<div id="admonition-导读-title">
+<p>导读</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-导读"></a>
+</div>
+<div>
+<p>解释器为某种能力选择表示或效应。它实现基本操作，但不会重新定义其上层派生出的领域行为，因此所有解释器都遵循相同定律。</p>
+</div>
+</div>
+<p>解释器使用具体表示或效应来实现语义能力。它应选择实现机制，而不重新定义领域行为。</p>
+<h2 id="a-thin-interpreter"><a class="header" href="#a-thin-interpreter">轻量级解释器</a></h2>
+<p>分支的一种位路径表示可以是：</p>
+<pre><code class="language-rust noplayground">#[derive(Clone, Debug, PartialEq, Eq)]
+struct BitBranch(Vec&lt;Direction&gt;);
+
+struct BitBranchImpl;
+
+impl BranchAlg for BitBranchImpl {
+    type Branch = BitBranch;
+
+    fn branch_root(&amp;self) -&gt; Self::Branch {
+        BitBranch(Vec::new())
+    }
+
+    fn branch_grow(&amp;self, branch: &amp;Self::Branch, direction: Direction) -&gt; Self::Branch {
+        let mut grown = branch.0.clone();
+        grown.push(direction);
+        BitBranch(grown)
+    }
+
+    fn branch_path(&amp;self, ancestor: &amp;Self::Branch, descendant: &amp;Self::Branch) -&gt; Option&lt;Vec&lt;Direction&gt;&gt; {
+        descendant.0.strip_prefix(&amp;ancestor.0[..]).map(&lt;[Direction]&gt;::to_vec)
+    }
+}</code></pre>
+<p>实现负责存储和观察基本事实。<code>branch_left</code>、<code>branch_right</code>和<code>branch_is_ancestor</code>仍留在共享扩展中。</p>
+<h2 id="interpreters-are-boundary-relative"><a class="header" href="#interpreters-are-boundary-relative">解释器取决于边界</a></h2>
+<p>同一种类型在一个边界上可以是解释器，在另一个边界上则可以是语义输入。</p>
+<div class="table-wrapper"><table><thead><tr><th>边界</th><th>使用</th><th>解释</th></tr></thead><tbody>
+<tr><td>文件系统适配器</td><td>文件系统访问</td><td>源代码查找</td></tr>
+<tr><td>规范化器环境</td><td>将源代码查找作为基本能力</td><td>规范化语言构造</td></tr>
+<tr><td>编译器流水线</td><td>规范化项</td><td>可执行程序构造</td></tr>
+</tbody></table>
+</div>
+<p>不存在唯一通用的“实现层”，而是存在嵌套的语义边界。</p>
+<h2 id="effects-at-the-edge"><a class="header" href="#effects-at-the-edge">边界处的效应</a></h2>
+<p>具体解释器负责选择以下内容：</p>
+<ul>
+<li>数据库布局</li>
+<li>异步运行时</li>
+<li>任务所有权</li>
+<li>重试策略</li>
+<li>HTTP 或 RPC 框架类型</li>
+<li>序列化</li>
+<li>锁与通道</li>
+<li>缓存</li>
+</ul>
+<p>除非调用者需要观察这些选择，否则应让它们留在语义 trait 之外。</p>
+<p>例如，语义源代码能力可以返回源代码值与错误。生产解释器可以缓存文件并异步读取；测试解释器则可以使用不可变映射。派生的规范化逻辑应能同时适用于二者。</p>
+<h2 id="runtime-ownership"><a class="header" href="#runtime-ownership">运行时所有权</a></h2>
+<p>框架回调通常要求状态具备所有权、可克隆且线程安全。这是解释器的约束，不一定是领域约束。</p>
+<div id="admonition-不要让框架载体污染基本操作" class="admonition admonish-warning" role="note" aria-labelledby="admonition-不要让框架载体污染基本操作-title">
+<div class="admonition-title">
+<div id="admonition-不要让框架载体污染基本操作-title">
+<p>不要让框架载体污染基本操作</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-不要让框架载体污染基本操作"></a>
+</div>
+<div>
+<p>避免在基本操作中混入框架载体：</p>
+<pre><code class="language-rust noplayground">async fn status(data: FrameworkData&lt;Arc&lt;AppState&gt;&gt;) -&gt; FrameworkJson&lt;Status&gt;;</code></pre>
+</div>
+</div>
+<p>优先采用语义应用方式：</p>
+<pre><code class="language-rust noplayground">trait StatusAlg {
+    type Status;
+
+    async fn status(&amp;self) -&gt; Self::Status;
+}</code></pre>
+<p>Web 解释器可以选择<code>Arc&lt;Context&gt;</code>、提取请求输入、调用<code>status</code>并转换结果。领域调用方无需知道 Web 服务器存在。</p>
+<h2 id="neutral-interpreters"><a class="header" href="#neutral-interpreters">中性解释器</a></h2>
+<p>并非所有解释器都需要执行效应。</p>
+<p>API 程序的文本解释器可以记录：</p>
+<div class="table-wrapper"><table><thead><tr><th>方法</th><th>路径</th><th>输入</th><th>输出</th></tr></thead><tbody>
+<tr><td><code>GET</code></td><td><code>/status</code></td><td>—</td><td>JSON <code>Status</code></td></tr>
+<tr><td><code>POST</code></td><td><code>/temperature</code></td><td>JSON <code>f32</code></td><td>JSON <code>Status</code></td></tr>
+</tbody></table>
+</div>
+<p>元数据解释器可以生成文档。测试解释器可以收集操作名称。生产解释器可以构造服务器路由。</p>
+<p>中性解释器能够证明，程序的含义独立于任何特定运行时。</p>
+<h2 id="composing-interpreters-by-delegation"><a class="header" href="#composing-interpreters-by-delegation">通过委托组合解释器</a></h2>
+<p>由于含义存在于小型能力 trait 中，解释器通常是<em>组装</em>而成，而非从头写出。载体通过委托给已有的能力来获得新能力，因此转发代码由工具生成，无需手写。两种形式几乎就能覆盖所有情况。</p>
+<p><strong>将能力转发给字段。</strong>ambassador 的<code>#[derive(Delegate)]</code>会把整个 trait 转发给内部值。持有多个组件的载体可以将各项能力委托给拥有它的字段，无需编写转发函数体：</p>
+<pre><code class="language-rust noplayground">#[derive(Delegate)]
+#[delegate(Clock, target = "clock")]
+#[delegate(Logger, target = "logger")]
+struct Service {
+    clock: SystemClock,
+    logger: StdoutLogger,
+}</code></pre>
+<p><strong>通过 getter 授予能力。</strong>为类型提供一个 getter，再由整体实现为所有具有该 getter 的类型提供完整能力：</p>
+<pre><code class="language-rust noplayground">trait Logger {
+    fn log(&amp;self, message: &amp;str);
+}
+
+trait HasLogger {
+    type Logger;
+
+    fn logger(&amp;self) -&gt; &amp;Self::Logger;
+}
+
+// Any carrier that can hand back a logger is itself a `Logger`.
+impl&lt;T&gt; Logger for T
+where
+    T: HasLogger,
+    T::Logger: Logger,
+{
+    fn log(&amp;self, message: &amp;str) {
+        self.logger().log(message)
+    }
+}</code></pre>
+<p>这样一来，许多结构体根本无需存在。庞大的上下文对象——一个携带多个关联类型与十几个方法的大型 trait，再加上唯一的具体实现——可以化为几个小型能力 trait，以及一个轻量载体；载体将每种能力委托给提供该能力的字段或 getter。检查截止时间是否已过之类的派生操作，只需作为基本操作之上的扩展编写一次，无需在每个载体上重新实现。</p>
+<div id="admonition-委托转发的是操作而非含义" class="admonition admonish-warning" role="note" aria-labelledby="admonition-委托转发的是操作而非含义-title">
+<div class="admonition-title">
+<div id="admonition-委托转发的是操作而非含义-title">
+<p>委托转发的是操作，而非含义</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-委托转发的是操作而非含义"></a>
+</div>
+<div>
+<p>生成委托代码可以省去样板工作，却不能确立语义上的可替代性。<code>derive</code>诸如 ambassador 的<code>#[derive(Delegate)]</code>宏只能证明实现能够编译，不能证明该载体指称相同的解释器。如果<code>Shared&lt;T&gt;(Arc&lt;T&gt;)</code>要替代<code>T</code>，就应在载体上检查定律——会改变共享性或身份的包装器（<code>Arc</code>、池化、缓存）可能正确转发每个方法，却仍违反新鲜度或唯一性定律。如果载体只是在其他服务之间存放了<code>T</code>，使用投影会比委托更诚实。</p>
+</div>
+</div>
+<h2 id="errors-belong-to-a-boundary"><a class="header" href="#errors-belong-to-a-boundary">错误属于特定边界</a></h2>
+<p>错误应当在负责处理它的边界上传达失败的含义。</p>
+<div class="table-wrapper"><table><thead><tr><th>错误</th><th>边界转换</th></tr></thead><tbody>
+<tr><td>领域错误</td><td>传输解释器将其映射为协议响应</td></tr>
+<tr><td>解析错误</td><td>编译器前端将其映射为诊断信息</td></tr>
+<tr><td>存储错误</td><td>源代码解释器将其映射为语义层面的源代码失败</td></tr>
+</tbody></table>
+</div>
+<p>不要把 HTTP 状态码、RPC 错误对象或数据库错误强加给基本领域 trait。应在解释器边界处转换它们。</p>
+<h2 id="performance-is-an-interpretation-concern-until-observed"><a class="header" href="#performance-is-an-interpretation-concern-until-observed">在性能可观察之前，它属于解释范畴</a></h2>
+<p>批处理、并行、缓存与数据布局通常属于解释器。只有当规范承诺了可观察的顺序、时间、资源使用、公平性或失败行为时，它们才成为语义的一部分。</p>
+<p>这种区分能够在避免语义漂移的同时进行优化：</p>
+<ul>
+<li>遵循相同定律</li>
+<li>声明相同观察</li>
+<li>采用不同操作策略</li>
+</ul>
+<h2 id="review-checks"><a class="header" href="#review-checks">审查要点</a></h2>
+<ul>
+<li>解释器是否实现基本操作，而非重复派生逻辑？</li>
+<li>运行时与框架约束是否限定在使用这些约束的边界内？</li>
+<li>中性解释器或测试解释器能否实现同一能力？</li>
+<li>传输与存储错误是否在边界处转换？</li>
+<li>委托表达的语义关系是否准确？</li>
+<li>根据所述指称，性能差异是否不可观察？</li>
+</ul>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../rust-dd/derived-meaning.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../rust-dd/laws.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../rust-dd/derived-meaning.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../rust-dd/laws.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

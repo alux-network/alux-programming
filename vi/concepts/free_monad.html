@@ -1,0 +1,546 @@
+<!DOCTYPE HTML>
+<html lang="vi" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Monad tự do - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="Monad tự do - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-vi.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"Monad tự do","sourceHash":"sha256:1d74262c1053f3cc50c6a3c49b8b9b7eddfb3c6ab6f247530387d19b335f4626"} -->
+<h1 id="free-monad"><a class="header" href="#free-monad">Monad tự do</a></h1>
+<div id="admonition-liên-quan" class="admonition admonish-tip" role="note" aria-labelledby="admonition-liên-quan-title">
+<div class="admonition-title">
+<div id="admonition-liên-quan-title">
+<p>Liên quan</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-liên-quan"></a>
+</div>
+<div>
+<p>Thiết kế theo ngữ nghĩa trong Rust: <a href="../rust-dd/first-order-programs.html">Chương trình bậc nhất</a>, <a href="../rust-dd/interpreters.html">Bộ diễn giải và hiệu ứng</a><br />
+Khái niệm: <a href="cps.html">Phong cách truyền tiếp nối</a>, <a href="defunctionalization.html">Phi chức năng hóa</a><br />
+Nhận định: <a href="../insights/evm-alg.html">Đại số EVM</a></p>
+</div>
+</div>
+<div id="admonition-vị-trí-ngữ-nghĩa" class="admonition admonish-note" role="note" aria-labelledby="admonition-vị-trí-ngữ-nghĩa-title">
+<div class="admonition-title">
+<div id="admonition-vị-trí-ngữ-nghĩa-title">
+<p>Vị trí ngữ nghĩa</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-vị-trí-ngữ-nghĩa"></a>
+</div>
+<div>
+<p>Monad tự do là cách biểu diễn cú pháp lệnh cùng phép tuần tự hóa được sinh tự do. Bộ thông dịch lệnh đã chọn một từ vựng; sau đó bộ diễn giải ánh xạ cú pháp này vào miền ngữ nghĩa. Đây là một cách mã hóa mạnh mẽ, không phải định nghĩa của Thiết kế theo ngữ nghĩa.</p>
+</div>
+</div>
+<h2 id="what-is-a-free-monad-rust-version"><a class="header" href="#what-is-a-free-monad-rust-version">Monad tự do là gì (phiên bản Rust)</a></h2>
+<p><strong>Monad tự do</strong> cho phép bạn:</p>
+<ul>
+<li><strong>Mô tả</strong> chương trình dưới dạng <em>dữ liệu</em> — thay vì chạy ngay lập tức.</li>
+<li><strong>Diễn giải</strong> chương trình đó về sau theo một hoặc nhiều cách.</li>
+</ul>
+<p>Hãy hình dung nó như sau:</p>
+<blockquote>
+<p>AST của các phép toán có hiệu ứng + <code>bind</code>/<code>flat_map</code> để nối chúng lại.</p>
+</blockquote>
+<p>Bạn tách biệt:</p>
+<ul>
+<li><strong>Cú pháp</strong> → enum các lệnh.</li>
+<li><strong>Cách diễn giải</strong> → ánh xạ bảo toàn cấu trúc vào miền ngữ nghĩa đã chọn.</li>
+</ul>
+<p>“Tự do” nghĩa là cấu trúc monad được sinh từ một functor <code>F</code> mà không thêm phương trình nào ngoài các định luật monad. Việc chọn <code>F</code> đã chọn cú pháp lệnh; diễn giải chương trình thu được sẽ cung cấp một ngữ nghĩa chỉ định cụ thể.</p>
+<h2 id="rust-implementation"><a class="header" href="#rust-implementation">Triển khai bằng Rust</a></h2>
+<div id="admonition-cách-mã-hóa-sơ-đồ" class="admonition admonish-warning" role="note" aria-labelledby="admonition-cách-mã-hóa-sơ-đồ-title">
+<div class="admonition-title">
+<div id="admonition-cách-mã-hóa-sơ-đồ-title">
+<p>Cách mã hóa sơ đồ</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-cách-mã-hóa-sơ-đồ"></a>
+</div>
+<div>
+<p>Rust không có tham số kiểu bậc cao trực tiếp, vì vậy cách mã hóa monad tự do dùng trong sản phẩm cần thêm cơ chế cấp kiểu hoặc một functor lệnh chuyên biệt. Đoạn mã sau minh họa hình dạng dự định; không phải triển khai tổng quát có thể dùng ngay.</p>
+</div>
+</div>
+<h3 id="free-monad-type"><a class="header" href="#free-monad-type">Kiểu monad tự do</a></h3>
+<pre><code class="language-rust noplayground">#[derive(Clone)]
+enum Free&lt;F, A&gt; {
+    Pure(A),
+    Suspend(F),
+    FlatMap(Box&lt;Free&lt;F, A&gt;&gt;, Box&lt;dyn Fn(A) -&gt; Free&lt;F, A&gt;&gt;),
+}
+
+impl&lt;F: Clone + 'static, A: 'static&gt; Free&lt;F, A&gt; {
+    fn pure(a: A) -&gt; Self {
+        Free::Pure(a)
+    }
+
+    fn flat_map&lt;B: 'static, G&gt;(self, f: G) -&gt; Free&lt;F, B&gt;
+    where
+        G: Fn(A) -&gt; Free&lt;F, B&gt; + 'static,
+        F: 'static,
+    {
+        match self {
+            Free::Pure(a) =&gt; f(a),
+            Free::Suspend(op) =&gt; {
+                Free::FlatMap(Box::new(Free::Suspend(op)), Box::new(f))
+            }
+            Free::FlatMap(inner, g) =&gt; {
+                Free::FlatMap(inner, Box::new(move |x| g(x).flat_map(f.clone())))
+            }
+        }
+    }
+}</code></pre>
+<h3 id="dsl-console-operations"><a class="header" href="#dsl-console-operations">DSL: các thao tác bảng điều khiển</a></h3>
+<pre><code class="language-rust noplayground">#[derive(Clone)]
+enum Console&lt;A&gt; {
+    Print(String, A),
+    ReadLine(fn(String) -&gt; A),
+}
+
+// Smart constructors
+fn print_line(s: &amp;str) -&gt; Free&lt;Console&lt;()&gt;, ()&gt; {
+    Free::Suspend(Console::Print(s.to_string(), ()))
+}
+
+fn read_line() -&gt; Free&lt;Console&lt;String&gt;, String&gt; {
+    Free::Suspend(Console::ReadLine(|input| Free::Pure(input)))
+}</code></pre>
+<h3 id="interpreter"><a class="header" href="#interpreter">Bộ diễn giải</a></h3>
+<pre><code class="language-rust noplayground">fn run_console&lt;A&gt;(mut prog: Free&lt;Console&lt;A&gt;, A&gt;) -&gt; A {
+    loop {
+        match prog {
+            Free::Pure(a) =&gt; return a,
+            Free::Suspend(Console::Print(s, next)) =&gt; {
+                println!("{}", s);
+                prog = Free::Pure(next);
+            }
+            Free::Suspend(Console::ReadLine(f)) =&gt; {
+                let mut buf = String::new();
+                std::io::stdin().read_line(&amp;mut buf).unwrap();
+                prog = f(buf.trim().to_string());
+            }
+            Free::FlatMap(inner, cont) =&gt; match *inner {
+                Free::Pure(a) =&gt; prog = cont(a),
+                Free::Suspend(op) =&gt; prog = Free::Suspend(op), // minimal handling
+                _ =&gt; unimplemented!(),
+            },
+        }
+    }
+}</code></pre>
+<h3 id="usage"><a class="header" href="#usage">Cách dùng</a></h3>
+<pre><code class="language-rust noplayground">fn main() {
+    let program =
+        print_line("What is your name?")
+        .flat_map(|_| read_line())
+        .flat_map(|name| print_line(&amp;format!("Hello, {name}!")));
+
+    run_console(program);
+}</code></pre>
+<h2 id="takeaway"><a class="header" href="#takeaway">Điểm chính</a></h2>
+<ul>
+<li><strong>Cú pháp</strong> = <code>enum Console</code> (các lệnh có thể có)</li>
+<li><strong>Chương trình</strong> = <code>Free&lt;Console, A&gt;</code> (dữ liệu mô tả các bước)</li>
+<li><strong>Cách diễn giải cụ thể</strong> = <code>run_console</code></li>
+<li>Lợi ích: Bạn có thể viết nhiều bộ diễn giải cho cùng một chương trình — ví dụ chạy với IO thật, ghi nhật ký vào tệp hoặc biên dịch sang ngôn ngữ khác.</li>
+</ul>
+<h2 id="correlation-to-continuations-and-cps"><a class="header" href="#correlation-to-continuations-and-cps">Tương quan với tiếp nối và CPS</a></h2>
+<p><strong>Phong cách truyền tiếp nối (CPS)</strong> là cách viết chương trình trong đó hàm không bao giờ trả giá trị trực tiếp mà truyền kết quả cho một hàm khác (<em>tiếp nối</em>) biểu thị “phần còn lại của chương trình”.</p>
+<p><strong>Monad tự do</strong> về cơ bản là một <strong>chương trình dưới dạng chuỗi bước</strong>, trong đó mỗi bước nói rằng:</p>
+<blockquote>
+<p>“Làm việc này, rồi tiếp tục với phần còn lại.”</p>
+</blockquote>
+<p>“Phần còn lại của chương trình” đó chính là một <strong>tiếp nối</strong> — hàm ánh xạ kết quả hiện tại sang bước tiếp theo.</p>
+<ul>
+<li>
+<p>Trong monad tự do Rust của chúng ta:</p>
+<pre><code class="language-rust noplayground">Free::FlatMap(Box&lt;Free&lt;F, A&gt;&gt;, Box&lt;dyn Fn(A) -&gt; Free&lt;F, A&gt;&gt;)</code></pre>
+<p><code>Box&lt;dyn Fn(A) -&gt; Free&lt;F, A&gt;&gt;</code> <strong>là tiếp nối</strong>.</p>
+</li>
+<li>
+<p>Khi diễn giải monad tự do, bạn đang <strong>chạy theo CPS</strong>:</p>
+<ul>
+<li>Thay vì trả về giá trị trực tiếp, bạn truyền chúng vào tiếp nối kế tiếp.</li>
+<li>Kết quả là một vòng lặp gồm: <code>current_instruction -&gt; feed result into continuation -&gt; next instruction</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Quan hệ CPS</strong>:</p>
+<ul>
+<li>Monad tự do <em>mã hóa CPS trong một cấu trúc dữ liệu</em>.</li>
+<li>CPS <em>là cách biểu diễn luồng điều khiển lúc chạy</em> của cùng ý tưởng.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Bảng đối chiếu nhanh</strong>:</p>
+<div class="table-wrapper"><table><thead><tr><th>Khái niệm</th><th>Trong CPS</th><th>Trong AST monad tự do</th></tr></thead><tbody>
+<tr><td>Kết quả bước</td><td>Đối số cho tiếp nối</td><td><code>A</code> trong <code>Fn(A) -&gt; Free</code></td></tr>
+<tr><td>Tiếp nối</td><td>Hàm <code>(A) -&gt; R</code></td><td><code>Box&lt;dyn Fn(A) -&gt; Free&gt;</code></td></tr>
+<tr><td>Chương trình</td><td>Tiếp nối lồng nhau</td><td>Các biến thể <code>FlatMap</code> lồng nhau</td></tr>
+<tr><td>Thực thi</td><td>Gọi hàm</td><td>Đối sánh mẫu + gọi</td></tr>
+</tbody></table>
+</div>
+<h2 id="gof-gang-of-four-design-patterns-mapping"><a class="header" href="#gof-gang-of-four-design-patterns-mapping">Ánh xạ với các mẫu thiết kế GoF (Gang of Four)</a></h2>
+<p>Monad tự do <strong>không thuộc</strong> GoF vì chúng bắt nguồn từ lý thuyết lập trình hàm, nhưng chúng <strong>bao hàm</strong> hoặc <strong>mô phỏng</strong> một số mẫu:</p>
+<div class="table-wrapper"><table><thead><tr><th>Mẫu GoF</th><th>Quan hệ với monad tự do</th></tr></thead><tbody>
+<tr><td><strong>Interpreter</strong></td><td>Toàn bộ cấu trúc “AST + chạy” chính là mẫu Interpreter — monad tự do chỉ cung cấp AST và bộ kết hợp miễn phí.</td></tr>
+<tr><td><strong>Command</strong></td><td>Mỗi biến thể <code>enum</code> trong DSL là một đối tượng Command. Monad tự do nối chuỗi chúng như một macro-command.</td></tr>
+<tr><td><strong>Composite</strong></td><td>Cấu trúc AST (các lệnh lồng nhau) là Composite của các lệnh.</td></tr>
+<tr><td><strong>Builder</strong></td><td>Chuỗi <code>.flat_map</code> là builder dạng nối chuỗi để tạo chương trình.</td></tr>
+<tr><td><strong>Visitor</strong></td><td>Bộ diễn giải về cơ bản là visitor duyệt tập lệnh.</td></tr>
+</tbody></table>
+</div>
+<h2 id="why-free-monad--these-patterns"><a class="header" href="#why-free-monad--these-patterns">Vì sao monad tự do vượt trội các mẫu này</a></h2>
+<ul>
+<li>
+<p>Mẫu GoF là công việc OO <strong>thủ công</strong> — bạn định nghĩa giao diện, lớp và cách hợp thành chúng.</p>
+</li>
+<li>
+<p>Monad tự do có tính <strong>đại số</strong> — bạn định nghĩa <em>dữ liệu</em> cho lệnh và <em>hàm</em> để diễn giải chúng.</p>
+</li>
+<li>
+<p>Bạn tự động có:</p>
+<ul>
+<li>Tuần tự hóa (<code>flat_map</code>)</li>
+<li>Phép hợp thành</li>
+<li>Nhiều bộ diễn giải mà không đụng đến logic lõi</li>
+</ul>
+</li>
+</ul>
+<p><strong>Bảng tóm tắt</strong>:</p>
+<div class="table-wrapper"><table><thead><tr><th>Khái niệm FP monad tự do</th><th>Mẫu GoF/OOP tương đương</th></tr></thead><tbody>
+<tr><td>Enum lệnh</td><td>Command</td></tr>
+<tr><td>AST chương trình</td><td>Composite</td></tr>
+<tr><td>Builder <code>flat_map</code></td><td>Builder</td></tr>
+<tr><td>Hàm diễn giải</td><td>Interpreter / Visitor</td></tr>
+<tr><td>Nhiều bộ diễn giải</td><td>Strategy</td></tr>
+</tbody></table>
+</div>
+<h2 id="relation-to-defunctionalization"><a class="header" href="#relation-to-defunctionalization">Quan hệ với phi chức năng hóa</a></h2>
+<p><strong>Phi chức năng hóa</strong> là phép biến đổi chương trình thay hàm bậc cao bằng cấu trúc dữ liệu bậc nhất biểu diễn các hàm có thể có, cùng một bộ diễn giải áp dụng chúng.</p>
+<p>Trong CPS, tiếp nối là hàm bậc cao. Phi chức năng hóa chương trình CPS thay các tiếp nối đó bằng enum các trường hợp tiếp nối và một hàm <code>apply</code> để chạy chúng.</p>
+<p>Với cách mã hóa phù hợp, có thể liên hệ monad tự do với các tiếp nối đã phi chức năng hóa bên trong chương trình chuyển đổi sang CPS:</p>
+<ol>
+<li>Bắt đầu bằng phiên bản CPS của chương trình. “Phần còn lại của chương trình” được mang trong các hàm tiếp nối.</li>
+<li>Phi chức năng hóa các hàm tiếp nối đó thành tập hữu hạn trường hợp trong kiểu dữ liệu.</li>
+<li>Kiểu dữ liệu bậc nhất thu được có thể mang cùng hình dạng lệnh-và-tiếp-nối như một biểu diễn monad tự do.</li>
+</ol>
+<p><strong>Điểm tương đồng chính</strong></p>
+<ul>
+<li>Cả monad tự do lẫn phi chức năng hóa đều tạo biểu diễn dữ liệu cho phép tính và cần bộ diễn giải để gán ý nghĩa cho dữ liệu đó.</li>
+<li>Trường hợp <code>FlatMap</code> trong monad tự do giữ tiếp nối; phi chức năng hóa thay closure đó bằng một trường hợp trong kiểu dữ liệu.</li>
+</ul>
+<p><strong>Khác biệt chính</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>Khía cạnh</th><th>Phi chức năng hóa</th><th>Monad tự do</th></tr></thead><tbody>
+<tr><td>Mục đích</td><td>Kỹ thuật trình biên dịch mang tính cơ học để loại bỏ hàm bậc cao</td><td>Cấu trúc đại số để tách cú pháp khỏi ngữ nghĩa</td></tr>
+<tr><td>Đầu vào</td><td>Bất kỳ chương trình bậc cao nào, thường ở dạng CPS</td><td>Functor F mô tả các lệnh có thể có</td></tr>
+<tr><td>Đầu ra</td><td>Enum các trường hợp hàm cùng hàm apply</td><td><code>Free&lt;F, A&gt;</code> AST cùng các bộ diễn giải</td></tr>
+<tr><td>Monad?</td><td>Không nhất thiết</td><td>Luôn là monad do cách kiến tạo</td></tr>
+<tr><td>Phạm vi</td><td>Phép biến đổi tổng quát</td><td>Mẫu lập trình hàm chuyên biệt</td></tr>
+</tbody></table>
+</div>
+<p><strong>Tóm tắt</strong> Phi chức năng hóa là kỹ thuật biến đổi. Monad tự do là cấu trúc đại số. Chúng có liên hệ chặt chẽ trong một số cách biểu diễn, nhưng nói chung không cách nào suy ra cách kia nếu thiếu giả định bổ sung.</p>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../concepts/referential_transparency.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../concepts/cps.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../concepts/referential_transparency.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../concepts/cps.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

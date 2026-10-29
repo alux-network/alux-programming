@@ -1,0 +1,388 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>ALUX 编程 - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="ALUX 编程 - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-zh.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+            try {
+                if (location.hash === '#worlds' || !sessionStorage.getItem('alux-entered')) {
+                    document.documentElement.dataset.gateway = '';
+                }
+            } catch (e) { }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/index.css">
+        <link rel="stylesheet" href="theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <section id="gateway" class="gateway" aria-label="Choose your world" data-i18n>
+            <button id="welcome-play" class="gateway-welcome" type="button">
+                <i class="fa fa-play" aria-hidden="true"></i> <span data-i18n>Listen to the welcome</span>
+            </button>
+            <label class="language">
+                <i class="fa fa-globe" aria-hidden="true"></i>
+                <select class="language-picker" title="Language" aria-label="Language" data-i18n></select>
+            </label>
+            <button class="world-choice magic" type="button" data-world="magic">
+                <i class="fa fa-magic" aria-hidden="true"></i>
+                <strong data-i18n>Magic world</strong>
+                <span class="world-enter"><span data-i18n>Click to enter</span> ↗</span>
+            </button>
+            <img class="gateway-wizard" src="/wizard-standing.webp" alt="">
+            <button class="world-choice real" type="button" data-world="real">
+                <i class="fa fa-code" aria-hidden="true"></i>
+                <strong data-i18n>Real world</strong>
+                <span class="world-enter"><span data-i18n>Click to enter</span> ↗</span>
+            </button>
+            <audio id="welcome-audio" src="/audio/welcome/zh.mp3" preload="none"></audio>
+        </section>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"ALUX 编程","parts":{"Welcome":"欢迎","The Semantic View":"语义视角","Design by Meaning in Rust":"Rust 中的语义驱动设计","Concepts":"概念","Insights":"洞见","Contributing":"参与贡献"},"sourceHash":"sha256:81b904efbe52746e7c430050f24b67bda84b62fab618ace269ce404c69b04146"} -->
+<div id="admonition-alux-项目" class="admonition admonish-warning" role="note" aria-labelledby="admonition-alux-项目-title">
+<div class="admonition-title">
+<div id="admonition-alux-项目-title">
+<p>ALUX 项目</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-alux-项目"></a>
+</div>
+<div>
+<p>ALUX 代码库仍在积极开发中，尚未公开。</p>
+</div>
+</div>
+<h1 id="alux-programming-guidelines"><a class="header" href="#alux-programming-guidelines"><img src="../alux-logo.png" style="margin-right: 10px; width: 60px;"> ALUX 编程指南</a></h1>
+<div id="admonition-注" class="admonition admonish-note" role="note" aria-labelledby="admonition-注-title">
+<div class="admonition-title">
+<div id="admonition-注-title">
+<p>注</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-注"></a>
+</div>
+<div>
+<p>本书将介绍理解并参与 ALUX 语义优先代码库所需的基础，从<a href="denotational-design/design.html">指称设计</a>的一项核心原则讲起：先定义程序的含义，再决定程序如何运行。</p>
+<p>沿袭 Conal Elliott 的思路，本书将计算视为清晰的数学对象，而不是不透明的步骤序列。</p>
+<p>规范以简单、可组合的<a href="rust-dd/capability-algebras.html">能力 trait</a>表达，用来描述程序<em>意味着什么</em>。<a href="rust-dd/interpreters.html">解释器</a>提供可互换的方式来<em>实现</em>这些含义。</p>
+<p>这样一来，软件的组合规则、实现义务和<a href="denotational-design/laws-and-interpretations.html">有效等式</a>都更容易理解和测试。</p>
+</div>
+</div>
+<div id="admonition-机制与含义" class="admonition admonish-quote" role="note" aria-labelledby="admonition-机制与含义-title">
+<div class="admonition-title">
+<div id="admonition-机制与含义-title">
+<p>机制与含义</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-机制与含义"></a>
+</div>
+<div>
+<p><a href="concepts/index.html">概念</a>与<a href="insights/index.html">洞见</a>用于说明实用的编程机制。<a href="denotational-design/design.html">指称设计</a>则说明如何判断这些机制应当保留什么。</p>
+</div>
+</div>
+<h2 id="how-to-read-this-book"><a class="header" href="#how-to-read-this-book">如何阅读本书</a></h2>
+<p>本书分三个层次阅读：</p>
+<ul>
+<li><a href="denotational-design/semantic-view.html"><strong>语义视角</strong></a>介绍<a href="denotational-design/denotations.html">指称与组合性</a>、<a href="denotational-design/laws-and-interpretations.html">定律与解释</a>，以及含义与表示之间的关系。</li>
+<li><a href="rust-dd/capability-algebras.html"><strong>Rust 中的语义驱动设计</strong></a>将这一视角落实为<a href="rust-dd/capability-algebras.html">小型能力</a>、<a href="rust-dd/derived-meaning.html">派生扩展</a>、<a href="rust-dd/first-order-programs.html">一阶程序</a>和<a href="rust-dd/interpreters.html">轻量级解释器</a>。</li>
+<li><a href="concepts/index.html"><strong>概念</strong></a>与<a href="insights/index.html"><strong>洞见</strong></a>介绍重要的执行模型、编码、变换与联系。</li>
+</ul>
+<p>语义原则不依赖特定语言。Rust 是主要实现语言；一条<a href="rust-dd/compiler-pipelines.html">并发语言处理流水线</a>将这些原则与 Tolang 联系起来。</p>
+<h2 id="who-this-book-is-for"><a class="header" href="#who-this-book-is-for">本书适合谁</a></h2>
+<ul>
+<li>希望复杂软件在不断演进时仍能保持<strong>模块化、可组合、可测试且易于维护</strong>的程序员。</li>
+<li>希望<strong>连接范畴论、类型系统与程序设计</strong>的开发者。</li>
+<li>熟悉表示与操作技术的读者——例如<a href="concepts/free_monad.html"><strong>自由单子</strong></a>、<a href="concepts/cps.html"><strong>延续传递风格（CPS）</strong></a>和<a href="concepts/defunctionalization.html"><strong>去函数化</strong></a>——希望理解这些机制如何服务于语义优先设计，而非定义它。</li>
+<li>熟悉<a href="denotational-design/dependent-types.html"><strong>依赖类型</strong></a>与证明导向编程，并希望在编写高性能 Rust 时运用这套思维方式的读者。</li>
+<li>需要阅读<a href="rust-dd/capability-algebras.html">语义优先的 Rust 规范</a>，并理解如何<a href="rust-dd/compiler-pipelines.html">编译并发语言</a>，而不以编译器本身作为语言定义依据的贡献者。</li>
+</ul>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+                            <a rel="next prefetch" href="denotational-design/semantic-view.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+                    <a rel="next prefetch" href="denotational-design/semantic-view.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

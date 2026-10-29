@@ -1,0 +1,469 @@
+<!DOCTYPE HTML>
+<html lang="vi" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Thiết kế theo ngữ nghĩa - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="Thiết kế theo ngữ nghĩa - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-vi.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"Thiết kế theo ngữ nghĩa","sourceHash":"sha256:bac0e12637b9f63a8fa1002e44ca58f04237a81e1bc18da343cf22e360a85e8e"} -->
+<h1 id="denotational-design"><a class="header" href="#denotational-design">Thiết kế theo ngữ nghĩa</a></h1>
+<div id="admonition-liên-quan" class="admonition admonish-tip" role="note" aria-labelledby="admonition-liên-quan-title">
+<div class="admonition-title">
+<div id="admonition-liên-quan-title">
+<p>Liên quan</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-liên-quan"></a>
+</div>
+<div>
+<p>Góc nhìn ngữ nghĩa: <a href="denotations.html">Ngữ nghĩa và tính hợp thành</a>, <a href="laws-and-interpretations.html">Định luật và cách diễn giải</a><br />
+Thiết kế theo ngữ nghĩa trong Rust: <a href="../rust-dd/capability-algebras.html">Các đại số năng lực</a>, <a href="../rust-dd/derived-meaning.html">Ý nghĩa suy ra và phép hợp thành</a></p>
+</div>
+</div>
+<div id="admonition-Ý-tưởng-cốt-lõi" class="admonition admonish-note" role="note" aria-labelledby="admonition-Ý-tưởng-cốt-lõi-title">
+<div class="admonition-title">
+<div id="admonition-Ý-tưởng-cốt-lõi-title">
+<p>Ý tưởng cốt lõi</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Ý-tưởng-cốt-lõi"></a>
+</div>
+<div>
+<p>Thiết kế theo ngữ nghĩa suy ra giao diện lập trình từ các ý nghĩa đơn giản, có thể hợp thành và độc lập với triển khai, để ngữ nghĩa dẫn dắt thiết kế thay vì chỉ mô tả giao diện sau khi đã tạo ra.</p>
+</div>
+</div>
+<p>Thiết kế theo ngữ nghĩa là phương pháp suy ra giao diện lập trình từ các ý nghĩa đơn giản, có thể hợp thành và độc lập với cách triển khai.</p>
+<p>Phương pháp này do <a href="http://conal.net/">Conal Elliott</a> phát triển và đặt tên. Bước cốt lõi không chỉ là gán ngữ nghĩa cho một ngôn ngữ hay API có sẵn, mà là để ngữ nghĩa dẫn dắt chính việc thiết kế API.</p>
+<h2 id="the-design-loop"><a class="header" href="#the-design-loop">Vòng lặp thiết kế</a></h2>
+<p>Thực hiện theo thứ tự này:</p>
+<ol>
+<li>Chọn miền ngữ nghĩa.</li>
+<li>Xác định cấu trúc quan trọng trong miền đó.</li>
+<li>Chọn tập từ vựng nhỏ gồm các phép toán nguyên thủy.</li>
+<li>Suy ra các phép toán hữu ích bằng tính hợp thành.</li>
+<li>Phát biểu các định luật mà những phép toán đó tuân theo.</li>
+<li>Chọn một hoặc nhiều cách biểu diễn.</li>
+<li>Triển khai các cách diễn giải bảo toàn cấu trúc.</li>
+<li>Thẩm định chúng bằng định luật, mô hình và tình huống.</li>
+</ol>
+<p>Thiết kế ưu tiên biểu diễn thường bắt đầu ở bước 6 rồi cố khôi phục các bước 1–5 sau đó.</p>
+<h2 id="designing-a-branch-algebra"><a class="header" href="#designing-a-branch-algebra">Thiết kế đại số nhánh</a></h2>
+<p>Hãy quay lại các vị trí nhánh. Ý nghĩa mong muốn là một đường đi hữu hạn trong cấu trúc phân nhánh nhị phân.</p>
+<p>Một đại số nguyên thủy có thể là:</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:4.5em;vertical-align:-2em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.5em;"><span style="top:-4.66em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mord mathrm">root</span></span></span></span><span style="top:-3.16em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">grow</span></span></span></span><span style="top:-1.66em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mord mathrm">path</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.5em;"><span style="top:-4.66em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace nobreak"></span><span class="mspace" style="margin-right:0.1111em;"></span><span class="mpunct"></span><span class="mspace" style="margin-right:-0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mrel">:</span></span><span class="mspace" style="margin-right:0.3333em;"></span><span class="mord"><span class="mopen">(</span><span class="mclose">)</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord"><span class="mord mathsf">Branch</span></span></span></span><span style="top:-3.16em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace nobreak"></span><span class="mspace" style="margin-right:0.1111em;"></span><span class="mpunct"></span><span class="mspace" style="margin-right:-0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mrel">:</span></span><span class="mspace" style="margin-right:0.3333em;"></span><span class="mord"><span class="mord mathsf">Branch</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathsf">Direction</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord"><span class="mord mathsf">Branch</span></span></span></span><span style="top:-1.66em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace nobreak"></span><span class="mspace" style="margin-right:0.1111em;"></span><span class="mpunct"></span><span class="mspace" style="margin-right:-0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mrel">:</span></span><span class="mspace" style="margin-right:0.3333em;"></span><span class="mord"><span class="mord mathsf">Branch</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathsf">Branch</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⇀</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mop"><span class="mord mathrm">List</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathsf">Direction</span></span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>Ánh xạ từng phần <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">⇀</span></span></span></span> có nghĩa là chỉ tồn tại phép quan sát đường đi khi nhánh thứ nhất là tổ tiên của nhánh thứ hai.</p>
+<p>Từ đó có các phép toán hữu ích:</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:6em;vertical-align:-2.75em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:3.25em;"><span style="top:-5.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mord mathrm">left</span></span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mclose">)</span></span></span><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mord mathrm">right</span></span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mclose">)</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mord mathrm">is_ancestor</span></span><span class="mopen">(</span><span class="mord mathnormal">a</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">b</span><span class="mclose">)</span></span></span><span style="top:-0.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mord mathrm">from_path</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.75em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:3.25em;"><span style="top:-5.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">grow</span></span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathsf">Left</span></span><span class="mclose">)</span></span></span><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">grow</span></span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathsf">Right</span></span><span class="mclose">)</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟺</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mop"><span class="mord mathrm">path</span></span><span class="mopen">(</span><span class="mord mathnormal">a</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">b</span><span class="mclose">)</span><span class="mspace"> </span><span class="mord text"><span class="mord">is defined</span></span></span></span><span style="top:-0.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mop"><span class="mord mathrm">fold</span></span><span class="mopen">(</span><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">grow</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mord mathrm">root</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.75em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>Đại số này không nhắc đến vectơ, số nguyên, phân số, khóa cơ sở dữ liệu hay byte. Những lựa chọn đó được quyết định sau.</p>
+<h2 id="structure-before-convenience"><a class="header" href="#structure-before-convenience">Cấu trúc trước sự tiện lợi</a></h2>
+<p>Tập từ vựng nguyên thủy cần làm lộ rõ cấu trúc mà mã phía sau phụ thuộc vào. Nó không nên là tập hợp mọi phương thức tiện lợi có trong một cách triển khai.</p>
+<div id="admonition-loại-bỏ-các-phép-toán-nguyên-thủy-ưu-tiên-biểu-diễn" class="admonition admonish-warning" role="note" aria-labelledby="admonition-loại-bỏ-các-phép-toán-nguyên-thủy-ưu-tiên-biểu-diễn-title">
+<div class="admonition-title">
+<div id="admonition-loại-bỏ-các-phép-toán-nguyên-thủy-ưu-tiên-biểu-diễn-title">
+<p>Loại bỏ các phép toán nguyên thủy ưu tiên biểu diễn</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-loại-bỏ-các-phép-toán-nguyên-thủy-ưu-tiên-biểu-diễn"></a>
+</div>
+<div>
+<p>Đặc trưng này gộp cách sắp xếp lưu trữ, vị trí cấu hình, biểu diễn bit và quy trình công việc kết hợp. Nó không tách riêng ý nghĩa của nhánh:</p>
+<pre><code class="language-rust noplayground">trait BranchManager {
+    // not recommended: exposes machinery, not semantic observations
+    fn storage(&amp;self) -&gt; &amp;BranchTable;
+    fn config(&amp;self) -&gt; &amp;BranchConfig;
+    fn raw_bits(&amp;self) -&gt; &amp;[u64];
+    fn grow_and_save(&amp;mut self, right: bool);
+}</code></pre>
+</div>
+</div>
+<p>API ngữ nghĩa vẫn có thể bao gồm hiệu ứng nếu hiệu ứng thuộc miền được chọn. Quy tắc không phải là “mọi thứ đều phải thuần”. Quy tắc là “mọi phép toán nguyên thủy phải nêu một ý nghĩa mạch lạc”.</p>
+<h2 id="encoding-is-not-methodology"><a class="header" href="#encoding-is-not-methodology">Mã hóa không phải phương pháp</a></h2>
+<p>Thiết kế theo ngữ nghĩa không đòi hỏi:</p>
+<ul>
+<li>Haskell</li>
+<li>mã hóa tagless-final</li>
+<li>đại số đối tượng</li>
+<li>monad tự do</li>
+<li>một AST duy nhất</li>
+<li>chỉ dùng hàm thuần</li>
+<li>thuật ngữ lý thuyết phạm trù trong mọi API</li>
+</ul>
+<p>Những thứ này có thể là cách mã hóa hoặc công cụ giải thích hữu ích. Không thứ nào định nghĩa phương pháp.</p>
+<div id="admonition-các-cách-mã-hóa-trong-rust" class="admonition admonish-note" role="note" aria-labelledby="admonition-các-cách-mã-hóa-trong-rust-title">
+<div class="admonition-title">
+<div id="admonition-các-cách-mã-hóa-trong-rust-title">
+<p>Các cách mã hóa trong Rust</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-các-cách-mã-hóa-trong-rust"></a>
+</div>
+<div>
+<p>Trong Rust, đặc trưng nhỏ, kiểu liên kết, phương thức mở rộng, hàm tổng quát và giá trị chương trình bậc nhất là các cách mã hóa thực tiễn. Giá trị của chúng tùy thuộc vào việc chúng có bảo toàn thiết kế ngữ nghĩa rõ ràng hay không.</p>
+</div>
+</div>
+<h2 id="type-class-morphisms"><a class="header" href="#type-class-morphisms">Ánh xạ đồng cấu của lớp kiểu</a></h2>
+<p>Một cách hiểu phương pháp này là qua các ánh xạ bảo toàn cấu trúc.</p>
+<p>Giả sử một giao diện mô tả đại số ngữ nghĩa. Cách triển khai ánh xạ các giá trị và phép toán trừu tượng vào một cách biểu diễn cụ thể. Cách triển khai hợp lệ phải bảo toàn các phép toán và định luật liên quan.</p>
+<p>Nếu <code>encode</code> ánh xạ các nhánh trừu tượng vào một đối tượng mang cụ thể, thì tính bảo toàn phép mở rộng có dạng:</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop"><span class="mord mathrm">encode</span></span><span class="mopen">(</span><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">grow</span></span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">d</span><span class="mclose">))</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop"><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">grow</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1559em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathsf mtight">concrete</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mop"><span class="mord mathrm">encode</span></span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">d</span><span class="mclose">)</span></span></span></span></span></p>
+<p>Cách triển khai không chỉ là tập hợp phương thức có tên tương ứng. Nó được kỳ vọng là một đồng cấu tôn trọng cấu trúc đại số.</p>
+<h2 id="what-counts-as-a-good-abstraction"><a class="header" href="#what-counts-as-a-good-abstraction">Thế nào là một trừu tượng hóa tốt</a></h2>
+<p>Một phép trừu tượng hóa DD tốt có một số đặc tính:</p>
+<ul>
+<li>Các giá trị có ý nghĩa dự định đơn giản.</li>
+<li>Các phép toán nguyên thủy bộc lộ những quan sát hoặc kiến tạo ngữ nghĩa.</li>
+<li>Hành vi phức tạp hơn được suy ra từ các phép toán nguyên thủy đó.</li>
+<li>Các định luật không phụ thuộc vào một cách biểu diễn duy nhất.</li>
+<li>Các cách triển khai độc lập có thể diễn giải nó.</li>
+<li>Chi tiết vận hành chỉ xuất hiện khi chúng trở nên liên quan.</li>
+</ul>
+<p>Chỉ nhỏ gọn thôi thì chưa đủ. Một đặc trưng bé xíu chỉ phơi bày <code>get_manager()</code> vẫn ưu tiên biểu diễn. Một đại số lớn hơn có thể hợp lý khi các phép toán của nó tạo thành một cấu trúc ngữ nghĩa nhất quán.</p>
+<h2 id="semantic-values-and-abstract-carriers"><a class="header" href="#semantic-values-and-abstract-carriers">Giá trị ngữ nghĩa và đối tượng mang trừu tượng</a></h2>
+<p>Không phải mọi kiểu cụ thể đều bị cấm trong đặc tả.</p>
+<p>Dùng kiểu liên kết khi bộ diễn giải cần chọn đối tượng mang:</p>
+<pre><code class="language-rust noplayground">trait BranchAlg {
+    type Branch;
+}</code></pre>
+<p>Dùng kiểu cụ thể khi nó là từ vựng ngữ nghĩa ổn định:</p>
+<pre><code class="language-rust noplayground">enum Direction {
+    Left,
+    Right,
+}</code></pre>
+<p>Sự phân biệt không phải “trừu tượng tốt, cụ thể xấu”, mà là giữa từ vựng ngữ nghĩa và cách biểu diễn máy tình cờ được chọn.</p>
+<h2 id="the-specification-is-the-denotation-and-it-need-not-execute"><a class="header" href="#the-specification-is-the-denotation-and-it-need-not-execute">Đặc tả chính là ngữ nghĩa chỉ định, và không nhất thiết phải thực thi</a></h2>
+<p>Đặc tả chính là ngữ nghĩa chỉ định: ý nghĩa toán học được gán cho từng cấu trúc. Sức mạnh của nó đến từ việc không bị ràng buộc bởi hiệu năng, thậm chí bởi khả năng thực thi.</p>
+<div id="admonition-conal-elliott" class="admonition admonish-quote" role="note" aria-labelledby="admonition-conal-elliott-title">
+<div class="admonition-title">
+<div id="admonition-conal-elliott-title">
+<p>Conal Elliott</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-conal-elliott"></a>
+</div>
+<div>
+<p>Việc định nghĩa ngữ nghĩa chỉ định thường dễ dàng và khai sáng hơn nhiều so với việc triển khai, vì nó không bị ràng buộc hay phân tâm bởi hiệu năng, thậm chí bởi khả năng thực thi.</p>
+<p>— <a href="https://github.com/conal/talk-2014-lambdajam-denotational-design">Denotational Design: from meanings to programs (LambdaJam 2015)</a></p>
+</div>
+</div>
+<p>Ví dụ kinh điển là FRP (Lập trình phản ứng hàm): một <code>Behavior a</code> được định nghĩa như hàm theo thời gian liên tục,</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen"><span class="mopen">[</span><span class="mspace" style="margin-right:-0.1778em;"></span><span class="mopen">[</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">⋅</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mclose"><span class="mclose">]</span><span class="mspace" style="margin-right:-0.1778em;"></span><span class="mclose">]</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord"><span class="mord mathsf" style="margin-right:0.01389em;">Behavior</span></span><span class="mspace"> </span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathbb">R</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">a</span><span class="mclose">)</span></span></span></span></span></p>
+<p>Mô hình đó chính xác nhưng không thể thực thi — ta không thể liệt kê các số thực. Tương tự, chương trình có thể biểu thị một tập kết quả; cả hai mô hình đều không chạy được, và đó chính là chủ ý. Ý nghĩa được chọn vì sự đơn giản và chính xác, chứ không phải cách tính toán.</p>
+<p>Khả năng thực thi và hiệu năng được đẩy hoàn toàn sang <em>cách triển khai</em>, một tạo phẩm riêng được bảo đảm tính đúng đắn bằng các định luật đồng cấu (đồng cấu lớp kiểu) liên hệ nó với ý nghĩa: hàm ý nghĩa phải ánh xạ mỗi phép hợp thành cú pháp sang phép hợp thành ngữ nghĩa tương ứng. Như Conal diễn đạt, ngữ nghĩa chỉ định đưa ra “định nghĩa rõ ràng <em>về chính xác điều cần triển khai</em>, đồng thời để lại nhiều không gian sáng tạo về <em>cách thực hiện</em>.”</p>
+<p>Trong Rust, một số tạo phẩm thể hiện các phần của đặc tả này, và có tạo phẩm tình cờ thực thi được. Khả năng thực thi chỉ là thuộc tính phụ; nó không khiến chúng trở thành đặc tả:</p>
+<ul>
+<li>văn xuôi nêu ý nghĩa dự định</li>
+<li>đặc trưng nêu các phép toán nguyên thủy có sẵn</li>
+<li>phần mở rộng nêu các phép suy ra</li>
+<li>định luật nêu các đẳng thức bắt buộc</li>
+<li>bộ diễn giải chứng minh khả năng hiện thực hóa</li>
+<li>kiểm thử cung cấp bằng chứng hữu hạn</li>
+</ul>
+<p>Hãy đọc chúng cùng nhau, đặt ý nghĩa và định luật cao hơn cơ chế cụ thể về mặt thẩm quyền.</p>
+<h2 id="further-reading"><a class="header" href="#further-reading">Đọc thêm</a></h2>
+<ul>
+<li><a href="https://github.com/conal/talk-2014-bayhac-denotational-design">Denotational Design: from programs to meanings (BayHac 2014)</a></li>
+<li><a href="http://conal.net/papers/type-class-morphisms/">Denotational design with type class morphisms</a></li>
+<li><a href="http://conal.net/">Các bài viết và bài nói chuyện của Conal Elliott</a></li>
+</ul>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../denotational-design/denotations.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../denotational-design/laws-and-interpretations.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../denotational-design/denotations.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../denotational-design/laws-and-interpretations.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

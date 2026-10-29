@@ -1,0 +1,546 @@
+<!DOCTYPE HTML>
+<html lang="zh-hant" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>自由單子 - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="自由單子 - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-zh-hant.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"自由單子","sourceHash":"sha256:1d74262c1053f3cc50c6a3c49b8b9b7eddfb3c6ab6f247530387d19b335f4626"} -->
+<h1 id="free-monad"><a class="header" href="#free-monad">自由單子</a></h1>
+<div id="admonition-相關內容" class="admonition admonish-tip" role="note" aria-labelledby="admonition-相關內容-title">
+<div class="admonition-title">
+<div id="admonition-相關內容-title">
+<p>相關內容</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-相關內容"></a>
+</div>
+<div>
+<p>Rust 中的語義驅動設計：<a href="../rust-dd/first-order-programs.html">一階程式</a>、<a href="../rust-dd/interpreters.html">直譯器與效應</a><br />
+概念：<a href="cps.html">延續傳遞風格</a>、<a href="defunctionalization.html">去函式化</a><br />
+洞見：<a href="../insights/evm-alg.html">EVM 代數</a></p>
+</div>
+</div>
+<div id="admonition-語義定位" class="admonition admonish-note" role="note" aria-labelledby="admonition-語義定位-title">
+<div class="admonition-title">
+<div id="admonition-語義定位-title">
+<p>語義定位</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-語義定位"></a>
+</div>
+<div>
+<p>自由單子是一種表示指令語法與自由生成的順序組合的方式。指令函子已經選定了詞彙；隨後，直譯器會將該語法對映到某個語義域。它是一種強大的編碼方式，但並非指稱設計的定義。</p>
+</div>
+</div>
+<h2 id="what-is-a-free-monad-rust-version"><a class="header" href="#what-is-a-free-monad-rust-version">什麼是自由單子（Rust 版本）</a></h2>
+<p><strong>自由單子</strong>可以讓你：</p>
+<ul>
+<li><strong>描述</strong>程式時使用<em>資料</em>，而非立即執行程式。</li>
+<li>稍後以一種或多種方式<strong>解釋</strong>該程式。</li>
+</ul>
+<p>可以將它想成：</p>
+<blockquote>
+<p>一個效應操作 AST + 用於串接步驟的<code>bind</code>/<code>flat_map</code>。</p>
+</blockquote>
+<p>將以下兩者分開：</p>
+<ul>
+<li><strong>語法</strong> → 指令列舉。</li>
+<li><strong>解釋</strong> → 對映到所選語義域並保留結構。</li>
+</ul>
+<p>“自由”意味著單子結構由函子<code>F</code>自由生成，除了單子定律之外不新增其他等式。選擇<code>F</code>本身就決定了指令語法；對結果程式作出解釋，則會賦予其特定指稱。</p>
+<h2 id="rust-implementation"><a class="header" href="#rust-implementation">Rust 實作</a></h2>
+<div id="admonition-示意性編碼" class="admonition admonish-warning" role="note" aria-labelledby="admonition-示意性編碼-title">
+<div class="admonition-title">
+<div id="admonition-示意性編碼-title">
+<p>示意性編碼</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-示意性編碼"></a>
+</div>
+<div>
+<p>Rust 不支援直接的高階型別引數，因此生產級自由單子編碼需要額外的型別機制，或專用指令函子。以下程式碼展示預期結構，並非可直接使用的泛型實作。</p>
+</div>
+</div>
+<h3 id="free-monad-type"><a class="header" href="#free-monad-type">自由單子型別</a></h3>
+<pre><code class="language-rust noplayground">#[derive(Clone)]
+enum Free&lt;F, A&gt; {
+    Pure(A),
+    Suspend(F),
+    FlatMap(Box&lt;Free&lt;F, A&gt;&gt;, Box&lt;dyn Fn(A) -&gt; Free&lt;F, A&gt;&gt;),
+}
+
+impl&lt;F: Clone + 'static, A: 'static&gt; Free&lt;F, A&gt; {
+    fn pure(a: A) -&gt; Self {
+        Free::Pure(a)
+    }
+
+    fn flat_map&lt;B: 'static, G&gt;(self, f: G) -&gt; Free&lt;F, B&gt;
+    where
+        G: Fn(A) -&gt; Free&lt;F, B&gt; + 'static,
+        F: 'static,
+    {
+        match self {
+            Free::Pure(a) =&gt; f(a),
+            Free::Suspend(op) =&gt; {
+                Free::FlatMap(Box::new(Free::Suspend(op)), Box::new(f))
+            }
+            Free::FlatMap(inner, g) =&gt; {
+                Free::FlatMap(inner, Box::new(move |x| g(x).flat_map(f.clone())))
+            }
+        }
+    }
+}</code></pre>
+<h3 id="dsl-console-operations"><a class="header" href="#dsl-console-operations">領域特定語言：控制檯操作</a></h3>
+<pre><code class="language-rust noplayground">#[derive(Clone)]
+enum Console&lt;A&gt; {
+    Print(String, A),
+    ReadLine(fn(String) -&gt; A),
+}
+
+// Smart constructors
+fn print_line(s: &amp;str) -&gt; Free&lt;Console&lt;()&gt;, ()&gt; {
+    Free::Suspend(Console::Print(s.to_string(), ()))
+}
+
+fn read_line() -&gt; Free&lt;Console&lt;String&gt;, String&gt; {
+    Free::Suspend(Console::ReadLine(|input| Free::Pure(input)))
+}</code></pre>
+<h3 id="interpreter"><a class="header" href="#interpreter">直譯器</a></h3>
+<pre><code class="language-rust noplayground">fn run_console&lt;A&gt;(mut prog: Free&lt;Console&lt;A&gt;, A&gt;) -&gt; A {
+    loop {
+        match prog {
+            Free::Pure(a) =&gt; return a,
+            Free::Suspend(Console::Print(s, next)) =&gt; {
+                println!("{}", s);
+                prog = Free::Pure(next);
+            }
+            Free::Suspend(Console::ReadLine(f)) =&gt; {
+                let mut buf = String::new();
+                std::io::stdin().read_line(&amp;mut buf).unwrap();
+                prog = f(buf.trim().to_string());
+            }
+            Free::FlatMap(inner, cont) =&gt; match *inner {
+                Free::Pure(a) =&gt; prog = cont(a),
+                Free::Suspend(op) =&gt; prog = Free::Suspend(op), // minimal handling
+                _ =&gt; unimplemented!(),
+            },
+        }
+    }
+}</code></pre>
+<h3 id="usage"><a class="header" href="#usage">用法</a></h3>
+<pre><code class="language-rust noplayground">fn main() {
+    let program =
+        print_line("What is your name?")
+        .flat_map(|_| read_line())
+        .flat_map(|name| print_line(&amp;format!("Hello, {name}!")));
+
+    run_console(program);
+}</code></pre>
+<h2 id="takeaway"><a class="header" href="#takeaway">要點</a></h2>
+<ul>
+<li><strong>語法</strong> = <code>enum Console</code>（可能的指令）</li>
+<li><strong>程式</strong> = <code>Free&lt;Console, A&gt;</code>（描述步驟的資料）</li>
+<li><strong>具體解釋</strong> = <code>run_console</code></li>
+<li>優勢：同一個程式可以編寫多種直譯器，例如在真正的 IO 中執行、將日誌寫入檔案，或編譯為另一種語言。</li>
+</ul>
+<h2 id="correlation-to-continuations-and-cps"><a class="header" href="#correlation-to-continuations-and-cps">與延續及 CPS 的關聯</a></h2>
+<p><strong>延續傳遞風格（CPS）</strong>是一種程式設計方式：函式不直接返回值，而是將結果傳給另一個函式（即<em>延續</em>），由它表示“程式接下來的部分”。</p>
+<p><strong>自由單子</strong>本質上是<strong>由一系列步驟組成的程式</strong>，每一步都會說：</p>
+<blockquote>
+<p>“執行此操作，然後繼續處理剩餘部分。”</p>
+</blockquote>
+<p>這個“程式剩餘部分”正是一個<strong>延續</strong>——從當前結果對映到下一步的函式。</p>
+<ul>
+<li>
+<p>在我們的 Rust 自由單子中：</p>
+<pre><code class="language-rust noplayground">Free::FlatMap(Box&lt;Free&lt;F, A&gt;&gt;, Box&lt;dyn Fn(A) -&gt; Free&lt;F, A&gt;&gt;)</code></pre>
+<p><code>Box&lt;dyn Fn(A) -&gt; Free&lt;F, A&gt;&gt;</code><strong>就是延續</strong>。</p>
+</li>
+<li>
+<p>解釋自由單子時，你其實是在<strong>透過 CPS 執行</strong>：</p>
+<ul>
+<li>你不會直接返回值，而是將它們傳給下一個延續。</li>
+<li>最終會進入如下迴圈： <code>current_instruction -&gt; feed result into continuation -&gt; next instruction</code></li>
+</ul>
+</li>
+<li>
+<p><strong>CPS 關係</strong>：</p>
+<ul>
+<li>自由單子<em>將 CPS 編碼進資料結構</em>。</li>
+<li>CPS <em>則是同一思想的執行時控制流表示</em>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>快速對照</strong>：</p>
+<div class="table-wrapper"><table><thead><tr><th>概念</th><th>在 CPS 中</th><th>在自由單子 AST 中</th></tr></thead><tbody>
+<tr><td>步驟結果</td><td>延續的引數</td><td><code>A</code>在<code>Fn(A) -&gt; Free</code>中</td></tr>
+<tr><td>延續</td><td>函式<code>(A) -&gt; R</code></td><td><code>Box&lt;dyn Fn(A) -&gt; Free&gt;</code></td></tr>
+<tr><td>程式</td><td>巢狀延續</td><td>巢狀的<code>FlatMap</code>變體</td></tr>
+<tr><td>執行</td><td>呼叫函式</td><td>模式匹配並呼叫</td></tr>
+</tbody></table>
+</div>
+<h2 id="gof-gang-of-four-design-patterns-mapping"><a class="header" href="#gof-gang-of-four-design-patterns-mapping">GoF（四人幫）設計模式對映</a></h2>
+<p>自由單子<strong>並不屬於</strong>GoF，因為它來自函數語言程式設計理論，但可以<strong>涵蓋</strong>或<strong>模擬</strong>若干模式：</p>
+<div class="table-wrapper"><table><thead><tr><th>GoF 模式</th><th>自由單子與該模式的關係</th></tr></thead><tbody>
+<tr><td><strong>直譯器</strong></td><td>整個“AST + 執行”就是字面意義上的直譯器模式——自由單子直接提供 AST 與組合器。</td></tr>
+<tr><td><strong>命令</strong></td><td>DSL 中的每個<code>enum</code>變體都是一個命令物件。自由單子會像宏命令一樣串接它們。</td></tr>
+<tr><td><strong>組合</strong></td><td>AST 結構（巢狀指令）是命令的組合體。</td></tr>
+<tr><td><strong>構建器</strong></td><td><code>.flat_map</code>鏈式呼叫為程式提供了流暢的構建器。</td></tr>
+<tr><td><strong>存取者</strong></td><td>直譯器本質上是指令集的存取者。</td></tr>
+</tbody></table>
+</div>
+<h2 id="why-free-monad--these-patterns"><a class="header" href="#why-free-monad--these-patterns">為什麼自由單子優於這些模式</a></h2>
+<ul>
+<li>
+<p>GoF 模式是<strong>手動的物件導向工作</strong>——需要自行定義介面、類並將它們組合起來。</p>
+</li>
+<li>
+<p>自由單子是<strong>代數式的</strong>——為指令定義<em>資料</em>，為其解釋定義<em>函式</em>。</p>
+</li>
+<li>
+<p>你會自動獲得：</p>
+<ul>
+<li>順序組合（<code>flat_map</code>）</li>
+<li>組合</li>
+<li>無需觸碰核心邏輯即可使用多種直譯器</li>
+</ul>
+</li>
+</ul>
+<p><strong>彙總表</strong>：</p>
+<div class="table-wrapper"><table><thead><tr><th>自由單子（函數語言程式設計概念）</th><th>對應的 GoF/物件導向模式</th></tr></thead><tbody>
+<tr><td>指令列舉</td><td>命令</td></tr>
+<tr><td>程式 AST</td><td>組合體</td></tr>
+<tr><td><code>flat_map</code>構建器</td><td>構建器</td></tr>
+<tr><td>直譯器函式</td><td>直譯器/存取者</td></tr>
+<tr><td>多種直譯器</td><td>策略</td></tr>
+</tbody></table>
+</div>
+<h2 id="relation-to-defunctionalization"><a class="header" href="#relation-to-defunctionalization">與去函式化的關係</a></h2>
+<p><strong>去函式化</strong>是一種程式變換：它將高階函式替換為表示可能函式集合的一階資料結構，並提供一個用於應用它們的直譯器。</p>
+<p>在 CPS 中，延續是高階函式。對 CPS 程式去函式化，會將這些延續替換為延續分支列舉，並提供一個<code>apply</code>函式來執行它們。</p>
+<p>對於適當的編碼，自由單子可以與 CPS 變換程式內部的去函式化延續連結起來：</p>
+<ol>
+<li>從程式的 CPS 版本開始。“程式剩餘部分”由延續函式承載。</li>
+<li>將這些延續函式去函式化為資料型別中的有限分支集合。</li>
+<li>所得的一階資料型別可以具有與自由單子表示相同的指令與延續結構。</li>
+</ol>
+<p><strong>關鍵相似之處</strong></p>
+<ul>
+<li>自由單子與去函式化都會生成計算的資料表示，並且都需要直譯器來賦予這些資料含義。</li>
+<li>自由單子中的<code>FlatMap</code>分支援有延續；去函式化則將該閉包替換為資料型別中的一個分支。</li>
+</ul>
+<p><strong>關鍵區別</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>方面</th><th>去函式化</th><th>自由單子</th></tr></thead><tbody>
+<tr><td>目的</td><td>消除高階函式的機械式編譯器技術</td><td>將語法與語義分離的代數構造</td></tr>
+<tr><td>輸入</td><td>任意高階程式，通常採用 CPS 形式</td><td>描述可能指令的函子 F</td></tr>
+<tr><td>輸出</td><td>函式分支列舉及應用函式</td><td><code>Free&lt;F, A&gt;</code>AST 與直譯器</td></tr>
+<tr><td>是否為單子？</td><td>不一定</td><td>根據構造始終是單子</td></tr>
+<tr><td>範圍</td><td>通用變換</td><td>特定的函數語言程式設計模式</td></tr>
+</tbody></table>
+</div>
+<p><strong>總結</strong> 去函式化是一種變換技術，自由單子是一種代數構造。在某些表示中二者關係密切，但除非附加額外假設，否則通常不能由其中一種構造推出另一種。</p>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../concepts/referential_transparency.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../concepts/cps.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../concepts/referential_transparency.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../concepts/cps.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

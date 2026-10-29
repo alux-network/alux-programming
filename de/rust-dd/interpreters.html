@@ -1,0 +1,490 @@
+<!DOCTYPE HTML>
+<html lang="de" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Interpreter und Effekte - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="Interpreter und Effekte - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-de.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"Interpreter und Effekte","sourceHash":"sha256:4ca52b24121e8361c8cc8983e3807794110bade03c63105c1609e60eb9554b93"} -->
+<h1 id="interpreters-and-effects"><a class="header" href="#interpreters-and-effects">Interpreter und Effekte</a></h1>
+<div id="admonition-verwandte-themen" class="admonition admonish-tip" role="note" aria-labelledby="admonition-verwandte-themen-title">
+<div class="admonition-title">
+<div id="admonition-verwandte-themen-title">
+<p>Verwandte Themen</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-verwandte-themen"></a>
+</div>
+<div>
+<p>The Semantic View: <a href="../denotational-design/laws-and-interpretations.html">Gesetze und Interpretationen</a><br />
+Design by Meaning in Rust: <a href="capability-algebras.html">Capability-Algebren</a>, <a href="laws.html">Gesetze, Szenarien und Nachweise</a><br />
+Concepts: <a href="../concepts/free_monad.html">Freie Monade</a><br />
+Insights: <a href="../insights/evm-alg.html">EVM-Algebra</a></p>
+</div>
+</div>
+<div id="admonition-orientierung" class="admonition admonish-note" role="note" aria-labelledby="admonition-orientierung-title">
+<div class="admonition-title">
+<div id="admonition-orientierung-title">
+<p>Orientierung</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-orientierung"></a>
+</div>
+<div>
+<p>Ein Interpreter wählt eine Repräsentation oder einen Effekt für eine Capability. Er realisiert die primitiven Operationen, ohne das darüber abgeleitete Verhalten des Fachbereichs neu zu definieren, sodass dieselben Gesetze für alle Interpreter gelten.</p>
+</div>
+</div>
+<p>Ein Interpreter realisiert eine semantische Capability mit einer konkreten Repräsentation oder einem Effekt. Er sollte die Mechanismen auswählen, ohne das Verhalten im Fachbereich neu zu definieren.</p>
+<h2 id="a-thin-interpreter"><a class="header" href="#a-thin-interpreter">Ein schlanker Interpreter</a></h2>
+<p>Eine Bitpfad-Repräsentation für Verzweigungen könnte so aussehen:</p>
+<pre><code class="language-rust noplayground">#[derive(Clone, Debug, PartialEq, Eq)]
+struct BitBranch(Vec&lt;Direction&gt;);
+
+struct BitBranchImpl;
+
+impl BranchAlg for BitBranchImpl {
+    type Branch = BitBranch;
+
+    fn branch_root(&amp;self) -&gt; Self::Branch {
+        BitBranch(Vec::new())
+    }
+
+    fn branch_grow(&amp;self, branch: &amp;Self::Branch, direction: Direction) -&gt; Self::Branch {
+        let mut grown = branch.0.clone();
+        grown.push(direction);
+        BitBranch(grown)
+    }
+
+    fn branch_path(&amp;self, ancestor: &amp;Self::Branch, descendant: &amp;Self::Branch) -&gt; Option&lt;Vec&lt;Direction&gt;&gt; {
+        descendant.0.strip_prefix(&amp;ancestor.0[..]).map(&lt;[Direction]&gt;::to_vec)
+    }
+}</code></pre>
+<p>Die Implementierung speichert und beobachtet primitive Fakten. <code>branch_left</code>, <code>branch_right</code> und <code>branch_is_ancestor</code> bleiben in der gemeinsamen Erweiterung.</p>
+<h2 id="interpreters-are-boundary-relative"><a class="header" href="#interpreters-are-boundary-relative">Interpreter gelten relativ zur Grenze</a></h2>
+<p>Derselbe Typ kann an einer Grenze Interpreter und an einer anderen semantische Eingabe sein.</p>
+<div class="table-wrapper"><table><thead><tr><th>Grenze</th><th>Verbraucht</th><th>Interpretiert</th></tr></thead><tbody>
+<tr><td>Dateisystemadapter</td><td>Dateisystemzugriff</td><td>Quelltextsuche</td></tr>
+<tr><td>Umgebung des Normalisierers</td><td>Quelltextsuche als primitive Capability</td><td>Konstruktion der normalisierten Sprache</td></tr>
+<tr><td>Compiler-Pipeline</td><td>Normalisierte Terme</td><td>Konstruktion des ausführbaren Programms</td></tr>
+</tbody></table>
+</div>
+<p>Es gibt keine einzige universelle „Implementierungsebene“. Semantische Grenzen sind ineinander verschachtelt.</p>
+<h2 id="effects-at-the-edge"><a class="header" href="#effects-at-the-edge">Effekte am Rand</a></h2>
+<p>Konkrete Interpreter treffen Entscheidungen über Dinge wie:</p>
+<ul>
+<li>Datenbanklayout</li>
+<li>asynchrone Laufzeitumgebung</li>
+<li>Besitzverhältnisse von Tasks</li>
+<li>Wiederholungsstrategie</li>
+<li>Typen des HTTP- oder RPC-Frameworks</li>
+<li>Serialisierung</li>
+<li>Sperren und Kanäle</li>
+<li>Zwischenspeicherung</li>
+</ul>
+<p>Halte diese Entscheidungen aus semantischen Traits heraus, sofern Aufrufer sie nicht beobachten müssen.</p>
+<p>Eine semantische Quell-Capability kann beispielsweise einen Quellwert und einen Fehler zurückgeben. Ihr Produktionsinterpreter kann Dateien zwischenspeichern und asynchrone Lesezugriffe ausführen. Ein Testinterpreter kann eine unveränderliche Map verwenden. Abgeleitete Normalisierungslogik sollte mit beiden funktionieren.</p>
+<h2 id="runtime-ownership"><a class="header" href="#runtime-ownership">Zuständigkeit der Laufzeitumgebung</a></h2>
+<p>Framework-Callbacks benötigen oft eigenen, klonbaren und threadsicheren Zustand. Das ist eine Einschränkung des Interpreters, nicht zwingend des Fachbereichs.</p>
+<div id="admonition-framework-träger-aus-primitiven-operationen-heraushalten" class="admonition admonish-warning" role="note" aria-labelledby="admonition-framework-träger-aus-primitiven-operationen-heraushalten-title">
+<div class="admonition-title">
+<div id="admonition-framework-träger-aus-primitiven-operationen-heraushalten-title">
+<p>Framework-Träger aus primitiven Operationen heraushalten</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-framework-träger-aus-primitiven-operationen-heraushalten"></a>
+</div>
+<div>
+<p>Vermeide Framework-Träger als Einschränkung einer primitiven Operation:</p>
+<pre><code class="language-rust noplayground">async fn status(data: FrameworkData&lt;Arc&lt;AppState&gt;&gt;) -&gt; FrameworkJson&lt;Status&gt;;</code></pre>
+</div>
+</div>
+<p>Semantische Anwendung bevorzugen:</p>
+<pre><code class="language-rust noplayground">trait StatusAlg {
+    type Status;
+
+    async fn status(&amp;self) -&gt; Self::Status;
+}</code></pre>
+<p>Der Web-Interpreter kann <code>Arc&lt;Context&gt;</code> auswählen, Eingaben aus der Anfrage entnehmen, <code>status</code> aufrufen und das Ergebnis umwandeln. Nutzer des Fachbereichs müssen nichts von einem Webserver wissen.</p>
+<h2 id="neutral-interpreters"><a class="header" href="#neutral-interpreters">Neutrale Interpreter</a></h2>
+<p>Nicht jeder Interpreter muss Effekte ausführen.</p>
+<p>Ein Text-Interpreter für ein API-Programm kann Folgendes festhalten:</p>
+<div class="table-wrapper"><table><thead><tr><th>Methode</th><th>Pfad</th><th>Eingabe</th><th>Ausgabe</th></tr></thead><tbody>
+<tr><td><code>GET</code></td><td><code>/status</code></td><td>—</td><td>JSON <code>Status</code></td></tr>
+<tr><td><code>POST</code></td><td><code>/temperature</code></td><td>JSON <code>f32</code></td><td>JSON <code>Status</code></td></tr>
+</tbody></table>
+</div>
+<p>Ein Metadaten-Interpreter kann Dokumentation erstellen. Ein Testinterpreter kann Operationsnamen sammeln. Ein Produktionsinterpreter kann Serverrouten aufbauen.</p>
+<p>Neutrale Interpreter zeigen, dass das Programm unabhängig von einer einzelnen Laufzeit Bedeutung trägt.</p>
+<h2 id="composing-interpreters-by-delegation"><a class="header" href="#composing-interpreters-by-delegation">Interpreter durch Delegation zusammensetzen</a></h2>
+<p>Da die Bedeutung in kleinen Capability-Traits liegt, wird ein Interpreter normalerweise <em>zusammengesetzt</em> statt vollständig ausgeschrieben. Ein Träger erhält eine Capability, indem er an einen bereits verfügbaren Anbieter delegiert. Die Weiterleitung wird also generiert und nicht von Hand geschrieben. Fast alle Fälle decken zwei Formen ab.</p>
+<p><strong>Eine Capability an ein Feld weiterleiten.</strong> Das <code>#[derive(Delegate)]</code> von ambassador leitet ein ganzes Trait an einen inneren Wert weiter. Ein Träger mit mehreren Komponenten delegiert jede Capability an das Feld, dem sie gehört, ganz ohne eigens geschriebene Weiterleitungsmethoden:</p>
+<pre><code class="language-rust noplayground">#[derive(Delegate)]
+#[delegate(Clock, target = "clock")]
+#[delegate(Logger, target = "logger")]
+struct Service {
+    clock: SystemClock,
+    logger: StdoutLogger,
+}</code></pre>
+<p><strong>Eine Capability über einen Getter bereitstellen.</strong> Gib einem Typ einen Getter, und eine pauschale Implementierung stellt allen Typen mit diesem Getter die gesamte Capability bereit:</p>
+<pre><code class="language-rust noplayground">trait Logger {
+    fn log(&amp;self, message: &amp;str);
+}
+
+trait HasLogger {
+    type Logger;
+
+    fn logger(&amp;self) -&gt; &amp;Self::Logger;
+}
+
+// Any carrier that can hand back a logger is itself a `Logger`.
+impl&lt;T&gt; Logger for T
+where
+    T: HasLogger,
+    T::Logger: Logger,
+{
+    fn log(&amp;self, message: &amp;str) {
+        self.logger().log(message)
+    }
+}</code></pre>
+<p>Dadurch müssen viele Strukturen gar nicht erst existieren. Ein monolithisches Kontextobjekt — ein großes Trait mit mehreren assoziierten Typen und einem Dutzend Methoden samt seiner einzigen konkreten Implementierung — wird durch eine Handvoll kleiner Capability-Traits und einen schlanken Träger ersetzt, der jede Capability an das zuständige Feld oder den Getter weiterleitet. Abgeleitete Operationen, etwa die Prüfung, ob eine Frist abgelaufen ist, werden einmal als Erweiterungen der primitiven Operationen formuliert, statt für jeden Träger neu implementiert zu werden.</p>
+<div id="admonition-delegation-leitet-operationen-nicht-bedeutung-weiter" class="admonition admonish-warning" role="note" aria-labelledby="admonition-delegation-leitet-operationen-nicht-bedeutung-weiter-title">
+<div class="admonition-title">
+<div id="admonition-delegation-leitet-operationen-nicht-bedeutung-weiter-title">
+<p>Delegation leitet Operationen, nicht Bedeutung weiter</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-delegation-leitet-operationen-nicht-bedeutung-weiter"></a>
+</div>
+<div>
+<p>Generierte Delegation erspart Boilerplate, begründet aber keine semantische Ersetzbarkeit. Ein <code>derive</code>-Makro wie <code>#[derive(Delegate)]</code> von ambassador beweist, dass die Implementierungen kompilieren, nicht dass der Träger denselben Interpreter bezeichnet. Soll <code>Shared&lt;T&gt;(Arc&lt;T&gt;)</code> für <code>T</code> stehen, prüfe die Gesetze für den Träger: Ein Wrapper, der Teilen oder Identität verändert (<code>Arc</code>, Pooling, Caching), kann jede Methode korrekt weiterleiten und trotzdem ein Frische- oder Eindeutigkeitsgesetz verletzen. Enthält der Träger lediglich <code>T</code> neben unabhängigen Diensten, ist Projektion ehrlicher als Delegation.</p>
+</div>
+</div>
+<h2 id="errors-belong-to-a-boundary"><a class="header" href="#errors-belong-to-a-boundary">Fehler gehören zu einer Grenze</a></h2>
+<p>Fehler sollten die Bedeutung des Scheiterns an der Grenze vermitteln, an der es behandelt wird.</p>
+<div class="table-wrapper"><table><thead><tr><th>Fehler</th><th>Übersetzung an der Grenze</th></tr></thead><tbody>
+<tr><td>Fachlicher Fehler</td><td>Der Transport-Interpreter bildet ihn auf eine Protokollantwort ab</td></tr>
+<tr><td>Parserfehler</td><td>Das Compiler-Frontend bildet ihn auf eine Diagnose ab</td></tr>
+<tr><td>Speicherfehler</td><td>Der Quellinterpreter bildet ihn auf einen semantischen Quellfehler ab</td></tr>
+</tbody></table>
+</div>
+<p>Zwinge keine HTTP-Statuscodes, RPC-Fehlerobjekte oder Datenbankfehler in primitive Traits des Fachbereichs. Übersetze sie an den Interpretergrenzen.</p>
+<h2 id="performance-is-an-interpretation-concern-until-observed"><a class="header" href="#performance-is-an-interpretation-concern-until-observed">Leistung ist Sache der Interpretation, solange sie nicht beobachtet wird</a></h2>
+<p>Batchverarbeitung, Parallelität, Zwischenspeicherung und Datenlayout gehören normalerweise zu den Interpretern. Sie werden erst dann semantisch, wenn die Spezifikation beobachtbare Reihenfolge, Timing, Ressourcenverbrauch, Fairness oder Fehlerverhalten garantiert.</p>
+<p>Diese Trennung ermöglicht Optimierungen ohne semantische Abweichung:</p>
+<ul>
+<li>Dieselben Gesetze</li>
+<li>Dieselben deklarierten Beobachtungen</li>
+<li>Andere operationale Strategie</li>
+</ul>
+<h2 id="review-checks"><a class="header" href="#review-checks">Prüfpunkte für das Review</a></h2>
+<ul>
+<li>Implementiert der Interpreter primitive Operationen, statt Ableitungen zu duplizieren?</li>
+<li>Sind Einschränkungen durch Laufzeit und Framework auf die verwendende Grenze beschränkt?</li>
+<li>Könnte ein neutraler oder Testinterpreter dieselbe Capability implementieren?</li>
+<li>Werden Transport- und Speicherfehler am Rand übersetzt?</li>
+<li>Ist die Delegation semantisch zutreffend?</li>
+<li>Sind Leistungsunterschiede unter der angegebenen Denotation unbeobachtbar?</li>
+</ul>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../rust-dd/derived-meaning.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../rust-dd/laws.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../rust-dd/derived-meaning.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../rust-dd/laws.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

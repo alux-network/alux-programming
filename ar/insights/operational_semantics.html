@@ -1,0 +1,447 @@
+<!DOCTYPE HTML>
+<html lang="ar" class="light sidebar-visible" dir="rtl">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>من الدلالات إلى الآلات - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="من الدلالات إلى الآلات - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-ar.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"من الدلالات إلى الآلات","sourceHash":"sha256:9fe5a0f66907af757d4b29691bf2aa8dcdda8c09246818d79d57434456ba33ab"} -->
+<h1 id="semantics-to-machines"><a class="header" href="#semantics-to-machines">من الدلالات إلى الآلات</a></h1>
+<div id="admonition-ذات-صلة" class="admonition admonish-tip" role="note" aria-labelledby="admonition-ذات-صلة-title">
+<div class="admonition-title">
+<div id="admonition-ذات-صلة-title">
+<p>ذات صلة</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-ذات-صلة"></a>
+</div>
+<div>
+<p>التصميم انطلاقًا من المعنى في Rust: <a href="../rust-dd/first-order-programs.html">برامج من الرتبة الأولى</a>، <a href="../rust-dd/compiler-pipelines.html">مسارات اللغة والمترجم</a><br />
+المفاهيم: <a href="../concepts/operational_semantics.html">الدلالات التشغيلية</a>، <a href="../concepts/free_monad.html">الموناد الحر</a>، <a href="../concepts/cps.html">أسلوب تمرير الاستمرار</a>، <a href="../concepts/defunctionalization.html">إزالة الدوال</a></p>
+</div>
+</div>
+<h2 id="what-operational-semantics-describes"><a class="header" href="#what-operational-semantics-describes">ما الذي تصفه الدلالات التشغيلية</a></h2>
+<p>تحدد الدلالات التشغيلية سلوك تمثيل برنامج مختار. وهي تعرّف أحكام التقييم أو علاقة انتقال على تهيئات مثل:</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathit">program</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathit">state</span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0519em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord mathit">program</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord"><span class="mord mathit">state</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>قد يكون البرنامج صياغة مصدر أو قيمة موناد حر أو حدًا بأسلوب تمرير الاستمرار أو شيفرة بايتية أو حالة آلة أزيلت دوالها. ولا يشكل أي تمثيل من هذه <em>دلالات تشغيلية</em>. فالدلالات التشغيلية تشرح كيفية تقييم قيم التمثيل المختار أو انتقالها.</p>
+<p>هذا الاتجاه مهم. يمنحنا التمثيل شيئًا يمكن وصف سلوكه؛ أما إضافة وصف تشغيلي فلا تشرح المعنى الذي ينبغي أن تحمله اللغة.</p>
+<h2 id="free-monad-programs"><a class="header" href="#free-monad-programs">برامج الموناد الحر</a></h2>
+<p>يوفر الموناد الحر صياغة التعليمات مع تسلسل مولد بحرية. لكنه لا يوفر سلوك تلك التعليمات.</p>
+<p>يمكن للدلالات التشغيلية لبرنامج موناد حر تعريف تهيئات تتضمن التعليمة الحالية واستمراريتها وأي حالة للآلة. ثم تشرح قواعدها، مثلًا، كيف تغيّر تعليمة معلقة الحالة وتمرر نتيجتها إلى بقية البرنامج.</p>
+<p>هذا تفسير ممكن واحد. ويمكن بدلًا من ذلك طي البرنامج الحر نفسه في نموذج دلالي أو تجميعه إلى لغة أخرى أو تحليله أو عرضه من دون تنفيذه.</p>
+<details>
+<summary><strong>من الحر إلى الأحرر: ما الذي كشفه البحث</strong></summary>
+<p>قد يتساءل من عرف المونادات الحرة بوصفها بنية عامة للبرامج ذات الآثار عن سبب انتقال النقاش لاحقًا إلى البنى الأحرر والآثار القابلة للتوسيع والمعالجات. لم يتخلّ البحث ببساطة عن المونادات الحرة، بل عزل ما توفره فعلًا، وقاس مواضع إخفاق تمثيلاتها الشائعة، ثم حمل البنية المفيدة إلى الأمام.</p>
+<p>اشتق كيسليوف وإيشي المونادات الأحرر بإزالة القيود والشيفرة النمطية تدريجيًا من تمثيلات الحدود ذات الآثار. في التمثيل الأحرر، قد تنتج التعليمة نوعًا وسيطًا مخفيًا عن نوع البرنامج النهائي، وتربط استمرارية صريحة تلك النتيجة ببقية الحساب. لذلك لم يعد توقيع التعليمة بحاجة إلى مثيل <code>Functor</code>.</p>
+<p>يحسن هذا التغيير القدرة التعبيرية، لكنه لا يحل مشكلة الأداء بحد ذاته. فالتمثيل الأحرر المباشر ما زال يركّب الاستمراريات كما يركّب إلحاق القوائم المرتبط من اليسار: قد يتطلب معالجة سلسلة من طلبات <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> عملًا قدره <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>. ويكشف إظهار الاستمرارية الفرصة الحقيقية؛ إذ يمكن تخزينها كتسلسل محاذٍ للأنواع تتطابق فيه أنواع النتائج والمدخلات المتجاورة بحكم البناء. ويزيل وصل هذا التسلسل بكفاءة الاجتياز الحساس للارتباط.</p>
+<p>تتيح الاتحادات المفتوحة لمفسر الآثار القابلة للتوسيع إضافة أنواع طلبات محددة ودمجها وإزالتها. وهذا يعالج تركيب الآثار المعياري وبنية المعالجات، لكنه لا يوفر معادلات مجال بعينه ولا يحدد متى يعني برنامجان ذوا آثار الشيء نفسه.</p>
+<p>الخلاصة أدق من «الأحرر أفضل من الحر». كشفت المونادات الحرة فصلًا مفيدًا بين الطلبات والتفسير. وأزالت ترميزات الأحرر قيدًا غير ضروري؛ وعالجت طوابير الأنواع المحاذية مشكلة أداء مقيسة؛ وحسنت الآثار القابلة للتوسيع التركيب. احتفظت كل خطوة بمعرفة السابقة مع تضييق الادعاء الذي تقدمه. وظل التفسير الدلالي قرارًا منفصلًا طوال الوقت.</p>
+<p>راجع كيسليوف وإيشي، <a href="https://okmij.org/ftp/Haskell/extensible/more.pdf"><em>Freer Monads, More Extensible Effects</em></a>.</p>
+</details>
+<h2 id="cps-programs"><a class="header" href="#cps-programs">برامج أسلوب تمرير الاستمرار</a></h2>
+<p>يمثل أسلوب تمرير الاستمرار بقية الحساب صراحة في صورة استمرارية. وتصف دلالاته التشغيلية سلوكًا مثل:</p>
+<ul>
+<li>تقييم تعبير CPS الحالي؛</li>
+<li>تمرير قيمة ناتجة إلى استمراريتها؛</li>
+<li>نقل التحكم عند تطبيق تلك الاستمرارية.</li>
+</ul>
+<p>يكشف أسلوب تمرير الاستمرار التحكم بصيغة يسهل وصفها تشغيليًا، لكنه تمثيل أو تحويل برمجي، لا دلالات تشغيلية. ويتطلب ربط برنامج بالأسلوب المباشر بترجمته إلى CPS تحديد دلالات المصدر والهدف مع حجة للحفاظ على المعنى.</p>
+<details>
+<summary><strong>ما وراء CPS: حين يلزم فحص الاستمراريات</strong></summary>
+<p>أسلوب تمرير الاستمرار علاج مألوف للإلحاق والربط الحساسين للارتباط. فبدلًا من تكرار اجتياز بنية مرتبطة من اليسار، يمثل الحساب المتبقي بتركيب الدوال. ويكون ذلك فعالًا حين تكون العملية الوحيدة على الاستمرارية هي تطبيقها في النهاية.</p>
+<p>حدد فان در بلوخ وكيسليوف الحد الفاصل: فبعض المستهلكات تحتاج إلى فحص نتيجة وسيطة أو تعديلها قبل المتابعة. وقد يتطلب البحث غير الحتمي والمكررات والمونادات الحرة والآثار القابلة للتوسيع هذا الوصول. ويخفي أسلوب تمرير الاستمرار التسلسل المفاهيمي داخل دالة، لذا يتطلب استعادة البنية الوسيطة إعادة تجسيدها كبيانات، ما قد يمحو ميزة الأداء.</p>
+<p>يمثل بديلهما التسلسل المخفي مباشرة في بنية بيانات محاذية للأنواع. وتدعم هذه البنية تركيبًا فعالًا بغض النظر عن الارتباط، مع الحفاظ على الوصول الكفء إلى النتائج الوسيطة. وتضمن الأنواع أن كل حساب مخزن ينتج المدخل الذي تتوقعه الخطوة التالية.</p>
+<p>الخلاصة الأوسع ليست أن التسلسلات المحاذية للأنواع تهزم أسلوب تمرير الاستمرار. بل إن هذا الأسلوب ممتاز في <em>تطبيق</em> الاستمراريات وأقل ملاءمة حين يحتاج المستهلك إلى <em>فحصها</em>. ويصقل بحث التحكم المحدد الدرس أكثر: فبدلًا من التعامل مع المستقبل كله كاستمرارية واحدة غير متمايزة، تحدد المحددات أي جزء من الحساب المحيط يمكن التقاطه والتلاعب به.</p>
+<p>لم تختف هذه الأفكار، بل تواصل دروسها في معالجات الآثار واشتقاق الآلات المجردة وعوامل التحكم ذات الأنواع وتمثيلات الآثار الكفؤة. وما تغير هو التوقع بأن يكون أسلوب تمرير الاستمرار وحده التجريد النهائي.</p>
+<p>راجع فان در بلوخ وكيسليوف، <a href="https://okmij.org/ftp/Haskell/zseq.pdf"><em>Reflection without Remorse</em></a>. وللسياق الأوسع للتحكم، راجع <a href="https://okmij.org/ftp/continuations/index.html">مجموعة كيسليوف عن الاستمراريات والتحكم المحدد</a>.</p>
+</details>
+<h2 id="defunctionalized-machines"><a class="header" href="#defunctionalized-machines">آلات أزيلت دوالها</a></h2>
+<p>تستبدل إزالة الدوال عائلة معلومة من قيم الدوال، مثل استمراريات CPS، بمُنشئات من الرتبة الأولى وعملية <code>apply</code>. ويمكن للدلالات التشغيلية بعد ذلك وصف الانتقالات بين التهيئات الصريحة الناتجة.</p>
+<p>قد تشتق هذه الانتقالات آلة مجردة بعد تحويل ملموس إلى CPS تتبعه إزالة للدوال. وهذا اشتقاق قوي، لكنه ليس تعريفًا عامًا للدلالات التشغيلية: لا يلزم أن تنشأ القواعد التشغيلية من CPS، كما أن الآلة الاعتباطية من الرتبة الأولى ليست بذلك آلة استمرارية أزيلت دوالها.</p>
+<details>
+<summary><strong>رينولدز: بدايات إزالة الدوال</strong></summary>
+<p>قدم جون سي. رينولدز إزالة الدوال في دراسته لعام 1972 للمفسرات التعريفية. ولم يبدأ بآلة افتراضية من الرتبة الأولى، بل بمفسر عالي الرتبة: كانت الدوال في اللغة المُعرِّفة تمثل البيئات والاستمراريات وأجزاء أخرى من اللغة قيد التعريف.</p>
+<p>يرصد التحويل العائلة المنتهية من تجريدات الدوال التي قد تظهر في البرنامج كله. ويستبدل كل تجريد بمُنشئ من الرتبة الأولى يحمل قيم متغيراته الحرة، ثم يستبدل تطبيق الدوال بعملية <code>apply</code> واحدة تفاضل على تلك المُنشئات. وهكذا يتحول ما كان ضمنيًا في اللغة المُعرِّفة إلى جبر صريح للإغلاقات أو الاستمراريات.</p>
+<p>عند تطبيق ذلك على مفسر قائم على الاستمراريات، تكشف الخطوة عن آلة: تصبح مُنشئات الاستمرارية حالات تحكم، وتصبح المتغيرات الملتقطة بيانات آلة مخزنة، وتصبح <code>apply</code> موزع الانتقالات. لا تُخمّن الآلة أولًا، بل تُشتق من مقيّم عالي الرتبة.</p>
+<p>وشدد رينولدز أيضًا على كلفة هذا الوضوح. تحتوي الآلة الناتجة خيارات تمثيل صحيحة لكنها ليست فريدة. وقد تنتج خيارات مُنشئات أو تحويلات سابقة مختلفة مجموعات مختلفة من «التروس والعجلات» الشبيهة بالآلات مع حفظ السلوك نفسه. ولذلك تكشف إزالة الدوال بنية تشغيلية، لا معنى اللغة الحتمي الوحيد.</p>
+<p>نظّم دانفي ونيلسن لاحقًا تقنية رينولدز بوصفها تحويلًا للبرنامج الكامل، ودرسا إعادة تحويل الدوال باعتبارها معكوسه. وخلاصتهما الأعمق أن التحويل جسر: ينقل المواصفات وحجج الصحة بين التعريفات عالية الرتبة والآلات من الرتبة الأولى، وقد يكشف أن برامج تبدو غير مترابطة هي تمثيلان للبنية نفسها.</p>
+<p>يمنح هذا المسار البحثي التقنية مكانتها المناسبة. إزالة الدوال أكثر من استبدال الإغلاقات بتعداد، لكنها أقل من أن تكون أساسًا كونيًا: إنها انتقال يحفظ الدلالات بين تمثيلات يجب إثبات العلاقة بينها.</p>
+<p>راجع رينولدز، <a href="https://homepages.inf.ed.ac.uk/wadler/papers/papers-we-love/reynolds-definitional-interpreters-1972.pdf"><em>Definitional Interpreters for Higher-Order Programming Languages</em></a>، ودانفي ونيلسن، <a href="https://tidsskrift.dk/brics/article/view/21684"><em>Defunctionalization at Work</em></a>.</p>
+</details>
+<h2 id="the-operational-representation-cycle"><a class="header" href="#the-operational-representation-cycle">دورة التمثيل التشغيلي</a></h2>
+<p>من الأخطاء المتكررة البحث عن تمثيل تشغيلي واحد يحل كل مشكلة برمجية. يستعيد كل تمثيل شيئًا أخفاه السابق، لكنه يجعل شأنًا آخر أصعب:</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">higher-order program</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">free syntax</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6943em;vertical-align:-0.011em;"></span><span class="mord text"><span class="mord">CPS</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7054em;vertical-align:-0.011em;"></span><span class="mord text"><span class="mord">first-order machine</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">higher abstraction</span></span></span></span></span></span></p>
+<p>لا تدعي الأسهم وجود مسار معالجة ضروري للمترجم. بل تعرض حركة تصميمية متكررة: اكشف ما يخفيه التمثيل الحالي، ثم أخفِ الآليات التي أدخلها هذا الكشف.</p>
+<div class="table-wrapper"><table><thead><tr><th>التمثيل</th><th>ما الذي يتيحه</th><th>الضغط الذي يسببه</th></tr></thead><tbody>
+<tr><td>دوال عالية الرتبة</td><td>تركيب مباشر وتجريد لغة المضيف</td><td>يمكن لمستهلك عام استدعاء دالة، لكنه لا يستطيع فحص بنيتها المخفية</td></tr>
+<tr><td>صياغة حرة مع تسلسل</td><td>برامج كبيانات قابلة للتركيب والتفسير</td><td>لا توفر الحرية معادلات المجال أو التطبيع أو التقييم الكفء أو فحص الدوال المخزنة</td></tr>
+<tr><td>أسلوب تمرير الاستمرار</td><td>يصبح ترتيب التقييم وبقية الحساب صريحين</td><td>يمرر ترميز CPS للبرنامج الكامل الاستمراريات عبر كل الواجهات تقريبًا</td></tr>
+<tr><td>تحكم من الرتبة الأولى بعد إزالة الدوال</td><td>تصبح الاستمراريات حالات قابلة للفحص والتسلسل</td><td>يجب صيانة المُنشئات والوسائط المخزنة وحالات الانتقال وعملية <code>apply</code> صراحة</td></tr>
+<tr><td>تجريد أعلى فوق الآلة</td><td>تصبح الآليات أسهل استخدامًا</td><td>تُخفى البنية مجددًا حين يحتاج المترجم أو المجدول أو مصحح الأخطاء أو المحسن إلى فحصها</td></tr>
+</tbody></table>
+</div>
+<p>هذه الضغوط بنيوية. يتطلب الفحص بيانات. وتحويل السلوك إلى بيانات يُدخل مُنشئات ومفسرًا. ويعيد إخفاء تلك المُنشئات التجريد الملائم، لكنه يزيل إمكانية الوصول نفسها التي تحتاج إليها المستهلكات لتحليل البرامج أو تحويلها.</p>
+<p>المفاضلة في الموناد الحر مفيدة على نحو خاص. فهو يحل مشكلة دقيقة واحدة: يولد التسلسل لفونكتور تعليمات من دون فرض معادلات تتجاوز قوانين الموناد. وهذا الضمان حدّه أيضًا. فهو لا يعرف قوانين المجال. فإذا كان ينبغي أن يكون إسنادان إلى الخلية نفسها مكافئين للإسناد الأخير وحده، يظل البرنامج الحر محتويًا على التعليمتين حتى يوحدهما تطبيع أو تفسير خاص بالمجال. لذلك يجب أن يأتي التحسين والشكل المعياري والمساواة الدلالية من مكان آخر.</p>
+<p>كما أن إعادة تمثيل التعليمات لا تجعل البرنامج كله قابلًا للفحص على نحو موحد. ففي الترميزات الشائعة، تكون التعليمة المعلقة ظاهرة، لكن استمراريتها دالة بلغة المضيف. ولا يستطيع محلل عام فحص البنية المستقبلية المخفية خلف تلك الدالة دون تقديم نتيجة وتطبيقها. وتعني إعادة تمثيل الاستمرارية لاستعادة الفحص الانتقال نحو تمثيل من الرتبة الأولى أو أزيلت دواله، فنعود إلى الجزء التالي من الدورة.</p>
+<p>تعتمد كلفة التقييم أيضًا على التمثيل. فقد تتطلب شجرة ساذجة من عمليات الربط المتسلسلة من اليسار اجتيازًا متكررًا وعملًا تربيعيًا. وقد يسبب تحويل يكرر البرامج الفرعية المتبقية نموًا أسيًا. ويمكن لترميزات Codensity أو الأحرر أو المتخصصة تحسين كلف محددة، لكن باختيار تمثيلات ومفاضلات مختلفة. النمو الأسي ممكن، لكنه ليس قانونًا أصيلًا للمونادات الحرة.</p>
+<p>لذلك فالموناد الحر ليس حلًا كونيًا. إنه يوفر صياغة مع تسلسل مشروع، لا معادلات المجال المقصودة ولا شكلًا معياريًا ولا رؤية بنيوية كاملة ولا تنفيذًا كفؤًا تلقائيًا. وبالمثل، لا يلزم أن ينتشر CPS في النظام كله عند استخدامه محليًا، ولا تكون إزالة الدوال مرهقة إلا بقدر عائلة الدوال والقيم الملتقطة التي يجب إعادة تمثيلها.</p>
+<p>تظهر الدورة حين يُطلب من كل ترميز جديد أن يصبح الأساس الكوني. فيحل إزعاجًا تشغيليًا سابقًا ثم يصبح مصدر التعقيد العرضي التالي.</p>
+<p>لهذا لا تتقارب النقاشات حول «أفضل تجريد» ما دامت تشغيلية بالكامل. تُقارن الدوال عالية الرتبة والصياغة الحرة وCPS والآلات من الرتبة الأولى كما لو لزم أن يتفوق أحدها على سواه. لكن <em>الأفضل</em> لا معنى له قبل تحديد ما يجب الحفاظ عليه ومن سيستهلك النتيجة:</p>
+<ul>
+<li>يفضل التنفيذ المباشر الاستدعاءات العادية والتمثيل المخفي؛</li>
+<li>يتطلب التحويل والتحليل بنية قابلة للفحص؛</li>
+<li>يتطلب التسلسل بيانات من الرتبة الأولى؛</li>
+<li>قد تفضل قابلية التوسيع إضافة تفسيرات أو إضافة صياغة، ونادرًا ما تفضلهما بالتساوي؛</li>
+<li>قد يتطلب التزامن ملاحظات تتجاهل عمدًا خيارات جدولة كثيرة.</li>
+</ul>
+<p>هذه متطلبات مختلفة، لا براهين متعاقبة على تفوق تجريد واحد كونيًا. قد تساعد الخصائص التشغيلية في اختيار تنفيذ لغرض محدد، لكنها لا تحدد الغرض أو ما الفروق ذات المعنى.</p>
+<p>وينطبق التحفظ نفسه على التفكير التسلسلي. يمكن للدلالات التشغيلية وصف الأنظمة المتزامنة وغير الحتمية، لكن تسلسل خطوات آلة واحدة ليس إلا تمثيلًا ممكنًا لسلوكها. فإذا جُعل ترتيب الجدولة مرجعًا حاسمًا مبكرًا، اختلفت التنفيذات المتكافئة لمجرد اختلاف تداخل آلياتها. على النموذج الدلالي أن يقرر أولًا أي الملاحظات تميز البرامج المتزامنة؛ ثم تُقيّم الجداول التشغيلية وفق ذلك القرار.</p>
+<h2 id="real-example-the-evm"><a class="header" href="#real-example-the-evm">مثال عملي: آلة EVM</a></h2>
+<p>يمكن فهم آلة Ethereum الافتراضية (EVM) تشغيليًا:</p>
+<ul>
+<li><strong>الحالة</strong>: عداد البرنامج، والمكدس، والذاكرة، والتخزين، والغاز</li>
+<li><strong>قواعد الانتقال</strong>: قاعدة لكل شفرة عملية (<code>ADD</code> و<code>PUSH</code> و<code>SSTORE</code> وغيرها)</li>
+<li><strong>التنفيذ</strong>: تطبيق قواعد الخطوات الصغيرة مرارًا حتى التوقف</li>
+</ul>
+<p>شيفرة EVM البايتية بيانات تعليمات من الرتبة الأولى. ويحدد الوصف التشغيلي كيفية تغير تهيئة EVM لكل شفرة عملية؛ وينفذ عميل ملموس ذلك السلوك.</p>
+<p>قد تشبه حلقة التوزيع وعداد البرنامج فيها آلة مجردة أزيلت دوالها. لكن تسميتها استمراريات أزيلت دوالها تتطلب مصدرًا عالي الرتبة وتحويلًا ملموسًا وعلاقة مثبتة، لا مجرد حلقة مشابهة في المظهر.</p>
+<h2 id="breaking-the-cycle-meaning-before-machinery"><a class="header" href="#breaking-the-cycle-meaning-before-machinery">كسر الدورة: المعنى قبل الآليات</a></h2>
+<p>تجيب الأوصاف التشغيلية والدلالية عن أسئلة مختلفة:</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:3em;vertical-align:-1.25em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.75em;"><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mopen"><span class="mopen">[</span><span class="mspace" style="margin-right:-0.1778em;"></span><span class="mopen">[</span></span><span class="mord mathnormal">p</span><span class="mclose"><span class="mclose">]</span><span class="mspace" style="margin-right:-0.1778em;"></span><span class="mclose">]</span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">c</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.75em;"><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:1em;"></span><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.75em;"><span style="top:-3.75em;"><span class="pstrut" style="height:2.84em;"></span><span class="mord"></span></span><span style="top:-2.25em;"><span class="pstrut" style="height:2.84em;"></span><span class="mord"></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.75em;"><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mord text"><span class="mord">what does the program mean?</span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mord text"><span class="mord">how does this representation step?</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>يختار التطوير الذي يبدأ بالمعنى المجال الدلالي والتركيب والملاحظات والقوانين قبل الالتزام بتمثيل آلة. وبعد اختيار نظام انتقال، يربط التزام صحته الطبقتين. وتكون صيغة مألوفة لادعاء حفظ الخطوة الصامتة، عند تعريف معنى مناسب للتهيئات الكاملة، كما يلي:</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.522em;vertical-align:-0.011em;"></span><span class="mord mathnormal">c</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8259em;vertical-align:-0.024em;"></span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟹</span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">meaning</span></span><span class="mopen">(</span><span class="mord mathnormal">c</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0519em;vertical-align:-0.25em;"></span><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">meaning</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>قد تستخدم العلاقة الدقيقة بدلًا من ذلك التكافؤ الرصدي أو المسارات أو التشابه المحاكى. والمهم أن تكون الآلة مسؤولة أمام المعنى المقصود.</p>
+<p>لا يختار التصميم الدلالي فائزًا من الدورة، بل ينشئ مصدرًا ثابتًا للمرجعية خارجها:</p>
+<ol>
+<li>عرّف المجال الدلالي والعمليات والتركيب والقوانين.</li>
+<li>اكتب البرامج بمفردات ذلك المعنى.</li>
+<li>اختر تمثيلًا لمستهلك ملموس: التنفيذ المباشر أو الفحص أو التجميع أو الجدولة أو التسلسل أو التحليل.</li>
+<li>اربط كل تمثيل وتحويل مختار بالمعنى نفسه.</li>
+</ol>
+<p>لذلك يمكن لمفسر عالي الرتبة وبرنامج من الرتبة الأولى أن يتعايشا. ولا يلزم أن يكون أي منهما تعريف اللغة. فقد يخدم الأول التنفيذ المباشر، والثاني المستهلكين الذين يحتاجون إلى البنية. وتوافقهما التزام دلالي، لا افتراض بتطابق آلياتهما.</p>
+<div id="admonition-لا-يوجد-تجريد-تشغيلي-أخير" class="admonition admonish-note" role="note" aria-labelledby="admonition-لا-يوجد-تجريد-تشغيلي-أخير-title">
+<div class="admonition-title">
+<div id="admonition-لا-يوجد-تجريد-تشغيلي-أخير-title">
+<p>لا يوجد تجريد تشغيلي أخير</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-لا-يوجد-تجريد-تشغيلي-أخير"></a>
+</div>
+<div>
+<p>يكشف كل تمثيل تشغيلي بعض البنية ويخفي أخرى. والمعنى هو النقطة الثابتة التي تُختار انطلاقًا منها التمثيلات المناسبة وتُربط بعضها ببعض.</p>
+</div>
+</div>
+<h2 id="summary"><a class="header" href="#summary">ملخص</a></h2>
+<ul>
+<li>تصف الدلالات التشغيلية التقييم أو الانتقالات لتمثيل مختار.</li>
+<li>توفر المونادات الحرة صياغة التعليمات والتسلسل، لكن السلوك يظل بحاجة إلى تفسير.</li>
+<li>يكشف أسلوب تمرير الاستمرار الاستمراريات؛ وقد تصف القواعد التشغيلية كيف تمرر برامج CPS القيم والتحكم.</li>
+<li>قد تحول إزالة الدوال برنامجًا معينًا عالي الرتبة إلى آلة من الرتبة الأولى يمكن وصف انتقالاتها تشغيليًا.</li>
+<li>إن التعامل مع أي ترميز منها بوصفه كونيًا يخلق دورة من إعادة تجسيد البنية وإخفائها.</li>
+<li>يحدد المعنى الدلالي ما يجب أن تحافظ عليه تلك الانتقالات.</li>
+</ul>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../insights/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../insights/expression-problem.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../insights/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../insights/expression-problem.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

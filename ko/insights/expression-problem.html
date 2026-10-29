@@ -1,0 +1,513 @@
+<!DOCTYPE HTML>
+<html lang="ko" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>표현식 문제 다시 보기 - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="표현식 문제 다시 보기 - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-ko.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"표현식 문제 다시 보기","sourceHash":"sha256:c0c35ab091b01a221419f7a315cdd37146fc4858d3335fa406996ecadc3148e8"} -->
+<h1 id="expression-problem-reloaded"><a class="header" href="#expression-problem-reloaded">표현식 문제 다시 보기</a></h1>
+<div id="admonition-관련-항목" class="admonition admonish-tip" role="note" aria-labelledby="admonition-관련-항목-title">
+<div class="admonition-title">
+<div id="admonition-관련-항목-title">
+<p>관련 항목</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-관련-항목"></a>
+</div>
+<div>
+<p>의미론적 관점: <a href="../denotational-design/design.html">표시적 설계</a><br />
+Rust에서 의미로 설계하기: <a href="../rust-dd/capability-algebras.html">케이퍼빌리티 대수</a>, <a href="../rust-dd/derived-meaning.html">파생 의미와 합성</a>, <a href="../rust-dd/interpreters.html">인터프리터와 효과</a><br />
+개념: <a href="../concepts/expression-problem.html">표현식 문제</a></p>
+</div>
+</div>
+<p>이 페이지에서는 <em>표현식 문제</em>에 대한 실용적인 트레이트 기반 해결책을 소개합니다. 기존 코드를 반복해서 다시 쓰지 않고 표현식 형식과 연산을 어떻게 추가할 수 있을까요? 이 해결책은 설계 면에서 <strong>Conal식</strong>이고 인코딩 면에서 <strong>태그리스 파이널/객체 대수</strong> 방식입니다. 구체적으로는 합성 의미를 먼저 명세하고(작은 케이퍼빌리티 인터페이스와 확장 수준의 프로그램 명세), 그다음 구체 인터프리터를 제공합니다. 구체 인코딩은 Oleg Kiselyov의 <strong>태그리스 파이널</strong> 방식 및 <strong>객체 대수</strong>와 같은 계열입니다. 생성자 인터페이스(<code>LitAlg</code>, <code>AddAlg</code>, <code>MulAlg</code>)가 언어 시그니처를 정의하고, 프로그램은 그 인터페이스에 대해 다형적으로 작성되며, 구체 구현(<code>Eval</code> 또는 <code>Pretty</code> 등)이 해석을 제공합니다. 이 방식은 닫힌 AST 하나에 고정하지 않으면서 두 차원에서 정적 타입과 확장성을 유지합니다.</p>
+<p>Oleg의 접근은 명시적으로 표시적입니다. 먼저 합성 의미를 부여하고 효과 및 인터프리터를 모듈식 의미 계층으로 실현합니다. 표현식 문제에서 표시적 설계와 정렬되는 것은 우연이 아니라 당연합니다. Conal의 표시적 설계 정식화도 같은 우선순위를 분명히 합니다. 의미를 합성적으로 먼저 명세하고 구체 실행 전략은 부차적이고 교체 가능한 것으로 취급합니다.</p>
+<p>표현식 언어 예에서 이 인코딩은 다음을 뜻합니다:</p>
+<ul>
+<li><strong>생성자 어휘</strong>는 작고 독립적인 대수 트레이트로 모델링합니다.</li>
+<li><strong>해석</strong>은 이러한 트레이트의 구현입니다.</li>
+<li>새 구문을 추가할 때 새 트레이트를 만들고 기존 코드는 그대로 둡니다.</li>
+<li>새 의미론을 추가할 때 새 인터프리터 타입을 만들고 기존 코드는 그대로 둡니다.</li>
+</ul>
+<p><code>lit</code>와 <code>add</code>은 특권 AST의 생성자가 아니라 의미론적 연산입니다. AST는 여러 해석 중 하나입니다.</p>
+<div id="admonition-c의-객체-대수" class="admonition admonish-example" role="note" aria-labelledby="admonition-c의-객체-대수-title">
+<div class="admonition-title">
+<div id="admonition-c의-객체-대수-title">
+<p>C#의 객체 대수</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-c의-객체-대수"></a>
+</div>
+<div>
+<p>이 인코딩은 Rust에만 국한되지 않습니다. <a href="https://github.com/tgrospic/object-algebras"><code>object-algebras</code></a>에서는 C#으로 이 패턴을 발전시키고 여기서 사용하는 고정 기반 집합을 넘어섭니다. 이 페이지에서 각 인터프리터는 일반 타입인 구체적인 <code>Self::Expr</code> 하나를 선택합니다. C# 대수는 대신 타입 <em>생성자</em> <code>F</code> — <code>FunctorAlg&lt;F&gt;</code>, <code>MonadAlg&lt;F&gt;</code>, <code>BankingDsl&lt;F&gt;</code> — 를 추상화하고, 사용할 수 없는 <code>F&lt;a&gt;</code> 대신 결과를 <code>App&lt;F, a&gt;</code>로 전달합니다.</p>
+<p>C#에는 일급 고차 종류 타입이 없으므로 <code>App&lt;F, a&gt;</code>가 애플리케이션 <code>F(a)</code>을 대신하고, 주입/투영 래퍼를 통해 되찾습니다. 이 <code>App</code> 기법이 바로 <a href="../concepts/defunctionalization.html">디펑셔널라이제이션</a>입니다. 언어로 표현할 수 없는 추상화가 일차 데이터가 되어 필요할 때 적용됩니다. Rust도 일급 고차 종류 타입이 없으므로 같은 한계에 부딪힙니다.</p>
+</div>
+</div>
+<h2 id="specify-tiny-syntax-capabilities"><a class="header" href="#specify-tiny-syntax-capabilities">작은 구문 케이퍼빌리티 명세하기</a></h2>
+<p>각 생성자는 작은 트레이트가 됩니다. 이것이 <strong>명세(spec)</strong>입니다.</p>
+<pre><code class="language-rust noplayground">trait LitAlg {
+    type Expr;
+
+    fn lit(&amp;self, n: i64) -&gt; Self::Expr;
+}
+
+trait AddAlg {
+    type Expr;
+
+    fn add(&amp;self, a: Self::Expr, b: Self::Expr) -&gt; Self::Expr;
+}</code></pre>
+<p>프로그램은 대수 트레이트에 대한 <strong>확장</strong>으로 작성합니다. 이 확장도 명세의 일부이며 작은 명세를 재사용 가능한 프로그램 수준 명세로 합성합니다:</p>
+<pre><code class="language-rust noplayground">#[ext(name = ExprPrograms)]
+impl&lt;This&gt; This
+where
+    This: LitAlg + AddAlg,
+{
+    fn expr_basic(&amp;self) -&gt; This::Expr {
+        self.add(self.lit(2), self.lit(3))
+    }
+}</code></pre>
+<p><code>#[ext(...)]</code>는 <a href="https://docs.rs/extend/latest/extend/"><code>extend</code> 크레이트의 매크로입니다</a>. <code>impl</code> 블록에서 확장 메서드를 생성해 상용구를 줄이며, 새로운 Rust 언어 기능은 아닙니다.</p>
+<h2 id="add-new-interpretation"><a class="header" href="#add-new-interpretation">새 해석 추가</a></h2>
+<p>인터프리터가 명세를 구현합니다. 구문을 바꿀 필요는 없습니다.</p>
+<pre><code class="language-rust noplayground">struct Eval;
+
+impl LitAlg for Eval {
+    type Expr = i64;
+
+    fn lit(&amp;self, n: i64) -&gt; i64 { n }
+}
+
+impl AddAlg for Eval {
+    type Expr = i64;
+
+    fn add(&amp;self, a: i64, b: i64) -&gt; i64 { a + b }
+}
+
+struct Pretty;
+
+impl LitAlg for Pretty {
+    type Expr = String;
+
+    fn lit(&amp;self, n: i64) -&gt; String { n.to_string() }
+}
+
+impl AddAlg for Pretty {
+    type Expr = String;
+
+    fn add(&amp;self, a: String, b: String) -&gt; String {
+        format!("({a} + {b})")
+    }
+}</code></pre>
+<p>이제 같은 표현식을 여러 방식으로 해석할 수 있습니다:</p>
+<pre><code class="language-rust noplayground">let eval = Eval;
+let pretty = Pretty;
+
+let v: i64 = eval.expr_basic();        // 5
+let s: String = pretty.expr_basic();   // "(2 + 3)"</code></pre>
+<h2 id="add-new-syntax-new-capability-trait"><a class="header" href="#add-new-syntax-new-capability-trait">새 구문 추가 (새 케이퍼빌리티 트레이트)</a></h2>
+<p><code>Mul</code>를 추가하려면 새 트레이트를 정의하세요. 기존 코드는 그대로 둡니다.</p>
+<pre><code class="language-rust noplayground">trait MulAlg {
+    type Expr;
+
+    fn mul(&amp;self, a: Self::Expr, b: Self::Expr) -&gt; Self::Expr;
+}
+
+#[ext(name = ExprProgramsMul)]
+impl&lt;This&gt; This
+where
+    This: LitAlg + AddAlg + MulAlg,
+{
+    fn expr_with_mul(&amp;self) -&gt; This::Expr {
+        self.mul(self.add(self.lit(2), self.lit(3)), self.lit(4))
+    }
+}</code></pre>
+<p>기존 인터프리터는 예전 표현식에서 계속 작동합니다.<br />
+새 구문도 지원하려면 새 트레이트를 구현합니다:</p>
+<pre><code class="language-rust noplayground">impl MulAlg for Eval {
+    type Expr = i64;
+
+    fn mul(&amp;self, a: i64, b: i64) -&gt; i64 { a * b }
+}
+
+impl MulAlg for Pretty {
+    type Expr = String;
+
+    fn mul(&amp;self, a: String, b: String) -&gt; String {
+        format!("({a} * {b})")
+    }
+}</code></pre>
+<h2 id="why-this-solves-the-expression-problem"><a class="header" href="#why-this-solves-the-expression-problem">이것이 표현식 문제를 해결하는 이유</a></h2>
+<p>전통적인 표현식 문제에는 표현을 기준으로 두 축이 있습니다:</p>
+<ul>
+<li>새 변형(사례) 추가</li>
+<li>새 연산 추가</li>
+</ul>
+<p>표시적 설계는 축을 다시 설명합니다:</p>
+<ul>
+<li><strong>의미 어휘 확장</strong>: 새 케이퍼빌리티 트레이트(<code>MulAlg</code>)를 정의합니다.</li>
+<li><strong>그 어휘에 대한 새 해석 추가</strong>: 새 인터프리터 타입(<code>Eval</code>, <code>Pretty</code>, AST 빌더, 코드 생성기)을 정의합니다.</li>
+</ul>
+<p>두 축은 독립적으로 합성됩니다:</p>
+<ul>
+<li>새 케이퍼빌리티가 필요하지 않다면 기존 프로그램을 바꿀 필요가 없습니다. <code>expr_basic</code>는 여전히 <code>LitAlg + AddAlg</code>만 요구합니다.</li>
+<li>새 케이퍼빌리티를 해석하기로 하지 않는 한 기존 인터프리터를 바꾸지 않아도 됩니다. <code>impl MulAlg</code>가 없는 <code>Eval</code>도 <code>mul</code>를 사용하지 않는 모든 프로그램을 계속 실행합니다.</li>
+</ul>
+<p>구현 행렬이 사라지는 것은 아닙니다. <code>Eval</code>와 <code>Pretty</code>가 모두 <code>mul</code>를 해석해야 한다면 둘 다 <code>impl MulAlg</code>가 필요합니다. 달라지는 점은 행렬을 구성하는 방식입니다. 각 칸이 <em>의미 연산 × 해석</em>이며 특권 표현을 중심으로 구성된 칸이 없고, 각 프로그램은 사용하는 케이퍼빌리티에만 의존합니다.</p>
+<h2 id="laws-belong-to-the-specification"><a class="header" href="#laws-belong-to-the-specification">법칙은 명세에 속합니다</a></h2>
+<p>의미론적 대수는 기반 집합, 연산, 법칙으로 이루어집니다. 기반 집합(<code>type Expr</code>)은 해석이 선택하지만 연산과 법칙은 명세에 속합니다. 예를 들어 산술의 의미인 <code>LitAlg + AddAlg</code>은 다음을 명시합니다:</p>
+<pre><code class="language-text">add(lit(m), lit(n)) = lit(m + n)
+</code></pre>
+<p><code>Eval</code>는 이 법칙을 만족합니다. <code>Pretty</code>는 만족하지 않습니다. <code>"(2 + 3)"</code>는 <code>"5"</code>이 아닙니다. 둘 다 구문 시그니처의 유효한 인터프리터지만, <code>Eval</code>만 산술 명세의 모델입니다. 법칙은 트레이트를 대상으로 한 번 명시하여 어떤 인터프리터가 적합한지 결정합니다. 어느 인터프리터도 법칙을 소유하지 않습니다.</p>
+<h2 id="final-insight-featherweight-go-vs-denotational-design"><a class="header" href="#final-insight-featherweight-go-vs-denotational-design">마지막 통찰: Featherweight Go와 표시적 설계</a></h2>
+<p>Wadler는 정적 타입과 모듈식 확장에서 행과 열의 문제로 언어 기제 수준의 표현식 문제를 진단했습니다. <a href="../concepts/expression-problem.html#featherweight-go-solution-2020">Featherweight Go</a>는 구체적인 해결책을 제공합니다. <code>Plus(type a Any)</code>로 재귀 표현을 제네릭하게 유지하고 각 연산은 <code>a</code>을 독립적으로 제한합니다(<code>Eval</code>에는 <code>Plus(type a Evaler)</code>, <code>String</code>에는 <code>Plus(type a Stringer)</code>). 표현이 닫힌 표현식 인터페이스 하나에 묶이지 않으므로 두 축이 모두 열려 있습니다.</p>
+<p>전통적인 해결책은 표현에서 시작해 확장 두 축을 모두 열어 두는 방법을 묻습니다. Featherweight Go는 재귀 표현을 제네릭하고 구조적으로 확장 가능하게 만들어 놀라울 만큼 멀리 나아갑니다. 표시적 설계는 경계를 한 단계 더 앞당깁니다. 표현이 모델은 아닙니다. 모델은 대수와 그 법칙이며 표현은 가능한 해석 중 하나입니다.</p>
+<p><strong>Featherweight Go는 표현을 확장 가능하게 합니다. 표시적 설계는 표현을 선택 사항으로 만듭니다.</strong></p>
+<div class="table-wrapper"><table><thead><tr><th></th><th>Featherweight Go</th><th>표시적 설계</th></tr></thead><tbody>
+<tr><td>의미의 중심</td><td>확장 가능한 표현</td><td>대수와 법칙</td></tr>
+<tr><td><code>Num</code>/<code>Plus</code>, <code>lit</code>/<code>add</code></td><td>구조 (표현 형식)</td><td>의미론적 연산</td></tr>
+<tr><td><code>Eval</code>, <code>String</code>/<code>Pretty</code></td><td>메서드와 인터페이스</td><td>해석</td></tr>
+<tr><td>재귀 구조</td><td>제네릭하고 열린 표현 (<code>Plus(a)</code>)</td><td>필요 없음</td></tr>
+<tr><td>기반 집합</td><td>표현된 표현식 타입</td><td>인터프리터가 선택 (<code>type Expr</code>)</td></tr>
+<tr><td>AST</td><td>표현이 계속 중심에 있음</td><td>선택 사항이며 여러 해석 중 하나</td></tr>
+<tr><td>행렬의 한 칸</td><td>사례 × 연산 → 메서드</td><td>의미론적 연산 × 해석 → <code>impl</code></td></tr>
+<tr><td>새 동작</td><td>메서드와 인터페이스 추가</td><td>케이퍼빌리티 추가 또는 합성</td></tr>
+<tr><td>새 구현</td><td>새 구조적 실현</td><td>새 인터프리터</td></tr>
+</tbody></table>
+</div>
+<p>Wadler는 표현의 두 축을 확장하는 법을 묻습니다. 표시적 설계는 왜 표현이 어느 축이든 소유해야 하는지 묻습니다.</p>
+<p>합성 가능한 의미를 먼저 정의하고 인코딩을 선택하세요. 그러면 표현식 문제는 개념적 교착 상태가 아니라 인코딩 사이에서 내리는 엔지니어링 선택이 됩니다.</p>
+<p><strong>언어의 의미는 기계라는 개념과 독립적이어야 합니다.</strong></p>
+<figure><iframe width="100%" height="315" src="https://www.youtube.com/embed/n2CBSNAVHVg?si=n-f84RYWjGtKkcVj&amp;clip=Ugkx52hOOFjiK-KEPMRhuB8vT6i4WUaav11c&amp;clipt=EKWcxgIYjoTIAg&amp;start=5344&amp;end=5375" title="Talk clip — a language's meaning should be independent of the machine" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""></iframe><figcaption>언어의 의미는 기계와 독립적이어야 합니다</figcaption></figure>
+<h2 id="references"><a class="header" href="#references">참고 문헌</a></h2>
+<ul>
+<li>
+<p>Elliott, C. <em>Denotational design with type class morphisms</em>.<br />
+<a href="http://conal.net/papers/type-class-morphisms/">http://conal.net/papers/type-class-morphisms/</a></p>
+</li>
+<li>
+<p>Elliott, C. <em>Compiling to categories</em>.<br />
+<a href="http://conal.net/papers/compiling-to-categories/">http://conal.net/papers/compiling-to-categories/</a></p>
+</li>
+<li>
+<p>Kiselyov, O. <em>Tagless-final style</em> (파이널 인코딩 및 확장 가능한 타입 인터프리터에 관한 개요, 튜토리얼, 논문).<br />
+<a href="https://okmij.org/ftp/tagless-final/">https://okmij.org/ftp/tagless-final/</a></p>
+</li>
+<li>
+<p>Kiselyov, O. <em>Having an Effect</em> (효과와 확장 가능한 인터프리터에 대한 정의적/표시적 관점).<br />
+<a href="https://okmij.org/ftp/Computation/having-effect.html#defint">https://okmij.org/ftp/Computation/having-effect.html#defint</a></p>
+</li>
+<li>
+<p>Griesemer, R., Hu, R., Kokke, W., Lange, J., Taylor, I. L., Toninho, B., Wadler, P., Yoshida, N. (2020). <em>Featherweight Go</em>. Proc. ACM Program. Lang. 4 (OOPSLA). 2.3절에서 위와 비교한 제네릭 구조적 해결책을 설명합니다.<br />
+<a href="https://homepages.inf.ed.ac.uk/wadler/papers/fg/fg.pdf">https://homepages.inf.ed.ac.uk/wadler/papers/fg/fg.pdf</a></p>
+</li>
+<li>
+<p>Oliveira, B. C. d. S., Cook, W. R. (2012). <em>Extensibility for the Masses: Practical Extensibility with Object Algebras</em>.<br />
+<a href="https://www.cs.utexas.edu/~wcook/Drafts/2012/ecoop2012.pdf">https://www.cs.utexas.edu/~wcook/Drafts/2012/ecoop2012.pdf</a></p>
+</li>
+</ul>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../insights/operational_semantics.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../insights/referential-transparency.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../insights/operational_semantics.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../insights/referential-transparency.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

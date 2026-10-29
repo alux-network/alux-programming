@@ -1,0 +1,447 @@
+<!DOCTYPE HTML>
+<html lang="ko" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>의미론에서 기계로 - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="의미론에서 기계로 - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-ko.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"의미론에서 기계로","sourceHash":"sha256:9fe5a0f66907af757d4b29691bf2aa8dcdda8c09246818d79d57434456ba33ab"} -->
+<h1 id="semantics-to-machines"><a class="header" href="#semantics-to-machines">의미론에서 기계로</a></h1>
+<div id="admonition-관련-항목" class="admonition admonish-tip" role="note" aria-labelledby="admonition-관련-항목-title">
+<div class="admonition-title">
+<div id="admonition-관련-항목-title">
+<p>관련 항목</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-관련-항목"></a>
+</div>
+<div>
+<p>Rust에서 의미로 설계하기: <a href="../rust-dd/first-order-programs.html">일차 프로그램</a>, <a href="../rust-dd/compiler-pipelines.html">언어와 컴파일러 파이프라인</a><br />
+개념: <a href="../concepts/operational_semantics.html">작동 의미론</a>, <a href="../concepts/free_monad.html">자유 모나드</a>, <a href="../concepts/cps.html">연속 전달 스타일</a>, <a href="../concepts/defunctionalization.html">디펑셔널라이제이션</a></p>
+</div>
+</div>
+<h2 id="what-operational-semantics-describes"><a class="header" href="#what-operational-semantics-describes">작동 의미론이 설명하는 것</a></h2>
+<p>작동 의미론은 선택한 프로그램 표현이 어떻게 동작하는지 명시합니다. 다음과 같은 구성을 대상으로 평가 판단이나 전이 관계를 정의합니다:</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathit">program</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathit">state</span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0519em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord mathit">program</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord"><span class="mord mathit">state</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>프로그램은 소스 구문, 자유 모나드 값, CPS 항, 바이트코드 또는 디펑셔널라이즈된 기계 상태일 수 있습니다. 어떤 표현도 그 자체가 작동 의미론은 <em>아닙니다</em>. 작동 의미론은 선택한 표현의 값이 어떻게 평가되거나 전이되는지 설명합니다.</p>
+<p>방향성이 중요합니다. 표현은 동작을 설명할 대상을 제공하지만, 작동 설명을 덧붙여도 언어가 무엇을 의미해야 하는지는 설명되지 않습니다.</p>
+<h2 id="free-monad-programs"><a class="header" href="#free-monad-programs">자유 모나드 프로그램</a></h2>
+<p>자유 모나드는 명령어 구문과 자유롭게 생성되는 시퀀싱을 제공합니다. 명령어가 어떤 동작을 하는지는 제공하지 않습니다.</p>
+<p>자유 모나드 프로그램의 작동 의미론은 현재 명령어, 연속 실행, 기계 상태를 포함하는 구성을 정의할 수 있습니다. 규칙은 예를 들어 보류된 명령어가 상태를 어떻게 바꾸고 결과를 나머지 프로그램에 어떻게 전달하는지 설명합니다.</p>
+<p>이는 가능한 해석 하나입니다. 같은 자유 프로그램을 실행하지 않고 표시적 모델로 폴드하거나 다른 언어로 컴파일하거나 분석하거나 렌더링할 수도 있습니다.</p>
+<details>
+<summary><strong>자유에서 프리어로: 연구를 통해 알게 된 것</strong></summary>
+<p>효과가 있는 프로그램의 일반 아키텍처로 자유 모나드를 접한 독자는 왜 이후 논의가 프리어 구성, 확장 효과, 핸들러로 이동했는지 궁금할 수 있습니다. 연구에서 자유 모나드를 단순히 버린 것은 아닙니다. 실제로 제공하는 것을 분리하고, 흔한 표현의 한계를 측정한 뒤, 유용한 구조를 이어 갔습니다.</p>
+<p>Kiselyov와 Ishii는 효과 항의 표현에서 제약과 상용구를 점진적으로 제거해 프리어 모나드를 도출합니다. 프리어 표현에서 명령어는 최종 프로그램 타입에는 드러나지 않는 중간 타입을 낼 수 있고, 명시적인 연속 실행이 그 결과를 계산의 나머지에 연결합니다. 따라서 명령어 시그니처에 <code>Functor</code> 인스턴스가 더는 필요하지 않습니다.</p>
+<p>이 변화는 표현력을 높이지만 그 자체로 성능 문제를 해결하지는 않습니다. 직접적인 프리어 표현은 여전히 왼쪽 결합 리스트 덧붙이기처럼 연속 실행을 합성할 수 있습니다. <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> 요청의 연결을 처리하는 데 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>의 작업이 걸릴 수 있습니다. 연속 실행을 드러내면 기회가 보입니다. 결과 타입과 입력 타입이 타입으로 일치하는 타입 정렬 시퀀스로 저장할 수 있습니다. 그 시퀀스를 효율적으로 연결하면 결합 순서에 따른 순회를 없앨 수 있습니다.</p>
+<p>그런 다음 열린 유니언을 이용해 확장 효과 인터프리터가 선택한 요청 타입을 추가, 결합, 제거할 수 있습니다. 이는 모듈식 효과 합성과 핸들러 구조 문제를 다룹니다. 하지만 특정 영역의 등식을 제공하거나 효과가 있는 두 프로그램의 의미가 언제 같은지는 결정하지 않습니다.</p>
+<p>결론은 “프리보다 프리어가 낫다”보다 정확합니다. 자유 모나드는 요청과 해석을 분리하는 가치 있는 방법을 보여 주었습니다. 프리어 인코딩은 불필요한 제약을 제거했고, 타입 정렬 큐는 측정된 성능 문제를 해결했으며, 확장 효과는 합성을 개선했습니다. 각 단계는 앞선 단계의 지식을 유지하면서 주장의 범위를 좁혔습니다. 의미론적 해석은 전 과정에서 별도의 결정으로 남았습니다.</p>
+<p>Kiselyov와 Ishii의 <a href="https://okmij.org/ftp/Haskell/extensible/more.pdf"><em>Freer Monads, More Extensible Effects</em></a>를 참고하세요.</p>
+</details>
+<h2 id="cps-programs"><a class="header" href="#cps-programs">CPS 프로그램</a></h2>
+<p>연속 전달 스타일(CPS)은 계산의 나머지를 연속 실행으로 명시합니다. CPS의 작동 의미론은 다음 동작을 설명합니다:</p>
+<ul>
+<li>현재 CPS 표현식 평가;</li>
+<li>생성한 값을 연속 실행에 전달;</li>
+<li>연속 실행을 적용할 때 제어 이전.</li>
+</ul>
+<p>CPS는 작동 방식으로 설명하기 쉬운 형태로 제어를 드러내지만, 표현이나 프로그램 변환이지 작동 의미론은 아닙니다. 직접 스타일 프로그램과 CPS 번역을 연결하려면 명시적인 소스 및 대상 의미론과 보존 논증이 필요합니다.</p>
+<details>
+<summary><strong>CPS를 넘어서: 연속 실행을 검사해야 할 때</strong></summary>
+<p>CPS는 결합 순서에 민감한 덧붙이기와 바인드를 피하는 표준 기법입니다. 왼쪽으로 결합된 구조를 반복해서 순회하는 대신 함수 합성을 사용해 계산의 나머지를 나타냅니다. 연속 실행에 적용하는 것만 가능하다면 효율적일 수 있습니다.</p>
+<p>van der Ploeg와 Kiselyov는 경계를 짚어냅니다. 일부 사용자는 계속하기 전에 중간 결과를 검사하거나 수정해야 합니다. 비결정적 탐색, 이터레이터, 자유 모나드, 확장 효과가 모두 이런 접근을 필요로 할 수 있습니다. CPS는 개념적 시퀀스를 함수 안에 감추므로 중간 구조를 복원하려면 데이터로 다시 반영해야 하고, 그 과정에서 성능 이점을 잃을 수 있습니다.</p>
+<p>이들은 숨겨진 시퀀스를 타입 정렬 자료 구조로 직접 표현하는 대안을 제시합니다. 결합 순서와 관계없이 효율적인 합성을 지원하면서 중간 결과에도 효율적으로 접근할 수 있습니다. 각 계산이 다음 계산에서 기대하는 입력을 만든다는 사실을 타입이 보장합니다.</p>
+<p>더 넓은 결론은 타입 정렬 시퀀스가 CPS를 이긴다는 것이 아닙니다. CPS는 연속 실행을 <em>적용</em>하는 데 탁월하지만, 사용자가 이를 <em>검사</em>해야 할 때는 적합성이 떨어집니다. 구획 제어 연구는 교훈을 더 구체화합니다. 전체 미래를 하나의 구분 없는 연속 실행으로 다루는 대신, 구획자가 주변 계산에서 어느 부분을 포착하고 조작할 수 있는지 지정합니다.</p>
+<p>이러한 아이디어는 사라지지 않았습니다. 그 교훈은 효과 핸들러, 추상 기계 도출, 타입이 지정된 제어 연산자, 효율적인 효과 표현에 이어집니다. 달라진 것은 CPS만으로 최종 추상화를 이뤄야 한다는 기대입니다.</p>
+<p>van der Ploeg와 Kiselyov의 <a href="https://okmij.org/ftp/Haskell/zseq.pdf"><em>Reflection without Remorse</em></a>를 참고하세요. 더 넓은 제어 주제는 Kiselyov의 <a href="https://okmij.org/ftp/continuations/index.html">연속 실행 및 구획 제어 모음</a>을 참고하세요.</p>
+</details>
+<h2 id="defunctionalized-machines"><a class="header" href="#defunctionalized-machines">디펑셔널라이즈된 기계</a></h2>
+<p>디펑셔널라이제이션은 CPS 연속 실행 같은 알려진 함수 값 계열을 일차 생성자와 <code>apply</code> 연산으로 대체합니다. 그러면 작동 의미론으로 결과 명시 구성 사이의 전이를 설명할 수 있습니다.</p>
+<p>구체적인 CPS 변환에 디펑셔널라이제이션을 이어 적용하면 그 전이들로 추상 기계를 도출할 수 있습니다. 강력한 도출 방법이지만 작동 의미론 일반의 정의는 아닙니다. 작동 규칙이 반드시 CPS에서 나올 필요는 없으며, 임의의 일차 기계가 자동으로 디펑셔널라이즈된 연속 실행 기계가 되는 것도 아닙니다.</p>
+<details>
+<summary><strong>Reynolds: 디펑셔널라이제이션의 시작</strong></summary>
+<p>John C. Reynolds는 1972년 정의적 인터프리터 연구에서 디펑셔널라이제이션을 소개했습니다. 출발점은 일차 가상 머신이 아니라 고차 인터프리터였습니다. 정의 언어의 함수가 환경, 연속 실행 및 정의 대상 언어의 다른 부분을 나타냈습니다.</p>
+<p>이 변환은 전체 프로그램에 나타날 수 있는 유한한 함수 추상화 계열을 살펴봅니다. 각 추상화를 자유 변수 값을 담은 일차 생성자로 바꾸고, 함수 적용은 그 생성자를 판별하는 하나의 <code>apply</code> 연산으로 대체합니다. 정의 언어 안에 암묵적으로 있던 것이 클로저나 연속 실행의 명시적 대수가 됩니다.</p>
+<p>연속 실행 기반 인터프리터에 적용하면 기계 구조가 드러납니다. 연속 실행 생성자는 제어 상태가 되고, 포착한 변수는 저장된 기계 데이터가 되며, <code>apply</code>는 전이 디스패처가 됩니다. 기계를 먼저 추측하는 것이 아니라 고차 평가기에서 도출합니다.</p>
+<p>Reynolds는 이런 명료함의 대가도 강조했습니다. 결과 기계에는 올바르지만 유일하지 않은 표현 선택이 들어갑니다. 생성자를 다르게 선택하거나 선행 변환을 달리하면 동작은 같아도 기계와 같은 “톱니와 바퀴”의 집합이 달라질 수 있습니다. 따라서 디펑셔널라이제이션은 작동 구조를 드러내지만 언어의 유일한 필연적 의미를 드러내지는 않습니다.</p>
+<p>이후 Danvy와 Nielsen은 Reynolds의 기법을 전체 프로그램 변환으로 체계화하고 역변환인 리펑셔널라이제이션을 연구했습니다. 더 깊은 결론은 이 변환이 다리라는 점입니다. 고차 정의와 일차 기계 사이에서 명세와 정확성 논증을 옮길 수 있고, 겉보기에는 무관한 프로그램이 같은 구조의 서로 다른 표현임을 드러낼 수 있습니다.</p>
+<p>이 연구 계보가 이 기법의 적절한 권위를 보여 줍니다. 디펑셔널라이제이션은 클로저를 열거형으로 바꾸는 것 이상이지만 보편적 토대는 아닙니다. 대응 관계를 증명해야 하는 표현 사이에서 의미를 보존하며 이동하는 방법입니다.</p>
+<p>Reynolds의 <a href="https://homepages.inf.ed.ac.uk/wadler/papers/papers-we-love/reynolds-definitional-interpreters-1972.pdf"><em>Definitional Interpreters for Higher-Order Programming Languages</em></a>와 Danvy 및 Nielsen의 <a href="https://tidsskrift.dk/brics/article/view/21684"><em>Defunctionalization at Work</em></a>을 참고하세요.</p>
+</details>
+<h2 id="the-operational-representation-cycle"><a class="header" href="#the-operational-representation-cycle">작동 표현의 순환</a></h2>
+<p>모든 프로그래밍 문제를 해결하는 작동 표현 하나를 찾으려는 것은 흔한 실수입니다. 각 표현은 이전 표현이 감춘 것을 되살리지만 다른 문제를 더 어렵게 만듭니다:</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">higher-order program</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">free syntax</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6943em;vertical-align:-0.011em;"></span><span class="mord text"><span class="mord">CPS</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7054em;vertical-align:-0.011em;"></span><span class="mord text"><span class="mord">first-order machine</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">higher abstraction</span></span></span></span></span></span></p>
+<p>화살표는 필연적인 컴파일러 파이프라인을 주장하지 않습니다. 현재 표현이 감추는 것을 드러낸 다음, 그 과정에서 새로 생긴 장치를 감추는 반복적인 설계 움직임을 보여 줍니다.</p>
+<div class="table-wrapper"><table><thead><tr><th>표현</th><th>제공하는 것</th><th>유발하는 부담</th></tr></thead><tbody>
+<tr><td>고차 함수</td><td>직접 합성과 호스트 언어의 추상화</td><td>제네릭 사용자는 함수를 호출할 수 있지만 숨겨진 구조는 검사할 수 없습니다</td></tr>
+<tr><td>시퀀싱을 갖춘 자유 구문</td><td>합성하고 해석할 수 있는 데이터로서의 프로그램</td><td>자유 구성만으로는 영역 등식, 정규화, 효율적인 평가, 저장된 함수의 검사를 제공하지 않습니다</td></tr>
+<tr><td>CPS</td><td>평가 순서와 계산의 나머지가 명시됩니다</td><td>프로그램 전체의 CPS 인코딩은 거의 모든 인터페이스에 연속 실행을 전달합니다</td></tr>
+<tr><td>디펑셔널라이즈된 일차 제어</td><td>연속 실행이 검사 및 직렬화 가능한 사례가 됩니다</td><td>생성자, 저장된 인수, 전이 상태, <code>apply</code> 연산을 명시적으로 관리해야 합니다</td></tr>
+<tr><td>기계 위의 상위 추상화</td><td>장치를 사용하기 쉬워집니다</td><td>컴파일러, 스케줄러, 디버거, 최적화기가 구조를 검사해야 할 때 다시 감춰집니다</td></tr>
+</tbody></table>
+</div>
+<p>이 부담은 구조에서 비롯됩니다. 검사는 데이터가 있어야 가능합니다. 동작을 데이터로 바꾸면 생성자와 인터프리터가 생깁니다. 생성자를 감추면 편리한 추상화가 돌아오지만 프로그램을 분석하거나 변환하는 사용자가 필요한 바로 그 접근이 사라집니다.</p>
+<p>자유 모나드의 절충은 특히 시사적입니다. 자유 모나드는 하나의 정확한 문제를 해결합니다. 모나드 법칙 외에 등식을 추가하지 않고 명령어 펑터의 시퀀싱을 생성합니다. 이 보장은 동시에 한계이기도 합니다. 도메인의 법칙은 알지 못합니다. 같은 셀에 대한 두 쓰기가 최종 쓰기와 같아야 하더라도, 도메인별 정규화나 해석이 이를 식별하기 전까지 자유 프로그램에는 명령어 둘이 모두 남습니다. 따라서 최적화, 정규형, 의미론적 동등성은 다른 곳에서 제공해야 합니다.</p>
+<p>명령어를 재구화해도 전체 프로그램을 일관되게 검사할 수 있는 것은 아닙니다. 일반적인 인코딩에서는 보류된 명령어가 보이지만 그 연속 실행은 호스트 언어의 함수입니다. 제네릭 분석기는 결과를 제공해 함수를 적용하지 않는 한 그 함수 뒤의 미래 구조를 검사할 수 없습니다. 연속 실행을 재구화하면 검사 기능이 돌아오지만 일차 또는 디펑셔널라이즈된 표현으로 이동하여 순환의 다음 단계로 돌아갑니다.</p>
+<p>평가 비용도 표현에 따라 다릅니다. 왼쪽으로 결합된 바인드 트리를 단순하게 쓰면 반복 순회와 제곱 시간 작업이 필요할 수 있습니다. 남은 하위 프로그램을 복제하는 변환은 지수적 증가를 초래할 수 있습니다. Codensity형, 프리어형 또는 특수화 인코딩은 다른 표현과 절충을 선택해 특정 비용을 개선할 수 있습니다. 지수적 증가는 가능하지만 자유 모나드의 고유 법칙은 아닙니다.</p>
+<p>따라서 자유 모나드는 만능 해법이 아닙니다. 법칙에 맞는 시퀀싱을 갖춘 구문을 제공할 뿐, 의도된 영역 등식, 정규형, 완전한 구조 가시성, 자동으로 효율적인 구현을 제공하지 않습니다. 마찬가지로 CPS를 국소적으로 쓸 때 시스템 전체에 퍼질 필요는 없으며, 디펑셔널라이제이션의 번거로움은 재구화해야 하는 함수 계열과 포착된 값의 규모에 비례합니다.</p>
+<p>새 인코딩을 보편적 토대로 삼으려 할 때 순환이 나타납니다. 이전 작동상의 불편을 해결한 뒤 다음 우발적 복잡성의 원인이 됩니다.</p>
+<p>그래서 “최고의 추상화”에 관한 논쟁을 작동 방식에만 가두면 결론이 나지 않습니다. 고차 함수, 자유 구문, CPS, 일차 기계를 마치 하나가 다른 것을 반드시 압도해야 하는 것처럼 비교합니다. 그러나 무엇을 보존해야 하고 누가 결과를 사용할지 명시하지 않으면 <em>더 낫다</em>는 말은 의미가 없습니다:</p>
+<ul>
+<li>직접 실행은 일반 호출과 숨겨진 표현을 선호합니다;</li>
+<li>변환과 분석에는 검사 가능한 구조가 필요합니다;</li>
+<li>직렬화에는 일차 데이터가 필요합니다;</li>
+<li>확장성은 해석 추가나 구문 추가 중 하나를 선호할 수 있지만 대개 양쪽을 똑같이 선호하지는 않습니다;</li>
+<li>동시성에서는 많은 스케줄링 선택을 의도적으로 무시하는 관찰이 필요할 수 있습니다.</li>
+</ul>
+<p>이는 서로 다른 요구 사항이지 하나의 추상화가 보편적으로 우월하다는 연속된 증거가 아닙니다. 작동 특성으로 명시된 목적에 맞는 구현을 선택할 수는 있지만, 목적을 대신하거나 어떤 구분이 의미 있는지 결정할 수는 없습니다.</p>
+<p>순차적인 사고에도 같은 주의가 필요합니다. 작동 의미론으로 동시 및 비결정적 시스템을 설명할 수 있지만, 기계 단계의 단일 시퀀스는 그 동작 표현 중 하나일 뿐입니다. 스케줄 순서를 너무 일찍 권위 있는 것으로 만들면 기계적 실행이 다르게 인터리빙되었다는 이유만으로 동등한 실행이 달라집니다. 의미 모델은 먼저 동시성 프로그램을 구분하는 관찰이 무엇인지 정해야 하고, 작동 스케줄은 그 결정에 비추어 평가해야 합니다.</p>
+<h2 id="real-example-the-evm"><a class="header" href="#real-example-the-evm">실제 예: EVM</a></h2>
+<p>이더리움 가상 머신(EVM)은 작동 방식으로 이해할 수 있습니다:</p>
+<ul>
+<li><strong>상태</strong>: 프로그램 카운터, 스택, 메모리, 저장소, 가스</li>
+<li><strong>전이 규칙</strong>: 각 연산 코드(<code>ADD</code>, <code>PUSH</code>, <code>SSTORE</code> 등)에 하나씩</li>
+<li><strong>실행</strong>: 정지할 때까지 소단계 규칙을 반복 적용</li>
+</ul>
+<p>EVM 바이트코드는 일차 명령어 데이터입니다. 작동 설명은 각 연산 코드에서 EVM 구성이 어떻게 바뀌는지 명시하고, 구체적인 클라이언트가 그 동작을 구현합니다.</p>
+<p>디스패치 루프와 프로그램 카운터는 디펑셔널라이즈된 추상 기계와 비슷해 보일 수 있습니다. 그러나 이를 디펑셔널라이즈된 연속 실행이라고 부르려면 겉모양이 비슷한 루프만으로는 부족하고 구체적인 고차 소스, 변환, 대응 관계가 필요합니다.</p>
+<h2 id="breaking-the-cycle-meaning-before-machinery"><a class="header" href="#breaking-the-cycle-meaning-before-machinery">순환 끊기: 구현 장치보다 의미를 먼저</a></h2>
+<p>작동 설명과 표시 설명은 서로 다른 질문에 답합니다:</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:3em;vertical-align:-1.25em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.75em;"><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mopen"><span class="mopen">[</span><span class="mspace" style="margin-right:-0.1778em;"></span><span class="mopen">[</span></span><span class="mord mathnormal">p</span><span class="mclose"><span class="mclose">]</span><span class="mspace" style="margin-right:-0.1778em;"></span><span class="mclose">]</span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">c</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.75em;"><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:1em;"></span><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.75em;"><span style="top:-3.75em;"><span class="pstrut" style="height:2.84em;"></span><span class="mord"></span></span><span style="top:-2.25em;"><span class="pstrut" style="height:2.84em;"></span><span class="mord"></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.75em;"><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mord text"><span class="mord">what does the program mean?</span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mord text"><span class="mord">how does this representation step?</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>의미 우선 개발에서는 기계 표현을 확정하기 전에 의미론적 영역, 합성, 관찰, 법칙을 선택합니다. 전이 시스템을 선택한 뒤에는 정확성 의무가 두 계층을 연결합니다. 전체 구성을 적절히 정의한 의미에 대해 일반적인 무음 전이 보존 주장은 다음과 같은 형식입니다:</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.522em;vertical-align:-0.011em;"></span><span class="mord mathnormal">c</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8259em;vertical-align:-0.024em;"></span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟹</span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">meaning</span></span><span class="mopen">(</span><span class="mord mathnormal">c</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0519em;vertical-align:-0.25em;"></span><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">meaning</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>정확한 관계는 관찰적 동치, 실행 기록, 쌍방향 시뮬레이션을 사용할 수 있습니다. 중요한 것은 기계를 의도된 의미에 비추어 검증할 수 있어야 한다는 점입니다.</p>
+<p>표시적 설계는 순환에서 승자를 고르지 않습니다. 그 바깥에 안정적인 권위의 원천을 세웁니다:</p>
+<ol>
+<li>의미론적 영역, 연산, 합성, 법칙을 정의합니다.</li>
+<li>그 의미를 바탕으로 프로그램을 작성합니다.</li>
+<li>직접 실행, 검사, 컴파일, 스케줄링, 직렬화, 분석 등 구체적 사용자를 위한 표현을 선택합니다.</li>
+<li>선택한 모든 표현과 변환을 같은 의미에 연결합니다.</li>
+</ol>
+<p>따라서 고차 인터프리터와 일차 프로그램은 함께 존재할 수 있습니다. 둘 중 어느 쪽도 언어의 정의일 필요는 없습니다. 전자는 직접 실행을 담당하고 후자는 구조가 필요한 사용자를 지원할 수 있습니다. 두 기계적 방식이 동일하다는 가정이 아니라 두 표현이 일치해야 한다는 의미론적 의무가 있습니다.</p>
+<div id="admonition-최종-작동-추상화는-없습니다" class="admonition admonish-note" role="note" aria-labelledby="admonition-최종-작동-추상화는-없습니다-title">
+<div class="admonition-title">
+<div id="admonition-최종-작동-추상화는-없습니다-title">
+<p>최종 작동 추상화는 없습니다</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-최종-작동-추상화는-없습니다"></a>
+</div>
+<div>
+<p>모든 작동 표현은 어떤 구조를 드러내고 다른 구조를 감춥니다. 의미는 적절한 표현을 선택하고 연관 짓는 안정적인 기준입니다.</p>
+</div>
+</div>
+<h2 id="summary"><a class="header" href="#summary">요약</a></h2>
+<ul>
+<li>작동 의미론은 선택된 표현의 평가나 전이를 설명합니다.</li>
+<li>자유 모나드는 명령어 구문과 시퀀싱을 제공하지만 그 동작은 여전히 해석이 필요합니다.</li>
+<li>CPS는 연속 실행을 드러내며, 작동 규칙은 CPS 프로그램에서 값과 제어가 전달되는 방식을 설명할 수 있습니다.</li>
+<li>디펑셔널라이제이션은 특정 고차 프로그램을 작동 규칙으로 전이를 명시할 수 있는 일차 기계로 바꿀 수 있습니다.</li>
+<li>이러한 인코딩 중 하나를 보편적인 것으로 취급하면 구조를 재구화하고 감추는 순환이 생깁니다.</li>
+<li>표시적 의미가 그 전이가 무엇을 보존해야 하는지 결정합니다.</li>
+</ul>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../insights/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../insights/expression-problem.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../insights/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../insights/expression-problem.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

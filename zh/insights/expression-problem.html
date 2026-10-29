@@ -1,0 +1,513 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>重新审视表达式问题 - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="重新审视表达式问题 - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-zh.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"重新审视表达式问题","sourceHash":"sha256:c0c35ab091b01a221419f7a315cdd37146fc4858d3335fa406996ecadc3148e8"} -->
+<h1 id="expression-problem-reloaded"><a class="header" href="#expression-problem-reloaded">重新审视表达式问题</a></h1>
+<div id="admonition-相关内容" class="admonition admonish-tip" role="note" aria-labelledby="admonition-相关内容-title">
+<div class="admonition-title">
+<div id="admonition-相关内容-title">
+<p>相关内容</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-相关内容"></a>
+</div>
+<div>
+<p>语义视角：<a href="../denotational-design/design.html">指称设计</a><br />
+Rust 中的语义驱动设计：<a href="../rust-dd/capability-algebras.html">能力代数</a>、<a href="../rust-dd/derived-meaning.html">派生含义与组合</a>、<a href="../rust-dd/interpreters.html">解释器与效应</a><br />
+概念：<a href="../concepts/expression-problem.html">表达式问题</a></p>
+</div>
+</div>
+<p>本页介绍一种基于 trait 的实用解法来处理<em>表达式问题</em>：如何添加新的表达式形式与操作，而不必反复重写现有代码。 该解法的设计<strong>遵循 Conal 风格</strong>，编码方式则采用<strong>无标签最终编码/对象代数</strong>。具体而言，我们先规定可组合含义（小型能力接口与扩展层面的程序规范），再提供具体解释器。这种编码与 Oleg Kiselyov 的<strong>无标签最终</strong>风格及<strong>对象代数</strong>属于同一类型：构造器接口（<code>LitAlg</code>、<code>AddAlg</code>、<code>MulAlg</code>）定义语言签名，程序以多态方式针对这些接口编写，具体实现（例如<code>Eval</code>或<code>Pretty</code>）则提供解释。这样既避免绑定到某个封闭 AST，又保留了两个维度上的静态类型与可扩展性。</p>
+<p>Oleg 的方法明确采用指称式设计：先赋予可组合含义，再将效应与解释器实现为模块化语义层。对于表达式问题而言，这正是它与指称设计契合的原因，而非偶然。Conal 对指称设计的表述也明确提出相同优先级：先以组合方式规定含义，再将具体执行策略视为次要且可替换的部分。</p>
+<p>对于表达式语言示例，这种编码意味着：</p>
+<ul>
+<li><strong>构造器词汇</strong>由小型、独立的代数 trait 建模。</li>
+<li><strong>解释</strong>是这些 trait 的实现。</li>
+<li>新语法会添加新 trait，而不触碰旧代码。</li>
+<li>新语义会添加新的解释器类型，而不触碰旧代码。</li>
+</ul>
+<p><code>lit</code>与<code>add</code>是语义操作，而非特权 AST 的构造器。AST 只是多种解释中的一种。</p>
+<div id="admonition-c-中的对象代数" class="admonition admonish-example" role="note" aria-labelledby="admonition-c-中的对象代数-title">
+<div class="admonition-title">
+<div id="admonition-c-中的对象代数-title">
+<p>C# 中的对象代数</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-c-中的对象代数"></a>
+</div>
+<div>
+<p>这种编码并非 Rust 特有。<a href="https://github.com/tgrospic/object-algebras"><code>object-algebras</code></a>在 C# 中发展了这一模式，并突破了本页采用的固定载体。在本页中，每个解释器会选择一个具体的<code>Self::Expr</code>普通类型。而 C# 代数会抽象出一个类型<em>构造器</em><code>F</code>——<code>FunctorAlg&lt;F&gt;</code>、<code>MonadAlg&lt;F&gt;</code>、<code>BankingDsl&lt;F&gt;</code>——并将结果作为<code>App&lt;F, a&gt;</code>承载，而不是采用不合法的<code>F&lt;a&gt;</code>。</p>
+<p>C# 没有一等高阶类型，因此以<code>App&lt;F, a&gt;</code>代替应用<code>F(a)</code>，并通过注入/投影包装器还原。这种<code>App</code>技巧正是<a href="../concepts/defunctionalization.html">去函数化</a>：语言无法表达的抽象被转为一阶数据，并在需要时应用。Rust 也遇到了同样的限制——它同样缺少一等高阶类型。</p>
+</div>
+</div>
+<h2 id="specify-tiny-syntax-capabilities"><a class="header" href="#specify-tiny-syntax-capabilities">规定小型语法能力</a></h2>
+<p>每种构造器都会成为一个小型 trait。这就是<strong>规范</strong>。</p>
+<pre><code class="language-rust noplayground">trait LitAlg {
+    type Expr;
+
+    fn lit(&amp;self, n: i64) -&gt; Self::Expr;
+}
+
+trait AddAlg {
+    type Expr;
+
+    fn add(&amp;self, a: Self::Expr, b: Self::Expr) -&gt; Self::Expr;
+}</code></pre>
+<p>程序以代数 trait 之上的<strong>扩展</strong>形式编写。这些扩展也属于规范，并可将较小规范组合为可复用的程序级规范：</p>
+<pre><code class="language-rust noplayground">#[ext(name = ExprPrograms)]
+impl&lt;This&gt; This
+where
+    This: LitAlg + AddAlg,
+{
+    fn expr_basic(&amp;self) -&gt; This::Expr {
+        self.add(self.lit(2), self.lit(3))
+    }
+}</code></pre>
+<p><code>#[ext(...)]</code>是来自<a href="https://docs.rs/extend/latest/extend/"><code>extend</code>crate 的宏</a>，用于从<code>impl</code>块中生成扩展方法以减少样板代码；它不是新的 Rust 语言特性。</p>
+<h2 id="add-new-interpretation"><a class="header" href="#add-new-interpretation">添加新的解释</a></h2>
+<p>解释器实现规范，无需修改语法。</p>
+<pre><code class="language-rust noplayground">struct Eval;
+
+impl LitAlg for Eval {
+    type Expr = i64;
+
+    fn lit(&amp;self, n: i64) -&gt; i64 { n }
+}
+
+impl AddAlg for Eval {
+    type Expr = i64;
+
+    fn add(&amp;self, a: i64, b: i64) -&gt; i64 { a + b }
+}
+
+struct Pretty;
+
+impl LitAlg for Pretty {
+    type Expr = String;
+
+    fn lit(&amp;self, n: i64) -&gt; String { n.to_string() }
+}
+
+impl AddAlg for Pretty {
+    type Expr = String;
+
+    fn add(&amp;self, a: String, b: String) -&gt; String {
+        format!("({a} + {b})")
+    }
+}</code></pre>
+<p>现在，同一个表达式可以有不同的解释：</p>
+<pre><code class="language-rust noplayground">let eval = Eval;
+let pretty = Pretty;
+
+let v: i64 = eval.expr_basic();        // 5
+let s: String = pretty.expr_basic();   // "(2 + 3)"</code></pre>
+<h2 id="add-new-syntax-new-capability-trait"><a class="header" href="#add-new-syntax-new-capability-trait">添加新语法（新能力 trait）</a></h2>
+<p>要添加<code>Mul</code>，只需定义一个新 trait。现有代码保持不变。</p>
+<pre><code class="language-rust noplayground">trait MulAlg {
+    type Expr;
+
+    fn mul(&amp;self, a: Self::Expr, b: Self::Expr) -&gt; Self::Expr;
+}
+
+#[ext(name = ExprProgramsMul)]
+impl&lt;This&gt; This
+where
+    This: LitAlg + AddAlg + MulAlg,
+{
+    fn expr_with_mul(&amp;self) -&gt; This::Expr {
+        self.mul(self.add(self.lit(2), self.lit(3)), self.lit(4))
+    }
+}</code></pre>
+<p>现有解释器仍可处理旧表达式。<br />
+如果它们需要支持新语法，就实现新 trait：</p>
+<pre><code class="language-rust noplayground">impl MulAlg for Eval {
+    type Expr = i64;
+
+    fn mul(&amp;self, a: i64, b: i64) -&gt; i64 { a * b }
+}
+
+impl MulAlg for Pretty {
+    type Expr = String;
+
+    fn mul(&amp;self, a: String, b: String) -&gt; String {
+        format!("({a} * {b})")
+    }
+}</code></pre>
+<h2 id="why-this-solves-the-expression-problem"><a class="header" href="#why-this-solves-the-expression-problem">为什么这能解决表达式问题</a></h2>
+<p>传统表达式问题包含表示上的两个维度：</p>
+<ul>
+<li>添加新的变体（分支）</li>
+<li>添加新操作</li>
+</ul>
+<p>指称设计重新诠释了这两个维度：</p>
+<ul>
+<li><strong>扩展语义词汇</strong>：定义新的能力 trait（<code>MulAlg</code>）。</li>
+<li><strong>为该词汇添加新的解释</strong>：定义新的解释器类型（<code>Eval</code>、<code>Pretty</code>、AST 构造器或代码生成器）。</li>
+</ul>
+<p>这两个维度可以独立组合：</p>
+<ul>
+<li>除非需要新能力，否则现有程序无需修改。<code>expr_basic</code>仍然只要求<code>LitAlg + AddAlg</code>。</li>
+<li>除非选择解释新能力，否则现有解释器无需修改。<code>Eval</code>即使没有<code>impl MulAlg</code>，仍可运行所有不使用<code>mul</code>的程序。</li>
+</ul>
+<p>这并没有消除实现矩阵。如果<code>Eval</code>与<code>Pretty</code>都需要解释<code>mul</code>，二者都需要<code>impl MulAlg</code>。变化在于矩阵的组织方式：每个单元格都是<em>语义操作 × 解释</em>；没有任何单元格围绕特权表示组织；每个程序只依赖自己使用的能力。</p>
+<h2 id="laws-belong-to-the-specification"><a class="header" href="#laws-belong-to-the-specification">定律属于规范</a></h2>
+<p>语义代数由载体、操作与定律构成。载体（<code>type Expr</code>）由解释选择；操作与定律则属于规范。例如，算术含义<code>LitAlg + AddAlg</code>规定：</p>
+<pre><code class="language-text">add(lit(m), lit(n)) = lit(m + n)
+</code></pre>
+<p><code>Eval</code>满足这条定律。<code>Pretty</code>则不满足：<code>"(2 + 3)"</code>并不等于<code>"5"</code>。二者都是语法签名的有效解释，但只有<code>Eval</code>才是算术规范的模型。这条定律只需针对 trait 陈述一次，并由它决定哪些解释器符合要求。它不属于任何解释器。</p>
+<h2 id="final-insight-featherweight-go-vs-denotational-design"><a class="header" href="#final-insight-featherweight-go-vs-denotational-design">最终洞见：轻量级 Go 与指称设计</a></h2>
+<p>Wadler 在语言机制层面诊断了表达式问题：静态类型与模块化扩展下的行列问题。<a href="../concepts/expression-problem.html#featherweight-go-solution-2020">轻量级 Go</a>给出了一种具体解法：<code>Plus(type a Any)</code>保持递归表示的泛型性，并让每种操作独立约束<code>a</code>（<code>Plus(type a Evaler)</code>对应<code>Eval</code>，<code>Plus(type a Stringer)</code>对应<code>String</code>）。表示不会绑定到某个封闭表达式接口，因此两个维度都保持开放。</p>
+<p>传统解法从表示出发，思考如何开放两个扩展维度。轻量级 Go 将这一点推进得出人意料地远：它让递归表示具有泛型性与结构可扩展性。指称设计则将边界提前了一步：表示并非模型。模型是代数及其定律；表示只是可能的解释之一。</p>
+<p><strong>轻量级 Go 让表示可以扩展。指称设计让表示成为可选项。</strong></p>
+<div class="table-wrapper"><table><thead><tr><th></th><th>轻量级 Go</th><th>指称设计</th></tr></thead><tbody>
+<tr><td>语义核心</td><td>可扩展表示</td><td>代数与定律</td></tr>
+<tr><td><code>Num</code>/<code>Plus</code>, <code>lit</code>/<code>add</code></td><td>结构（表示形式）</td><td>语义操作</td></tr>
+<tr><td><code>Eval</code>, <code>String</code>/<code>Pretty</code></td><td>方法与接口</td><td>解释</td></tr>
+<tr><td>递归结构</td><td>泛型、开放表示（<code>Plus(a)</code>）</td><td>无需递归表示</td></tr>
+<tr><td>载体</td><td>所表示的表达式类型</td><td>由解释器选择（<code>type Expr</code>）</td></tr>
+<tr><td>AST</td><td>表示仍居于核心</td><td>可选，是多种解释之一</td></tr>
+<tr><td>矩阵单元格</td><td>分支 × 操作 → 方法</td><td>语义操作 × 解释 → <code>impl</code></td></tr>
+<tr><td>新行为</td><td>添加方法与接口</td><td>添加或组合能力</td></tr>
+<tr><td>新实现</td><td>新的结构实现</td><td>新的解释器</td></tr>
+</tbody></table>
+</div>
+<p>Wadler 询问如何扩展表示的两个维度。指称设计则询问为什么表示应当掌握这两个维度。</p>
+<p>先定义可组合含义，再选择编码。这样，表达式问题就成为编码之间的工程选择，而不再是概念上的死结。</p>
+<p><strong>语言的含义应独立于机器这一概念。</strong></p>
+<figure><iframe width="100%" height="315" src="https://www.youtube.com/embed/n2CBSNAVHVg?si=n-f84RYWjGtKkcVj&amp;clip=Ugkx52hOOFjiK-KEPMRhuB8vT6i4WUaav11c&amp;clipt=EKWcxgIYjoTIAg&amp;start=5344&amp;end=5375" title="Talk clip — a language's meaning should be independent of the machine" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""></iframe><figcaption>语言的含义应独立于机器</figcaption></figure>
+<h2 id="references"><a class="header" href="#references">参考文献</a></h2>
+<ul>
+<li>
+<p>Elliott, C. <em>《借助类型类态射进行指称设计》</em>。<br />
+<a href="http://conal.net/papers/type-class-morphisms/">http://conal.net/papers/type-class-morphisms/</a></p>
+</li>
+<li>
+<p>Elliott, C. <em>《编译到范畴》</em>。<br />
+<a href="http://conal.net/papers/compiling-to-categories/">http://conal.net/papers/compiling-to-categories/</a></p>
+</li>
+<li>
+<p>Kiselyov, O. <em>《无标签最终风格》</em>（关于最终编码与可扩展类型解释器的概览、教程与论文）。<br />
+<a href="https://okmij.org/ftp/tagless-final/">https://okmij.org/ftp/tagless-final/</a></p>
+</li>
+<li>
+<p>Kiselyov, O. <em>《拥有一种效应》</em>（对效应与可扩展解释器的定义式/指称式阐述）。<br />
+<a href="https://okmij.org/ftp/Computation/having-effect.html#defint">https://okmij.org/ftp/Computation/having-effect.html#defint</a></p>
+</li>
+<li>
+<p>Griesemer, R., Hu, R., Kokke, W., Lange, J., Taylor, I. L., Toninho, B., Wadler, P. 与 Yoshida, N.（2020）。<em>《轻量级 Go》</em>。ACM Program. Lang. 4（OOPSLA）。第 2.3 节给出了上文比较的泛型结构化解法。<br />
+<a href="https://homepages.inf.ed.ac.uk/wadler/papers/fg/fg.pdf">https://homepages.inf.ed.ac.uk/wadler/papers/fg/fg.pdf</a></p>
+</li>
+<li>
+<p>Oliveira, B. C. d. S. 与 Cook, W. R.（2012）。<em>《面向大众的可扩展性：借助对象代数实现实用的可扩展设计》</em>。<br />
+<a href="https://www.cs.utexas.edu/~wcook/Drafts/2012/ecoop2012.pdf">https://www.cs.utexas.edu/~wcook/Drafts/2012/ecoop2012.pdf</a></p>
+</li>
+</ul>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../insights/operational_semantics.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../insights/referential-transparency.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../insights/operational_semantics.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../insights/referential-transparency.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,567 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>EVM 代数 - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="EVM 代数 - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-zh.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"EVM 代数","sourceHash":"sha256:da120bbcd539c9554e41570500a952022780145a38a60d99226ed7f248d561ca"} -->
+<h1 id="evm-algebra"><a class="header" href="#evm-algebra">EVM 代数</a></h1>
+<div id="admonition-相关内容" class="admonition admonish-tip" role="note" aria-labelledby="admonition-相关内容-title">
+<div class="admonition-title">
+<div id="admonition-相关内容-title">
+<p>相关内容</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-相关内容"></a>
+</div>
+<div>
+<p>Rust 中的语义驱动设计：<a href="../rust-dd/interpreters.html">解释器与效应</a>、<a href="../rust-dd/first-order-programs.html">一阶程序</a>、<a href="../rust-dd/compiler-pipelines.html">语言与编译器流水线</a><br />
+概念：<a href="../concepts/operational_semantics.html">操作语义</a>、<a href="../concepts/free_monad.html">自由单子</a>、<a href="../concepts/cps.html">延续传递风格</a>、<a href="../concepts/defunctionalization.html">去函数化</a></p>
+</div>
+</div>
+<p><strong>以太坊虚拟机（EVM）</strong>是一种基于栈的虚拟 CPU，用于执行<strong>以太坊字节码</strong>，后者是以 Solidity、Vyper 或其他兼容 EVM 的语言编写的智能合约编译后的形式。</p>
+<p>在最低层：</p>
+<ul>
+<li>EVM 会处理<strong>操作码</strong>（ADD、PUSH、JUMP、SSTORE 等）。</li>
+<li>Execution state includes:
+<ul>
+<li><strong>栈</strong>：后进先出的操作数数据栈。</li>
+<li><strong>内存</strong>：用于临时值的瞬态字节数组。</li>
+<li><strong>存储</strong>：每份合约对应的持久键值存储。</li>
+<li><strong>程序计数器</strong>：指向下一条操作码。</li>
+<li><strong>Gas</strong>：对执行步骤计量并收费。</li>
+</ul>
+</li>
+</ul>
+<h2 id="evm-as-an-interpreter-pattern"><a class="header" href="#evm-as-an-interpreter-pattern">作为解释器模式的 EVM</a></h2>
+<p>EVM 客户端是对一门指令语言的解释器：</p>
+<ul>
+<li><strong>指令集</strong> = EVM 操作码（由多个变体组成的枚举）。</li>
+<li><strong>程序</strong> = 一系列指令。</li>
+<li><strong>解释器</strong> = 每种操作码如何改变机器状态的规则。</li>
+<li><strong>多个解释器</strong> = EVM 规范固定，但 Geth、Nethermind、Besu 与 Erigon 是同一解释器的不同实现。</li>
+</ul>
+<p>本书中的三种技术——<strong>自由单子</strong>、<strong>延续传递风格</strong>与<strong>去函数化</strong>——贯穿同一条主线；它们只在如何表示<em>程序剩余部分</em>上有所不同。</p>
+<h2 id="three-encodings-of-one-machine"><a class="header" href="#three-encodings-of-one-machine">一台机器的三种编码</a></h2>
+<p>以下每种编码都运行同一个固定程序：</p>
+<pre><code class="language-text">push 2; push 3; add; sstore 1 5; load 1 -&gt; v; push v
+</code></pre>
+<p>而且每种编码都会产生相同的观察结果：</p>
+<pre><code class="language-text">stack:   [5, 5]
+storage: {1: 5}
+</code></pre>
+<p>它们的区别仅在于如何表示控制流——“接下来要做什么”。</p>
+<details>
+<summary><strong>自由单子</strong>——程序是数据；解释器赋予它含义</summary>
+<p>指令函子会生成程序树。<code>and_then</code>是单子 bind，<code>run</code>是一种解释器——另一个解释器（编译为字节码）也可以折叠同一棵树。泛型<code>Free&lt;A&gt;</code>针对这套指令集专门化，因此可以在稳定版 Rust 中编译。</p>
+<pre><pre class="playground"><code class="language-rust">use std::collections::HashMap;
+
+struct State { stack: Vec&lt;u64&gt;, storage: HashMap&lt;u64, u64&gt; }
+
+// The free monad over the EVM instruction set: a program is data — a tree of
+// instructions ending in `Pure`, each carrying its continuation.
+enum Free&lt;A&gt; {
+    Pure(A),
+    Push(u64, Box&lt;Free&lt;A&gt;&gt;),
+    Add(Box&lt;Free&lt;A&gt;&gt;),
+    SStore(u64, u64, Box&lt;Free&lt;A&gt;&gt;),
+    SLoad(u64, Box&lt;dyn FnOnce(u64) -&gt; Free&lt;A&gt;&gt;),
+}
+
+impl&lt;A: 'static&gt; Free&lt;A&gt; {
+    // Monadic bind: graft `k` onto every leaf of the program.
+    fn and_then&lt;B: 'static&gt;(self, k: impl FnOnce(A) -&gt; Free&lt;B&gt; + 'static) -&gt; Free&lt;B&gt; {
+        match self {
+            Free::Pure(a) =&gt; k(a),
+            Free::Push(v, next) =&gt; Free::Push(v, Box::new(next.and_then(k))),
+            Free::Add(next) =&gt; Free::Add(Box::new(next.and_then(k))),
+            Free::SStore(x, y, next) =&gt; Free::SStore(x, y, Box::new(next.and_then(k))),
+            Free::SLoad(key, cont) =&gt; Free::SLoad(key, Box::new(move |v| cont(v).and_then(k))),
+        }
+    }
+}
+
+fn push(v: u64) -&gt; Free&lt;()&gt; { Free::Push(v, Box::new(Free::Pure(()))) }
+fn add() -&gt; Free&lt;()&gt; { Free::Add(Box::new(Free::Pure(()))) }
+fn sstore(k: u64, v: u64) -&gt; Free&lt;()&gt; { Free::SStore(k, v, Box::new(Free::Pure(()))) }
+fn sload(k: u64) -&gt; Free&lt;u64&gt; { Free::SLoad(k, Box::new(|v| Free::Pure(v))) }
+
+// Interpreter: give the program data meaning against the machine state.
+fn run(mut prog: Free&lt;()&gt;, st: &amp;mut State) {
+    loop {
+        prog = match prog {
+            Free::Pure(()) =&gt; return,
+            Free::Push(v, next) =&gt; { st.stack.push(v); *next }
+            Free::Add(next) =&gt; {
+                let b = st.stack.pop().unwrap();
+                let a = st.stack.pop().unwrap();
+                st.stack.push(a + b);
+                *next
+            }
+            Free::SStore(k, v, next) =&gt; { st.storage.insert(k, v); *next }
+            Free::SLoad(k, cont) =&gt; { let v = *st.storage.get(&amp;k).unwrap_or(&amp;0); cont(v) }
+        };
+    }
+}
+
+fn main() {
+    let program = push(2)
+        .and_then(|_| push(3))
+        .and_then(|_| add())
+        .and_then(|_| sstore(1, 5))
+        .and_then(|_| sload(1))
+        .and_then(|v| push(v));
+
+    let mut st = State { stack: vec![], storage: HashMap::new() };
+    run(program, &amp;mut st);
+    println!("stack:   {:?}", st.stack);
+    println!("storage: {:?}", st.storage);
+}</code></pre></pre>
+</details>
+<details>
+<summary><strong>延续传递风格（CPS）</strong>——每个操作码都会调用“程序剩余部分”</summary>
+<p>每个处理器完成工作后都会调用延续<code>k</code>。<code>sload</code>会将加载的值传递给一个需要该值的延续。控制流以嵌套延续的形式显式表达，完全没有程序数据结构。</p>
+<pre><pre class="playground"><code class="language-rust">use std::collections::HashMap;
+
+struct State { stack: Vec&lt;u64&gt;, storage: HashMap&lt;u64, u64&gt; }
+
+// Each opcode does its work, then calls the continuation `k` = "the rest of
+// the program". `sload` passes the loaded value on to its continuation.
+fn push(st: &amp;mut State, v: u64, k: impl FnOnce(&amp;mut State)) {
+    st.stack.push(v);
+    k(st);
+}
+fn add(st: &amp;mut State, k: impl FnOnce(&amp;mut State)) {
+    let b = st.stack.pop().unwrap();
+    let a = st.stack.pop().unwrap();
+    st.stack.push(a + b);
+    k(st);
+}
+fn sstore(st: &amp;mut State, key: u64, val: u64, k: impl FnOnce(&amp;mut State)) {
+    st.storage.insert(key, val);
+    k(st);
+}
+fn sload(st: &amp;mut State, key: u64, k: impl FnOnce(&amp;mut State, u64)) {
+    let v = *st.storage.get(&amp;key).unwrap_or(&amp;0);
+    k(st, v);
+}
+
+fn main() {
+    let mut st = State { stack: vec![], storage: HashMap::new() };
+
+    push(&amp;mut st, 2, |st| {
+        push(st, 3, |st| {
+            add(st, |st| {
+                sstore(st, 1, 5, |st| {
+                    sload(st, 1, |st, v| {
+                        push(st, v, |_st| {});
+                    });
+                });
+            });
+        });
+    });
+
+    println!("stack:   {:?}", st.stack);
+    println!("storage: {:?}", st.storage);
+}</code></pre></pre>
+</details>
+<details>
+<summary><strong>去函数化</strong>——操作调用变成由一个<code>apply</code>执行的数据</summary>
+<p>自由单子与 CPS 版本会<em>调用</em>操作（<code>push(2)</code>、<code>add()</code>、<code>sstore(1, 5)</code>、<code>sload(1)</code>）——这是一种几乎可直接读作规范说明的小型代数；去函数化则将每次调用具体化为一阶数据。随后由一个<code>apply</code>函数解释这些数据，延续也会随之折叠：“程序剩余部分”变成下一个索引（<code>pc</code>）。可以把它看作以数据形式书写的操作代数，并由<code>apply</code>这个单一解释器解释。</p>
+<pre><pre class="playground"><code class="language-rust">use std::collections::HashMap;
+
+struct State { stack: Vec&lt;u64&gt;, storage: HashMap&lt;u64, u64&gt; }
+
+// The EVM algebra reified: where the other encodings CALL `push(2)`, `add()`,
+// `sstore(1, 5)`, `sload(1)`, each such call becomes a first-order value — a
+// tag with its arguments.
+enum Op {
+    Push(u64),
+    Add,
+    SStore(u64, u64),
+    SLoad(u64),
+}
+
+// `apply` is the single interpreter for the reified operations: it gives each
+// tag its meaning against the machine state.
+fn apply(op: &amp;Op, st: &amp;mut State) {
+    match op {
+        Op::Push(v) =&gt; st.stack.push(*v),
+        Op::Add =&gt; {
+            let b = st.stack.pop().unwrap();
+            let a = st.stack.pop().unwrap();
+            st.stack.push(a + b);
+        }
+        Op::SStore(k, v) =&gt; { st.storage.insert(*k, *v); }
+        Op::SLoad(k) =&gt; {
+            let v = *st.storage.get(k).unwrap_or(&amp;0);
+            st.stack.push(v);
+        }
+    }
+}
+
+fn main() {
+    // The program is now data: a flat list of reified operation calls.
+    let code = vec![
+        Op::Push(2),
+        Op::Push(3),
+        Op::Add,
+        Op::SStore(1, 5),
+        Op::SLoad(1),
+    ];
+
+    // `pc` is the defunctionalized continuation: "the rest of the program" is
+    // just the next index.
+    let mut st = State { stack: vec![], storage: HashMap::new() };
+    let mut pc = 0;
+    while pc &lt; code.len() {
+        apply(&amp;code[pc], &amp;mut st);
+        pc += 1;
+    }
+
+    println!("stack:   {:?}", st.stack);
+    println!("storage: {:?}", st.storage);
+}</code></pre></pre>
+</details>
+<h2 id="from-continuations-to-bytecode"><a class="header" href="#from-continuations-to-bytecode">从延续到字节码</a></h2>
+<p>以下三种编码是同一计算在距机器远近不同的视角下呈现的形式：</p>
+<ul>
+<li><strong>自由单子</strong>先以<em>代数方式</em>将程序构造为数据，再对其作出解释。同一棵树可以由多个解释器折叠：一个运行它，一个漂亮打印它，一个编译它。</li>
+<li><strong>CPS</strong>会移除数据结构并显式表示控制流：“执行此操作码，然后调用延续。”加载的值会流向需要它的延续。</li>
+<li><strong>去函数化</strong>会将操作的<em>调用</em>转换为一阶数据，并由一个<code>apply</code>函数解释这些数据；延续则折叠为一个<code>pc</code>，其操作对象是<code>Vec&lt;Op&gt;</code>。驱动循环就是一个不使用闭包的 CPS 蹦床。</li>
+</ul>
+<div id="admonition-类比而非推导" class="admonition admonish-note" role="note" aria-labelledby="admonition-类比而非推导-title">
+<div class="admonition-title">
+<div id="admonition-类比而非推导-title">
+<p>类比，而非推导</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-类比而非推导"></a>
+</div>
+<div>
+<p>EVM 可以分析为一阶抽象机，其显式程序计数器类似于去函数化的控制表示。但这种结构类比本身无法证明 EVM 字节码是经 CPS 变换再去函数化得到的。</p>
+</div>
+</div>
+<h2 id="key-insight"><a class="header" href="#key-insight">关键洞见</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>概念</th><th>自由单子世界</th><th>EVM 实际情况</th></tr></thead><tbody>
+<tr><td>指令类型</td><td>操作码枚举</td><td>固定的 EVM 操作码</td></tr>
+<tr><td>程序表示</td><td>由<code>Free&lt;A&gt;</code>构造的树</td><td>线性字节码数组</td></tr>
+<tr><td>延续</td><td>指令节点中的闭包</td><td>程序计数器（<code>pc</code>）</td></tr>
+<tr><td>解释器</td><td>对程序进行模式匹配</td><td>按操作码切换分支，并修改虚拟机状态</td></tr>
+<tr><td>多种解释器</td><td>对同一程序进行不同折叠</td><td>多个以太坊客户端实现</td></tr>
+</tbody></table>
+</div>
+<h2 id="how-this-maps-to-the-real-evm"><a class="header" href="#how-this-maps-to-the-real-evm">与真实 EVM 的对应</a></h2>
+<ul>
+<li><strong>指令集</strong>（<code>Free</code>的变体，或<code>Op</code>枚举）对应 EVM 操作码集合。</li>
+<li><strong>程序</strong>（<code>Free</code>树、嵌套延续或<code>Vec&lt;Op&gt;</code>）表示编译前后的合约。</li>
+<li><strong>解释器</strong>（<code>run</code>、CPS 处理器或<code>apply</code>）是 Geth、Besu 或 Nethermind 等客户端所实现的部分。</li>
+<li><strong>机器状态</strong>（<code>stack</code>、<code>storage</code>）是 EVM 的栈、内存与存储。</li>
+<li>真实的 EVM 字节码是去函数化后的形式：由程序计数器索引的扁平指令数组，恰如上文展示的去函数化编码。</li>
+</ul>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../insights/referential-transparency.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../about.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../insights/referential-transparency.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../about.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,567 @@
+<!DOCTYPE HTML>
+<html lang="ar" class="light sidebar-visible" dir="rtl">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>جبر EVM - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="جبر EVM - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-ar.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"جبر EVM","sourceHash":"sha256:da120bbcd539c9554e41570500a952022780145a38a60d99226ed7f248d561ca"} -->
+<h1 id="evm-algebra"><a class="header" href="#evm-algebra">جبر EVM</a></h1>
+<div id="admonition-ذات-صلة" class="admonition admonish-tip" role="note" aria-labelledby="admonition-ذات-صلة-title">
+<div class="admonition-title">
+<div id="admonition-ذات-صلة-title">
+<p>ذات صلة</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-ذات-صلة"></a>
+</div>
+<div>
+<p>التصميم انطلاقًا من المعنى في Rust: <a href="../rust-dd/interpreters.html">المفسرات والآثار</a>، <a href="../rust-dd/first-order-programs.html">برامج من الرتبة الأولى</a>، <a href="../rust-dd/compiler-pipelines.html">مسارات اللغة والمترجم</a><br />
+المفاهيم: <a href="../concepts/operational_semantics.html">الدلالات التشغيلية</a>، <a href="../concepts/free_monad.html">الموناد الحر</a>، <a href="../concepts/cps.html">أسلوب تمرير الاستمرار</a>، <a href="../concepts/defunctionalization.html">إزالة الدوال</a></p>
+</div>
+</div>
+<p><strong>آلة Ethereum الافتراضية (EVM)</strong> وحدة معالجة افتراضية مكدسية تنفذ <strong>شيفرة Ethereum البايتية</strong>، أي الصيغة المجمعة للعقود الذكية المكتوبة بـ Solidity أو Vyper أو لغة أخرى متوافقة مع EVM.</p>
+<p>على المستوى الأدنى:</p>
+<ul>
+<li>تعالج EVM <strong>شفرات العمليات</strong> (ADD وPUSH وJUMP وSSTORE وغيرها).</li>
+<li>Execution state includes:
+<ul>
+<li><strong>المكدس</strong>: مكدس بيانات أخير ما يدخل أول ما يخرج للمعاملات.</li>
+<li><strong>الذاكرة</strong>: مصفوفة بايتات مؤقتة للقيم المؤقتة.</li>
+<li><strong>التخزين</strong>: مخزن دائم أزواج مفتاح/قيمة لكل عقد.</li>
+<li><strong>عداد البرنامج</strong>: يشير إلى شفرة العملية التالية.</li>
+<li><strong>الغاز</strong>: قياس يفرض تكلفة على خطوات التنفيذ.</li>
+</ul>
+</li>
+</ul>
+<h2 id="evm-as-an-interpreter-pattern"><a class="header" href="#evm-as-an-interpreter-pattern">EVM بوصفها نمط مفسر</a></h2>
+<p>عميل EVM مفسر للغة تعليمات:</p>
+<ul>
+<li><strong>مجموعة التعليمات</strong> = شفرات عمليات EVM (تعداد لصيغ متعددة).</li>
+<li><strong>البرنامج</strong> = تسلسل من التعليمات.</li>
+<li><strong>المفسر</strong> = قاعدة كيفية تغيير كل شفرة عملية لحالة الآلة.</li>
+<li><strong>المفسرات المتعددة</strong> = مواصفة EVM ثابتة، لكن Geth وNethermind وBesu وErigon تطبيقات بديلة للمفسر نفسه.</li>
+</ul>
+<p>هذا هو الخيط الواصل بين ثلاث تقنيات في هذا الكتاب — <strong>المونادات الحرة</strong> و<strong>أسلوب تمرير الاستمرار</strong> و<strong>إزالة الدوال</strong> — التي لا تختلف إلا في طريقة تمثيلها <em>بقية البرنامج</em>.</p>
+<h2 id="three-encodings-of-one-machine"><a class="header" href="#three-encodings-of-one-machine">ثلاثة ترميزات لآلة واحدة</a></h2>
+<p>ينفذ كل ترميز أدناه البرنامج الثابت نفسه:</p>
+<pre><code class="language-text">push 2; push 3; add; sstore 1 5; load 1 -&gt; v; push v
+</code></pre>
+<p>وتنتج عنها جميعًا الملاحظة نفسها:</p>
+<pre><code class="language-text">stack:   [5, 5]
+storage: {1: 5}
+</code></pre>
+<p>لا تختلف إلا في تمثيل التحكم — «ما الذي ينبغي فعله تاليًا».</p>
+<details>
+<summary><strong>الموناد الحر</strong> — البرنامج بيانات؛ ويمنحه مفسر معنى</summary>
+<p>ينشئ فونكتور التعليمات شجرة برنامج. و<code>and_then</code> هو الربط المونادي، و<code>run</code> مفسر واحد — ويمكن لمفسر ثانٍ (مترجم إلى الشيفرة البايتية) طي الشجرة نفسها. ويُخصص <code>Free&lt;A&gt;</code> العام لمجموعة التعليمات هذه لكي يُجمَّع في Rust المستقرة.</p>
+<pre><pre class="playground"><code class="language-rust">use std::collections::HashMap;
+
+struct State { stack: Vec&lt;u64&gt;, storage: HashMap&lt;u64, u64&gt; }
+
+// The free monad over the EVM instruction set: a program is data — a tree of
+// instructions ending in `Pure`, each carrying its continuation.
+enum Free&lt;A&gt; {
+    Pure(A),
+    Push(u64, Box&lt;Free&lt;A&gt;&gt;),
+    Add(Box&lt;Free&lt;A&gt;&gt;),
+    SStore(u64, u64, Box&lt;Free&lt;A&gt;&gt;),
+    SLoad(u64, Box&lt;dyn FnOnce(u64) -&gt; Free&lt;A&gt;&gt;),
+}
+
+impl&lt;A: 'static&gt; Free&lt;A&gt; {
+    // Monadic bind: graft `k` onto every leaf of the program.
+    fn and_then&lt;B: 'static&gt;(self, k: impl FnOnce(A) -&gt; Free&lt;B&gt; + 'static) -&gt; Free&lt;B&gt; {
+        match self {
+            Free::Pure(a) =&gt; k(a),
+            Free::Push(v, next) =&gt; Free::Push(v, Box::new(next.and_then(k))),
+            Free::Add(next) =&gt; Free::Add(Box::new(next.and_then(k))),
+            Free::SStore(x, y, next) =&gt; Free::SStore(x, y, Box::new(next.and_then(k))),
+            Free::SLoad(key, cont) =&gt; Free::SLoad(key, Box::new(move |v| cont(v).and_then(k))),
+        }
+    }
+}
+
+fn push(v: u64) -&gt; Free&lt;()&gt; { Free::Push(v, Box::new(Free::Pure(()))) }
+fn add() -&gt; Free&lt;()&gt; { Free::Add(Box::new(Free::Pure(()))) }
+fn sstore(k: u64, v: u64) -&gt; Free&lt;()&gt; { Free::SStore(k, v, Box::new(Free::Pure(()))) }
+fn sload(k: u64) -&gt; Free&lt;u64&gt; { Free::SLoad(k, Box::new(|v| Free::Pure(v))) }
+
+// Interpreter: give the program data meaning against the machine state.
+fn run(mut prog: Free&lt;()&gt;, st: &amp;mut State) {
+    loop {
+        prog = match prog {
+            Free::Pure(()) =&gt; return,
+            Free::Push(v, next) =&gt; { st.stack.push(v); *next }
+            Free::Add(next) =&gt; {
+                let b = st.stack.pop().unwrap();
+                let a = st.stack.pop().unwrap();
+                st.stack.push(a + b);
+                *next
+            }
+            Free::SStore(k, v, next) =&gt; { st.storage.insert(k, v); *next }
+            Free::SLoad(k, cont) =&gt; { let v = *st.storage.get(&amp;k).unwrap_or(&amp;0); cont(v) }
+        };
+    }
+}
+
+fn main() {
+    let program = push(2)
+        .and_then(|_| push(3))
+        .and_then(|_| add())
+        .and_then(|_| sstore(1, 5))
+        .and_then(|_| sload(1))
+        .and_then(|v| push(v));
+
+    let mut st = State { stack: vec![], storage: HashMap::new() };
+    run(program, &amp;mut st);
+    println!("stack:   {:?}", st.stack);
+    println!("storage: {:?}", st.storage);
+}</code></pre></pre>
+</details>
+<details>
+<summary><strong>أسلوب تمرير الاستمرار (CPS)</strong> — تستدعي كل شفرة عملية «بقية البرنامج»</summary>
+<p>ينفذ كل معالج عمله ثم يستدعي الاستمرارية <code>k</code>. و<code>sload</code> يمرر القيمة المحملة إلى استمرارية تتوقعها. ويصبح التحكم صريحًا عبر استمراريات متداخلة، من دون أي بنية بيانات للبرنامج.</p>
+<pre><pre class="playground"><code class="language-rust">use std::collections::HashMap;
+
+struct State { stack: Vec&lt;u64&gt;, storage: HashMap&lt;u64, u64&gt; }
+
+// Each opcode does its work, then calls the continuation `k` = "the rest of
+// the program". `sload` passes the loaded value on to its continuation.
+fn push(st: &amp;mut State, v: u64, k: impl FnOnce(&amp;mut State)) {
+    st.stack.push(v);
+    k(st);
+}
+fn add(st: &amp;mut State, k: impl FnOnce(&amp;mut State)) {
+    let b = st.stack.pop().unwrap();
+    let a = st.stack.pop().unwrap();
+    st.stack.push(a + b);
+    k(st);
+}
+fn sstore(st: &amp;mut State, key: u64, val: u64, k: impl FnOnce(&amp;mut State)) {
+    st.storage.insert(key, val);
+    k(st);
+}
+fn sload(st: &amp;mut State, key: u64, k: impl FnOnce(&amp;mut State, u64)) {
+    let v = *st.storage.get(&amp;key).unwrap_or(&amp;0);
+    k(st, v);
+}
+
+fn main() {
+    let mut st = State { stack: vec![], storage: HashMap::new() };
+
+    push(&amp;mut st, 2, |st| {
+        push(st, 3, |st| {
+            add(st, |st| {
+                sstore(st, 1, 5, |st| {
+                    sload(st, 1, |st, v| {
+                        push(st, v, |_st| {});
+                    });
+                });
+            });
+        });
+    });
+
+    println!("stack:   {:?}", st.stack);
+    println!("storage: {:?}", st.storage);
+}</code></pre></pre>
+</details>
+<details>
+<summary><strong>أزيلت دواله</strong> — تصبح استدعاءات العمليات بيانات يشغلها <code>apply</code> واحد</summary>
+<p>بينما <em>تستدعي</em> نسختا الموناد الحر وCPS العمليات (<code>push(2)</code> و<code>add()</code> و<code>sstore(1, 5)</code> و<code>sload(1)</code>) — وهو جبر صغير يكاد يُقرأ كمواصفة — تجسّد إزالة الدوال كل استدعاء في بيانات من الرتبة الأولى. ثم تفسر تلك البيانات <code>apply</code> دالة واحدة، وتنهار الاستمراريات أيضًا: تصبح «بقية البرنامج» الفهرس التالي (<code>pc</code>). اقرأها بوصفها جبر العمليات مكتوبًا كبيانات، مع <code>apply</code> مفسره الوحيد.</p>
+<pre><pre class="playground"><code class="language-rust">use std::collections::HashMap;
+
+struct State { stack: Vec&lt;u64&gt;, storage: HashMap&lt;u64, u64&gt; }
+
+// The EVM algebra reified: where the other encodings CALL `push(2)`, `add()`,
+// `sstore(1, 5)`, `sload(1)`, each such call becomes a first-order value — a
+// tag with its arguments.
+enum Op {
+    Push(u64),
+    Add,
+    SStore(u64, u64),
+    SLoad(u64),
+}
+
+// `apply` is the single interpreter for the reified operations: it gives each
+// tag its meaning against the machine state.
+fn apply(op: &amp;Op, st: &amp;mut State) {
+    match op {
+        Op::Push(v) =&gt; st.stack.push(*v),
+        Op::Add =&gt; {
+            let b = st.stack.pop().unwrap();
+            let a = st.stack.pop().unwrap();
+            st.stack.push(a + b);
+        }
+        Op::SStore(k, v) =&gt; { st.storage.insert(*k, *v); }
+        Op::SLoad(k) =&gt; {
+            let v = *st.storage.get(k).unwrap_or(&amp;0);
+            st.stack.push(v);
+        }
+    }
+}
+
+fn main() {
+    // The program is now data: a flat list of reified operation calls.
+    let code = vec![
+        Op::Push(2),
+        Op::Push(3),
+        Op::Add,
+        Op::SStore(1, 5),
+        Op::SLoad(1),
+    ];
+
+    // `pc` is the defunctionalized continuation: "the rest of the program" is
+    // just the next index.
+    let mut st = State { stack: vec![], storage: HashMap::new() };
+    let mut pc = 0;
+    while pc &lt; code.len() {
+        apply(&amp;code[pc], &amp;mut st);
+        pc += 1;
+    }
+
+    println!("stack:   {:?}", st.stack);
+    println!("storage: {:?}", st.storage);
+}</code></pre></pre>
+</details>
+<h2 id="from-continuations-to-bytecode"><a class="header" href="#from-continuations-to-bytecode">من الاستمراريات إلى الشيفرة البايتية</a></h2>
+<p>الترميزات الثلاثة هي الحساب نفسه على مسافات مختلفة من الآلة:</p>
+<ul>
+<li>ينشئ <strong>الموناد الحر</strong> البرنامج <em>جبريًا</em> كبيانات، ثم يفسره. ويمكن طي الشجرة نفسها عبر عدة مفسرات: لتشغيلها أو طباعتها الجميلة أو تجميعها.</li>
+<li>يزيل <strong>أسلوب تمرير الاستمرار (CPS)</strong> بنية البيانات ويجعل التحكم صريحًا: «نفذ شفرة العملية هذه ثم استدعِ الاستمرارية». وتتدفق القيمة المحملة إلى الاستمرارية التي تحتاج إليها.</li>
+<li>يحوّل <strong>إزالة الدوال</strong> <em>استدعاءات</em> العمليات إلى بيانات من الرتبة الأولى، ويقرأها بدالة <code>apply</code> واحدة، بينما تنهار الاستمراريات إلى <code>pc</code> على <code>Vec&lt;Op&gt;</code>. حلقة القيادة هي منحدر CPS بلا إغلاقات.</li>
+</ul>
+<div id="admonition-تشبيه-لا-اشتقاق" class="admonition admonish-note" role="note" aria-labelledby="admonition-تشبيه-لا-اشتقاق-title">
+<div class="admonition-title">
+<div id="admonition-تشبيه-لا-اشتقاق-title">
+<p>تشبيه، لا اشتقاق</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-تشبيه-لا-اشتقاق"></a>
+</div>
+<div>
+<p>يمكن تحليل EVM بوصفها آلة مجردة من الرتبة الأولى يشبه عداد برنامجها الصريح تمثيلًا للتحكم أزيلت دواله. لكن هذا التشابه البنيوي لا يثبت وحده أن شيفرة EVM البايتية نتجت عن تحويل CPS أعقبته إزالة للدوال.</p>
+</div>
+</div>
+<h2 id="key-insight"><a class="header" href="#key-insight">الرؤية الأساسية</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>المفهوم</th><th>عالم الموناد الحر</th><th>واقع EVM</th></tr></thead><tbody>
+<tr><td>نوع التعليمة</td><td>تعداد لشفرات العمليات</td><td>شفرات عمليات EVM ثابتة</td></tr>
+<tr><td>تمثيل البرنامج</td><td>شجرة مبنية من <code>Free&lt;A&gt;</code></td><td>مصفوفة شيفرة بايتية خطية</td></tr>
+<tr><td>الاستمرارية</td><td>إغلاق في عقدة التعليمة</td><td>عداد البرنامج (<code>pc</code>)</td></tr>
+<tr><td>المفسر</td><td>مطابقة أنماط البرنامج</td><td>تبديل شفرة العملية وتعديل حالة الآلة الافتراضية</td></tr>
+<tr><td>مفسرات متعددة</td><td>طيات مختلفة للبرنامج نفسه</td><td>تطبيقات متعددة لعملاء Ethereum</td></tr>
+</tbody></table>
+</div>
+<h2 id="how-this-maps-to-the-real-evm"><a class="header" href="#how-this-maps-to-the-real-evm">كيفية انطباق ذلك على EVM الحقيقية</a></h2>
+<ul>
+<li>تعكس <strong>مجموعة التعليمات</strong> (صيغ <code>Free</code> أو تعداد <code>Op</code>) مجموعة شفرات عمليات EVM.</li>
+<li>يمثل <strong>البرنامج</strong> (شجرة <code>Free</code> أو استمراريات متداخلة أو <code>Vec&lt;Op&gt;</code>) العقد قبل التجميع وبعده.</li>
+<li>يمثل <strong>المفسر</strong> (<code>run</code> أو معالجات CPS أو <code>apply</code>) ما ينفذه عميل مثل Geth أو Besu أو Nethermind.</li>
+<li>تمثل <strong>حالة الآلة</strong> (<code>stack</code> و<code>storage</code>) المكدس والذاكرة والتخزين في EVM.</li>
+<li>شيفرة EVM البايتية الحقيقية هي الصيغة التي أزيلت دوالها: مصفوفة تعليمات مسطحة مفهرسة بعداد برنامج، تمامًا مثل الترميز منزوع الدوال أعلاه.</li>
+</ul>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../insights/referential-transparency.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../about.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../insights/referential-transparency.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../about.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

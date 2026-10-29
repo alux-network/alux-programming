@@ -1,0 +1,513 @@
+<!DOCTYPE HTML>
+<html lang="vi" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Bài toán biểu thức trở lại - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="Bài toán biểu thức trở lại - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-vi.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"Bài toán biểu thức trở lại","sourceHash":"sha256:c0c35ab091b01a221419f7a315cdd37146fc4858d3335fa406996ecadc3148e8"} -->
+<h1 id="expression-problem-reloaded"><a class="header" href="#expression-problem-reloaded">Bài toán biểu thức trở lại</a></h1>
+<div id="admonition-liên-quan" class="admonition admonish-tip" role="note" aria-labelledby="admonition-liên-quan-title">
+<div class="admonition-title">
+<div id="admonition-liên-quan-title">
+<p>Liên quan</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-liên-quan"></a>
+</div>
+<div>
+<p>Góc nhìn ngữ nghĩa: <a href="../denotational-design/design.html">Thiết kế theo ngữ nghĩa</a><br />
+Thiết kế theo ngữ nghĩa trong Rust: <a href="../rust-dd/capability-algebras.html">Các đại số năng lực</a>, <a href="../rust-dd/derived-meaning.html">Ý nghĩa suy ra và phép hợp thành</a>, <a href="../rust-dd/interpreters.html">Bộ diễn giải và hiệu ứng</a><br />
+Khái niệm: <a href="../concepts/expression-problem.html">Bài toán biểu thức</a></p>
+</div>
+</div>
+<p>Trang này trình bày giải pháp thực tiễn dựa trên đặc trưng cho <em>Bài toán biểu thức</em>: làm sao thêm dạng biểu thức và phép toán mới mà không phải liên tục viết lại mã hiện có. Thiết kế của giải pháp theo phong cách <strong>Conal</strong>, còn cách mã hóa thuộc kiểu <strong>tagless-final/đại số đối tượng</strong>. Cụ thể, trước hết ta đặc tả ý nghĩa hợp thành (các giao diện năng lực nhỏ và đặc tả chương trình ở cấp phần mở rộng), rồi mới cung cấp các bộ diễn giải cụ thể. Cách mã hóa cụ thể thuộc cùng họ với phong cách <strong>tagless-final</strong> của Oleg Kiselyov và <strong>đại số đối tượng</strong>: giao diện cấu trúc (<code>LitAlg</code>, <code>AddAlg</code>, <code>MulAlg</code>) định nghĩa chữ ký ngôn ngữ, chương trình được viết đa hình dựa trên các giao diện đó, còn các cách triển khai cụ thể như <code>Eval</code> hoặc <code>Pretty</code> cung cấp cách diễn giải. Nhờ vậy, không cần cam kết với một AST đóng duy nhất mà vẫn giữ được kiểu tĩnh và khả năng mở rộng theo cả hai chiều.</p>
+<p>Cách tiếp cận của Oleg tường minh mang tính ngữ nghĩa chỉ định: trước hết gán ý nghĩa hợp thành, rồi hiện thực hóa hiệu ứng/bộ diễn giải thành các lớp ngữ nghĩa mô-đun. Với Bài toán biểu thức, vì vậy sự tương hợp với Thiết kế theo ngữ nghĩa là có chủ ý chứ không phải ngẫu nhiên. Cách trình bày Thiết kế theo ngữ nghĩa của Conal nêu trực tiếp cùng ưu tiên: trước hết đặc tả ý nghĩa theo tính hợp thành, còn chiến lược thực thi cụ thể là thứ yếu và có thể thay thế.</p>
+<p>Với ví dụ ngôn ngữ biểu thức, cách mã hóa này có nghĩa:</p>
+<ul>
+<li><strong>Từ vựng cấu trúc tạo</strong> được mô hình hóa thành các đặc trưng đại số nhỏ, độc lập.</li>
+<li><strong>Các cách diễn giải</strong> là những cách triển khai các đặc trưng đó.</li>
+<li>Cú pháp mới bổ sung đặc trưng mới mà không đụng đến mã cũ.</li>
+<li>Ngữ nghĩa mới bổ sung kiểu bộ diễn giải mới mà không đụng đến mã cũ.</li>
+</ul>
+<p><code>lit</code> và <code>add</code> là các phép toán ngữ nghĩa, không phải cấu trúc tạo của một AST được ưu tiên. AST chỉ là một cách diễn giải trong số nhiều cách.</p>
+<div id="admonition-Đại-số-đối-tượng-trong-c" class="admonition admonish-example" role="note" aria-labelledby="admonition-Đại-số-đối-tượng-trong-c-title">
+<div class="admonition-title">
+<div id="admonition-Đại-số-đối-tượng-trong-c-title">
+<p>Đại số đối tượng trong C#</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Đại-số-đối-tượng-trong-c"></a>
+</div>
+<div>
+<p>Cách mã hóa này không riêng cho Rust. <a href="https://github.com/tgrospic/object-algebras"><code>object-algebras</code></a> phát triển mẫu này trong C# và vượt qua đối tượng mang cố định dùng ở đây. Trên trang này, mỗi bộ diễn giải chọn một <code>Self::Expr</code> cụ thể, tức kiểu thông thường. Thay vào đó, đại số C# trừu tượng hóa trên <em>bộ dựng</em> kiểu <code>F</code> — <code>FunctorAlg&lt;F&gt;</code>, <code>MonadAlg&lt;F&gt;</code>, <code>BankingDsl&lt;F&gt;</code> — mang kết quả dưới dạng <code>App&lt;F, a&gt;</code> thay cho <code>F&lt;a&gt;</code> bất hợp lệ.</p>
+<p>C# không có kiểu bậc cao hạng nhất, vì vậy <code>App&lt;F, a&gt;</code> thay mặt cho phép áp dụng <code>F(a)</code>, được khôi phục qua các lớp bọc inject/project. Mẹo <code>App</code> này chính là <a href="../concepts/defunctionalization.html">phi chức năng hóa</a>: phép trừu tượng mà ngôn ngữ không thể biểu đạt được chuyển thành dữ liệu bậc nhất để áp dụng khi cần. Rust cũng chạm cùng giới hạn — ngôn ngữ này cũng thiếu kiểu bậc cao hạng nhất.</p>
+</div>
+</div>
+<h2 id="specify-tiny-syntax-capabilities"><a class="header" href="#specify-tiny-syntax-capabilities">Đặc tả các năng lực cú pháp nhỏ</a></h2>
+<p>Mỗi cấu trúc tạo trở thành một đặc trưng nhỏ. Đây là <strong>đặc tả</strong>.</p>
+<pre><code class="language-rust noplayground">trait LitAlg {
+    type Expr;
+
+    fn lit(&amp;self, n: i64) -&gt; Self::Expr;
+}
+
+trait AddAlg {
+    type Expr;
+
+    fn add(&amp;self, a: Self::Expr, b: Self::Expr) -&gt; Self::Expr;
+}</code></pre>
+<p>Chương trình được viết dưới dạng <strong>phần mở rộng</strong> trên các đặc trưng đại số; phần mở rộng này cũng là một phần của đặc tả và kết hợp các đặc tả nhỏ thành đặc tả chương trình có thể tái sử dụng:</p>
+<pre><code class="language-rust noplayground">#[ext(name = ExprPrograms)]
+impl&lt;This&gt; This
+where
+    This: LitAlg + AddAlg,
+{
+    fn expr_basic(&amp;self) -&gt; This::Expr {
+        self.add(self.lit(2), self.lit(3))
+    }
+}</code></pre>
+<p><code>#[ext(...)]</code> là macro từ crate <a href="https://docs.rs/extend/latest/extend/"><code>extend</code></a>, dùng để giảm mã khuôn mẫu bằng cách tạo phương thức mở rộng từ khối <code>impl</code>; đây không phải tính năng mới của ngôn ngữ Rust.</p>
+<h2 id="add-new-interpretation"><a class="header" href="#add-new-interpretation">Thêm cách diễn giải mới</a></h2>
+<p>Bộ diễn giải triển khai đặc tả. Không cần thay đổi cú pháp.</p>
+<pre><code class="language-rust noplayground">struct Eval;
+
+impl LitAlg for Eval {
+    type Expr = i64;
+
+    fn lit(&amp;self, n: i64) -&gt; i64 { n }
+}
+
+impl AddAlg for Eval {
+    type Expr = i64;
+
+    fn add(&amp;self, a: i64, b: i64) -&gt; i64 { a + b }
+}
+
+struct Pretty;
+
+impl LitAlg for Pretty {
+    type Expr = String;
+
+    fn lit(&amp;self, n: i64) -&gt; String { n.to_string() }
+}
+
+impl AddAlg for Pretty {
+    type Expr = String;
+
+    fn add(&amp;self, a: String, b: String) -&gt; String {
+        format!("({a} + {b})")
+    }
+}</code></pre>
+<p>Giờ cùng biểu thức có thể được diễn giải theo cách khác:</p>
+<pre><code class="language-rust noplayground">let eval = Eval;
+let pretty = Pretty;
+
+let v: i64 = eval.expr_basic();        // 5
+let s: String = pretty.expr_basic();   // "(2 + 3)"</code></pre>
+<h2 id="add-new-syntax-new-capability-trait"><a class="header" href="#add-new-syntax-new-capability-trait">Thêm cú pháp mới (đặc trưng năng lực mới)</a></h2>
+<p>Để thêm <code>Mul</code>, hãy định nghĩa đặc trưng mới. Mã hiện có vẫn nguyên vẹn.</p>
+<pre><code class="language-rust noplayground">trait MulAlg {
+    type Expr;
+
+    fn mul(&amp;self, a: Self::Expr, b: Self::Expr) -&gt; Self::Expr;
+}
+
+#[ext(name = ExprProgramsMul)]
+impl&lt;This&gt; This
+where
+    This: LitAlg + AddAlg + MulAlg,
+{
+    fn expr_with_mul(&amp;self) -&gt; This::Expr {
+        self.mul(self.add(self.lit(2), self.lit(3)), self.lit(4))
+    }
+}</code></pre>
+<p>Các bộ diễn giải hiện có vẫn hoạt động với biểu thức cũ.<br />
+Nếu muốn hỗ trợ cú pháp mới, chúng triển khai đặc trưng mới:</p>
+<pre><code class="language-rust noplayground">impl MulAlg for Eval {
+    type Expr = i64;
+
+    fn mul(&amp;self, a: i64, b: i64) -&gt; i64 { a * b }
+}
+
+impl MulAlg for Pretty {
+    type Expr = String;
+
+    fn mul(&amp;self, a: String, b: String) -&gt; String {
+        format!("({a} * {b})")
+    }
+}</code></pre>
+<h2 id="why-this-solves-the-expression-problem"><a class="header" href="#why-this-solves-the-expression-problem">Vì sao cách này giải quyết Bài toán biểu thức</a></h2>
+<p>Bài toán biểu thức truyền thống có hai trục trên một cách biểu diễn:</p>
+<ul>
+<li>thêm biến thể mới (trường hợp)</li>
+<li>thêm phép toán mới</li>
+</ul>
+<p>Thiết kế theo ngữ nghĩa diễn đạt lại hai trục:</p>
+<ul>
+<li><strong>Mở rộng từ vựng ngữ nghĩa</strong>: định nghĩa đặc trưng năng lực mới (<code>MulAlg</code>).</li>
+<li><strong>Thêm cách diễn giải mới</strong> cho từ vựng đó: định nghĩa kiểu bộ diễn giải mới (<code>Eval</code>, <code>Pretty</code>, bộ dựng AST hoặc bộ sinh mã).</li>
+</ul>
+<p>Hai trục hợp thành độc lập:</p>
+<ul>
+<li>Chương trình hiện có không thay đổi trừ khi chúng cần năng lực mới. <code>expr_basic</code> vẫn chỉ yêu cầu <code>LitAlg + AddAlg</code>.</li>
+<li>Bộ diễn giải hiện có không thay đổi trừ khi chúng chọn diễn giải năng lực mới. <code>Eval</code> không có <code>impl MulAlg</code> vẫn chạy mọi chương trình không dùng đến <code>mul</code>.</li>
+</ul>
+<p>Cách này không loại bỏ ma trận triển khai. Nếu <code>Eval</code> và <code>Pretty</code> đều cần diễn giải <code>mul</code> thì cả hai đều cần <code>impl MulAlg</code>. Điều thay đổi là cách tổ chức ma trận: mỗi ô là <em>phép toán ngữ nghĩa × cách diễn giải</em>, không ô nào xoay quanh cách biểu diễn được ưu tiên, và mỗi chương trình chỉ phụ thuộc vào các năng lực nó sử dụng.</p>
+<h2 id="laws-belong-to-the-specification"><a class="header" href="#laws-belong-to-the-specification">Định luật thuộc về đặc tả</a></h2>
+<p>Đại số ngữ nghĩa gồm đối tượng mang, phép toán và định luật. Đối tượng mang (<code>type Expr</code>) do cách diễn giải chọn; phép toán và định luật thuộc về đặc tả. Chẳng hạn, ý nghĩa số học của <code>LitAlg + AddAlg</code> phát biểu:</p>
+<pre><code class="language-text">add(lit(m), lit(n)) = lit(m + n)
+</code></pre>
+<p><code>Eval</code> thỏa mãn định luật này. <code>Pretty</code> thì không: <code>"(2 + 3)"</code> không bằng <code>"5"</code>. Cả hai đều là bộ diễn giải hợp lệ cho chữ ký cú pháp, nhưng chỉ <code>Eval</code> là mô hình của đặc tả số học. Định luật được phát biểu một lần dựa trên các đặc trưng và quyết định bộ diễn giải nào đạt yêu cầu. Không bộ diễn giải nào sở hữu nó.</p>
+<h2 id="final-insight-featherweight-go-vs-denotational-design"><a class="header" href="#final-insight-featherweight-go-vs-denotational-design">Nhận định cuối: Featherweight Go và Thiết kế theo ngữ nghĩa</a></h2>
+<p>Wadler chẩn đoán Bài toán biểu thức ở cấp cơ chế ngôn ngữ: hàng và cột dưới ràng buộc kiểu tĩnh và khả năng mở rộng mô-đun. <a href="../concepts/expression-problem.html#featherweight-go-solution-2020">Featherweight Go</a> đưa ra giải pháp cụ thể: <code>Plus(type a Any)</code> giữ biểu diễn đệ quy ở dạng tổng quát, còn từng phép toán đặt ràng buộc riêng lên <code>a</code> (<code>Plus(type a Evaler)</code> cho <code>Eval</code>, <code>Plus(type a Stringer)</code> cho <code>String</code>). Cách biểu diễn không bị gắn với một giao diện biểu thức đóng, nên cả hai trục vẫn mở.</p>
+<p>Các giải pháp truyền thống bắt đầu từ cách biểu diễn rồi hỏi làm sao mở cả hai trục mở rộng. Featherweight Go đẩy ý tưởng này đi khá xa khi làm cho biểu diễn đệ quy tổng quát và có thể mở rộng theo cấu trúc. Thiết kế theo ngữ nghĩa đẩy ranh giới sớm hơn một bước: biểu diễn không phải mô hình. Mô hình là đại số và các định luật của nó; biểu diễn là một cách diễn giải khả dĩ.</p>
+<p><strong>Featherweight Go giúp mở rộng cách biểu diễn. Thiết kế theo ngữ nghĩa khiến biểu diễn trở thành tùy chọn.</strong></p>
+<div class="table-wrapper"><table><thead><tr><th></th><th>Featherweight Go</th><th>Thiết kế theo ngữ nghĩa</th></tr></thead><tbody>
+<tr><td>Trung tâm ngữ nghĩa</td><td>biểu diễn có thể mở rộng</td><td>đại số và định luật</td></tr>
+<tr><td><code>Num</code>/<code>Plus</code>, <code>lit</code>/<code>add</code></td><td>cấu trúc (dạng biểu diễn)</td><td>phép toán ngữ nghĩa</td></tr>
+<tr><td><code>Eval</code>, <code>String</code>/<code>Pretty</code></td><td>phương thức và giao diện</td><td>cách diễn giải</td></tr>
+<tr><td>Cấu trúc đệ quy</td><td>biểu diễn tổng quát, mở (<code>Plus(a)</code>)</td><td>không bắt buộc</td></tr>
+<tr><td>Đối tượng mang</td><td>kiểu biểu thức được biểu diễn</td><td>do bộ diễn giải chọn (<code>type Expr</code>)</td></tr>
+<tr><td>AST</td><td>biểu diễn vẫn là trung tâm</td><td>tùy chọn, là một trong nhiều cách diễn giải</td></tr>
+<tr><td>Ô ma trận</td><td>trường hợp × phép toán → phương thức</td><td>phép toán ngữ nghĩa × cách diễn giải → <code>impl</code></td></tr>
+<tr><td>Hành vi mới</td><td>thêm phương thức và giao diện</td><td>thêm hoặc hợp thành năng lực</td></tr>
+<tr><td>Cách triển khai mới</td><td>các hiện thực hóa cấu trúc mới</td><td>bộ diễn giải mới</td></tr>
+</tbody></table>
+</div>
+<p>Wadler hỏi cách mở rộng cả hai trục của một cách biểu diễn. Thiết kế theo ngữ nghĩa hỏi vì sao cách biểu diễn phải sở hữu trục nào trong hai trục.</p>
+<p>Trước hết định nghĩa ý nghĩa hợp thành, rồi chọn cách mã hóa. Bài toán biểu thức trở thành lựa chọn kỹ thuật giữa các cách mã hóa, chứ không còn là bế tắc khái niệm.</p>
+<p><strong>Ý nghĩa của ngôn ngữ cần độc lập với khái niệm máy móc.</strong></p>
+<figure><iframe width="100%" height="315" src="https://www.youtube.com/embed/n2CBSNAVHVg?si=n-f84RYWjGtKkcVj&amp;clip=Ugkx52hOOFjiK-KEPMRhuB8vT6i4WUaav11c&amp;clipt=EKWcxgIYjoTIAg&amp;start=5344&amp;end=5375" title="Talk clip — a language's meaning should be independent of the machine" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""></iframe><figcaption>Ý nghĩa của ngôn ngữ cần độc lập với máy móc</figcaption></figure>
+<h2 id="references"><a class="header" href="#references">Tài liệu tham khảo</a></h2>
+<ul>
+<li>
+<p>Elliott, C. <em>Denotational design with type class morphisms</em>.<br />
+<a href="http://conal.net/papers/type-class-morphisms/">http://conal.net/papers/type-class-morphisms/</a></p>
+</li>
+<li>
+<p>Elliott, C. <em>Compiling to categories</em>.<br />
+<a href="http://conal.net/papers/compiling-to-categories/">http://conal.net/papers/compiling-to-categories/</a></p>
+</li>
+<li>
+<p>Kiselyov, O. <em>Tagless-final style</em> (tổng quan, hướng dẫn và bài viết về mã hóa final và bộ diễn giải có kiểu mở rộng).<br />
+<a href="https://okmij.org/ftp/tagless-final/">https://okmij.org/ftp/tagless-final/</a></p>
+</li>
+<li>
+<p>Kiselyov, O. <em>Having an Effect</em> (cách trình bày hiệu ứng theo hướng định nghĩa/ngữ nghĩa chỉ định và bộ diễn giải mở rộng).<br />
+<a href="https://okmij.org/ftp/Computation/having-effect.html#defint">https://okmij.org/ftp/Computation/having-effect.html#defint</a></p>
+</li>
+<li>
+<p>Griesemer, R., Hu, R., Kokke, W., Lange, J., Taylor, I. L., Toninho, B., Wadler, P. và Yoshida, N. (2020). <em>Featherweight Go</em>. Proc. ACM Program. Lang. 4 (OOPSLA). Mục 2.3 trình bày giải pháp cấu trúc tổng quát được so sánh ở trên.<br />
+<a href="https://homepages.inf.ed.ac.uk/wadler/papers/fg/fg.pdf">https://homepages.inf.ed.ac.uk/wadler/papers/fg/fg.pdf</a></p>
+</li>
+<li>
+<p>Oliveira, B. C. d. S. và Cook, W. R. (2012). <em>Extensibility for the Masses: Practical Extensibility with Object Algebras</em>.<br />
+<a href="https://www.cs.utexas.edu/~wcook/Drafts/2012/ecoop2012.pdf">https://www.cs.utexas.edu/~wcook/Drafts/2012/ecoop2012.pdf</a></p>
+</li>
+</ul>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../insights/operational_semantics.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../insights/referential-transparency.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../insights/operational_semantics.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../insights/referential-transparency.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,499 @@
+<!DOCTYPE HTML>
+<html lang="es" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Un flujo de trabajo guiado por el significado - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="Un flujo de trabajo guiado por el significado - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-es.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"Un flujo de trabajo guiado por el significado","sourceHash":"sha256:4e52a8067c665db3ce38a802a1615b5d660d1aeee86656c13b53a33c6ebd2dff"} -->
+<h1 id="a-meaning-first-workflow"><a class="header" href="#a-meaning-first-workflow">Un flujo de trabajo guiado por el significado</a></h1>
+<div id="admonition-relacionado" class="admonition admonish-tip" role="note" aria-labelledby="admonition-relacionado-title">
+<div class="admonition-title">
+<div id="admonition-relacionado-title">
+<p>Relacionado</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-relacionado"></a>
+</div>
+<div>
+<p>La perspectiva semántica: <a href="../denotational-design/semantic-view.html">Por qué el significado va primero</a><br />
+Diseño basado en el significado en Rust: <a href="capability-algebras.html">Álgebras de capacidades</a>, <a href="derived-meaning.html">Significado derivado y composición</a>, <a href="laws.html">Leyes, escenarios y pruebas</a></p>
+</div>
+</div>
+<div id="admonition-una-disciplina-repetible" class="admonition admonish-note" role="note" aria-labelledby="admonition-una-disciplina-repetible-title">
+<div class="admonition-title">
+<div id="admonition-una-disciplina-repetible-title">
+<p>Una disciplina repetible</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-una-disciplina-repetible"></a>
+</div>
+<div>
+<p>El diseño denotacional es un flujo de trabajo, no solo una explicación del código terminado: formula el cambio semántico, identifica las capacidades primitivas mínimas, compónlas con fidelidad, implementa intérpretes delgados y comprueba las leyes.</p>
+</div>
+</div>
+<p>El diseño denotacional resulta más útil como disciplina de desarrollo repetible que como simple explicación del código terminado.</p>
+<h2 id="the-core-workflow"><a class="header" href="#the-core-workflow">El flujo de trabajo central</a></h2>
+<p>Para una nueva funcionalidad o refactorización:</p>
+<ol>
+<li>Formula el cambio semántico en una frase.</li>
+<li>Identifica el portador y la igualdad observable.</li>
+<li>Encuentra las capacidades primitivas mínimas necesarias.</li>
+<li>Define el comportamiento derivado a partir de capacidades explícitas.</li>
+<li>Elige una forma de composición fiel al significado.</li>
+<li>Reifica un programa de primer orden solo si su estructura necesita varias interpretaciones.</li>
+<li>Implementa intérpretes concretos y delgados.</li>
+<li>Añade leyes o escenarios compartidos.</li>
+<li>Valida las interpretaciones alternativas.</li>
+<li>Documenta el significado antes que la maquinaria.</li>
+</ol>
+<h2 id="state-the-semantic-change"><a class="header" href="#state-the-semantic-change">Formula el cambio semántico</a></h2>
+<p>Formulación débil:</p>
+<blockquote>
+<p>Añadir una caché y un método al gestor.</p>
+</blockquote>
+<p>Formulación orientada al significado:</p>
+<blockquote>
+<p>Resolver el mismo nombre de origen inmutable denota el mismo valor de origen durante una compilación.</p>
+</blockquote>
+<p>La segunda formulación plantea una posible ley. Más adelante, se puede elegir el almacenamiento en caché como una implementación.</p>
+<h2 id="find-the-primitive-boundary"><a class="header" href="#find-the-primitive-boundary">Encuentra el límite primitivo</a></h2>
+<p>Pregunta:</p>
+<ul>
+<li>¿Qué nueva observación o transformación hace falta?</li>
+<li>¿Es primitiva en este límite o puede derivarse del significado existente?</li>
+<li>¿Hace falta un nuevo portador asociado?</li>
+<li>¿La supuesta dependencia es solo una ubicación de almacenamiento?</li>
+<li>¿Qué distinciones deberían permanecer invisibles?</li>
+</ul>
+<p>Añade una capacidad solo cuando haya un significado primitivo realmente nuevo.</p>
+<h2 id="choose-composition-truthfully"><a class="header" href="#choose-composition-truthfully">Elige la composición con fidelidad</a></h2>
+<p>Usa esta tabla de decisión:</p>
+<div class="table-wrapper"><table><thead><tr><th>Pregunta</th><th>Opción</th></tr></thead><tbody>
+<tr><td>¿Un mismo receptor interpreta todos los significados requeridos?</td><td>Restricciones directas</td></tr>
+<tr><td>¿El comportamiento se elige de manera independiente?</td><td>Valor de política explícito</td></tr>
+<tr><td>¿Se pueden componer las políticas de forma independiente?</td><td>Producto</td></tr>
+<tr><td>¿Un entorno contiene otro intérprete?</td><td>Proyección</td></tr>
+<tr><td>¿Un envoltorio debe sustituir al intérprete interno?</td><td>Delegación</td></tr>
+</tbody></table>
+</div>
+<p>No introduzcas un rasgo de contexto grande como respuesta predeterminada.</p>
+<h2 id="refactor-one-meaning-at-a-time"><a class="header" href="#refactor-one-meaning-at-a-time">Refactoriza un significado cada vez</a></h2>
+<p>Cuando el código existente priorice la representación:</p>
+<ol>
+<li>Identifica una observación semántica.</li>
+<li>Define una capacidad pequeña.</li>
+<li>Traslada una derivación a una extensión.</li>
+<li>Mantén la estructura actual como su intérprete.</li>
+<li>Añade una prueba basada en una ley.</li>
+</ol>
+<div id="admonition-el-diseño-denotacional-no-busca-maximizar-las-abstracciones" class="admonition admonish-warning" role="note" aria-labelledby="admonition-el-diseño-denotacional-no-busca-maximizar-las-abstracciones-title">
+<div class="admonition-title">
+<div id="admonition-el-diseño-denotacional-no-busca-maximizar-las-abstracciones-title">
+<p>El diseño denotacional no busca maximizar las abstracciones</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-el-diseño-denotacional-no-busca-maximizar-las-abstracciones"></a>
+</div>
+<div>
+<p>Evita reescribir todo un subsistema con abstracciones especulativas. El diseño denotacional no busca maximizar las abstracciones.</p>
+</div>
+</div>
+<h2 id="review-from-meaning-to-machinery"><a class="header" href="#review-from-meaning-to-machinery">Revisa desde el significado hasta la maquinaria</a></h2>
+<p>Lee el código en este orden:</p>
+<ol>
+<li>rasgos de capacidades</li>
+<li>tipos de valores semánticos</li>
+<li>extensiones derivadas</li>
+<li>sintaxis de programas de primer orden, si existe</li>
+<li>leyes y escenarios compartidos</li>
+<li>intérpretes concretos</li>
+<li>orquestación del entorno de ejecución</li>
+</ol>
+<p>Empezar por la estructura más grande que contiene el estado inclina la revisión hacia su representación.</p>
+<h2 id="common-failure-modes"><a class="header" href="#common-failure-modes">Modos de fallo habituales</a></h2>
+<div id="admonition-un-estado-concreto-con-forma-de-rasgo-no-es-diseño-denotacional" class="admonition admonish-warning" role="note" aria-labelledby="admonition-un-estado-concreto-con-forma-de-rasgo-no-es-diseño-denotacional-title">
+<div class="admonition-title">
+<div id="admonition-un-estado-concreto-con-forma-de-rasgo-no-es-diseño-denotacional-title">
+<p>Un estado concreto con forma de rasgo no es diseño denotacional</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-un-estado-concreto-con-forma-de-rasgo-no-es-diseño-denotacional"></a>
+</div>
+<div>
+<pre><code class="language-rust noplayground">trait ContextAlg {
+    fn state(&amp;self) -&gt; &amp;ConcreteState;
+}</code></pre>
+<p>El rasgo cambia la sintaxis, pero no quién es dueño del significado. El núcleo semántico sigue dependiendo de la representación concreta.</p>
+</div>
+</div>
+<h3 id="derived-logic-in-every-interpreter"><a class="header" href="#derived-logic-in-every-interpreter">Lógica derivada en cada intérprete</a></h3>
+<p>Si cada implementación define por separado el mismo algoritmo de dominio, la especificación está duplicada.</p>
+<h3 id="god-capability"><a class="header" href="#god-capability">Capacidad omnipotente</a></h3>
+<p>Un superrasgo que reúne operaciones sin relación oculta las dependencias e impide la interpretación independiente.</p>
+<h3 id="framework-owned-specification"><a class="header" href="#framework-owned-specification">Especificación propiedad del framework</a></h3>
+<p>Si las anotaciones de rutas o el registro de RPC son la única definición de interfaz, la documentación y la ejecución pueden divergir.</p>
+<h3 id="macro-owned-meaning"><a class="header" href="#macro-owned-meaning">Significado propiedad de la macro</a></h3>
+<p>Si el código generado carece de un destino público de primer orden, la expansión de la macro se convierte accidentalmente en la especificación.</p>
+<h3 id="policy-hidden-in-defaults"><a class="header" href="#policy-hidden-in-defaults">Política oculta en valores predeterminados</a></h3>
+<p>Si <code>Default</code> elige silenciosamente una política de quórum, reintentos, ordenación o compilación, la composición deja de ser explícita.</p>
+<h3 id="tests-of-private-steps"><a class="header" href="#tests-of-private-steps">Pruebas de pasos privados</a></h3>
+<p>Las pruebas acopladas a la disposición de campos o al orden de recorrido desincentivan intérpretes alternativos válidos.</p>
+<h2 id="pull-request-checklist"><a class="header" href="#pull-request-checklist">Lista de comprobación para la solicitud de integración</a></h2>
+<h3 id="meaning"><a class="header" href="#meaning">Significado</a></h3>
+<ul>
+<li>¿Se ha formulado el cambio semántico?</li>
+<li>¿Están claros el portador y la igualdad?</li>
+<li>¿Se han nombrado las omisiones intencionales?</li>
+</ul>
+<h3 id="capabilities"><a class="header" href="#capabilities">Capacidades</a></h3>
+<ul>
+<li>¿Cada rasgo expone un significado primitivo coherente?</li>
+<li>¿Las restricciones están donde se usan las operaciones?</li>
+<li>¿El código derivado evita los campos concretos?</li>
+</ul>
+<h3 id="composition"><a class="header" href="#composition">Composición</a></h3>
+<ul>
+<li>¿Se usan con fidelidad las restricciones directas, las políticas, los productos, las proyecciones y la delegación?</li>
+<li>¿Los valores semánticos predeterminados son explícitos?</li>
+</ul>
+<h3 id="programs-and-interpreters"><a class="header" href="#programs-and-interpreters">Programas e intérpretes</a></h3>
+<ul>
+<li>¿Se introduce una estructura de primer orden solo cuando otra interpretación la necesita?</li>
+<li>¿Pueden las macros de conveniencia traducirse a valores de programa públicos?</li>
+<li>¿Los intérpretes concretos son delgados y específicos de cada límite?</li>
+</ul>
+<h3 id="evidence"><a class="header" href="#evidence">Pruebas</a></h3>
+<ul>
+<li>¿Se incluye una ley o una afirmación semántica específica?</li>
+<li>¿Se puede ejecutar el mismo escenario con otro intérprete?</li>
+<li>¿Se presentan las pruebas finitas como indicios y no como demostración?</li>
+</ul>
+<h2 id="reading-alux-style-code"><a class="header" href="#reading-alux-style-code">Leer código al estilo de ALUX</a></h2>
+<p>La forma general que conviene reconocer es:</p>
+<ol>
+<li>rasgos de capacidades primitivas pequeñas</li>
+<li>extensiones derivadas sobre restricciones explícitas</li>
+<li>programas de primer orden cuando se requiere inspección o composición</li>
+<li>leyes y escenarios compartidos</li>
+<li>intérpretes concretos para entornos de ejecución, compiladores, HTTP, RPC o almacenamiento</li>
+</ol>
+<p>Los grandes sistemas concurrentes aún contienen zonas dominadas por la orquestación. No des por sentado que todas las interfaces existentes ya son especificaciones denotacionales ideales. Busca los límites semánticos y lee desde ellos hacia afuera.</p>
+<p>Tolang aplica la misma perspectiva a escala de lenguaje: la sintaxis se normaliza en formas portadoras de significado, la compilación preserva ese significado y un entorno de ejecución concurrente interpreta la representación ejecutable. La explicación operativa sigue siendo esencial, pero viene después del contrato semántico.</p>
+<h2 id="final-principle"><a class="header" href="#final-principle">Principio final</a></h2>
+<p>En caso de duda, vuelve a una sola pregunta:</p>
+<div id="admonition-la-pregunta-a-la-que-debes-volver" class="admonition admonish-quote" role="note" aria-labelledby="admonition-la-pregunta-a-la-que-debes-volver-title">
+<div class="admonition-title">
+<div id="admonition-la-pregunta-a-la-que-debes-volver-title">
+<p>La pregunta a la que debes volver</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-la-pregunta-a-la-que-debes-volver"></a>
+</div>
+<div>
+<p>¿Qué significado debe preservar esta maquinaria?</p>
+</div>
+</div>
+<p>Esa pregunta no resuelve todos los problemas de ingeniería. Hace visible el problema en el nivel correcto.</p>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../rust-dd/compiler-pipelines.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../concepts/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../rust-dd/compiler-pipelines.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../concepts/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

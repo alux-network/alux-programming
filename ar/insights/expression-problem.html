@@ -1,0 +1,513 @@
+<!DOCTYPE HTML>
+<html lang="ar" class="light sidebar-visible" dir="rtl">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>إعادة طرح مسألة التعبير - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="إعادة طرح مسألة التعبير - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-ar.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"إعادة طرح مسألة التعبير","sourceHash":"sha256:c0c35ab091b01a221419f7a315cdd37146fc4858d3335fa406996ecadc3148e8"} -->
+<h1 id="expression-problem-reloaded"><a class="header" href="#expression-problem-reloaded">إعادة طرح مسألة التعبير</a></h1>
+<div id="admonition-ذات-صلة" class="admonition admonish-tip" role="note" aria-labelledby="admonition-ذات-صلة-title">
+<div class="admonition-title">
+<div id="admonition-ذات-صلة-title">
+<p>ذات صلة</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-ذات-صلة"></a>
+</div>
+<div>
+<p>الرؤية الدلالية: <a href="../denotational-design/design.html">التصميم الدلالي</a><br />
+التصميم انطلاقًا من المعنى في Rust: <a href="../rust-dd/capability-algebras.html">جبريات القدرات</a>، <a href="../rust-dd/derived-meaning.html">المعنى المشتق والتركيب</a>، <a href="../rust-dd/interpreters.html">المفسرات والآثار</a><br />
+المفاهيم: <a href="../concepts/expression-problem.html">مسألة التعبير</a></p>
+</div>
+</div>
+<p>تعرض هذه الصفحة حلًا عمليًا لمسألة التعبير قائمًا على السمات: كيفية إضافة صيغ تعبير وعمليات جديدة من دون إعادة كتابة الشيفرة القائمة مرارًا. التصميم <strong>على نمط كونال</strong> في فكرته، وترميزه <strong>من نمط tagless-final/جبريات الكائنات</strong>. عمليًا: نحدد المعنى التركيبي أولًا (واجهات قدرات صغيرة ومواصفات برامج على مستوى الامتدادات)، ثم نوفر مفسرات ملموسة. وينتمي الترميز الملموس إلى عائلة أسلوب <strong>tagless-final</strong> لدى أوليغ كيسليوف و<strong>جبريات الكائنات</strong>: تحدد واجهات المُنشئات (<code>LitAlg</code>، <code>AddAlg</code>، <code>MulAlg</code>) توقيع اللغة، وتكتب البرامج بصورة متعددة الأشكال اعتمادًا على تلك الواجهات، وتوفر التطبيقات الملموسة (مثل <code>Eval</code> أو <code>Pretty</code>) التفسيرات. وهذا يتجنب الالتزام بشجرة AST مغلقة واحدة مع الحفاظ على الأنواع الساكنة وقابلية التوسيع في البعدين. وتقدم هذه الصفحة حلًا عمليًا لـ <em>مسألة التعبير</em>.</p>
+<p>نهج أوليغ دلالي صراحة: يسند المعنى التركيبي أولًا، ثم يحقق الآثار والمفسرات كطبقات دلالية معيارية. وفي مسألة التعبير، لهذا يكون التوافق مع التصميم الدلالي متوقعًا لا عرضيًا. فصياغة كونال للتصميم الدلالي تقرر الأولوية نفسها مباشرة: حدد المعنى تركيبيًا أولًا، وتعامل مع استراتيجيات التنفيذ الملموسة بوصفها ثانوية وقابلة للاستبدال.</p>
+<p>في مثال لغة التعبير، يعني هذا الترميز ما يلي:</p>
+<ul>
+<li><strong>تُمثّل مفردات المُنشئات</strong> بسمات جبرية صغيرة ومستقلة.</li>
+<li><strong>التفسيرات</strong> هي تطبيقات لتلك السمات.</li>
+<li>تضيف الصياغة الجديدة سمة جديدة وتترك الشيفرة القديمة دون تغيير.</li>
+<li>تضيف الدلالات الجديدة نوع مفسر جديدًا وتترك الشيفرة القديمة دون تغيير.</li>
+</ul>
+<p><code>lit</code> و<code>add</code> عمليتان دلاليتان وليستا مُنشئين لشجرة AST مميزة. فشجرة AST تفسير واحد ضمن عدة تفسيرات.</p>
+<div id="admonition-جبريات-الكائنات-في-c" class="admonition admonish-example" role="note" aria-labelledby="admonition-جبريات-الكائنات-في-c-title">
+<div class="admonition-title">
+<div id="admonition-جبريات-الكائنات-في-c-title">
+<p>جبريات الكائنات في C#</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-جبريات-الكائنات-في-c"></a>
+</div>
+<div>
+<p>هذا الترميز ليس خاصًا بـ Rust. تطور <a href="https://github.com/tgrospic/object-algebras"><code>object-algebras</code></a> النمط في C# وتتجاوز الحامل الثابت المستخدم هنا. في هذه الصفحة يختار كل مفسر <code>Self::Expr</code> ملموسًا واحدًا، أي نوعًا عاديًا. أما جبريات C# فتجردها على نوع <em>منشئ</em> <code>F</code> — <code>FunctorAlg&lt;F&gt;</code>، <code>MonadAlg&lt;F&gt;</code>، <code>BankingDsl&lt;F&gt;</code> — يحمل النتائج على هيئة <code>App&lt;F, a&gt;</code> بدلًا من <code>F&lt;a&gt;</code> غير القانوني.</p>
+<p>لا تتضمن C# أنواعًا من الرتبة الأعلى من الدرجة الأولى، لذا يقوم <code>App&lt;F, a&gt;</code> مقام التطبيق <code>F(a)</code>، الذي تستعيده أغلفة الحقن/الإسقاط. وهذه <code>App</code>حيلة <a href="../concepts/defunctionalization.html">هي بالضبط إزالة الدوال</a>: يتحول التجريد الذي لا تستطيع اللغة التعبير عنه إلى بيانات من الرتبة الأولى تُطبّق عند الطلب. وتواجه Rust الحد نفسه؛ إذ تفتقر هي أيضًا إلى أنواع من الرتبة الأعلى من الدرجة الأولى.</p>
+</div>
+</div>
+<h2 id="specify-tiny-syntax-capabilities"><a class="header" href="#specify-tiny-syntax-capabilities">حدد قدرات صياغة صغيرة</a></h2>
+<p>يصبح كل مُنشئ سمة صغيرة. وهذا هو <strong>المواصفة</strong>.</p>
+<pre><code class="language-rust noplayground">trait LitAlg {
+    type Expr;
+
+    fn lit(&amp;self, n: i64) -&gt; Self::Expr;
+}
+
+trait AddAlg {
+    type Expr;
+
+    fn add(&amp;self, a: Self::Expr, b: Self::Expr) -&gt; Self::Expr;
+}</code></pre>
+<p>تكتب البرامج بوصفها <strong>امتدادات</strong> فوق السمات الجبرية؛ وهذه الامتدادات جزء من المواصفة أيضًا، وتجمع المواصفات الصغيرة في مواصفات برامج قابلة لإعادة الاستخدام:</p>
+<pre><code class="language-rust noplayground">#[ext(name = ExprPrograms)]
+impl&lt;This&gt; This
+where
+    This: LitAlg + AddAlg,
+{
+    fn expr_basic(&amp;self) -&gt; This::Expr {
+        self.add(self.lit(2), self.lit(3))
+    }
+}</code></pre>
+<p><code>#[ext(...)]</code> ماكرو من الحزمة <a href="https://docs.rs/extend/latest/extend/"><code>extend</code>، وتقلل الشيفرة النمطية بإنشاء أساليب الامتداد من كتلة <code>impl</code>؛ وليست ميزة جديدة في لغة Rust.</a></p>
+<h2 id="add-new-interpretation"><a class="header" href="#add-new-interpretation">أضف تفسيرًا جديدًا</a></h2>
+<p>تنفذ المفسرات المواصفة. ولا حاجة إلى تغيير الصياغة.</p>
+<pre><code class="language-rust noplayground">struct Eval;
+
+impl LitAlg for Eval {
+    type Expr = i64;
+
+    fn lit(&amp;self, n: i64) -&gt; i64 { n }
+}
+
+impl AddAlg for Eval {
+    type Expr = i64;
+
+    fn add(&amp;self, a: i64, b: i64) -&gt; i64 { a + b }
+}
+
+struct Pretty;
+
+impl LitAlg for Pretty {
+    type Expr = String;
+
+    fn lit(&amp;self, n: i64) -&gt; String { n.to_string() }
+}
+
+impl AddAlg for Pretty {
+    type Expr = String;
+
+    fn add(&amp;self, a: String, b: String) -&gt; String {
+        format!("({a} + {b})")
+    }
+}</code></pre>
+<p>يمكن الآن تفسير التعبير نفسه بطرق مختلفة:</p>
+<pre><code class="language-rust noplayground">let eval = Eval;
+let pretty = Pretty;
+
+let v: i64 = eval.expr_basic();        // 5
+let s: String = pretty.expr_basic();   // "(2 + 3)"</code></pre>
+<h2 id="add-new-syntax-new-capability-trait"><a class="header" href="#add-new-syntax-new-capability-trait">أضف صياغة جديدة (سمة قدرة جديدة)</a></h2>
+<p>لإضافة <code>Mul</code>، عرّف سمة جديدة. وتبقى الشيفرة القائمة دون تغيير.</p>
+<pre><code class="language-rust noplayground">trait MulAlg {
+    type Expr;
+
+    fn mul(&amp;self, a: Self::Expr, b: Self::Expr) -&gt; Self::Expr;
+}
+
+#[ext(name = ExprProgramsMul)]
+impl&lt;This&gt; This
+where
+    This: LitAlg + AddAlg + MulAlg,
+{
+    fn expr_with_mul(&amp;self) -&gt; This::Expr {
+        self.mul(self.add(self.lit(2), self.lit(3)), self.lit(4))
+    }
+}</code></pre>
+<p>تظل المفسرات القائمة صالحة للتعبيرات القديمة.<br />
+وإذا أرادت دعم الصياغة الجديدة، فلتنفذ السمة الجديدة:</p>
+<pre><code class="language-rust noplayground">impl MulAlg for Eval {
+    type Expr = i64;
+
+    fn mul(&amp;self, a: i64, b: i64) -&gt; i64 { a * b }
+}
+
+impl MulAlg for Pretty {
+    type Expr = String;
+
+    fn mul(&amp;self, a: String, b: String) -&gt; String {
+        format!("({a} * {b})")
+    }
+}</code></pre>
+<h2 id="why-this-solves-the-expression-problem"><a class="header" href="#why-this-solves-the-expression-problem">لماذا يحل هذا مسألة التعبير</a></h2>
+<p>لمسألة التعبير التقليدية محوران على تمثيل:</p>
+<ul>
+<li>إضافة صيغ جديدة (حالات)</li>
+<li>إضافة عمليات جديدة</li>
+</ul>
+<p>يعيد التصميم الدلالي صياغة المحورين:</p>
+<ul>
+<li><strong>وسّع المفردات الدلالية</strong>: عرّف سمة قدرة جديدة (<code>MulAlg</code>).</li>
+<li><strong>أضف تفسيرًا جديدًا</strong> لهذه المفردات: عرّف نوع مفسر جديدًا (<code>Eval</code> أو <code>Pretty</code> أو منشئ شجرة AST أو مولد شيفرة).</li>
+</ul>
+<p>يركب المحوران بصورة مستقلة:</p>
+<ul>
+<li>لا تتغير البرامج القائمة ما لم تتطلب القدرة الجديدة. يظل <code>expr_basic</code> يطلب <code>LitAlg + AddAlg</code> فقط.</li>
+<li>لا تتغير المفسرات القائمة ما لم تختر تفسير القدرة الجديدة. ويستمر <code>Eval</code> بلا <code>impl MulAlg</code> في تشغيل كل برنامج لا يستخدم <code>mul</code>.</li>
+</ul>
+<p>لا يلغي هذا مصفوفة التنفيذ. فإذا كان ينبغي لـ <code>Eval</code> و<code>Pretty</code> تفسير <code>mul</code>، احتاج كلاهما إلى <code>impl MulAlg</code>. لكن تنظيم المصفوفة يتغير: كل خلية <em>عملية دلالية × تفسير</em>، ولا تتمحور أي خلية حول تمثيل مميز، ولا يعتمد كل برنامج إلا على القدرات التي يستخدمها.</p>
+<h2 id="laws-belong-to-the-specification"><a class="header" href="#laws-belong-to-the-specification">القوانين جزء من المواصفة</a></h2>
+<p>يتكوّن الجبر الدلالي من حامل وعمليات وقوانين. يختار التفسير الحامل (<code>type Expr</code>)، بينما تنتمي العمليات والقوانين إلى المواصفة. مثلًا، تحدد دلالة حسابية لـ <code>LitAlg + AddAlg</code> ما يلي:</p>
+<pre><code class="language-text">add(lit(m), lit(n)) = lit(m + n)
+</code></pre>
+<p>تحقق <code>Eval</code> هذا القانون، ولا تحققه <code>Pretty</code>: فـ <code>"(2 + 3)"</code> ليست <code>"5"</code>. وكلاهما مفسر صالح لتوقيع الصياغة، لكن <code>Eval</code> وحده نموذج للمواصفة الحسابية. يُذكر القانون مرة واحدة مقابل السمات، وهو الذي يحدد المفسرات المؤهلة. لا يملكه أي مفسر.</p>
+<h2 id="final-insight-featherweight-go-vs-denotational-design"><a class="header" href="#final-insight-featherweight-go-vs-denotational-design">الرؤية الختامية: Featherweight Go في مقابل التصميم الدلالي</a></h2>
+<p>شخّص وادلر مسألة التعبير على مستوى آليات اللغة: الصفوف في مقابل الأعمدة في ظل الأنواع الساكنة والتوسعة المعيارية. ويقدم <a href="../concepts/expression-problem.html#featherweight-go-solution-2020">Featherweight Go</a> حلًا ملموسًا: يبقي <code>Plus(type a Any)</code> التمثيل التكراري عامًا، ويقيّد كل عملية <code>a</code> باستقلال (<code>Plus(type a Evaler)</code> لـ <code>Eval</code> و<code>Plus(type a Stringer)</code> لـ <code>String</code>). ولا يرتبط التمثيل بواجهة تعبير مغلقة واحدة، لذا يظل المحوران مفتوحين.</p>
+<p>تبدأ الحلول التقليدية بالتمثيل وتسأل كيف تبقي محوري التوسعة مفتوحين. ويتقدم Featherweight Go بعيدًا على نحو لافت بجعل التمثيل التكراري عامًا وقابلًا للتوسيع البنيوي. أما التصميم الدلالي فينقل الحد خطوة إلى الخلف: التمثيل ليس النموذج. النموذج هو الجبر وقوانينه؛ والتمثيل أحد التفسيرات الممكنة.</p>
+<p><strong>يجعل Featherweight Go التمثيل قابلًا للتوسيع، ويجعل التصميم الدلالي التمثيل اختياريًا.</strong></p>
+<div class="table-wrapper"><table><thead><tr><th></th><th>Featherweight Go</th><th>التصميم الدلالي</th></tr></thead><tbody>
+<tr><td>المركز الدلالي</td><td>تمثيل قابل للتوسيع</td><td>الجبر والقوانين</td></tr>
+<tr><td><code>Num</code>/<code>Plus</code>, <code>lit</code>/<code>add</code></td><td>البنى (صيغ التمثيل)</td><td>العمليات الدلالية</td></tr>
+<tr><td><code>Eval</code>, <code>String</code>/<code>Pretty</code></td><td>الأساليب والواجهات</td><td>التفسيرات</td></tr>
+<tr><td>البنية التكرارية</td><td>تمثيل عام ومفتوح (<code>Plus(a)</code>)</td><td>غير مطلوب</td></tr>
+<tr><td>الحامل</td><td>نوع التعبير المُمثَّل</td><td>يختاره المفسر (<code>type Expr</code>)</td></tr>
+<tr><td>شجرة AST</td><td>يبقى التمثيل محوريًا</td><td>اختياري، تفسير واحد من بين تفسيرات كثيرة</td></tr>
+<tr><td>خلية المصفوفة</td><td>حالة × عملية → أسلوب</td><td>عملية دلالية × تفسير → <code>impl</code></td></tr>
+<tr><td>سلوك جديد</td><td>إضافة أساليب وواجهات</td><td>إضافة القدرات أو تركيبها</td></tr>
+<tr><td>تنفيذ جديد</td><td>تجسيدات بنيوية جديدة</td><td>مفسر جديد</td></tr>
+</tbody></table>
+</div>
+<p>يسأل وادلر كيف يمكن توسيع المحورين في تمثيل. أما التصميم الدلالي فيسأل لماذا ينبغي للتمثيل أن يملك أيًا من المحورين.</p>
+<p>حدد المعنى التركيبي أولًا ثم اختر الترميزات. تصبح مسألة التعبير خيارًا هندسيًا بين الترميزات، لا مأزقًا مفاهيميًا.</p>
+<p><strong>ينبغي أن يكون معنى اللغة مستقلًا عن فكرة الآلة.</strong></p>
+<figure><iframe width="100%" height="315" src="https://www.youtube.com/embed/n2CBSNAVHVg?si=n-f84RYWjGtKkcVj&amp;clip=Ugkx52hOOFjiK-KEPMRhuB8vT6i4WUaav11c&amp;clipt=EKWcxgIYjoTIAg&amp;start=5344&amp;end=5375" title="Talk clip — a language's meaning should be independent of the machine" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""></iframe><figcaption>ينبغي أن يكون معنى اللغة مستقلًا عن الآلة</figcaption></figure>
+<h2 id="references"><a class="header" href="#references">المراجع</a></h2>
+<ul>
+<li>
+<p>إليوت، C. <em>Denotational design with type class morphisms</em>.<br />
+<a href="http://conal.net/papers/type-class-morphisms/">http://conal.net/papers/type-class-morphisms/</a></p>
+</li>
+<li>
+<p>إليوت، C. <em>Compiling to categories</em>.<br />
+<a href="http://conal.net/papers/compiling-to-categories/">http://conal.net/papers/compiling-to-categories/</a></p>
+</li>
+<li>
+<p>كيسليوف، O. <em>Tagless-final style</em> (عرض ودروس وأوراق بحثية عن الترميزات النهائية والمفسرات ذات الأنواع القابلة للتوسيع).<br />
+<a href="https://okmij.org/ftp/tagless-final/">https://okmij.org/ftp/tagless-final/</a></p>
+</li>
+<li>
+<p>كيسليوف، O. <em>Having an Effect</em> (عرض تعريفي/دلالي للآثار والمفسرات القابلة للتوسيع).<br />
+<a href="https://okmij.org/ftp/Computation/having-effect.html#defint">https://okmij.org/ftp/Computation/having-effect.html#defint</a></p>
+</li>
+<li>
+<p>غريسمير، R.، هو، R.، كوكي، W.، لانغه، J.، تايلور، I. L.، تونينيو، B.، وادلر، P.، ويوشيدا، N. (2020). <em>Featherweight Go</em>. Proc. ACM Program. Lang. 4 (OOPSLA). يعرض القسم 2.3 الحل البنيوي العام المقارن أعلاه.<br />
+<a href="https://homepages.inf.ed.ac.uk/wadler/papers/fg/fg.pdf">https://homepages.inf.ed.ac.uk/wadler/papers/fg/fg.pdf</a></p>
+</li>
+<li>
+<p>أوليفيرا، B. C. d. S.، وكوك، W. R. (2012). <em>Extensibility for the Masses: Practical Extensibility with Object Algebras</em>.<br />
+<a href="https://www.cs.utexas.edu/~wcook/Drafts/2012/ecoop2012.pdf">https://www.cs.utexas.edu/~wcook/Drafts/2012/ecoop2012.pdf</a></p>
+</li>
+</ul>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../insights/operational_semantics.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../insights/referential-transparency.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../insights/operational_semantics.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../insights/referential-transparency.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

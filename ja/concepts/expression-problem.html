@@ -1,0 +1,591 @@
+<!DOCTYPE HTML>
+<html lang="ja" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>式問題 - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="式問題 - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-ja.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"式問題","sourceHash":"sha256:095010cccfe7dcb155f2ad304d334ffd7d3d56212b3b67168e4f5b04da397ee6"} -->
+<h1 id="expression-problem"><a class="header" href="#expression-problem">式問題</a></h1>
+<div id="admonition-関連項目" class="admonition admonish-tip" role="note" aria-labelledby="admonition-関連項目-title">
+<div class="admonition-title">
+<div id="admonition-関連項目-title">
+<p>関連項目</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-関連項目"></a>
+</div>
+<div>
+<p>意味論的な見方：<a href="../denotational-design/design.html">Denotational Design</a>、<a href="../denotational-design/denotations.html">表示と合成性</a><br />
+Rustで意味から設計する：<a href="../rust-dd/capability-algebras.html">ケイパビリティ代数</a>、<a href="../rust-dd/derived-meaning.html">導出される意味と合成</a><br />
+洞察：<a href="../insights/expression-problem.html">Expression Problem再考</a></p>
+</div>
+</div>
+<div id="admonition-意味論上の位置付け" class="admonition admonish-note" role="note" aria-labelledby="admonition-意味論上の位置付け-title">
+<div class="admonition-title">
+<div id="admonition-意味論上の位置付け-title">
+<p>意味論上の位置付け</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-意味論上の位置付け"></a>
+</div>
+<div>
+<p>Expression Problemは、表現と操作をモジュール式に拡張する問題です。Denotational Designは一つ手前の問いを立てます。そもそも、どの意味論上の語彙と解釈に表現する価値があるでしょうか。</p>
+</div>
+</div>
+<p>Phil Wadlerのexpression problemは、既存コードを変更せずに言語を二つの軸で<strong>同時に</strong>拡張することを扱います。</p>
+<ul>
+<li><strong>新しいデータのバリアント</strong>（新しい式形式、すなわち「構文」）を追加する。</li>
+<li><strong>新しい操作</strong>（新しい解釈、すなわち「意味論」）を追加する。</li>
+</ul>
+<p>中核となる緊張関係：</p>
+<ul>
+<li><strong>関数型／ADT</strong>のスタイルでは、新しい操作を追加しやすい一方、新しいバリアントを追加すると広範な変更が必要です。</li>
+<li><strong>オブジェクト指向</strong>のスタイルでは、新しいバリアントを追加しやすい一方、新しい操作を追加すると広範な変更が必要です。</li>
+</ul>
+<p>この節では、HaskellとJavaの短い例で両面を示します。</p>
+<h2 id="haskell-functional--adt"><a class="header" href="#haskell-functional--adt">Haskell（関数型／ADT）</a></h2>
+<p>式と二つの操作を定義する、典型的なADTから始めます。</p>
+<pre><code class="language-haskell">data Expr
+  = Lit Int
+  | Add Expr Expr
+
+eval :: Expr -&gt; Int
+eval (Lit n)     = n
+eval (Add a b)   = eval a + eval b
+
+pretty :: Expr -&gt; String
+pretty (Lit n)   = show n
+pretty (Add a b) = "(" ++ pretty a ++ " + " ++ pretty b ++ ")"
+</code></pre>
+<p>ここでは、<strong>新しい操作を追加する</strong>のは簡単です。</p>
+<pre><code class="language-haskell">size :: Expr -&gt; Int
+size (Lit _)   = 1
+size (Add a b) = 1 + size a + size b
+</code></pre>
+<p>しかし、<strong>新しいバリアント</strong>（例：<code>Mul</code>）を追加すると、すべての関数を変更する必要があります。</p>
+<pre><code class="language-haskell">data Expr
+  = Lit Int
+  | Add Expr Expr
+  | Mul Expr Expr
+
+eval :: Expr -&gt; Int
+eval (Lit n)     = n
+eval (Add a b)   = eval a + eval b
+eval (Mul a b)   = eval a * eval b  -- ✏️ UPDATE: new case
+
+pretty :: Expr -&gt; String
+pretty (Lit n)   = show n
+pretty (Add a b) = "(" ++ pretty a ++ " + " ++ pretty b ++ ")"
+pretty (Mul a b) = "(" ++ pretty a ++ " * " ++ pretty b ++ ")"  -- ✏️ UPDATE: new case
+
+size :: Expr -&gt; Int
+size (Lit _)   = 1
+size (Add a b) = 1 + size a + size b
+size (Mul a b) = 1 + size a + size b  -- ✏️ UPDATE: new case
+</code></pre>
+<p>Wadlerの言葉では、ADT方式では<strong>データの拡張がモジュール式ではない</strong>のです。</p>
+<h2 id="java-object-oriented"><a class="header" href="#java-object-oriented">Java（オブジェクト指向）</a></h2>
+<p>各バリアントのインターフェースと具体クラスから始めます。</p>
+<pre><code class="language-java">// Expression variants
+interface Expr {
+    int eval();
+    String pretty();
+}
+
+final class Lit implements Expr {
+    private final int n;
+
+    Lit(int n) {
+        this.n = n;
+    }
+
+    public int eval() {
+        return n;
+    }
+
+    public String pretty() {
+        return Integer.toString(n);
+    }
+}
+
+final class Add implements Expr {
+    private final Expr a;
+    private final Expr b;
+
+    Add(Expr a, Expr b) {
+        this.a = a;
+        this.b = b;
+    }
+
+    public int eval() {
+        return a.eval() + b.eval();
+    }
+
+    public String pretty() {
+        return "(" + a.pretty() + " + " + b.pretty() + ")";
+    }
+}
+</code></pre>
+<p>ここでは、<strong>新しいバリアントを追加する</strong>のは簡単です。</p>
+<pre><code class="language-java">final class Mul implements Expr {
+    private final Expr a;
+    private final Expr b;
+
+    Mul(Expr a, Expr b) {
+        this.a = a;
+        this.b = b;
+    }
+
+    public int eval() {
+        return a.eval() * b.eval();
+    }
+
+    public String pretty() {
+        return "(" + a.pretty() + " * " + b.pretty() + ")";
+    }
+}
+</code></pre>
+<p>しかし、<strong>新しい操作</strong>（例：<code>size</code>）の追加には広範な変更が必要です。インターフェースとすべてのクラスを変更しなければなりません。</p>
+<pre><code class="language-java">interface Expr {
+    int eval();
+    String pretty();
+    int size(); // ✏️ UPDATE: new operation added here
+}
+
+final class Lit implements Expr {
+    private final int n;
+
+    Lit(int n) { this.n = n; }
+
+    public int eval() { return n; }
+    public String pretty() { return Integer.toString(n); }
+    public int size() { return 1; } // ✏️ UPDATE: new method in every class
+}
+
+final class Add implements Expr {
+    private final Expr a;
+    private final Expr b;
+
+    Add(Expr a, Expr b) { this.a = a; this.b = b; }
+
+    public int eval() { return a.eval() + b.eval(); }
+    public String pretty() { return "(" + a.pretty() + " + " + b.pretty() + ")"; }
+    public int size() { return 1 + a.size() + b.size(); } // ✏️ UPDATE: new method in every class
+}
+
+final class Mul implements Expr {
+    private final Expr a;
+    private final Expr b;
+
+    Mul(Expr a, Expr b) { this.a = a; this.b = b; }
+
+    public int eval() { return a.eval() * b.eval(); }
+    public String pretty() { return "(" + a.pretty() + " * " + b.pretty() + ")"; }
+    public int size() { return 1 + a.size() + b.size(); } // ✏️ UPDATE: new method in every class
+}
+</code></pre>
+<p>Wadlerの言葉では、OO方式では<strong>操作の拡張がモジュール式ではない</strong>のです。</p>
+<h2 id="summary-wadlers-point"><a class="header" href="#summary-wadlers-point">まとめ（Wadlerの指摘）</a></h2>
+<ul>
+<li>関数型／ADT方式は、<strong>新しい操作</strong>を追加しやすい一方、<strong>新しいバリアント</strong>を追加しにくい。</li>
+<li>OO方式は、<strong>新しいバリアント</strong>を追加しやすい一方、<strong>新しい操作</strong>を追加しにくい。</li>
+<li>expression problemが求めるのは、既存コードを変更せずに<strong>両方</strong>の軸を拡張できる設計です。</li>
+</ul>
+<h2 id="wadlers-explanation-and-solution-landscape-1998"><a class="header" href="#wadlers-explanation-and-solution-landscape-1998">Wadlerによる説明と解決策の概要（1998）</a></h2>
+<p>Wadlerはこの問題を、データ型の<strong>ケースの追加</strong>（新しいバリアント）と、そのデータ型を処理する<strong>関数の拡張</strong>（新しい操作）を、<em>既存コードを再コンパイルせず</em>、<strong>静的な型安全性</strong>（キャストなし）を保ちながら行うことと定義しています。</p>
+<p>「表」のたとえを使います。</p>
+<ul>
+<li><strong>行</strong>＝ケース（バリアント／コンストラクター）</li>
+<li><strong>列</strong>＝関数（操作／解釈）</li>
+</ul>
+<p><strong>関数型／ADT</strong>の環境では、行が固定され、列を簡単に追加できます。<br />
+<strong>OO</strong>の環境では、列が固定され、行を簡単に追加できます。<br />
+課題は、<strong>両方向</strong>を拡張可能にすることです。</p>
+<h2 id="wadlers-proposed-solution-gj--virtual-types"><a class="header" href="#wadlers-proposed-solution-gj--virtual-types">Wadlerの提案した解決策（GJ＋virtual types）</a></h2>
+<p>WadlerはGeneric Java（GJ）を使う解決策を提示しています。そこでは次のものを使います。</p>
+<ul>
+<li><code>This</code>境界付きパラメーター（<code>This extends LangF&lt;This&gt;</code>）によって<strong>ThisType</strong>を模倣する。</li>
+<li><strong>内部クラスとインターフェース</strong>は、<code>This</code>（virtual types）で添字付けされます。</li>
+<li>A visitor-based structure that allows:
+<ul>
+<li>「言語ファミリー」をサブクラス化して新しいケース（例：<code>Plus</code>）を追加する。</li>
+<li>新しいビジターを追加して新しい操作（例：<code>Show</code>）を加える。</li>
+</ul>
+</li>
+</ul>
+<p>各拡張段階で型安全性と個別コンパイルを保つには、<code>This.Exp</code>と<code>This.Visitor</code>を参照する方法が要点です。</p>
+<h3 id="caveat-java-inner-interfaces"><a class="header" href="#caveat-java-inner-interfaces">注意点（Javaの内部インターフェース）</a></h3>
+<p>Wadlerは、Javaでは内部インターフェースが<strong>static</strong>として扱われ、添字付けの仕組みが崩れると指摘します。<br />
+この制限を緩めれば解決策は実用可能になると提案していますが、現在のJavaでも変わっていません（ネストしたインターフェースは暗黙にstaticです）。</p>
+<h2 id="other-solution-directions-mentioned"><a class="header" href="#other-solution-directions-mentioned">挙げられているほかの解決方針</a></h2>
+<ol>
+<li>
+<p>Corky Cartwrightの方法 <strong>反変な拡張</strong>が必要です。基底の式型を拡張後の型の代わりに使えるようにします。 拡張された言語ファミリーが元の言語のサブタイプ<em>ではない</em>ため、ここで不動点を使う理由を説明できます。</p>
+</li>
+<li>
+<p>Kim Bruceの方法 <strong>高階型コンストラクター</strong>（型コンストラクターを受け取る型パラメーター）が必要です。 GJはこれを直接サポートしませんが、Wadlerはvirtual typesで模倣できると論じています。</p>
+</li>
+<li>
+<p>Krishnamurthiら（拡張ビジターパターン） 拡張ビジター設計によって実現します。 彼らの環境（Pizza）では<strong>静的に型付けされない</strong>ため、動的キャストが必要です。</p>
+</li>
+<li>
+<p>特別目的の言語拡張 Wadlerは、この問題専用に設計された言語機能に依存する二つの解決策を挙げています。 virtual typesによる方法ほど一般的ではありません。</p>
+</li>
+</ol>
+<h2 id="wadlers-two-points"><a class="header" href="#wadlers-two-points">Wadlerの二つの指摘</a></h2>
+<p>Wadlerのメールからは、二つの要点が明確に分かります。</p>
+<ol>
+<li>Expression Problemは、データの拡張と操作の拡張の間にある<strong>構造的な緊張関係</strong>です。</li>
+<li>Solutions are possible, but they tend to require either:
+<ul>
+<li><strong>virtual types</strong>を模倣する型システム機能</li>
+<li>特別目的の言語拡張</li>
+<li>静的型安全性または個別コンパイルに関する妥協</li>
+</ul>
+</li>
+</ol>
+<h2 id="featherweight-go-solution-2020"><a class="header" href="#featherweight-go-solution-2020">Featherweight Goによる解決（2020）</a></h2>
+<p>Wadlerは1998年に問題を定式化して命名しました。その後、Featherweight Go（FG）とそのジェネリクス拡張であるFGG（Featherweight Generic Go）が、構造的インターフェースとジェネリクスを持つGo風言語において、具体的かつ完全に静的な解決策を示しました。</p>
+<p>論文の解決策（図8、簡略版）には、構造<code>Num</code>と<code>Plus</code>、操作<code>Eval</code>と<code>String</code>がそれぞれ二つあります。</p>
+<pre><code class="language-go">type Evaler interface { Eval() int }
+type Stringer interface { String() string }
+
+type Num struct { value int }
+type Plus(type a Any) struct { left a; right a }
+
+func (e Num) Eval() int { return e.value }
+func (e Plus(type a Evaler)) Eval() int { return e.left.Eval() + e.right.Eval() }
+
+func (e Num) String() string { return fmt.Sprintf("%d", e.value) }
+func (e Plus(type a Stringer)) String() string {
+    return fmt.Sprintf("(%s+%s)", e.left.String(), e.right.String())
+}
+
+type Expr interface { Evaler; Stringer }
+
+var e Expr = Plus(Expr){Num{1}, Num{2}}
+</code></pre>
+<p>仕組み：</p>
+<ul>
+<li><strong>ジェネリックな再帰表現。</strong><code>Plus</code>の子要素は、<code>Any</code>だけを境界とする型パラメーター<code>a</code>を持ちます。すべての操作を列挙した一つの閉じたインターフェースに構造を結び付けないため、後から操作を追加できます。</li>
+<li><strong>操作ごとの制約。</strong>各メソッド宣言で<code>a</code>の境界を個別に定めます。<code>Eval</code>では<code>Plus(type a Evaler)</code>を、<code>String</code>では<code>Plus(type a Stringer)</code>を使います。FGGの<em>共変なレシーバー</em>に依存しており、型宣言にある境界より強い境界をメソッドのレシーバーに設定できます。</li>
+<li><strong>構造的インターフェース。</strong>構造体がインターフェースを実装するには、そのメソッドを備えていればよいため、既存の<code>Num</code>と<code>Plus</code>に触れずに後から<code>Expr</code>を導入できます。値の構築時（<code>Plus(Expr){...}</code>）に限って、操作一式が固定されます。</li>
+</ul>
+<p>新しいケースは新しい構造体、新しい操作は新しいインターフェースとメソッドで追加できます。既存の宣言を変更したり再コンパイルしたりする必要はなく、型アサーションも不要です。</p>
+<h2 id="references"><a class="header" href="#references">参考文献</a></h2>
+<ul>
+<li>
+<p>Wadler, P.（1998）。<em>The Expression Problem</em>。Java-Genericityメーリングリストへの投稿。問題の定式化と命名。<br />
+<a href="https://homepages.inf.ed.ac.uk/wadler/papers/expression/expression.txt">https://homepages.inf.ed.ac.uk/wadler/papers/expression/expression.txt</a></p>
+</li>
+<li>
+<p>Griesemer, R., Hu, R., Kokke, W., Lange, J., Taylor, I. L., Toninho, B., Wadler, P., Yoshida, N.（2020）。<em>Featherweight Go</em>。Proc. ACM Program. Lang. 4（OOPSLA）。後年の具体的な言語解決策、第2.3節。<br />
+<a href="https://homepages.inf.ed.ac.uk/wadler/papers/fg/fg.pdf">https://homepages.inf.ed.ac.uk/wadler/papers/fg/fg.pdf</a></p>
+</li>
+</ul>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../concepts/operational_semantics.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../concepts/referential_transparency.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../concepts/operational_semantics.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../concepts/referential_transparency.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,460 @@
+<!DOCTYPE HTML>
+<html lang="ko" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Rust의 의미 타입 - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="Rust의 의미 타입 - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-ko.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"Rust의 의미 타입","sourceHash":"sha256:f260bada57ff228ad424bf6ea7f98dc225853e8a47e5611be37891f06f97e8af"} -->
+<h1 id="semantic-types-in-rust"><a class="header" href="#semantic-types-in-rust">Rust의 의미 타입</a></h1>
+<div id="admonition-관련-항목" class="admonition admonish-tip" role="note" aria-labelledby="admonition-관련-항목-title">
+<div class="admonition-title">
+<div id="admonition-관련-항목-title">
+<p>관련 항목</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-관련-항목"></a>
+</div>
+<div>
+<p>의미론적 관점: <a href="../denotational-design/dependent-types.html">종속 타입과 증명</a>, <a href="../denotational-design/design.html">표시적 설계</a><br />
+Rust에서 의미로 설계하기: <a href="capability-algebras.html">케이퍼빌리티 대수</a>, <a href="first-order-programs.html">일차 프로그램</a>, <a href="laws.html">법칙, 시나리오, 증거</a><br />
+개념: <a href="../concepts/referential_transparency.html">참조 투명성</a></p>
+</div>
+</div>
+<div id="admonition-개요" class="admonition admonish-note" role="note" aria-labelledby="admonition-개요-title">
+<div class="admonition-title">
+<div id="admonition-개요-title">
+<p>개요</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-개요"></a>
+</div>
+<div>
+<p>의미 우선 Rust는 타입으로 의미 구조를 명확히 드러냅니다. 연관 타입은 기반 집합 계열에 이름을 붙이고, 바운드는 그 사이의 관계를 명시하며, 확장은 명시된 전제에서 새 연산을 도출합니다. 모든 해석이 보존해야 하는 것은 여전히 법칙으로 정합니다.</p>
+</div>
+</div>
+<p>Rust에서는 여러 역할이 모두 <code>type</code>로 표기됩니다. 이를 구분하면 의미가 표현으로 뭉개지는 일을 막을 수 있습니다.</p>
+<div class="table-wrapper"><table><thead><tr><th>역할</th><th>예</th><th>설명하는 내용</th></tr></thead><tbody>
+<tr><td>의미 타입</td><td><code>Direction</code></td><td>어떤 영역의 구분이 중요한지</td></tr>
+<tr><td>인터프리터가 선택하는 기반 집합</td><td><code>BranchAlg::Branch</code></td><td>인터프리터가 선택하는 표현</td></tr>
+<tr><td>파생 연산</td><td><code>BranchExt::branch_child</code></td><td>선언된 케이퍼빌리티에서 무엇이 따라오는지</td></tr>
+<tr><td>단계 타입</td><td><code>Syntax</code>, <code>CoreProgram</code>, <code>Executable</code></td><td>값이 어떤 변환을 거쳤는지</td></tr>
+<tr><td>표현 타입</td><td><code>BitBranch</code></td><td>인터프리터 하나가 분기의 의미를 저장하는 방식</td></tr>
+<tr><td>증거 프로그램</td><td>시나리오 또는 재사용 가능한 법칙 확장</td><td>호환 인터프리터가 만족해야 하는 관찰</td></tr>
+</tbody></table>
+</div>
+<h2 id="semantic-types-before-representation"><a class="header" href="#semantic-types-before-representation">표현보다 의미 타입을 먼저</a></h2>
+<p>분기 영역이 두 방향을 구분한다고 가정해 봅시다:</p>
+<pre><code class="language-rust noplayground">#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Direction {
+    Left,
+    Right,
+}</code></pre>
+<p><code>Direction</code>은 그 구분을 직접 나타냅니다. 한 인터프리터는 경로를 간결하게 인코딩할 수 있습니다:</p>
+<pre><code class="language-rust noplayground">struct BitBranch(Vec&lt;bool&gt;);</code></pre>
+<p>불리언은 그 표현에 속합니다. 왼쪽과 오른쪽의 정의가 아니며, 다른 인터프리터는 불리언을 사용하지 않아도 됩니다.</p>
+<div id="admonition-간결한-인코딩은-의미-타입이-아닙니다" class="admonition admonish-warning" role="note" aria-labelledby="admonition-간결한-인코딩은-의미-타입이-아닙니다-title">
+<div class="admonition-title">
+<div id="admonition-간결한-인코딩은-의미-타입이-아닙니다-title">
+<p>간결한 인코딩은 의미 타입이 아닙니다</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-간결한-인코딩은-의미-타입이-아닙니다"></a>
+</div>
+<div>
+<p>비트 위치, 바이트 오프셋, 기계 분기로 영역의 동작을 정의하지 마세요. 그런 산출물은 의미론적 구분을 인코딩해야 하지만, 그 구분의 주인이 되지는 않습니다.</p>
+</div>
+</div>
+<p>이 분리 덕분에 저장 및 실행 배치를 바꾸더라도 영역의 의미가 소리 없이 바뀌지 않습니다.</p>
+<h2 id="associated-types-choose-carriers"><a class="header" href="#associated-types-choose-carriers">연관 타입으로 기반 집합 선택하기</a></h2>
+<p>케이퍼빌리티 대수는 기반 집합 선택을 인터프리터마다 다르게 둘 수 있습니다:</p>
+<pre><code class="language-rust noplayground">trait BranchAlg {
+    type Branch;
+
+    fn branch_root(&amp;self) -&gt; Self::Branch;
+    fn branch_grow(&amp;self, branch: &amp;Self::Branch, direction: Direction) -&gt; Self::Branch;
+    fn branch_path(
+        &amp;self,
+        ancestor: &amp;Self::Branch,
+        descendant: &amp;Self::Branch,
+    ) -&gt; Option&lt;Vec&lt;Direction&gt;&gt;;
+}</code></pre>
+<p><code>Self::Branch</code>은 숨겨진 필드 타입이 아닙니다. 분기 의미를 해석하면서 선택한 기반 집합입니다. 비트 경로, 수치 트리 위치, 기호 항 등 어떤 표현도 같은 대수를 만족할 수 있습니다.</p>
+<p>인터프리터 <code>T</code>에 대해 표기 <code>T::Branch</code>을 기반 집합 계열 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathsf">Branch</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mclose">)</span></span></span></span>로 읽을 수 있습니다. 인터프리터가 바뀌면 기반 집합은 달라질 수 있지만, 모든 연산은 같은 선택을 일관되게 따릅니다.</p>
+<h2 id="extensions-derive-consequences"><a class="header" href="#extensions-derive-consequences">확장으로 결과를 도출하기</a></h2>
+<p>확장은 필요한 전제만으로 새 연산을 구성할 수 있습니다:</p>
+<pre><code class="language-rust noplayground">#[ext(name = BranchExt)]
+pub impl&lt;This&gt; This
+where
+    This: BranchAlg,
+{
+    fn branch_child(
+        &amp;self,
+        branch: &amp;This::Branch,
+        direction: Direction,
+    ) -&gt; This::Branch {
+        self.branch_grow(branch, direction)
+    }
+}</code></pre>
+<p><code>where</code> 절은 전제입니다. <code>This</code>가 분기 대수를 해석합니다. 메서드는 그 결과입니다. 해당 인터프리터의 기반 집합에서는 분기와 방향으로 자식 분기가 정해집니다.</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mopen"><span class="delimsizing size1">(</span></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord"><span class="mord mathsf" style="margin-right:0.01389em;">BranchAlg</span></span><span class="mclose"><span class="delimsizing size1">)</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟹</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord mathsf">branchChild</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathsf">Branch</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord"><span class="mord mathsf">Direction</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathsf">Branch</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mclose">)</span></span></span></span></span></p>
+<p>도출 과정에서 구체적인 분기 표현을 선택하지 않습니다. 결과는 인터프리터가 선택한 기반 집합 계열에 그대로 남습니다.</p>
+<h2 id="equality-bounds-state-compatibility"><a class="header" href="#equality-bounds-state-compatibility">동등성 바운드로 호환성을 명시하기</a></h2>
+<p>두 케이퍼빌리티가 같은 기반 집합을 사용해야 할 때가 있습니다. 연관 타입 동등성으로 구체 표현을 고르지 않고 그 요구를 명시할 수 있습니다:</p>
+<pre><code class="language-rust noplayground">Right: BranchAlg&lt;Branch = Left::Branch&gt;</code></pre>
+<p>이 바운드는 국소 명제처럼 읽으면 됩니다. <code>Left</code>과 <code>Right</code>은 같은 기반 집합에서 분기 연산을 해석합니다. 이 동등성은 두 대수 전체에 강제하지 말고, 일치가 필요한 연산에 두세요.</p>
+<p>이런 바운드는 두 구현을 우연히 담고 있다는 이유만으로 구체적인 컨텍스트를 받는 것보다 더 강하고 정확합니다.</p>
+<h2 id="stage-types-make-compiler-contracts-visible"><a class="header" href="#stage-types-make-compiler-contracts-visible">단계 타입으로 컴파일러 계약 드러내기</a></h2>
+<p>컴파일러 파이프라인이 모든 단계를 구분 없는 트리 하나로 처리해서는 안 됩니다. 서로 다른 단계 타입은 어떤 변환이 이루어졌는지 명시합니다:</p>
+<div class="table-wrapper"><table><thead><tr><th>단계</th><th>입력</th><th>출력</th><th>계약</th></tr></thead><tbody>
+<tr><td>파싱</td><td>소스 텍스트</td><td><code>Syntax</code></td><td>표면 문법을 인식합니다</td></tr>
+<tr><td>정규화</td><td><code>Syntax</code></td><td><code>CoreProgram</code></td><td>선택한 핵심 의미를 생성합니다</td></tr>
+<tr><td>코드 생성</td><td><code>CoreProgram</code></td><td><code>Executable</code></td><td>실행 가능한 형식에서도 프로그램 관찰을 보존합니다</td></tr>
+<tr><td>런타임</td><td><code>Executable</code></td><td>관찰 가능한 동작</td><td>언어 모델에 맞게 실행 코드를 일관되게 해석합니다</td></tr>
+</tbody></table>
+</div>
+<p>이 타입들은 단계 혼동을 막지만, 타입 이름만으로 보존을 증명하지는 못합니다. 변환에는 여전히 명시적인 법칙, 대표 시나리오, 인터프리터 간 증거가 필요합니다.</p>
+<h2 id="read-the-contract"><a class="header" href="#read-the-contract">계약 읽기</a></h2>
+<p>타입 수준 구조는 다음과 같은 논리적 해석을 허용합니다:</p>
+<div class="table-wrapper"><table><thead><tr><th>Rust 표현</th><th>해석</th></tr></thead><tbody>
+<tr><td><code>This: BranchAlg</code></td><td><code>This</code>가 분기 의미의 해석을 제공합니다</td></tr>
+<tr><td><code>This::Branch</code></td><td>분기 기반 집합은 <code>This</code>가 선택합니다</td></tr>
+<tr><td><code>Right: BranchAlg&lt;Branch = Left::Branch&gt;</code></td><td>두 해석이 기반 집합에서 일치합니다</td></tr>
+<tr><td><code>-&gt; This::Branch</code></td><td>결과는 선택된 기반 집합 계열에 남습니다</td></tr>
+</tbody></table>
+</div>
+<p>이런 식으로 읽으면 타입을 결정하는 요소, 합성에 필요한 동등성, 전제에서 따라오는 결론을 API에 드러낼 수 있습니다. 기초 구분이 실제로 존재한다면 연관 타입, 제네릭 연관 타입, const 제네릭, 타입 상태, 크기가 0인 증거 타입으로 계약의 일부를 표현할 수 있습니다.</p>
+<p>구현을 더 형식적으로 보이게 하려고 타입 수준 장치를 만들어 내지 마세요. 타입은 표현을 장식하는 대신 의미나 필요한 관계를 드러내야 합니다.</p>
+<h2 id="types-do-not-replace-laws"><a class="header" href="#types-do-not-replace-laws">타입이 법칙을 대체하지 않습니다</a></h2>
+<p>타입 시그니처는 어떤 프로그램을 만들 수 있는지 제약합니다. 법칙은 그 연산들이 어떤 관계인지 제약합니다. 둘 다 필요합니다.</p>
+<p>예를 들어 <code>BranchAlg::Branch</code>은 각 인터프리터가 분기 기반 집합을 선택한다고 말합니다. 그것만으로 다음이 보장되지는 않습니다:</p>
+<ul>
+<li>분기에서 자기 자신으로 가는 경로는 비어 있습니다</li>
+<li>루트 경로를 다시 적용하면 해당 분기가 재구성됩니다</li>
+<li>서로 반대 방향의 자식은 서로 다릅니다</li>
+</ul>
+<p>이는 호환 인터프리터가 공유하는 의미론적 법칙입니다. 사용하지 않는 비트가 0이라는 주장과 같은 표현별 주장은 해당 표현을 선택한 인터프리터에 속합니다.</p>
+<div id="admonition-타입을-주장으로-읽기" class="admonition admonish-quote" role="note" aria-labelledby="admonition-타입을-주장으로-읽기-title">
+<div class="admonition-title">
+<div id="admonition-타입을-주장으로-읽기-title">
+<p>타입을 주장으로 읽기</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-타입을-주장으로-읽기"></a>
+</div>
+<div>
+<p>각 타입이 무엇을 주장하는지, 무엇이 그 타입을 결정하는지, 어떤 법칙으로 완성되는지, 어떤 인터프리터가 실현하는지 물으세요.</p>
+</div>
+</div>
+<h2 id="review-checks"><a class="header" href="#review-checks">검토 항목</a></h2>
+<ul>
+<li>영역의 구분을 간결한 기계 인코딩보다 먼저 정의했나요?</li>
+<li>연관 타입이 위장된 구체 상태가 아니라 인터프리터가 선택하는 기반 집합인가요?</li>
+<li>동등성 바운드가 사용 지점에 필요한 호환성만 명시하나요?</li>
+<li>컴파일러의 각 단계에 별도 타입과 명시적 계약이 있나요?</li>
+<li>의미론적 명제와 표현 불변량을 구분했나요?</li>
+<li>Rust로 표현할 수 없는 주장을 재사용 가능한 법칙이나 시나리오로 뒷받침하나요?</li>
+</ul>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../rust-dd/capability-algebras.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../rust-dd/derived-meaning.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../rust-dd/capability-algebras.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../rust-dd/derived-meaning.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

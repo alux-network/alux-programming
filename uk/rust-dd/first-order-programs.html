@@ -1,0 +1,490 @@
+<!DOCTYPE HTML>
+<html lang="uk" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Програми першого порядку - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="Програми першого порядку - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-uk.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"Програми першого порядку","sourceHash":"sha256:963dfa4d3aafbcfe83acf16b8c79baeceaab0bf4e0106b971e32a212ecb279af"} -->
+<h1 id="first-order-programs"><a class="header" href="#first-order-programs">Програми першого порядку</a></h1>
+<div id="admonition-Повязані-матеріали" class="admonition admonish-tip" role="note" aria-labelledby="admonition-Повязані-матеріали-title">
+<div class="admonition-title">
+<div id="admonition-Повязані-матеріали-title">
+<p>Пов’язані матеріали</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Повязані-матеріали"></a>
+</div>
+<div>
+<p>Проєктування від значення в Rust: <a href="derived-meaning.html">Похідне значення та композиція</a>, <a href="compiler-pipelines.html">Мова й конвеєри компілятора</a><br />
+Поняття: <a href="../concepts/cps.html">Стиль передавання продовжень</a>, <a href="../concepts/defunctionalization.html">Дефункціоналізація</a>, <a href="../concepts/free_monad.html">Вільна монада</a><br />
+Інсайти: <a href="../insights/expression-problem.html">Проблема виразів: новий погляд</a></p>
+</div>
+</div>
+<div id="admonition-Коли-варто-реїфікувати-застосування" class="admonition admonish-note" role="note" aria-labelledby="admonition-Коли-варто-реїфікувати-застосування-title">
+<div class="admonition-title">
+<div id="admonition-Коли-варто-реїфікувати-застосування-title">
+<p>Коли варто реїфікувати застосування</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Коли-варто-реїфікувати-застосування"></a>
+</div>
+<div>
+<p>Звичайних функцій і розширень уже достатньо, щоб виражати похідну поведінку. Перетворюйте застосування на дані першого порядку лише тоді, коли інший інтерпретатор має оглянути, поєднати, серіалізувати чи скомпілювати програму до її запуску.</p>
+</div>
+</div>
+<p>Звичайні функції й методи-розширення зазвичай найкраще виражають похідну поведінку. Іноді іншому інтерпретатору потрібно оглянути, поєднати, задокументувати, серіалізувати чи скомпілювати структуру програми до її застосування. Тоді саме застосування треба подати як дані першого порядку.</p>
+<h2 id="execution-erases-structure"><a class="header" href="#execution-erases-structure">Виконання стирає структуру</a></h2>
+<p>Розгляньмо:</p>
+<pre><code class="language-rust noplayground">#[ext(name = StatusExt)]
+pub impl&lt;This&gt; This
+where
+    This: StatusAlg,
+{
+    async fn status_current(&amp;self) -&gt; This::Status {
+        self.status().await
+    }
+}</code></pre>
+<p>Виклик цього методу повертає стан. Після початку виклику зовнішній інтерпретатор зазвичай уже не може відновити:</p>
+<ul>
+<li>семантичний тип контексту</li>
+<li>упорядковані аргументи</li>
+<li>назви аргументів у вихідному коді</li>
+<li>тип результату</li>
+<li>ідентичність операції</li>
+</ul>
+<p>Ця інформація була доступна у типі функції на рівні вихідного коду, але під час звичайного виконання вона споживається.</p>
+<h2 id="defunctionalizing-application"><a class="header" href="#defunctionalizing-application">Дефункціоналізація застосунку</a></h2>
+<p>Дефункціоналізація замінює елемент відомого сімейства функцій даними першого порядку — тегом і спільною операцією застосування.</p>
+<p>Мінімальний набір операцій:</p>
+<pre><code class="language-rust noplayground">trait OperationAlg {
+    type Context;
+    type Args;
+
+    const ARG_NAMES: &amp;'static [&amp;'static str];
+}
+
+trait ApplyAlg&lt;Handle, Args&gt; {
+    type Output;
+
+    async fn apply(&amp;self, handle: Handle, args: Args) -&gt; Self::Output;
+}</code></pre>
+<p>Тип нульового розміру <code>CurrentStatusOperation&lt;App&gt;</code> може позначати застосування початкового методу-розширення. Він має викликати цей метод, а не містити його тіло вдруге.</p>
+<ol>
+<li>Почніть із методу-розширення.</li>
+<li>Перетворіть його на тип операції.</li>
+<li>Збережіть його контекст, добуток аргументів, назви аргументів і вихідне значення.</li>
+<li>Інтерпретуйте його через <code>ApplyAlg</code>.</li>
+</ol>
+<p>Метод лишається зручним для звичайних викликів. Значення операції потрібне лише контекстам, яким необхідна структура першого порядку.</p>
+<h2 id="do-not-reify-without-a-consumer"><a class="header" href="#do-not-reify-without-a-consumer">Не реїфікуйте без споживача</a></h2>
+<p>Програми першого порядку додають механізми типів. Використовуйте їх, коли вони уможливлюють реальну другу інтерпретацію:</p>
+<ul>
+<li>реєстрація під час виконання</li>
+<li>створення документації чи схем</li>
+<li>статичний аналіз</li>
+<li>композиція програми до виконання</li>
+<li>серіалізація</li>
+<li>компіляція</li>
+</ul>
+<p>Якщо коду потрібно лише викликати функцію, залиште її функцією.</p>
+<h2 id="portable-interface-programs"><a class="header" href="#portable-interface-programs">Переносні програми інтерфейсу</a></h2>
+<p>Припустімо, поверхня HTTP містить:</p>
+<div class="table-wrapper"><table><thead><tr><th>Метод</th><th>Шлях</th><th>Вхідні дані</th><th>Операція</th><th>Вихідні дані</th></tr></thead><tbody>
+<tr><td><code>GET</code></td><td><code>/status</code></td><td>—</td><td><code>status_current</code></td><td>JSON</td></tr>
+<tr><td><code>POST</code></td><td><code>/set_temperature</code></td><td>Тіло: <code>f32</code></td><td><code>adjust_status</code></td><td>JSON</td></tr>
+<tr><td><code>GET</code></td><td><code>/download</code></td><td>—</td><td><code>current_file</code></td><td>Файл для потокового передавання</td></tr>
+</tbody></table>
+</div>
+<p>Переносна програма має зберігати:</p>
+<ul>
+<li>селектори методу й шляху</li>
+<li>ролі вхідних даних, як-от шлях, запит, тіло, заголовок і автентифікація</li>
+<li>значення операції</li>
+<li>роль вихідних даних, наприклад JSON чи файл</li>
+<li>злиття маршрутів і вкладеність</li>
+</ul>
+<p>Вона не має зберігати конкретний тип запиту, маршрутизатора чи відповіді певного фреймворку.</p>
+<p>Можлива форма з ланцюжком викликів:</p>
+<pre><code class="language-rust noplayground">self.routes()
+    .get("/status", self.op(CurrentStatusOperation::&lt;App&gt;::default()).json())
+    .post("/set_temperature", self.op(AdjustStatusOperation::&lt;App&gt;::default()).body::&lt;f32&gt;().json())
+    .get("/download", self.op(CurrentFileOperation::&lt;App&gt;::default()).file())</code></pre>
+<p>Ланцюжок викликів створює типізовану програму. Він не зобов’язаний одразу реєструвати маршрут сервера.</p>
+<h2 id="one-program-several-folds"><a class="header" href="#one-program-several-folds">Одна програма — кілька згортань</a></h2>
+<p>Ту саму програму першого порядку можна інтерпретувати кількома способами:</p>
+<div class="table-wrapper"><table><thead><tr><th>Програма</th><th>Інтерпретації</th></tr></thead><tbody>
+<tr><td>Типізована програма HTTP</td><td>Текстова документація, виконувані маршрути, метадані OpenAPI, прив’язки клієнта, тести на відповідність</td></tr>
+<tr><td>Типізована програма JSON-RPC</td><td>Реєстр методів, схема, клієнт, тестовий каркас</td></tr>
+</tbody></table>
+</div>
+<p>Не підтримуйте окремі списки маршрутів чи методів для виконання й документації: так виникають конкуруючі специфікації.</p>
+<h2 id="input-and-output-roles"><a class="header" href="#input-and-output-roles">Ролі вхідних і вихідних даних</a></h2>
+<p>Операція вже знає типи аргументів і результату. Оголошення транспорту має додавати лише транспортне значення.</p>
+<pre><code class="language-rust noplayground">self.op(FindOperation::&lt;App&gt;::default())
+    .path::&lt;u64&gt;()
+    .query::&lt;String&gt;()
+    .json()</code></pre>
+<p><code>path</code>, <code>query</code> та <code>json</code> визначають ролі. Вони не мають змушувати автора повторно вказувати тип виходу, уже визначений через <code>ApplyAlg</code>.</p>
+<p>Перетворення виходу належить транспортному інтерпретатору. Сервер може перетворити один результат на JSON, а інший — на вкладення для потокового передавання. Семантичні операції не залежать від жодного з цих представлень.</p>
+<h2 id="composition-is-program-meaning"><a class="header" href="#composition-is-program-meaning">Композиція є значенням програми</a></h2>
+<p>Програми мають зберігати загальні операції композиції:</p>
+<ul>
+<li>порожня програма</li>
+<li>об’єднання програм</li>
+<li>вкладення програми під префіксом</li>
+<li>підняття кінцевої точки до програми</li>
+</ul>
+<p>Це фундаментальніше за методи маршрутизатора одного фреймворку. Звичні ланцюжкові назви на кшталт <code>get</code>, <code>post</code>, <code>merge</code> та <code>nest</code> можуть бути псевдонімами операцій нейтральної алгебри.</p>
+<p>Незалежні специфікації можуть публікувати невеликі програми:</p>
+<div class="table-wrapper"><table><thead><tr><th>Вхідні програми</th><th>Композиція</th><th>Результат</th></tr></thead><tbody>
+<tr><td>Програми стану й завантаження</td><td>Об’єднання</td><td>Програма служби</td></tr>
+<tr><td>Програма каталогу</td><td>Вкладення</td><td>Програма служби</td></tr>
+</tbody></table>
+</div>
+<p>Застосунок вибирає та інтерпретує отриману композицію.</p>
+<h2 id="macros-must-lower-to-public-meaning"><a class="header" href="#macros-must-lower-to-public-meaning">Макроси мають зводитися до публічного значення</a></h2>
+<p>Макроси Rust можуть спростити читабельність оголошень першого порядку:</p>
+<pre><code class="language-rust noplayground">#[ext(name = StatusApiExt, defunc(via = http))]
+pub impl&lt;This&gt; This
+where
+    This: HttpApiAlg + JsonOutAlg,
+{
+    fn status_api&lt;Alg&gt;(&amp;self)
+    where
+        Alg: StatusAlg,
+    {
+        self.routes().get("/status", self.op(Alg::status_current).json());
+    }
+}</code></pre>
+<p>Макрос прийнятний, лише якщо він зводиться до публічної, придатної для ручного конструювання програми першого порядку. Згенеровані зворотні виклики не мають ставати єдиним визначенням інтерфейсу.</p>
+<p>Правильний напрямок:</p>
+<ol>
+<li>Зручний синтаксис</li>
+<li>Публічні значення операцій і програм</li>
+<li>Узагальнене згортання</li>
+<li>Конкретний фреймворк</li>
+</ol>
+<p>Напрямок, що виходить із представлення:</p>
+<ol>
+<li>Анотація фреймворку</li>
+<li>Непрозорі згенеровані зворотні виклики</li>
+<li>Документація, відновлена з реалізації</li>
+</ol>
+<h2 id="relation-to-existing-concepts"><a class="header" href="#relation-to-existing-concepts">Зв’язок з наявними поняттями</a></h2>
+<p>Програми інтерфейсу першого порядку спираються на методи з інших розділів: дефункціоналізація є загальним перетворенням, розширюваний синтаксис та інтерпретації стосуються проблеми виразів, а вільна монада — це один конкретний різновид представлення синтаксису з послідовністю. Посилання у верхній частині сторінки ведуть до кожного з цих понять.</p>
+<p>Не ототожнюйте ці методи з денотаційним проєктуванням. Воно визначає, яка структура важлива; представлення першого порядку зберігають цю структуру, коли звичайні виклики її стирають.</p>
+<h2 id="review-checks"><a class="header" href="#review-checks">Перевірка</a></h2>
+<ul>
+<li>Чи потрібна реїфікація справжньому другому інтерпретатору?</li>
+<li>Чи викликає операція авторський метод, а не дублює його?</li>
+<li>Чи визначаються аргументи й вихід із самої операції?</li>
+<li>Чи додає транспортний синтаксис лише транспортні ролі?</li>
+<li>Чи можна створити програму без допоміжного макросу?</li>
+<li>Чи інтерпретують середовище виконання й метадані ту саму програму?</li>
+</ul>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../rust-dd/laws.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../rust-dd/compiler-pipelines.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../rust-dd/laws.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../rust-dd/compiler-pipelines.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,460 @@
+<!DOCTYPE HTML>
+<html lang="ar" class="light sidebar-visible" dir="rtl">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>الأنواع الدلالية في Rust - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="الأنواع الدلالية في Rust - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-ar.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"الأنواع الدلالية في Rust","sourceHash":"sha256:f260bada57ff228ad424bf6ea7f98dc225853e8a47e5611be37891f06f97e8af"} -->
+<h1 id="semantic-types-in-rust"><a class="header" href="#semantic-types-in-rust">الأنواع الدلالية في Rust</a></h1>
+<div id="admonition-ذات-صلة" class="admonition admonish-tip" role="note" aria-labelledby="admonition-ذات-صلة-title">
+<div class="admonition-title">
+<div id="admonition-ذات-صلة-title">
+<p>ذات صلة</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-ذات-صلة"></a>
+</div>
+<div>
+<p>المنظور الدلالي: <a href="../denotational-design/dependent-types.html">الأنواع التابعة والبراهين</a>، <a href="../denotational-design/design.html">التصميم الدلالي (Denotational Design)</a><br />
+التصميم انطلاقًا من المعنى في Rust: <a href="capability-algebras.html">جبر القدرات</a>، <a href="first-order-programs.html">برامج من الرتبة الأولى</a>، <a href="laws.html">القوانين والسيناريوهات والأدلة</a><br />
+المفاهيم: <a href="../concepts/referential_transparency.html">الشفافية المرجعية</a></p>
+</div>
+</div>
+<div id="admonition-تمهيد" class="admonition admonish-note" role="note" aria-labelledby="admonition-تمهيد-title">
+<div class="admonition-title">
+<div id="admonition-تمهيد-title">
+<p>تمهيد</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-تمهيد"></a>
+</div>
+<div>
+<p>تستخدم Rust التي تبدأ بالمعنى الأنواع لإبقاء البنية الدلالية ظاهرة. تسمي الأنواع المرتبطة عائلات الحوامل، وتصرّح الحدود بالعلاقات بينها، وتشتق الامتدادات عمليات جديدة من مقدمات صريحة. وتظل القوانين هي ما يحدد ما يجب على كل تفسير الحفاظ عليه.</p>
+</div>
+</div>
+<p>تُكتب أدوار مختلفة عديدة في Rust على الصورة <code>type</code>. ويمنع إبقاؤها متميزة انهيار المعنى إلى تمثيل.</p>
+<div class="table-wrapper"><table><thead><tr><th>الدور</th><th>مثال</th><th>ما الذي يصرح به</th></tr></thead><tbody>
+<tr><td>نوع دلالي</td><td><code>Direction</code></td><td>فروق المجال المهمة</td></tr>
+<tr><td>حامل يختاره المفسر</td><td><code>BranchAlg::Branch</code></td><td>التمثيل الذي يختاره المفسر</td></tr>
+<tr><td>عملية مشتقة</td><td><code>BranchExt::branch_child</code></td><td>ما ينتج عن القدرات المعلنة</td></tr>
+<tr><td>نوع مرحلة</td><td><code>Syntax</code>, <code>CoreProgram</code>, <code>Executable</code></td><td>التحويل الذي اجتازته القيمة</td></tr>
+<tr><td>نوع تمثيل</td><td><code>BitBranch</code></td><td>كيفية تخزين مفسر واحد لمعنى الفرع</td></tr>
+<tr><td>برنامج دليل</td><td>سيناريو أو امتداد قانون قابل لإعادة الاستخدام</td><td>الملاحظات التي يجب على المفسرات المتوافقة تحقيقها</td></tr>
+</tbody></table>
+</div>
+<h2 id="semantic-types-before-representation"><a class="header" href="#semantic-types-before-representation">الأنواع الدلالية قبل التمثيل</a></h2>
+<p>لنفترض أن مجالًا متشعبًا يميّز اتجاهين:</p>
+<pre><code class="language-rust noplayground">#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Direction {
+    Left,
+    Right,
+}</code></pre>
+<p>يسمي <code>Direction</code> هذا الفرق مباشرة. وقد يرمّز مفسر أحد المسارات بإيجاز:</p>
+<pre><code class="language-rust noplayground">struct BitBranch(Vec&lt;bool&gt;);</code></pre>
+<p>تنتمي القيم المنطقية إلى ذلك التمثيل. وليست تعريف اليسار واليمين، ولا يلزم مفسر آخر باستخدامها.</p>
+<div id="admonition-الترميز-المدمج-ليس-النوع-الدلالي" class="admonition admonish-warning" role="note" aria-labelledby="admonition-الترميز-المدمج-ليس-النوع-الدلالي-title">
+<div class="admonition-title">
+<div id="admonition-الترميز-المدمج-ليس-النوع-الدلالي-title">
+<p>الترميز المدمج ليس النوع الدلالي</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-الترميز-المدمج-ليس-النوع-الدلالي"></a>
+</div>
+<div>
+<p>لا تعرّف سلوك المجال بمواضع البتات أو إزاحات البايتات أو تفرعات الآلة. يجب أن ترمّز هذه الآثار الفروق الدلالية، لا أن تملكها.</p>
+</div>
+</div>
+<p>يتيح هذا الفصل تغيير تخطيطات التخزين والتنفيذ من دون تغيير المجال ضمنيًا.</p>
+<h2 id="associated-types-choose-carriers"><a class="header" href="#associated-types-choose-carriers">تختار الأنواع المرتبطة الحوامل</a></h2>
+<p>يمكن لجبر القدرات أن يترك لكل مفسر اختيار الحامل:</p>
+<pre><code class="language-rust noplayground">trait BranchAlg {
+    type Branch;
+
+    fn branch_root(&amp;self) -&gt; Self::Branch;
+    fn branch_grow(&amp;self, branch: &amp;Self::Branch, direction: Direction) -&gt; Self::Branch;
+    fn branch_path(
+        &amp;self,
+        ancestor: &amp;Self::Branch,
+        descendant: &amp;Self::Branch,
+    ) -&gt; Option&lt;Vec&lt;Direction&gt;&gt;;
+}</code></pre>
+<p>ليس <code>Self::Branch</code> نوع حقل مخفيًا، بل هو الحامل الذي يختاره تفسير معنى الفرع. ويمكن لمسار بتات أو موضع شجرة عددي أو حد رمزي أو تمثيل آخر تحقيق الجبر نفسه.</p>
+<p>يمكن قراءة التدوين <code>T::Branch</code> لدى المفسر <code>T</code> على أنه عائلة حوامل <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathsf">Branch</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mclose">)</span></span></span></span>. وقد يتغير الحامل بتغيير المفسر، مع بقاء كل عملية مفهرسة باتساق وفق الاختيار نفسه.</p>
+<h2 id="extensions-derive-consequences"><a class="header" href="#extensions-derive-consequences">تشتق الامتدادات النتائج</a></h2>
+<p>يمكن للامتداد بناء عملية جديدة من المقدمات التي يحتاج إليها تحديدًا:</p>
+<pre><code class="language-rust noplayground">#[ext(name = BranchExt)]
+pub impl&lt;This&gt; This
+where
+    This: BranchAlg,
+{
+    fn branch_child(
+        &amp;self,
+        branch: &amp;This::Branch,
+        direction: Direction,
+    ) -&gt; This::Branch {
+        self.branch_grow(branch, direction)
+    }
+}</code></pre>
+<p>جملة <code>where</code> هي المقدمة: يفسر <code>This</code> جبر الفروع. والأسلوب هو النتيجة: بالنسبة إلى حامل ذلك المفسر، يحدد الفرع والاتجاه الفرعَ الابن.</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mopen"><span class="delimsizing size1">(</span></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord"><span class="mord mathsf" style="margin-right:0.01389em;">BranchAlg</span></span><span class="mclose"><span class="delimsizing size1">)</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟹</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord mathsf">branchChild</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathsf">Branch</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord"><span class="mord mathsf">Direction</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathsf">Branch</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mclose">)</span></span></span></span></span></p>
+<p>لا يختار شيء في الاشتقاق تمثيلًا ملموسًا للفرع. وتبقى النتيجة ضمن عائلة الحوامل التي اختارها المفسر.</p>
+<h2 id="equality-bounds-state-compatibility"><a class="header" href="#equality-bounds-state-compatibility">تصرح حدود المساواة بالتوافق</a></h2>
+<p>تحتاج قدرتان أحيانًا إلى الاتفاق على حامل. ويمكن لمساواة النوع المرتبط التصريح بهذا الشرط دون اختيار تمثيل ملموس:</p>
+<pre><code class="language-rust noplayground">Right: BranchAlg&lt;Branch = Left::Branch&gt;</code></pre>
+<p>اقرأ الحد بوصفه قضية محلية: يفسر <code>Left</code> و<code>Right</code> عمليات الفروع على الحامل نفسه. ضع هذه المساواة عند العملية التي تحتاج إلى التوافق بدلًا من فرضها عالميًا على أحد الجبرين.</p>
+<p>هذا الحد أقوى وأدق من قبول سياق ملموس لمجرد أنه يصادف أن يحتوي التنفيذين معًا.</p>
+<h2 id="stage-types-make-compiler-contracts-visible"><a class="header" href="#stage-types-make-compiler-contracts-visible">تُظهر أنواع المراحل عقود المترجم</a></h2>
+<p>ينبغي ألا يمرر مسار المترجم شجرة واحدة بلا تمييز عبر كل مرحلة. فأنواع المراحل المختلفة تحدد التحويل الذي حدث:</p>
+<div class="table-wrapper"><table><thead><tr><th>المرحلة</th><th>المدخل</th><th>المخرج</th><th>العقد</th></tr></thead><tbody>
+<tr><td>التحليل النحوي</td><td>نص المصدر</td><td><code>Syntax</code></td><td>يتعرف على القواعد السطحية</td></tr>
+<tr><td>التطبيع</td><td><code>Syntax</code></td><td><code>CoreProgram</code></td><td>ينتج المعنى الأساسي المختار</td></tr>
+<tr><td>توليد الشيفرة</td><td><code>CoreProgram</code></td><td><code>Executable</code></td><td>يحافظ على ملاحظات البرنامج في صيغة قابلة للتنفيذ</td></tr>
+<tr><td>بيئة التشغيل</td><td><code>Executable</code></td><td>السلوك القابل للملاحظة</td><td>يفسر الملف التنفيذي بما يتسق مع نموذج اللغة</td></tr>
+</tbody></table>
+</div>
+<p>تمنع هذه الأنواع الخلط العرضي بين المراحل، لكن أسماءها وحدها لا تثبت الحفاظ. فما زالت التحويلات تحتاج إلى قوانين معلنة وسيناريوهات تمثيلية وأدلة بين المفسرات.</p>
+<h2 id="read-the-contract"><a class="header" href="#read-the-contract">اقرأ العقد</a></h2>
+<p>تقبل البنية على مستوى الأنواع قراءة منطقية مفيدة:</p>
+<div class="table-wrapper"><table><thead><tr><th>صيغة Rust</th><th>القراءة</th></tr></thead><tbody>
+<tr><td><code>This: BranchAlg</code></td><td>يوفر <code>This</code> تفسيرًا لمعنى الفرع</td></tr>
+<tr><td><code>This::Branch</code></td><td>يختار <code>This</code> حامل الفرع</td></tr>
+<tr><td><code>Right: BranchAlg&lt;Branch = Left::Branch&gt;</code></td><td>يتفق تفسيران على حاملهما</td></tr>
+<tr><td><code>-&gt; This::Branch</code></td><td>تبقى النتيجة ضمن عائلة الحوامل المختارة</td></tr>
+</tbody></table>
+</div>
+<p>تشجع هذه القراءة واجهات API على إظهار ما يحدد النوع، والتساويات التي يتطلبها التركيب، والاستنتاجات الناتجة عن تلك المقدمات. ويمكن للأنواع المرتبطة والأنواع المرتبطة العامة والمعممات الثابتة وtypestate والشواهد عديمة الحجم التعبير عن أجزاء من هذه العقود عندما يكون الفرق الأساسي حقيقيًا.</p>
+<p>لا تصطنع آليات على مستوى الأنواع لمجرد إضفاء مظهر أكثر صورية على التنفيذ. ينبغي للنوع أن يكشف معنى أو يحافظ على علاقة لازمة، لا أن يزخرف التمثيل.</p>
+<h2 id="types-do-not-replace-laws"><a class="header" href="#types-do-not-replace-laws">الأنواع لا تحل محل القوانين</a></h2>
+<p>يقيّد توقيع النوع البرامج التي يمكن تكوينها، بينما تقيّد القوانين علاقة العمليات بعضها ببعض. وكلاهما مطلوب.</p>
+<p>على سبيل المثال، يقرر <code>BranchAlg::Branch</code> أن كل مفسر يختار حاملًا للفرع. لكنه لا يثبت وحده أن:</p>
+<ul>
+<li>المسار من الفرع إلى نفسه فارغ</li>
+<li>إعادة تشغيل مسار الجذر تعيد بناء الفرع</li>
+<li>الابنين المتعاكسين متميزان</li>
+</ul>
+<p>هذه قوانين دلالية مشتركة بين المفسرات المتوافقة. أما الادعاءات الخاصة بالتمثيل، مثل كون البتات غير المستخدمة صفرًا، فتنتمي إلى المفسر الذي اختار ذلك التمثيل.</p>
+<div id="admonition-اقرأ-الأنواع-بوصفها-ادعاءات" class="admonition admonish-quote" role="note" aria-labelledby="admonition-اقرأ-الأنواع-بوصفها-ادعاءات-title">
+<div class="admonition-title">
+<div id="admonition-اقرأ-الأنواع-بوصفها-ادعاءات-title">
+<p>اقرأ الأنواع بوصفها ادعاءات</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-اقرأ-الأنواع-بوصفها-ادعاءات"></a>
+</div>
+<div>
+<p>اسأل عما يدّعيه كل نوع، وما الذي يحدده، وما القوانين التي تكمله، وأي مفسر يحققه.</p>
+</div>
+</div>
+<h2 id="review-checks"><a class="header" href="#review-checks">فحوص المراجعة</a></h2>
+<ul>
+<li>هل يظهر فرق المجال قبل ترميزه الآلي المدمج؟</li>
+<li>هل النوع المرتبط حامل يختاره المفسر، لا حالة ملموسة متنكرة؟</li>
+<li>هل تصرح حدود المساواة بالتوافق المطلوب عند موضع الاستخدام فقط؟</li>
+<li>هل للمراحل المختلفة للمترجم أنواع مختلفة وعقود صريحة؟</li>
+<li>هل تُفصل القضايا الدلالية عن الثوابت التمثيلية؟</li>
+<li>هل تسند القوانين أو السيناريوهات القابلة لإعادة الاستخدام الادعاءات التي لا تستطيع Rust التعبير عنها؟</li>
+</ul>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../rust-dd/capability-algebras.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../rust-dd/derived-meaning.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../rust-dd/capability-algebras.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../rust-dd/derived-meaning.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

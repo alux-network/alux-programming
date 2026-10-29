@@ -1,0 +1,447 @@
+<!DOCTYPE HTML>
+<html lang="es" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>De la semántica a las máquinas - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="De la semántica a las máquinas - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-es.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"De la semántica a las máquinas","sourceHash":"sha256:9fe5a0f66907af757d4b29691bf2aa8dcdda8c09246818d79d57434456ba33ab"} -->
+<h1 id="semantics-to-machines"><a class="header" href="#semantics-to-machines">De la semántica a las máquinas</a></h1>
+<div id="admonition-relacionado" class="admonition admonish-tip" role="note" aria-labelledby="admonition-relacionado-title">
+<div class="admonition-title">
+<div id="admonition-relacionado-title">
+<p>Relacionado</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-relacionado"></a>
+</div>
+<div>
+<p>Diseño basado en el significado en Rust: <a href="../rust-dd/first-order-programs.html">Programas de primer orden</a>, <a href="../rust-dd/compiler-pipelines.html">Lenguaje y procesos de compilación</a><br />
+Conceptos: <a href="../concepts/operational_semantics.html">Semántica operacional</a>, <a href="../concepts/free_monad.html">Mónada libre</a>, <a href="../concepts/cps.html">Estilo de paso de continuaciones</a>, <a href="../concepts/defunctionalization.html">Defuncionalización</a></p>
+</div>
+</div>
+<h2 id="what-operational-semantics-describes"><a class="header" href="#what-operational-semantics-describes">Qué describe la semántica operacional</a></h2>
+<p>La semántica operacional especifica cómo se comporta una representación de programa elegida. Define juicios de evaluación o una relación de transición sobre configuraciones como:</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathit">program</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathit">state</span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0519em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord mathit">program</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord"><span class="mord mathit">state</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>El programa puede ser sintaxis fuente, un valor de mónada libre, un término CPS, bytecode o un estado de máquina defuncionalizado. Ninguna de esas representaciones <em>es</em> semántica operacional. La semántica operacional describe cómo se evalúan o avanzan los valores de la representación elegida.</p>
+<p>Esta dirección importa. Una representación nos ofrece algo cuyo comportamiento se puede describir; añadir una descripción operacional no explica qué debería significar el lenguaje.</p>
+<h2 id="free-monad-programs"><a class="header" href="#free-monad-programs">Programas de mónada libre</a></h2>
+<p>Una mónada libre proporciona sintaxis de instrucciones junto con una secuenciación generada libremente. No define el comportamiento de esas instrucciones.</p>
+<p>Una semántica operacional para un programa de mónada libre puede definir configuraciones que contengan la instrucción actual, su continuación y cualquier estado de máquina. Las reglas explican, por ejemplo, cómo una instrucción suspendida modifica el estado y pasa su resultado al resto del programa.</p>
+<p>Esa es una posible interpretación. El mismo programa libre también puede plegarse en un modelo denotacional, compilarse a otro lenguaje, analizarse o representarse sin ejecutarse.</p>
+<details>
+<summary><strong>De libre a freer: qué reveló la investigación</strong></summary>
+<p>Quienes conocieron las mónadas libres como una arquitectura general para programas con efectos quizá se pregunten por qué el debate pasó después a las construcciones freer, los efectos extensibles y los manejadores. La investigación no descartó sin más las mónadas libres. Aisló qué aportan realmente, midió dónde fallan sus representaciones habituales y conservó la estructura útil.</p>
+<p>Kiselyov e Ishii derivan mónadas freer al eliminar progresivamente restricciones y código repetitivo de las representaciones de términos con efectos. En la representación freer, una instrucción puede producir un tipo intermedio oculto en el tipo final del programa, y una continuación explícita conecta ese resultado con el resto del cálculo. Por ello, la signatura de instrucciones ya no necesita una instancia <code>Functor</code>.</p>
+<p>Ese cambio mejora la expresividad, pero no resuelve por sí mismo el rendimiento. Una representación freer directa sigue componiendo continuaciones como la concatenación de listas asociada a la izquierda: procesar una cadena de solicitudes <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> puede requerir <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> trabajo. Al hacer explícita la continuación, se revela la verdadera oportunidad: se puede almacenar como una secuencia alineada por tipos, cuyos tipos de resultado y entrada adyacentes coinciden por construcción. La concatenación eficiente de esa secuencia elimina el recorrido sensible a la asociación.</p>
+<p>Las uniones abiertas permiten luego que un intérprete de efectos extensibles añada, combine y elimine tipos de solicitud seleccionados. Esto resuelve la composición modular de efectos y la estructura de manejadores. Aun así, no proporciona las ecuaciones de un dominio concreto ni decide cuándo dos programas con efectos tienen el mismo significado.</p>
+<p>La conclusión es más precisa que «freer es mejor que free». Las mónadas libres revelaron una separación valiosa entre solicitudes e interpretación. Las codificaciones freer eliminaron una restricción innecesaria; las colas alineadas por tipos abordaron un problema de rendimiento medido; los efectos extensibles mejoraron la composición. Cada paso conservó lo aprendido en el anterior y delimitó mejor la afirmación. La interpretación semántica siguió siendo una decisión independiente.</p>
+<p>Consulta Kiselyov e Ishii, <a href="https://okmij.org/ftp/Haskell/extensible/more.pdf"><em>Freer Monads, More Extensible Effects</em></a>.</p>
+</details>
+<h2 id="cps-programs"><a class="header" href="#cps-programs">Programas CPS</a></h2>
+<p>El estilo de paso de continuaciones (CPS) representa explícitamente el resto del cálculo mediante una continuación. Una semántica operacional de CPS describe comportamientos como:</p>
+<ul>
+<li>evaluar la expresión CPS actual;</li>
+<li>pasar un valor producido a su continuación;</li>
+<li>transferir el control al aplicar esa continuación.</li>
+</ul>
+<p>CPS expone el control de una forma cómoda para describir operacionalmente, pero es una representación o transformación de programas, no una semántica operacional. Relacionar un programa de estilo directo con su traducción CPS requiere especificar las semánticas de origen y destino y demostrar su preservación.</p>
+<details>
+<summary><strong>Más allá de CPS: cuándo hay que inspeccionar las continuaciones</strong></summary>
+<p>CPS es una solución estándar para el append y el bind sensibles a la asociación. En lugar de recorrer repetidamente una estructura asociada a la izquierda, representa el cálculo restante mediante composición de funciones. Esta representación puede ser eficiente cuando la única operación sobre la continuación es su aplicación final.</p>
+<p>Van der Ploeg y Kiselyov identifican el límite: algunos consumidores deben examinar o modificar un resultado intermedio antes de continuar. La búsqueda no determinista, los iteratees, las mónadas libres y los efectos extensibles pueden requerir ese acceso. CPS oculta la secuencia conceptual dentro de una función, por lo que recuperar la estructura intermedia requiere convertirla de nuevo en datos y puede anular la ventaja de rendimiento.</p>
+<p>Su alternativa representa directamente la secuencia oculta como una estructura de datos alineada por tipos. Permite una composición eficiente sin importar la asociación y conserva un acceso eficiente a los resultados intermedios. Los tipos garantizan que cada cálculo almacenado produzca la entrada que espera el siguiente.</p>
+<p>La conclusión más amplia no es que las secuencias alineadas por tipos venzan a CPS. CPS es excelente para <em>aplicar</em> continuaciones y menos adecuado cuando un consumidor debe <em>inspeccionarlas</em>. La investigación sobre control delimitado afina aún más la lección: en lugar de tratar todo el futuro como una única continuación indiferenciada, los delimitadores especifican qué parte del cálculo circundante se puede capturar y manipular.</p>
+<p>Estas ideas no desaparecieron. Sus lecciones continúan en los manejadores de efectos, las derivaciones de máquinas abstractas, los operadores de control tipados y las representaciones eficientes de efectos. Lo que cambió fue la expectativa de que CPS por sí solo debía ser la abstracción final.</p>
+<p>Consulta van der Ploeg y Kiselyov, <a href="https://okmij.org/ftp/Haskell/zseq.pdf"><em>Reflection without Remorse</em></a>. Para un panorama más amplio del control, consulta la <a href="https://okmij.org/ftp/continuations/index.html">colección de Kiselyov sobre continuaciones y control delimitado</a>.</p>
+</details>
+<h2 id="defunctionalized-machines"><a class="header" href="#defunctionalized-machines">Máquinas defuncionalizadas</a></h2>
+<p>La defuncionalización reemplaza una familia conocida de valores de función, como las continuaciones CPS, por constructores de primer orden y una operación <code>apply</code>. La semántica operacional puede describir entonces las transiciones entre las configuraciones explícitas resultantes.</p>
+<p>Tras aplicar una transformación CPS concreta seguida de una defuncionalización, esas transiciones pueden derivar una máquina abstracta. Es una derivación potente, pero no define la semántica operacional en general: las reglas operacionales no tienen por qué originarse en CPS, y una máquina arbitraria de primer orden no se convierte por ello en una máquina de continuaciones defuncionalizada.</p>
+<details>
+<summary><strong>Reynolds: los orígenes de la defuncionalización</strong></summary>
+<p>John C. Reynolds introdujo la defuncionalización en su estudio de 1972 sobre los intérpretes denotacionales. No partió de una máquina virtual de primer orden, sino de un intérprete de orden superior: las funciones del lenguaje de definición representaban entornos, continuaciones y otros elementos del lenguaje definido.</p>
+<p>La transformación identifica la familia finita de abstracciones de función que puede aparecer en todo el programa. Reemplaza cada abstracción por un constructor de primer orden que contiene los valores de sus variables libres; luego, sustituye la aplicación de funciones por una operación <code>apply</code> que distribuye la ejecución según esos constructores. Lo implícito en el lenguaje de definición se convierte en un álgebra explícita de cierres o continuaciones.</p>
+<p>Aplicado a un intérprete basado en continuaciones, este paso revela una máquina: los constructores de continuación se convierten en estados de control, las variables capturadas pasan a ser datos almacenados en la máquina y <code>apply</code> se convierte en el despachador de transiciones. La máquina no se inventa de antemano; se deriva de un evaluador de orden superior.</p>
+<p>Reynolds también subrayó el coste de esta claridad. La máquina resultante contiene decisiones de representación correctas, pero no únicas. Distintas elecciones de constructores o transformaciones previas pueden producir colecciones distintas de engranajes y piezas de máquina, sin cambiar el comportamiento. Por tanto, la defuncionalización revela una estructura operacional, no el único significado inevitable del lenguaje.</p>
+<p>Danvy y Nielsen sistematizaron después la técnica de Reynolds como transformación de programas completos y estudiaron la refuncionalización como su inversa. Su conclusión más profunda es que la transformación sirve de puente: permite transferir especificaciones y argumentos de corrección entre definiciones de orden superior y máquinas de primer orden, y revela que programas aparentemente distintos pueden ser dos representaciones de la misma estructura.</p>
+<p>Esta trayectoria de investigación confiere a la técnica su autoridad adecuada. La defuncionalización es más que reemplazar cierres por una enumeración, pero menos que un fundamento universal: es un paso que preserva la semántica entre representaciones y cuya correspondencia debe establecerse.</p>
+<p>Consulta a Reynolds, <a href="https://homepages.inf.ed.ac.uk/wadler/papers/papers-we-love/reynolds-definitional-interpreters-1972.pdf"><em>Definitional Interpreters for Higher-Order Programming Languages</em></a>, y a Danvy y Nielsen, <a href="https://tidsskrift.dk/brics/article/view/21684"><em>Defunctionalization at Work</em></a>.</p>
+</details>
+<h2 id="the-operational-representation-cycle"><a class="header" href="#the-operational-representation-cycle">El ciclo de representación operacional</a></h2>
+<p>Un error recurrente es buscar una única representación operacional que resuelva todos los problemas de programación. Cada representación recupera algo que la anterior ocultaba, pero dificulta otra preocupación:</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">higher-order program</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">free syntax</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6943em;vertical-align:-0.011em;"></span><span class="mord text"><span class="mord">CPS</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7054em;vertical-align:-0.011em;"></span><span class="mord text"><span class="mord">first-order machine</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">higher abstraction</span></span></span></span></span></span></p>
+<p>Las flechas no afirman que exista un proceso de compilación obligatorio. Muestran un movimiento de diseño recurrente: hacer explícito lo que la representación actual oculta y, después, ocultar la maquinaria que introdujo esa exposición.</p>
+<div class="table-wrapper"><table><thead><tr><th>Representación</th><th>Qué permite representar</th><th>Qué dificultades introduce</th></tr></thead><tbody>
+<tr><td>Funciones de orden superior</td><td>Composición directa y abstracción del lenguaje anfitrión</td><td>Un consumidor genérico puede llamar a una función, pero no inspeccionar su estructura oculta</td></tr>
+<tr><td>Sintaxis libre con secuenciación</td><td>Programas como datos componibles e interpretables</td><td>La libertad no proporciona ecuaciones del dominio, normalización, evaluación eficiente ni inspección de funciones almacenadas</td></tr>
+<tr><td>CPS</td><td>El orden de evaluación y el resto del cálculo se vuelven explícitos</td><td>Una codificación CPS de todo el programa propaga continuaciones por casi todas las interfaces</td></tr>
+<tr><td>Control defuncionalizado de primer orden</td><td>Las continuaciones se convierten en casos inspeccionables y serializables</td><td>Hay que mantener explícitamente constructores, argumentos almacenados, estados de transición y una operación <code>apply</code></td></tr>
+<tr><td>Una abstracción de nivel superior sobre la máquina</td><td>La maquinaria se vuelve más fácil de usar</td><td>La estructura vuelve a quedar oculta cuando un compilador, planificador, depurador u optimizador necesita inspeccionarla</td></tr>
+</tbody></table>
+</div>
+<p>Las dificultades son estructurales. Inspeccionar requiere datos. Convertir el comportamiento en datos introduce constructores y un intérprete. Ocultar esos constructores restaura una abstracción cómoda, pero elimina el acceso que necesitan los consumidores que analizan o transforman programas.</p>
+<p>El equilibrio de las mónadas libres es especialmente ilustrativo. Una mónada libre resuelve un problema preciso: genera secuenciación para un functor de instrucciones sin imponer ecuaciones aparte de las leyes de mónada. Esa garantía también marca su límite: no conoce las leyes del dominio. Si dos escrituras a la misma celda deberían equivaler a conservar solo la última, el programa libre sigue conteniendo ambas instrucciones hasta que una normalización o interpretación específica del dominio las identifique. Por tanto, la optimización, la forma canónica y la igualdad semántica deben venir de otra parte.</p>
+<p>Tampoco basta con reificar las instrucciones para hacer que todo el programa sea inspeccionable de manera uniforme. En las codificaciones habituales, la instrucción suspendida es visible, pero su continuación es una función del lenguaje anfitrión. Un analizador genérico no puede inspeccionar la estructura futura que hay detrás de esa función sin proporcionar un resultado y aplicarla. Reificar la continuación recupera la capacidad de inspección al pasar a una representación de primer orden o defuncionalizada; así se vuelve a la siguiente parte del ciclo.</p>
+<p>El coste de evaluación también depende de la representación. Un árbol ingenuo de binds asociados a la izquierda puede requerir recorridos repetidos y trabajo cuadrático. Una transformación que duplique subprogramas residuales puede provocar un crecimiento exponencial. Las codificaciones estilo Codensity, freer o especializadas pueden mejorar costes concretos, pero lo hacen eligiendo otras representaciones y equilibrios. El crecimiento exponencial es posible, pero no es una ley intrínseca de las mónadas libres.</p>
+<p>Por eso una mónada libre no es una solución universal. Proporciona sintaxis con secuenciación sujeta a leyes, pero no las ecuaciones del dominio pretendido, una forma normal canónica, visibilidad estructural completa ni una implementación automáticamente eficiente. Del mismo modo, CPS no tiene por qué extenderse por todo un sistema si se usa localmente, y la defuncionalización solo resulta engorrosa en proporción a la familia de funciones y los valores capturados que deba reificar.</p>
+<p>El ciclo aparece cuando se pretende que cada nueva codificación se convierta en el fundamento universal. Resuelve el inconveniente operacional anterior y luego se convierte en la siguiente fuente de complejidad accidental.</p>
+<p>Por eso los debates sobre la «mejor abstracción» no llegan a una conclusión cuando permanecen exclusivamente en el plano operacional. Se comparan las funciones de orden superior, la sintaxis libre, CPS y las máquinas de primer orden como si una debiera dominar a las demás. Pero <em>mejor</em> no significa nada hasta que la comparación especifica qué debe preservarse y quién consumirá el resultado:</p>
+<ul>
+<li>la ejecución directa favorece las llamadas habituales y la representación oculta;</li>
+<li>la transformación y el análisis requieren una estructura inspeccionable;</li>
+<li>la serialización requiere datos de primer orden;</li>
+<li>la extensibilidad puede favorecer la incorporación de interpretaciones o de sintaxis, pero rara vez ambas por igual;</li>
+<li>la concurrencia puede exigir observaciones que ignoren deliberadamente muchas decisiones de planificación.</li>
+</ul>
+<p>Son requisitos distintos, no pruebas sucesivas de que una abstracción sea universalmente superior. Las propiedades operacionales pueden ayudar a elegir una implementación para un propósito especificado; no pueden aportar ese propósito ni decidir qué distinciones son significativas.</p>
+<p>La misma cautela se aplica al pensamiento secuencial. La semántica operacional puede describir sistemas concurrentes y no deterministas, pero una única secuencia de pasos de máquina es solo una representación posible de su comportamiento. Si se da autoridad demasiado pronto al orden de planificación, las ejecuciones equivalentes se vuelven distintas únicamente porque sus mecanismos se intercalaron de otra manera. El modelo semántico debe decidir primero qué observaciones distinguen los programas concurrentes; después se pueden evaluar las planificaciones operacionales según esa decisión.</p>
+<h2 id="real-example-the-evm"><a class="header" href="#real-example-the-evm">Ejemplo real: la EVM</a></h2>
+<p>La máquina virtual de Ethereum (EVM) se puede entender operacionalmente:</p>
+<ul>
+<li><strong>Estado</strong>: contador de programa, pila, memoria, almacenamiento y gas</li>
+<li><strong>Reglas de transición</strong>: una por cada código de operación (<code>ADD</code>, <code>PUSH</code>, <code>SSTORE</code>, etc.)</li>
+<li><strong>Ejecución</strong>: se aplican repetidamente reglas de pequeños pasos hasta detenerse</li>
+</ul>
+<p>El bytecode de la EVM son datos de instrucciones de primer orden. Una descripción operacional especifica cómo cambia una configuración de la EVM para cada código de operación; un cliente concreto implementa ese comportamiento.</p>
+<p>Su ciclo de despacho y su contador de programa pueden parecerse a una máquina abstracta defuncionalizada. Sin embargo, llamarlos continuaciones defuncionalizadas exige un origen de orden superior, una transformación y una correspondencia concretos; no basta con que un ciclo tenga un aspecto parecido.</p>
+<h2 id="breaking-the-cycle-meaning-before-machinery"><a class="header" href="#breaking-the-cycle-meaning-before-machinery">Romper el ciclo: el significado antes que la maquinaria</a></h2>
+<p>Las descripciones operacionales y denotacionales responden a preguntas distintas:</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:3em;vertical-align:-1.25em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.75em;"><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mopen"><span class="mopen">[</span><span class="mspace" style="margin-right:-0.1778em;"></span><span class="mopen">[</span></span><span class="mord mathnormal">p</span><span class="mclose"><span class="mclose">]</span><span class="mspace" style="margin-right:-0.1778em;"></span><span class="mclose">]</span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">c</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.75em;"><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:1em;"></span><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.75em;"><span style="top:-3.75em;"><span class="pstrut" style="height:2.84em;"></span><span class="mord"></span></span><span style="top:-2.25em;"><span class="pstrut" style="height:2.84em;"></span><span class="mord"></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.75em;"><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mord text"><span class="mord">what does the program mean?</span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mord text"><span class="mord">how does this representation step?</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>Un desarrollo guiado por el significado elige el dominio semántico, la composición, las observaciones y las leyes antes de comprometerse con una representación de máquina. Una vez elegido un sistema de transición, su obligación de corrección conecta ambas capas. Para un significado de configuraciones completas definido adecuadamente, una afirmación típica de preservación de pasos silenciosos tiene esta forma:</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.522em;vertical-align:-0.011em;"></span><span class="mord mathnormal">c</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟶</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8259em;vertical-align:-0.024em;"></span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟹</span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">meaning</span></span><span class="mopen">(</span><span class="mord mathnormal">c</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0519em;vertical-align:-0.25em;"></span><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">meaning</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>La relación exacta puede usar equivalencia observacional, trazas o bisimilaridad. Lo importante es que la máquina responda ante el significado pretendido.</p>
+<p>El diseño denotacional no elige un ganador del ciclo. Establece una fuente estable de autoridad fuera de él:</p>
+<ol>
+<li>Define el dominio semántico, las operaciones, la composición y las leyes.</li>
+<li>Escribe los programas en términos de ese significado.</li>
+<li>Elige una representación para un consumidor concreto: ejecución directa, inspección, compilación, planificación, serialización o análisis.</li>
+<li>Relaciona cada representación y transformación elegida con el mismo significado.</li>
+</ol>
+<p>Por tanto, pueden coexistir un intérprete de orden superior y un programa de primer orden. Ninguno tiene que ser la definición del lenguaje. El primero puede servir para la ejecución directa; el segundo, para los consumidores que necesitan estructura. Que concuerden es una obligación semántica, no una suposición de que sus mecanismos sean idénticos.</p>
+<div id="admonition-no-existe-una-abstracción-operacional-definitiva" class="admonition admonish-note" role="note" aria-labelledby="admonition-no-existe-una-abstracción-operacional-definitiva-title">
+<div class="admonition-title">
+<div id="admonition-no-existe-una-abstracción-operacional-definitiva-title">
+<p>No existe una abstracción operacional definitiva</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-no-existe-una-abstracción-operacional-definitiva"></a>
+</div>
+<div>
+<p>Toda representación operacional expone parte de la estructura y oculta otra. El significado es el punto estable desde el que se pueden elegir y relacionar las representaciones adecuadas.</p>
+</div>
+</div>
+<h2 id="summary"><a class="header" href="#summary">Resumen</a></h2>
+<ul>
+<li>La semántica operacional describe la evaluación o las transiciones de una representación elegida.</li>
+<li>Las mónadas libres proporcionan sintaxis de instrucciones y secuenciación, cuyo comportamiento aún requiere interpretación.</li>
+<li>CPS hace explícitas las continuaciones; las reglas operacionales pueden describir cómo los programas CPS pasan valores y control.</li>
+<li>La defuncionalización puede convertir un programa concreto de orden superior en una máquina de primer orden cuyas transiciones se describen operacionalmente.</li>
+<li>Tratar cualquiera de estas codificaciones como universal genera un ciclo de reificación y ocultación de estructuras.</li>
+<li>El significado denotacional determina qué deben preservar esas transiciones.</li>
+</ul>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../insights/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../insights/expression-problem.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../insights/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../insights/expression-problem.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

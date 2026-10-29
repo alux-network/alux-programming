@@ -1,0 +1,461 @@
+<!DOCTYPE HTML>
+<html lang="de" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Warum Bedeutung an erster Stelle steht - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="Warum Bedeutung an erster Stelle steht - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-de.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"Warum Bedeutung an erster Stelle steht","sourceHash":"sha256:ae896b29c1d884e5f54c3937b60d791be4dd745e85f605b91d647e32b95a0ee6"} -->
+<h1 id="why-meaning-comes-first"><a class="header" href="#why-meaning-comes-first">Warum Bedeutung an erster Stelle steht</a></h1>
+<p><img src="../../semantic-view.png" alt="The semantic view — choosing what a program means before how it runs" /></p>
+<div id="admonition-verwandte-themen" class="admonition admonish-tip" role="note" aria-labelledby="admonition-verwandte-themen-title">
+<div class="admonition-title">
+<div id="admonition-verwandte-themen-title">
+<p>Verwandte Themen</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-verwandte-themen"></a>
+</div>
+<div>
+<p>The Semantic View: <a href="denotations.html">Denotationen und Kompositionalität</a>, <a href="design.html">Denotational Design</a><br />
+Design by Meaning in Rust: <a href="../rust-dd/capability-algebras.html">Capability-Algebren</a><br />
+Concepts: <a href="../concepts/index.html">Einführung</a></p>
+</div>
+</div>
+<div id="admonition-orientierung" class="admonition admonish-note" role="note" aria-labelledby="admonition-orientierung-title">
+<div class="admonition-title">
+<div id="admonition-orientierung-title">
+<p>Orientierung</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-orientierung"></a>
+</div>
+<div>
+<p>Denotational Design legt zuerst die Bedeutung eines Programms fest und leitet daraus anschließend Vokabular, Repräsentation und Ausführungsstrategie ab, die diese Bedeutung bewahren. Diese Seite stellt diese semantische Reihenfolge der in den meisten Softwareprojekten üblichen Reihenfolge gegenüber, bei der die Repräsentation an erster Stelle steht.</p>
+</div>
+</div>
+<p>Die meisten Softwaresysteme werden in der Reihenfolge entworfen, in der sie ausgeführt werden:</p>
+<ol>
+<li>Zustand festlegen.</li>
+<li>Kontrollfluss festlegen.</li>
+<li>Methoden um diese Mechanismen herum bereitstellen.</li>
+<li>Anschließend erklären, was die Methoden bedeuten sollten.</li>
+</ol>
+<p>Denotational Design kehrt diese Reihenfolge um:</p>
+<ol>
+<li>Bedeutung festlegen.</li>
+<li>Die Kompositionsstruktur bestimmen.</li>
+<li>Aus dieser Struktur ein Vokabular ableiten.</li>
+<li>Repräsentationen und Ausführungsstrategien auswählen.</li>
+<li>Überprüfen, ob sie die Bedeutung bewahren.</li>
+</ol>
+<p>Diese Umkehrung ist die semantische Sicht.</p>
+<div id="admonition-mechanik-und-bedeutung" class="admonition admonish-quote" role="note" aria-labelledby="admonition-mechanik-und-bedeutung-title">
+<div class="admonition-title">
+<div id="admonition-mechanik-und-bedeutung-title">
+<p>Mechanik und Bedeutung</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-mechanik-und-bedeutung"></a>
+</div>
+<div>
+<p><a href="../concepts/index.html">Concepts</a> und <a href="../insights/index.html">Insights</a> erklären nützliche Programmiermechanismen. <a href="design.html">Denotational Design</a> erklärt, wie man entscheidet, was diese Mechanismen bewahren sollen.</p>
+</div>
+</div>
+<h2 id="three-questions"><a class="header" href="#three-questions">Drei Fragen</a></h2>
+<p>Halte beim Entwurf eines Programms drei Fragen auseinander.</p>
+<div class="table-wrapper"><table><thead><tr><th>Sicht</th><th>Frage</th><th>Typische Artefakte</th></tr></thead><tbody>
+<tr><td>Semantisch</td><td>Was bedeutet dieses Programm?</td><td>Werte, Relationen, Funktionen, Gleichungen, Gesetze</td></tr>
+<tr><td>Repräsentativ</td><td>Wie wird diese Bedeutung kodiert?</td><td>Rust-Typen, Traits, ASTs, Tabellen, Bäume, Bytecode</td></tr>
+<tr><td>Operativ</td><td>Wie wird die Repräsentation ausgeführt?</td><td>Schleifen, Mutation, Tasks, Nachrichten, Interpreter, virtuelle Maschinen</td></tr>
+</tbody></table>
+</div>
+<p>Alle drei Sichtweisen sind wichtig. Der Fehler besteht darin, zuzulassen, dass Repräsentation oder Ausführung die semantische Sicht unbemerkt festlegt.</p>
+<p>Eine operationale Semantik beschreibt die Ausführung präzise und auf wertvolle Weise. Sie kann jeden Übergang eines Auswerters darstellen. Dennoch beantwortet sie eine andere Entwurfsfrage als eine denotationelle Darstellung. Die denotationelle Frage lautet, welchen beobachtbaren mathematischen Wert das Gesamtprogramm bezeichnet und welche Gleichungen unabhängig von der Ausführungsstrategie gelten sollen.</p>
+<h2 id="a-small-example"><a class="header" href="#a-small-example">Ein kleines Beispiel</a></h2>
+<p>Angenommen, ein System identifiziert Positionen in einem Verzweigungsprozess.</p>
+<p>Ein repräsentationsorientierter Entwurf könnte mit einem Bitvektor beginnen:</p>
+<pre><code class="language-rust noplayground">struct BranchId(Vec&lt;bool&gt;);</code></pre>
+<p>Um die Felder herum entstehen dann Methoden: ein Bit anhängen, ein Präfix ausschneiden, Vektoren vergleichen, Bytes serialisieren.</p>
+<p>Die semantische Sicht setzt an einem anderen Punkt an:</p>
+<ul>
+<li>Es gibt eine Wurzelposition.</li>
+<li>Eine Position kann nach links oder rechts erweitert werden.</li>
+<li>Eine Position kann Vorfahr einer anderen sein.</li>
+<li>Der Pfad zwischen einem Vorfahren und einem Nachfahren lässt sich beobachten.</li>
+</ul>
+<p>Diese Aussagen bleiben sinnvoll, auch wenn die Repräsentation später zu einer Ganzzahl, einer Baumkoordinate, einem kompakten Hybridwert oder einem Datenbankschlüssel wird. Der Bitvektor ist eine Interpretation der Verzweigungsposition, nicht deren Definition.</p>
+<h2 id="meaning-is-not-documentation-after-the-fact"><a class="header" href="#meaning-is-not-documentation-after-the-fact">Bedeutung ist keine nachträgliche Dokumentation</a></h2>
+<p>Prosa über eine konkrete API zu schreiben, macht den Entwurf noch nicht denotationell. Die Bedeutung muss die API einschränken, bevor die Repräsentation gewählt wird.</p>
+<p>Eine semantische Darstellung sollte uns sagen:</p>
+<ul>
+<li>welche Unterscheidungen wichtig sind</li>
+<li>welche Beobachtungen grundlegend sind</li>
+<li>wie sich größere Bedeutungen zusammensetzen</li>
+<li>welche Gleichungen gelten</li>
+<li>was jede Implementierung bewahren muss</li>
+<li>welche Einzelheiten bewusst ausgeblendet werden</li>
+</ul>
+<p>Wenn das einzige präzise Artefakt eine Zustandsstruktur oder eine Ausführungsschleife ist, bestimmt weiterhin die Implementierung die Bedeutung.</p>
+<h2 id="abstraction-versus-meaning"><a class="header" href="#abstraction-versus-meaning">Abstraktion und Bedeutung</a></h2>
+<div id="admonition-ein-kontext-trait-definiert-keine-bedeutung" class="admonition admonish-warning" role="note" aria-labelledby="admonition-ein-kontext-trait-definiert-keine-bedeutung-title">
+<div class="admonition-title">
+<div id="admonition-ein-kontext-trait-definiert-keine-bedeutung-title">
+<p>Ein Kontext-Trait definiert keine Bedeutung</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-ein-kontext-trait-definiert-keine-bedeutung"></a>
+</div>
+<div>
+<p>Eine Schnittstelle kann Mechanismen verbergen, ohne die Bedeutung zu erklären:</p>
+<pre><code class="language-rust noplayground">trait ApplicationContext {
+    fn database(&amp;self) -&gt; &amp;Database;
+    fn settings(&amp;self) -&gt; &amp;Settings;
+    fn runtime(&amp;self) -&gt; &amp;Runtime;
+}</code></pre>
+<p>Diese Schnittstelle abstrahiert den Zugriff auf konkrete Komponenten. Sie nennt nicht die semantischen Beobachtungen, die eine Berechnung voraussetzt.</p>
+</div>
+</div>
+<div id="admonition-direkt-nach-der-bedeutung-fragen" class="admonition admonish-success" role="note" aria-labelledby="admonition-direkt-nach-der-bedeutung-fragen-title">
+<div class="admonition-title">
+<div id="admonition-direkt-nach-der-bedeutung-fragen-title">
+<p>Direkt nach der Bedeutung fragen</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-direkt-nach-der-bedeutung-fragen"></a>
+</div>
+<div>
+<p>Eine bedeutungsorientierte Schnittstelle fragt nach der Beobachtung selbst:</p>
+<pre><code class="language-rust noplayground">trait BranchAlg {
+    type Branch;
+
+    fn branch_root(&amp;self) -&gt; Self::Branch;
+    fn branch_grow(&amp;self, branch: &amp;Self::Branch, direction: Direction) -&gt; Self::Branch;
+    fn branch_path(
+        &amp;self,
+        ancestor: &amp;Self::Branch,
+        descendant: &amp;Self::Branch,
+    ) -&gt; Option&lt;Vec&lt;Direction&gt;&gt;;
+}</code></pre>
+</div>
+</div>
+<p>Dependency Inversion ist hilfreich, aber Denotational Design verlangt mehr: Die Abstraktionsgrenze muss sich an der Bedeutung statt am Speicherort orientieren.</p>
+<h2 id="the-direction-of-authority"><a class="header" href="#the-direction-of-authority">Die Richtung der Autorität</a></h2>
+<p>Wenn Artefakte einander widersprechen, überlasse nicht demjenigen die Deutungshoheit, das dem ausführbaren Code am nächsten ist. Frage, was jedes Artefakt bewahren muss.</p>
+<div class="table-wrapper"><table><thead><tr><th>Rolle</th><th>Was hier hingehört</th><th>Verantwortung</th></tr></thead><tbody>
+<tr><td><strong>Bedeutung</strong></td><td>Beabsichtigte Beobachtungen, Unterscheidungen und Gleichheiten des Fachgebiets</td><td>Legt fest, was Korrektheit bedeutet</td></tr>
+<tr><td><strong>Spezifikation</strong></td><td>Semantische Bereiche, Denotationen, Typen, primitive Operationen, Gesetze und abgeleitete Kompositionen</td><td>Formuliert diese Bedeutung präzise</td></tr>
+<tr><td><strong>Realisierung</strong></td><td>Konkrete Repräsentationen, Interpreter, Compiler, Laufzeitumgebungen, Speicher und Ablaufplanung</td><td>Setzt die Spezifikation um, ohne sie zu verändern</td></tr>
+<tr><td><strong>Nachweis</strong></td><td>Beweise, Gesetzesprüfungen, Szenarien und Vergleiche zwischen Interpretern</td><td>Verknüpft eine Realisierung mit der Spezifikation; definiert die Bedeutung aber nicht selbst</td></tr>
+</tbody></table>
+</div>
+<p>Daraus ergibt sich eine praktische Regel zur Klärung von Widersprüchen:</p>
+<ul>
+<li>Verletzt eine Implementierung ein semantisches Gesetz, ändere die Implementierung.</li>
+<li>Widerspricht ein Test dem Gesetz, das er prüfen sollte, ändere den Test.</li>
+<li>Bringt die formale Spezifikation die beabsichtigte Bedeutung des Fachgebiets nicht zum Ausdruck, überarbeite die Spezifikation.</li>
+</ul>
+<p>Ein Artefakt wird nach seiner Rolle eingeordnet, nicht nach seiner Syntax. Ein Rust-Trait oder ein Programm erster Ordnung kann zur Spezifikation gehören, wenn es die gewählte semantische Struktur direkt bewahrt; ein anderer Rust-Typ kann lediglich eine konkrete Kodierung sein. Auch eine formale operationale Semantik kann Teil einer Sprachspezifikation sein, doch ihre Übergänge müssen sich an den Beobachtungen und Äquivalenzen messen lassen, die die Sprache vorsieht.</p>
+<p>CPS, Defunktionalisierung, freie Monaden, virtuelle Maschinen, Protokoll-Laufzeitumgebungen und Compiler-Pipelines lassen sich nun einordnen, ohne zu fragen, welche davon die endgültige Abstraktion ist. Jede davon ist für bestimmte Nutzer eine nützliche Repräsentations- oder Ausführungstechnik. Die semantische Spezifikation legt fest, was jede gewählte Technik bewahren muss.</p>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../denotational-design/denotations.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../denotational-design/denotations.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

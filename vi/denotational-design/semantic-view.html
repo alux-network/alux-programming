@@ -1,0 +1,461 @@
+<!DOCTYPE HTML>
+<html lang="vi" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Vì sao ý nghĩa được đặt lên trước - ALUX programming guidelines</title>
+
+
+        <!-- Custom HTML head -->
+
+        <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
+        <meta property="og:title" content="Vì sao ý nghĩa được đặt lên trước - ALUX programming guidelines">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-vi.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+        <script>
+            try {
+                const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
+                document.documentElement.dataset.world = reader.world || 'real';
+                document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+            } catch (e) {
+                document.documentElement.dataset.world = 'real';
+            }
+        </script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="../theme/reader.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title" data-i18n>Keyboard shortcuts</h2>
+            <div>
+                <p><kbd>←</kbd> / <kbd>→</kbd> <span data-i18n>Turn pages or chapters</span></p>
+                <p><kbd>S</kbd> / <kbd>/</kbd> <span data-i18n>Search the book</span></p>
+                <p><kbd>?</kbd> <span data-i18n>Show keyboard help</span></p>
+                <p><kbd>Esc</kbd> <span data-i18n>Close keyboard help</span></p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <a class="brand" href="../index.html#worlds" title="Choose world" aria-label="Choose world" data-i18n>
+                <img class="brand-logo" src="/alux-bronze.webp" alt="">
+                <span class="brand-name">ALUX</span>
+                <span class="brand-subtitle" data-i18n>Programming</span>
+            </a>
+            <button id="bookmarks-open" class="sidebar-bookmarks" type="button" aria-haspopup="dialog">
+                <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                <span data-i18n>My bookmarks</span>
+                <span id="bookmark-count" class="bookmark-count">0</span>
+            </button>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
+                        <div class="theme-menu">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-moon-o"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        </div>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                            <i class="fa fa-music"></i>
+                        </button>
+                        <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
+                            <i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmark-label" data-i18n>Add bookmark</span>
+                        </button>
+                        <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
+                        <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                    </div>
+
+                    <span class="menu-title"></span>
+
+                    <div class="right-buttons">
+                        <button id="world-toggle" class="world-link" type="button">
+                            <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
+                        </button>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
+                        <div class="theme-menu language-menu">
+                            <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
+                                <i class="fa fa-globe" aria-hidden="true"></i> <span id="language-name"></span>
+                            </button>
+                            <ul id="language-list" class="theme-popup" aria-label="Language" role="menu" data-i18n></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search the book" data-i18n aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <div class="volume">
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <main class="leaves">
+                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"Vì sao ý nghĩa được đặt lên trước","sourceHash":"sha256:ae896b29c1d884e5f54c3937b60d791be4dd745e85f605b91d647e32b95a0ee6"} -->
+<h1 id="why-meaning-comes-first"><a class="header" href="#why-meaning-comes-first">Vì sao ý nghĩa được đặt lên trước</a></h1>
+<p><img src="../../semantic-view.png" alt="The semantic view — choosing what a program means before how it runs" /></p>
+<div id="admonition-liên-quan" class="admonition admonish-tip" role="note" aria-labelledby="admonition-liên-quan-title">
+<div class="admonition-title">
+<div id="admonition-liên-quan-title">
+<p>Liên quan</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-liên-quan"></a>
+</div>
+<div>
+<p>Góc nhìn ngữ nghĩa: <a href="denotations.html">Ngữ nghĩa và tính hợp thành</a>, <a href="design.html">Thiết kế theo ngữ nghĩa</a><br />
+Thiết kế theo ngữ nghĩa trong Rust: <a href="../rust-dd/capability-algebras.html">Các đại số năng lực</a><br />
+Khái niệm: <a href="../concepts/index.html">Giới thiệu</a></p>
+</div>
+</div>
+<div id="admonition-Định-hướng" class="admonition admonish-note" role="note" aria-labelledby="admonition-Định-hướng-title">
+<div class="admonition-title">
+<div id="admonition-Định-hướng-title">
+<p>Định hướng</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Định-hướng"></a>
+</div>
+<div>
+<p>Thiết kế theo ngữ nghĩa chọn ý nghĩa của chương trình trước, rồi suy ra từ vựng, cách biểu diễn và chiến lược thực thi để bảo toàn ý nghĩa đó. Trang này đối chiếu thứ tự ngữ nghĩa ấy với cách thiết kế ưu tiên biểu diễn mà phần lớn phần mềm đang theo.</p>
+</div>
+</div>
+<p>Phần lớn phần mềm được thiết kế theo thứ tự mà nó sẽ chạy:</p>
+<ol>
+<li>Chọn trạng thái.</li>
+<li>Chọn luồng điều khiển.</li>
+<li>Tạo các phương thức xoay quanh cơ chế đó.</li>
+<li>Sau đó mới giải thích các phương thức được dự định mang ý nghĩa gì.</li>
+</ol>
+<p>Thiết kế theo ngữ nghĩa đảo ngược thứ tự ấy:</p>
+<ol>
+<li>Chọn ý nghĩa.</li>
+<li>Xác định cấu trúc hợp thành của ý nghĩa.</li>
+<li>Suy ra từ vựng từ cấu trúc đó.</li>
+<li>Chọn cách biểu diễn và chiến lược thực thi.</li>
+<li>Xác minh rằng chúng bảo toàn ý nghĩa.</li>
+</ol>
+<p>Sự đảo ngược này chính là góc nhìn ngữ nghĩa.</p>
+<div id="admonition-cơ-chế-và-ý-nghĩa" class="admonition admonish-quote" role="note" aria-labelledby="admonition-cơ-chế-và-ý-nghĩa-title">
+<div class="admonition-title">
+<div id="admonition-cơ-chế-và-ý-nghĩa-title">
+<p>Cơ chế và ý nghĩa</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-cơ-chế-và-ý-nghĩa"></a>
+</div>
+<div>
+<p><a href="../concepts/index.html">Các khái niệm</a> và <a href="../insights/index.html">nhận định</a> giải thích những cơ chế lập trình hữu ích. <a href="design.html">Thiết kế theo ngữ nghĩa</a> giải thích cách xác định cơ chế cần bảo toàn điều gì.</p>
+</div>
+</div>
+<h2 id="three-questions"><a class="header" href="#three-questions">Ba câu hỏi</a></h2>
+<p>Khi thiết kế chương trình, hãy tách biệt ba câu hỏi.</p>
+<div class="table-wrapper"><table><thead><tr><th>Góc nhìn</th><th>Câu hỏi</th><th>Sản phẩm thường gặp</th></tr></thead><tbody>
+<tr><td>Ngữ nghĩa</td><td>Chương trình này có ý nghĩa gì?</td><td>giá trị, quan hệ, hàm, phương trình, định luật</td></tr>
+<tr><td>Biểu diễn</td><td>Ý nghĩa đó được mã hóa như thế nào?</td><td>kiểu Rust, đặc trưng, AST, bảng, cây, bytecode</td></tr>
+<tr><td>Vận hành</td><td>Cách biểu diễn được thực thi ra sao?</td><td>vòng lặp, biến đổi trạng thái, tác vụ, thông điệp, bộ diễn giải, máy ảo</td></tr>
+</tbody></table>
+</div>
+<p>Cả ba góc nhìn đều quan trọng. Sai lầm là để biểu diễn hoặc thực thi âm thầm định nghĩa góc nhìn ngữ nghĩa.</p>
+<p>Ngữ nghĩa vận hành là mô tả chính xác và có giá trị về việc thực thi. Nó có thể mô tả mọi chuyển tiếp mà bộ đánh giá thực hiện. Tuy vậy, nó vẫn trả lời một câu hỏi thiết kế khác với cách tiếp cận ngữ nghĩa chỉ định. Câu hỏi ngữ nghĩa chỉ định là chương trình hoàn chỉnh biểu thị giá trị toán học quan sát được nào và những phương trình nào phải đúng bất kể chiến lược thực thi.</p>
+<h2 id="a-small-example"><a class="header" href="#a-small-example">Một ví dụ nhỏ</a></h2>
+<p>Giả sử một hệ thống xác định các vị trí trong một quá trình phân nhánh.</p>
+<p>Thiết kế ưu tiên biểu diễn có thể bắt đầu bằng một vectơ bit:</p>
+<pre><code class="language-rust noplayground">struct BranchId(Vec&lt;bool&gt;);</code></pre>
+<p>Sau đó, các phương thức phát sinh quanh những trường dữ liệu: nối thêm bit, lấy lát cắt tiền tố, so sánh vectơ, tuần tự hóa byte.</p>
+<p>Góc nhìn ngữ nghĩa bắt đầu từ nơi khác:</p>
+<ul>
+<li>Có một vị trí gốc.</li>
+<li>Một vị trí có thể mở rộng sang trái hoặc phải.</li>
+<li>Một vị trí có thể là tổ tiên của vị trí khác.</li>
+<li>Có thể quan sát đường đi giữa tổ tiên và hậu duệ.</li>
+</ul>
+<p>Những phát biểu đó vẫn có ý nghĩa nếu sau này cách biểu diễn trở thành số nguyên, tọa độ cây, giá trị lai gọn nhẹ hoặc khóa cơ sở dữ liệu. Vectơ bit là một cách diễn giải vị trí nhánh, chứ không phải định nghĩa của nó.</p>
+<h2 id="meaning-is-not-documentation-after-the-fact"><a class="header" href="#meaning-is-not-documentation-after-the-fact">Ý nghĩa không phải phần tài liệu viết sau cùng</a></h2>
+<p>Viết văn xuôi về một API cụ thể không biến thiết kế thành thiết kế ngữ nghĩa chỉ định. Ý nghĩa phải ràng buộc API trước khi chọn cách biểu diễn.</p>
+<p>Một mô tả ngữ nghĩa cần cho biết:</p>
+<ul>
+<li>những khác biệt nào quan trọng</li>
+<li>những quan sát nào là nguyên thủy</li>
+<li>các ý nghĩa lớn hơn hợp thành ra sao</li>
+<li>những phương trình nào hợp lệ</li>
+<li>mọi cách triển khai phải bảo toàn điều gì</li>
+<li>những chi tiết nào được chủ ý lược bỏ</li>
+</ul>
+<p>Nếu sản phẩm duy nhất có độ chính xác là một cấu trúc trạng thái hoặc vòng lặp thực thi, thì ý nghĩa vẫn thuộc về phần triển khai.</p>
+<h2 id="abstraction-versus-meaning"><a class="header" href="#abstraction-versus-meaning">Trừu tượng hóa và ý nghĩa</a></h2>
+<div id="admonition-Đặc-trưng-ngữ-cảnh-không-định-nghĩa-ý-nghĩa" class="admonition admonish-warning" role="note" aria-labelledby="admonition-Đặc-trưng-ngữ-cảnh-không-định-nghĩa-ý-nghĩa-title">
+<div class="admonition-title">
+<div id="admonition-Đặc-trưng-ngữ-cảnh-không-định-nghĩa-ý-nghĩa-title">
+<p>Đặc trưng ngữ cảnh không định nghĩa ý nghĩa</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Đặc-trưng-ngữ-cảnh-không-định-nghĩa-ý-nghĩa"></a>
+</div>
+<div>
+<p>Giao diện có thể che giấu cơ chế mà không giải thích ý nghĩa:</p>
+<pre><code class="language-rust noplayground">trait ApplicationContext {
+    fn database(&amp;self) -&gt; &amp;Database;
+    fn settings(&amp;self) -&gt; &amp;Settings;
+    fn runtime(&amp;self) -&gt; &amp;Runtime;
+}</code></pre>
+<p>Giao diện này trừu tượng hóa quyền truy cập vào các thành phần cụ thể. Nó không nêu các quan sát ngữ nghĩa mà phép tính cần có.</p>
+</div>
+</div>
+<div id="admonition-hỏi-trực-tiếp-về-ý-nghĩa" class="admonition admonish-success" role="note" aria-labelledby="admonition-hỏi-trực-tiếp-về-ý-nghĩa-title">
+<div class="admonition-title">
+<div id="admonition-hỏi-trực-tiếp-về-ý-nghĩa-title">
+<p>Hỏi trực tiếp về ý nghĩa</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-hỏi-trực-tiếp-về-ý-nghĩa"></a>
+</div>
+<div>
+<p>Giao diện định hướng theo ý nghĩa yêu cầu chính quan sát đó:</p>
+<pre><code class="language-rust noplayground">trait BranchAlg {
+    type Branch;
+
+    fn branch_root(&amp;self) -&gt; Self::Branch;
+    fn branch_grow(&amp;self, branch: &amp;Self::Branch, direction: Direction) -&gt; Self::Branch;
+    fn branch_path(
+        &amp;self,
+        ancestor: &amp;Self::Branch,
+        descendant: &amp;Self::Branch,
+    ) -&gt; Option&lt;Vec&lt;Direction&gt;&gt;;
+}</code></pre>
+</div>
+</div>
+<p>Đảo ngược phụ thuộc rất hữu ích, nhưng Thiết kế theo ngữ nghĩa đòi hỏi nhiều hơn: ranh giới trừu tượng phải được tổ chức xoay quanh ý nghĩa, chứ không phải vị trí lưu trữ.</p>
+<h2 id="the-direction-of-authority"><a class="header" href="#the-direction-of-authority">Hướng thẩm quyền</a></h2>
+<p>Khi các tạo phẩm bất đồng, đừng trao thẩm quyền cho tạo phẩm gần với mã đang chạy nhất. Hãy hỏi mỗi tạo phẩm cần bảo toàn điều gì.</p>
+<div class="table-wrapper"><table><thead><tr><th>Vai trò</th><th>Nội dung thuộc về đây</th><th>Trách nhiệm</th></tr></thead><tbody>
+<tr><td><strong>Ý nghĩa</strong></td><td>Các quan sát, khác biệt và đẳng thức dự định của miền</td><td>Quyết định thế nào là đúng</td></tr>
+<tr><td><strong>Đặc tả</strong></td><td>Miền ngữ nghĩa, ngữ nghĩa chỉ định, kiểu, phép toán nguyên thủy, định luật và phép hợp thành suy ra</td><td>Phát biểu ý nghĩa đó một cách chính xác</td></tr>
+<tr><td><strong>Hiện thực hóa</strong></td><td>Cách biểu diễn cụ thể, bộ diễn giải, trình biên dịch, môi trường chạy, lưu trữ và lập lịch</td><td>Triển khai đặc tả mà không thay đổi nó</td></tr>
+<tr><td><strong>Bằng chứng</strong></td><td>Chứng minh, kiểm tra định luật, tình huống và so sánh giữa các bộ diễn giải</td><td>Kết nối một cách hiện thực hóa với đặc tả; bản thân nó không định nghĩa ý nghĩa</td></tr>
+</tbody></table>
+</div>
+<p>Từ đó có một quy tắc thực tế để giải quyết bất đồng:</p>
+<ul>
+<li>Nếu một cách triển khai vi phạm định luật ngữ nghĩa, hãy sửa cách triển khai.</li>
+<li>Nếu một bài kiểm thử mâu thuẫn với định luật mà nó cần kiểm tra, hãy sửa bài kiểm thử.</li>
+<li>Nếu đặc tả hình thức không diễn đạt được ý nghĩa dự định của miền, hãy chỉnh sửa đặc tả.</li>
+</ul>
+<p>Một tạo phẩm được phân loại theo vai trò, không phải cú pháp. Một đặc trưng Rust hoặc chương trình bậc nhất có thể thuộc về đặc tả khi nó trực tiếp bảo toàn cấu trúc ngữ nghĩa đã chọn; một kiểu Rust khác có thể chỉ là một cách mã hóa cụ thể. Ngữ nghĩa vận hành hình thức cũng có thể là một phần của đặc tả ngôn ngữ, nhưng các bước chuyển tiếp của nó vẫn phải tuân theo những quan sát và quan hệ tương đương mà ngôn ngữ hướng tới.</p>
+<p>Giờ đây có thể đặt CPS, phi chức năng hóa, monad tự do, máy ảo, môi trường chạy giao thức và quy trình biên dịch vào đúng chỗ mà không cần hỏi cái nào là trừu tượng cuối cùng. Mỗi kỹ thuật đều là một cách biểu diễn hoặc thực thi hữu ích cho một số đối tượng sử dụng. Đặc tả ngữ nghĩa cho biết mọi kỹ thuật được chọn phải bảo toàn điều gì.</p>
+
+                        </main>
+                        <div class="page-foot" aria-hidden="true"><span class="page-number"></span><span>✦</span></div>
+                        <div class="page-foot" aria-hidden="true"><span>✦</span><span class="page-number"></span></div>
+                    </div>
+                    <div class="folio-bar">
+                        <button id="page-prev" class="page-turn" type="button">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
+                        </button>
+                        <span class="folio-center">
+                            <span class="folio-book" data-i18n>ALUX Programming</span>
+                            <span id="folio" class="folio" aria-live="polite"></span>
+                        </span>
+                        <button id="page-next" class="page-turn" type="button">
+                            <span id="page-next-label" data-i18n>Next page</span> <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../denotational-design/denotations.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" data-i18n aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../denotational-design/denotations.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" data-i18n aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <dialog id="bookmarks" class="bookmarks" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-head">
+                <p class="bookmarks-title"><i class="fa fa-bookmark-o" aria-hidden="true"></i> <span id="bookmarks-title" data-i18n>My bookmarks</span></p>
+                <button id="bookmarks-close" class="bookmarks-close" type="button" title="Close bookmarks" aria-label="Close bookmarks" data-i18n>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
+            <p class="bookmarks-empty" data-i18n>No bookmarks yet.</p>
+            <ul id="bookmark-list" class="bookmark-list"></ul>
+        </dialog>
+        <audio id="music" src="/audio/forest-breath.mp3" loop preload="none"></audio>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <script type="module" src="/reader.js"></script>
+        <!-- Keep initial URL searches behind the reader's CJK matching extension. -->
+        <script defer src="../searcher.js"></script>
+
+
+
+    </div>
+    </body>
+</html>
