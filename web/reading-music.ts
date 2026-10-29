@@ -20,6 +20,7 @@ export interface ReadingMusicOptions {
   positionStorage?: Pick<Storage, 'getItem' | 'setItem'>;
   volumeStorage?: Pick<Storage, 'getItem' | 'setItem'>;
   events?: Pick<Window, 'addEventListener' | 'removeEventListener'>;
+  isHidden?: () => boolean;
 }
 
 /** Creates the reading-music controller and returns entry, toggle and teardown operations. */
@@ -31,9 +32,11 @@ export function bindReadingMusic(options: ReadingMusicOptions) {
     positionStorage = globalThis.sessionStorage,
     volumeStorage = globalThis.localStorage,
     events = globalThis.window,
+    isHidden = () => globalThis.document?.hidden ?? false,
   } = options;
   let world: ReadingWorld | undefined;
   let disposed = false;
+  let resumeConsumed = false;
   let noticeOpen = false;
   let noticeTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -60,7 +63,7 @@ export function bindReadingMusic(options: ReadingMusicOptions) {
     if (noticeOpen && world) notice?.update?.({ world, playing });
   };
   const play = () => {
-    if (disposed || !world || isGateway() || !shouldAutoplay()) return;
+    if (disposed || !world || isGateway() || isHidden() || !shouldAutoplay()) return;
     try { void audio.play().then(render).catch(render); } catch { render(); }
   };
   const onTrustedGesture = (event: Event) => {
@@ -73,6 +76,10 @@ export function bindReadingMusic(options: ReadingMusicOptions) {
   const onPause = () => render();
   const onPageHide = () => { remember(); audio.pause(); };
   const onPageShow = (event: PageTransitionEvent) => { if (event.persisted) play(); };
+  const onVisibilityChange = () => {
+    if (isHidden()) audio.pause();
+    else if (world && shouldAutoplay()) play();
+  };
   const showNotice = () => {
     if (disposed || !world) return;
     noticeOpen = true;
@@ -108,6 +115,7 @@ export function bindReadingMusic(options: ReadingMusicOptions) {
   events.addEventListener('keydown', onTrustedGesture, true);
   events.addEventListener('pagehide', onPageHide);
   events.addEventListener('pageshow', onPageShow);
+  events.addEventListener('visibilitychange', onVisibilityChange);
   button.addEventListener('click', onButtonClick);
   button.addEventListener('mouseenter', showNoticeOnHover);
   button.addEventListener('focus', showNoticeOnFocus);
@@ -117,9 +125,12 @@ export function bindReadingMusic(options: ReadingMusicOptions) {
     if (disposed || isGateway()) return;
     audio.pause();
     world = next;
-    const resume = position();
-    if (resume > 0) {
-      try { audio.currentTime = resume; } catch {}
+    if (!resumeConsumed) {
+      resumeConsumed = true;
+      const resume = position();
+      if (resume > 0) {
+        try { audio.currentTime = resume; } catch {}
+      }
     }
     showNotice();
     play();
@@ -159,6 +170,7 @@ export function bindReadingMusic(options: ReadingMusicOptions) {
     events.removeEventListener('keydown', onTrustedGesture, true);
     events.removeEventListener('pagehide', onPageHide);
     events.removeEventListener('pageshow', onPageShow);
+    events.removeEventListener('visibilitychange', onVisibilityChange);
   };
 
   return { enter, closeNotice, showNotice, stop, setVolume, toggle: () => button.click(), dispose };

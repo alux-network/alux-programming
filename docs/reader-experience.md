@@ -6,7 +6,7 @@ This is the maintenance contract for the reader polish following PR #4. The owne
 
 Keep mdBook, TypeScript, Vite, native document navigation and the single `src/` content source. Pagination measures only the current chapter; the folio explicitly reports chapter progress. Do not revive the former framework, duplicate content models, measure the whole book in the background, or alter code/math/translation meaning for layout.
 
-The only new runtime dependency is pinned `page-flip@2.0.7`, a standalone soft-paper renderer. It receives temporary, inert visual snapshots of the current spread, never another book model. Snapshots remove IDs and executable/running media. One renderer is reused per document because this upstream release has no cancellable frame loop; drawing is suspended while idle.
+The only new runtime dependency is pinned `page-flip@2.0.7`, a standalone soft-paper renderer. It receives temporary, inert visual snapshots of the current spread, never another book model. Snapshots remove IDs and executable/running media. One renderer is reused per document because this upstream release has no cancellable frame loop; drawing is suspended while idle, while its animation clock continues to advance.
 
 ## Agreed presentation and behavior
 
@@ -33,15 +33,17 @@ Specific fixes address distinct causes:
 - Native paragraph/list line-height, table striping and theme colors overrode the inherited paper treatment. Explicit semantic styles now cover those elements in each world.
 - Empty mdBook affix items retained margins; wrapped labels lacked a shared number/title layout. Empty items are hidden and numbered labels use hanging columns.
 - Repeated running book names and toolbar search created duplicate navigation/identity. The canonical chapter remains; redundant display elements are removed.
+- The first adapter suspended the upstream render method while idle, which also froze the animation clock used by subsequent folds. Only drawing is now suppressed; consecutive normal-motion turns must show changing page geometry. Pending handoffs are removed on actual size/scale changes, and leaf dimensions are checked again before animation.
 - Our initial replacement animation rotated a rigid rectangle and could expose a new spread before transition. The standalone soft-paper renderer keeps the old spread until the fold commits.
 - Our first native-navigation handoff selected `main.leaves` inside its own old snapshot. That caused a DOM ancestor/descendant insertion error and mismatched content. The reader now binds only the actual direct chapter main; handoff tests cover exact targets, hashes, expiry and geometry.
 - Snapshot image URLs were relative to the departing document, producing a broken request in the next chapter directory. Snapshots now retain the selected absolute image URL; canonical Markdown and rendered chapter URLs remain unchanged.
-- WebKit could fragment an over-height table across several leaves differently after a world switch, changing the total by a page at identical dimensions. Tables now use one bounded local scrollport; all rows remain available and world-switch progress/total assertions remain strict.
+- WebKit could fragment an over-height table across several leaves differently after a world switch, changing the total by a page at identical dimensions. Tables now use one bounded local scrollport; over-height code likewise scrolls within a bounded panel below its fixed copy row, so the bottom cannot be clipped; all rows remain available and world-switch progress/total assertions remain strict.
 - Headers, page numbers and clipboard bindings also target only the canonical volume; snapshot elements never join the live reader controls. New font completion triggers pagination again even when the column viewport dimensions do not change, when a world newly requests math or UI fonts.
 - Unversioned CSS allowed an already-open preview to mix old and new presentation. Native mdBook `hash-files` now versions its emitted assets; local Vite previews disable caching. The source remains the template/configuration, with no rendered-HTML rewrite.
 - Ribbon `cover` scaling and a synthetic clip cropped the approved artwork. Its original bottom-aligned texture treatment is restored. Logos use their actual approved source rather than an unrelated tint.
 - Native search reacts to keyup, which can miss paste or IME completion after its index is warm. Input and composition completion now reuse the native search event path; the search engine and index remain native.
 - Native clipboard text inherited code wrapping. Copy feedback is a nonwrapping localized UI label while mdBook retains clipboard ownership.
+- Review also caught hidden-tab playback and a resume checkpoint reapplied on every world toggle. Hidden documents now pause, and the checkpoint is consumed once per document so toggles retain the live track position.
 - Audio/world defaults and entry language selection were incomplete during migration. Small typed helpers now own those lifecycles and races without changing canonical content.
 
 ## Verification and prevention

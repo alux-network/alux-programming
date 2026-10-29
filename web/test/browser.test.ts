@@ -155,9 +155,9 @@ for (const profile of selected) {
       page.on('requestfailed', (r) => {
         // A navigation aborts the old page's pending requests (Firefox: fonts, the favicon). That is a
         // cancellation, not a missing asset; missing assets still fail through their 404 response.
-        const cancelled = /NS_BINDING_ABORTED|ERR_ABORTED|Load request cancelled/.test(r.failure()?.errorText ?? '');
+        const cancelled = /^(?:NS_BINDING_ABORTED|ERR_ABORTED|Load request cancelled)$/.test(r.failure()?.errorText ?? '');
         // World choice may also pause the reader's forest bed; both are intentional media aborts.
-        const pausedReaderAudio = cancelled && r.resourceType() === 'media' &&
+        const pausedReaderAudio = cancelled &&
           (/\/audio\/welcome\/[^/]+\.mp3$/.test(r.url()) || /\/audio\/forest-breath\.mp3$/.test(r.url()));
         if (r.url().startsWith(base + '/') && !pausedReaderAudio && !(moving.has(page) && cancelled)) {
           problems.push('failed: ' + r.url() + ' ' + r.failure()?.errorText);
@@ -303,6 +303,53 @@ for (const profile of selected) {
       }
     });
 
+    test('an over-height code panel stays bounded and scrolls to its final character', async () => {
+      const chapter = english.pages.find((page) => page.file === 'rust-dd/capability-algebras.html');
+      assert.ok(chapter, 'the expected code chapter is present');
+      const page = await open(chapter.file, 'magic');
+      const pre = page.locator('main.leaves pre:has(> .buttons)').first();
+      assert.equal(await pre.count(), 1, 'the code fixture has a copy-enabled code panel');
+      const codePanel = await pre.evaluate((panel) => {
+        const main = panel.closest('main.leaves')!;
+        const code = panel.querySelector('code')!;
+        const copy = panel.querySelector('.clip-button')!;
+        const before = code.textContent ?? '';
+        code.scrollTop = code.scrollHeight;
+        const walker = document.createTreeWalker(code, NodeFilter.SHOW_TEXT);
+        let last: Text | null = null;
+        while (walker.nextNode()) if (walker.currentNode.textContent?.trim()) last = walker.currentNode as Text;
+        const range = document.createRange();
+        if (last) range.setStart(last, Math.max(0, last.length - 1)), range.setEnd(last, last.length);
+        const char = range.getBoundingClientRect();
+        const panelBox = panel.getBoundingClientRect(), codeBox = code.getBoundingClientRect(), copyBox = copy.getBoundingClientRect();
+        const copyRow = panel.querySelector('.buttons')?.getBoundingClientRect();
+        const panelStyle = getComputedStyle(panel), mainBox = main.getBoundingClientRect();
+        const marginTop = parseFloat(panelStyle.marginTop) || 0, marginBottom = parseFloat(panelStyle.marginBottom) || 0;
+        const marginBox = { top: panelBox.top - marginTop, bottom: panelBox.bottom + marginBottom };
+        // The code port starts immediately below the panel's 1px border; allow that
+        // border overlap while rejecting any button overlap with the scrollable text.
+        const overlaps = !(copyBox.right <= codeBox.left || copyBox.left >= codeBox.right || copyBox.bottom <= codeBox.top + 4 || copyBox.top >= codeBox.bottom);
+        return {
+          bounded: panelBox.height <= main.clientHeight + 1,
+          preMarginInsideLeaf: marginBox.top >= mainBox.top - 1 && marginBox.bottom <= mainBox.bottom + 1,
+          codeViewportInsideLeaf: codeBox.bottom <= mainBox.bottom + 1 && codeBox.top >= mainBox.top - 1,
+          atBottom: code.scrollTop >= code.scrollHeight - code.clientHeight - 1,
+          textUnchanged: code.textContent === before,
+          finalCharacterVisible: !!last && char.bottom > codeBox.top && char.top < codeBox.bottom,
+          copyRowComplete: !!copyRow && copyRow.top >= marginBox.top - 1 && copyRow.bottom <= marginBox.bottom + 1 && copyRow.top >= mainBox.top - 1 && copyRow.bottom <= mainBox.bottom + 1,
+          copyDoesNotCoverCode: !overlaps,
+        };
+      });
+      assert.equal(codePanel.bounded, true, 'code panel does not exceed the physical leaf');
+      assert.equal(codePanel.preMarginInsideLeaf, true, 'code panel margin box stays inside the physical leaf');
+      assert.equal(codePanel.codeViewportInsideLeaf, true, 'code viewport bottom stays inside the physical leaf');
+      assert.equal(codePanel.atBottom, true, 'code port scroll reaches the final character');
+      assert.equal(codePanel.textUnchanged, true, 'code scrolling does not change source text');
+      assert.equal(codePanel.finalCharacterVisible, true, 'the final non-empty code character enters the code viewport');
+      assert.equal(codePanel.copyRowComplete, true, 'copy control row stays completely visible inside the leaf');
+      assert.equal(codePanel.copyDoesNotCoverCode, true, 'copy control does not cover the code port');
+    });
+
     test('a normal-motion chapter boundary hands off to the destination document', async () => {
       const page = await open(english.pages[0]!.file + '#last-page', 'magic');
       await page.emulateMedia({ reducedMotion: 'no-preference' });
@@ -350,6 +397,67 @@ for (const profile of selected) {
         releaseReader();
       }
       assert.notEqual(pathname(page), from);
+    });
+
+    test('two normal-motion page turns change the real page-flip transform before settling', async () => {
+      const { page, count } = await longChapter();
+      assert.ok(count.last < count.total, 'the code fixture has at least one in-chapter spread');
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      for (let turn = 0; turn < 2; turn++) {
+        const before = await folio(page);
+        const click = page.locator('#page-next').click({ noWaitAfter: true });
+        await page.waitForSelector('.turn-leaf .stf__item');
+        const samples = await page.evaluate(() => new Promise<string[]>((resolve) => {
+          const values: string[] = [];
+          let frames = 0;
+          const sample = () => {
+            values.push([...document.querySelectorAll('.turn-leaf .stf__item')].map((item) => getComputedStyle(item).transform).join('|'));
+            if (++frames === 8) resolve(values);
+            else requestAnimationFrame(sample);
+          };
+          requestAnimationFrame(sample);
+        }));
+        assert.ok(new Set(samples).size > 1, `normal turn ${turn + 1} changes stf__item transform across RAF samples`);
+        await click;
+        await page.waitForFunction(() => !document.querySelector('.turn-leaf'));
+        assert.ok((await folio(page)).first > before.first, `normal turn ${turn + 1} advances the folio`);
+      }
+    });
+
+    test('a resize while destination fonts are pending clears the handoff and leaves paging usable', async () => {
+      const page = await open(english.pages[0]!.file + '#last-page', 'magic');
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      const next = await page.locator('.nav-wide-wrapper a[rel~="next"]').evaluate((anchor) => (anchor as HTMLAnchorElement).href);
+      let releaseReader!: () => void;
+      let releaseFont!: () => void;
+      let fontRequested!: () => void;
+      const readerGate = new Promise<void>((resolve) => { releaseReader = resolve; });
+      const fontGate = new Promise<void>((resolve) => { releaseFont = resolve; });
+      const fontSeen = new Promise<void>((resolve) => { fontRequested = resolve; });
+      await page.route('**/reader.js', async (route) => { await readerGate; await route.continue(); });
+      await page.route('**/*.woff2', async (route) => { fontRequested(); await fontGate; await route.continue(); });
+      try {
+        const commit = page.waitForURL(next, { waitUntil: 'commit' });
+        await page.locator('#page-next').click({ noWaitAfter: true });
+        await commit;
+        await page.waitForSelector('[data-navigation-handoff-veil]');
+        releaseReader();
+        await Promise.race([
+          fontSeen,
+          page.waitForTimeout(1500).then(() => { throw new Error('destination did not request a gated font'); }),
+        ]);
+        const size = page.viewportSize()!;
+        await page.setViewportSize({ width: size.width - 80, height: size.height + 40 });
+        await page.waitForFunction(() => !document.querySelector('#content[data-navigation-handoff]') && !document.querySelector('[data-navigation-handoff-veil]') && !document.querySelector('[data-navigation-handoff-style]'));
+        releaseFont();
+        await page.waitForFunction(() => !!document.querySelector('#folio')?.textContent);
+        assert.ok(await page.locator('#page-next').isEnabled(), 'paging controls remain usable after a pending-font resize');
+      } finally {
+        releaseReader();
+        releaseFont();
+        await page.unroute('**/reader.js');
+        await page.unroute('**/*.woff2');
+      }
     });
 
     test('search and the repository remain discoverable in the contents', async () => {

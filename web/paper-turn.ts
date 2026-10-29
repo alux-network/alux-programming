@@ -31,6 +31,16 @@ function snapshot(source: HTMLElement): HTMLElement {
     const table = port.querySelector<HTMLElement>('table');
     if (table) table.style.transform = `translate(${-original.scrollLeft}px,${-original.scrollTop}px)`;
   });
+  const codePorts = source.querySelectorAll<HTMLElement>('pre > code');
+  copy.querySelectorAll<HTMLElement>('pre > code').forEach((port,index) => {
+    const original = codePorts[index]!;
+    if (!original.scrollLeft && !original.scrollTop) return;
+    port.style.cssText += `width:${original.clientWidth}px;height:${original.clientHeight}px;overflow:hidden;`;
+    const text = document.createElement('span');
+    text.style.cssText = `display:block;transform:translate(${-original.scrollLeft}px,${-original.scrollTop}px)`;
+    text.append(...port.childNodes);
+    port.append(text);
+  });
   copy.removeAttribute('id');
   copy.querySelectorAll('[id]').forEach((element) => element.removeAttribute('id'));
   return copy;
@@ -126,8 +136,9 @@ export function paperTurn(main: HTMLElement) {
       engine.loadFromHTML(pages);
       // Upstream 2.0.7 starts an uncancellable frame loop. Reuse one engine, and suppress its
       // drawing while idle rather than leaking another loop and detached book on every click.
-      const renderer = engine.getRender(), render = renderer.render.bind(renderer);
-      renderer.render = (time) => { if (active) render(time); };
+      const renderer = engine.getRender(), drawFrame = renderer.drawFrame.bind(renderer);
+      // Keep upstream's timer current even while idle; the next animation starts from that clock.
+      renderer.drawFrame = () => { if (active) drawFrame(); };
       let started = false;
       engine.on('changeState', ({ data }) => {
         if (data === 'flipping') started = true;

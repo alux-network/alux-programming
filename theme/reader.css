@@ -790,11 +790,12 @@ linear-gradient(var(--reader-trim),var(--reader-trim)) left bottom/1px 24px no-r
 linear-gradient(var(--reader-trim),var(--reader-trim)) right bottom/24px 1px no-repeat,
 linear-gradient(var(--reader-trim),var(--reader-trim)) right bottom/1px 24px no-repeat; }
 .music-volume > span { white-space:nowrap; flex-shrink:0; }
-html[data-world="magic"] pre > .buttons .clip-button { width:auto; display:inline-flex; align-items:center; gap:6px; padding:6px 9px; font:15px/1.4 var(--reader-sans); }
+html[data-world="magic"] pre > .buttons .clip-button { width:auto; min-height:44px; margin:0; display:inline-flex; align-items:center; gap:6px; padding:6px 9px; font:15px/1.4 var(--reader-sans); }
 html[data-world="magic"] .clip-button::after { content:attr(data-copy-label); white-space:nowrap; }
 html[data-world="magic"] pre:hover > .buttons, html[data-world="magic"] pre:focus-within > .buttons { opacity:1; visibility:visible; }
 
 /* Copy remains discoverable on paper and touch screens; its control row never covers code. */
 html[data-world="magic"] main.leaves pre > .buttons { opacity:1; visibility:visible; }
-html[data-world="magic"] main.leaves pre:has(> .buttons) > code { padding-block-start:48px; }
+html[data-world="magic"] main.leaves pre:has(> .buttons) { display:inline-block; vertical-align:top; width:100%; max-height:calc(var(--leaf-height) - 2 * var(--book-font)); box-sizing:border-box; margin-block:var(--book-font); padding-top:56px; overflow:hidden; border:1px solid var(--reader-rule); background:color-mix(in srgb,var(--reader-trim) 14%,var(--reader-paper)); }
+html[data-world="magic"] main.leaves pre:has(> .buttons) > code { max-height:calc(var(--leaf-height) - 2 * var(--book-font) - 58px); box-sizing:border-box; overflow:auto; padding:10px; border:0; background:transparent; font-size:.82em; line-height:1.65; }
 @media (hover:none) { pre > .buttons { opacity:1; visibility:visible; } html[data-world="real"] main.leaves pre:has(> .buttons) > code { padding-block-start:48px; } }

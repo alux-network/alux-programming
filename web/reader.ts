@@ -449,7 +449,10 @@ document.fonts.ready.then(async () => {
   const before = [...veil.querySelectorAll<HTMLElement>(':scope > .turn-sheet')];
   if (!before.length) { teardownNavigationHandoff(); return; }
   const after = paper.sheets();
-  if (before.length !== after.length || matchMedia('(prefers-reduced-motion: reduce)').matches) { teardownNavigationHandoff(); return; }
+  if (before.length !== after.length || before.some((sheet, i) =>
+      Math.abs(parseFloat(sheet.style.width) - parseFloat(after[i]!.style.width)) > 2 ||
+      Math.abs(parseFloat(sheet.style.height) - parseFloat(after[i]!.style.height)) > 2) ||
+      matchMedia('(prefers-reduced-motion: reduce)').matches) { teardownNavigationHandoff(); return; }
   paper.show(before, after, veil.dataset.direction === 'back' ? -1 : 1,
     () => teardownNavigationHandoff(),
     () => veil.remove());
@@ -458,8 +461,15 @@ addEventListener('load', () => { if (!document.querySelector('#content[data-navi
 // Changing worlds can request different math/UI fonts without resizing the column viewport.
 // Recompute its overflow pagination when those fonts finish, preserving normalized progress.
 document.fonts.addEventListener('loadingdone', settle);
-addEventListener('resize', settle);
-new ResizeObserver(settle).observe(main);
+// A pending first-frame veil is also geometry-dependent, even before paper.active becomes true.
+const relayout = () => { teardownNavigationHandoff(); settle(); };
+addEventListener('resize', relayout);
+let observedWidth = main.clientWidth, observedHeight = main.clientHeight;
+new ResizeObserver(() => {
+  const changed = observedWidth !== main.clientWidth || observedHeight !== main.clientHeight;
+  observedWidth = main.clientWidth; observedHeight = main.clientHeight;
+  if (changed) relayout();
+}).observe(main);
 addEventListener('hashchange', () => { fragmentPending = true; restorePending = false; settle(); });
 addEventListener('pagehide', () => { remember(); cancelTurn(); });
 addEventListener('load', restoreScroll);
@@ -504,6 +514,7 @@ document.addEventListener('keydown', (e) => {
 
 /** Changes reading text by `delta`, within 0.7 to 1.5, without enlarging the navigation. */
 function scale(delta: number) {
+  teardownNavigationHandoff();
   prefs.scale = Math.round(Math.min(1.5, Math.max(0.7, (prefs.scale ?? 1) + delta)) * 10) / 10;
   save();
   html.style.setProperty('--reader-scale', String(prefs.scale));

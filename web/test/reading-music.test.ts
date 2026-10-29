@@ -14,12 +14,13 @@ function fixture() {
   } as unknown as HTMLAudioElement;
   const button = { click() { listeners.get('button:click')?.({} as Event); }, addEventListener(type: string, listener: EventListener) { listeners.set(`button:${type}`, listener); }, removeEventListener(type: string) { listeners.delete(`button:${type}`); }, setAttribute() {}, set title(_: string) {} } as unknown as HTMLButtonElement;
   const storage = new Map<string, string>();
+  let hidden = false;
   const notice = { shown: [] as Array<{ world: string; playing: boolean }>, closed: 0, show(state: { world: 'magic' | 'real'; playing: boolean }) { this.shown.push(state); }, hide() { this.closed++; } };
   const prefs: { music?: boolean } = {};
   const events = { addEventListener(type: string, listener: EventListener) { listeners.set(type, listener); }, removeEventListener(type: string) { listeners.delete(type); } } as unknown as Window;
   const storageApi = { getItem: (key: string) => storage.get(key) ?? null, setItem: (key: string, value: string) => { storage.set(key, value); } };
-  const controller = bindReadingMusic({ audio, button, prefs, save() {}, isGateway: () => false, notice, events, positionStorage: storageApi, volumeStorage: storageApi });
-  return { audio, button, listeners, notice, prefs, storage, controller };
+  const controller = bindReadingMusic({ audio, button, prefs, save() {}, isGateway: () => false, notice, events, isHidden: () => hidden, positionStorage: storageApi, volumeStorage: storageApi });
+  return { audio, button, listeners, notice, prefs, storage, controller, setHidden: (value: boolean) => { hidden = value; } };
 }
 
 test('magic entry autoplays by default and both worlds show a closeable notice', async () => {
@@ -97,5 +98,47 @@ test('closing the notice keeps later play and pause updates from reopening it', 
   f.controller.closeNotice();
   f.audio.pause();
   assert.equal(f.notice.shown.length, before);
+  f.controller.dispose();
+});
+
+test('visibility hidden pauses immediately and visible resumes when music is enabled', async () => {
+  const f = fixture();
+  f.controller.enter('magic');
+  await Promise.resolve();
+  assert.equal(f.audio.paused, false);
+  f.setHidden(true);
+  f.listeners.get('visibilitychange')?.({} as Event);
+  assert.equal(f.audio.paused, true);
+  f.setHidden(false);
+  f.listeners.get('visibilitychange')?.({} as Event);
+  await Promise.resolve();
+  assert.equal(f.audio.paused, false);
+  f.controller.dispose();
+});
+
+test('resume checkpoint is consumed once, so world toggles keep current audio position', () => {
+  const f = fixture();
+  f.storage.set('alux-music-time', '50');
+  f.controller.enter('magic');
+  assert.equal(f.audio.currentTime, 50);
+  f.audio.currentTime = 77;
+  f.controller.enter('real');
+  assert.equal(f.audio.currentTime, 77);
+  f.controller.enter('magic');
+  assert.equal(f.audio.currentTime, 77);
+  f.controller.dispose();
+});
+
+test('hidden entry does not play until the document becomes visible', async () => {
+  const f = fixture();
+  let attempts = 0;
+  f.audio.play = () => { attempts++; return Promise.resolve(); };
+  f.setHidden(true);
+  f.controller.enter('magic');
+  assert.equal(attempts, 0);
+  f.setHidden(false);
+  f.listeners.get('visibilitychange')?.({} as Event);
+  await Promise.resolve();
+  assert.equal(attempts, 1);
   f.controller.dispose();
 });
