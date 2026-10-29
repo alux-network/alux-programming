@@ -57,6 +57,12 @@ async function folio(page: Page) {
 /** Waits for the reader's font-dependent geometry to settle. */
 async function ready(page: Page) {
   await page.evaluate(() => document.fonts.ready);
+  // mdBook's sidebar/page wrapper uses CSS transitions during viewport changes;
+  // wait for those and one extra ResizeObserver delivery before reading geometry.
+  await page.evaluate(async () => {
+    const running = document.getAnimations().filter((animation) => animation.playState === 'running');
+    await Promise.allSettled(running.map((animation) => animation.finished.catch(() => undefined)));
+  });
   await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
   await page.waitForFunction(() => {
     const h = document.documentElement;
@@ -67,10 +73,19 @@ async function ready(page: Page) {
 
 /** Waits for nonempty native results belonging to the current query, never stale cached results. */
 async function searchResults(page: Page, query: string) {
-  await page.waitForFunction((q) => {
-    const links = [...document.querySelectorAll<HTMLAnchorElement>('#searchresults li a')];
-    return links.length > 0 && links.every((a) => new URL(a.href).searchParams.get('highlight') === q);
-  }, query);
+  try {
+    await page.waitForFunction((q) => {
+      const links = [...document.querySelectorAll<HTMLAnchorElement>('#searchresults li a')];
+      return links.length > 0 && links.every((a) => new URL(a.href).searchParams.get('highlight') === q);
+    }, query);
+  } catch (error) {
+    const state = await page.evaluate(() => ({
+      value: (document.querySelector('#searchbar') as HTMLInputElement | null)?.value,
+      outer: document.querySelector('#searchresults')?.innerHTML.slice(0, 500),
+      count: document.querySelectorAll('#searchresults li a').length,
+    }));
+    throw new Error((error as Error).message + ' ' + JSON.stringify(state));
+  }
   const queries = await page.locator('#searchresults li a').evaluateAll(
     (links) => links.map((a) => new URL((a as HTMLAnchorElement).href).searchParams.get('highlight')));
   assert.ok(queries.length > 0);
@@ -86,7 +101,7 @@ for (const profile of selected) {
     const problems: string[] = [];
     const moving = new WeakSet<Page>();
     before(async () => {
-      browser = await profile.engine.launch({ headless: true });
+      browser = await profile.engine.launch({ headless: true, ...(profile.engine === chromium && process.env.ALUX_BROWSER_CHANNEL ? { channel: process.env.ALUX_BROWSER_CHANNEL } : {}) });
       console.log(profile.name + ': ' + browser.version() + (profile.options.isMobile ? ' (simulation)' : ''));
     });
     after(async () => { await browser?.close(); });
@@ -132,12 +147,16 @@ for (const profile of selected) {
         // A navigation aborts the old page's pending requests (Firefox: fonts, the favicon). That is a
         // cancellation, not a missing asset; missing assets still fail through their 404 response.
         const cancelled = /NS_BINDING_ABORTED|ERR_ABORTED/.test(r.failure()?.errorText ?? '');
-        if (r.url().startsWith(base + '/') && !(moving.has(page) && cancelled)) {
+        // World choice may also pause the reader's forest bed; both are intentional media aborts.
+        const pausedReaderAudio = cancelled && r.resourceType() === 'media' &&
+          (/\/audio\/welcome\/[^/]+\.mp3$/.test(r.url()) || /\/audio\/forest-breath\.mp3$/.test(r.url()));
+        if (r.url().startsWith(base + '/') && !pausedReaderAudio && !(moving.has(page) && cancelled)) {
           problems.push('failed: ' + r.url() + ' ' + r.failure()?.errorText);
         }
       });
       if (world) {
         await context.addInitScript((w) => {
+          if (window !== window.top) return;
           if (!localStorage.getItem('alux-reader')) {
             localStorage.setItem('alux-reader', JSON.stringify({ world: w, bookmarks: [] }));
           }
@@ -184,6 +203,157 @@ for (const profile of selected) {
       await navigate(page, () => page.goto(base + '/index.html#worlds'));
       await activate(page, '#gateway [data-world="real"]');
       assert.equal(await page.locator('html').getAttribute('data-world'), 'real');
+    });
+
+    test('approved day/night control, stable navigation size and bookmark identity', async () => {
+      const page = await open(route(english, english.pages[0]!.file), 'magic');
+      await page.emulateMedia({ colorScheme: 'dark' });
+      assert.equal(await page.locator('html').evaluate((e) => e.classList.contains('light')), true, 'clean first entry stays daylight');
+      assert.equal(await page.title(), 'ALUX Programming');
+      assert.equal(await page.locator('#theme-list button').count(), 2);
+      const before = await page.locator('#menu-bar').evaluate((e) => e.getBoundingClientRect().height);
+      await activate(page, '#text-larger');
+      assert.equal(await page.locator('#menu-bar').evaluate((e) => e.getBoundingClientRect().height), before);
+      await activate(page, '#theme-toggle');
+      assert.equal(await page.locator('html').evaluate((e) => e.classList.contains('coal')), true);
+      assert.equal(await page.locator('#theme-list').isVisible(), false);
+      await navigate(page, () => page.reload());
+      assert.equal(await page.locator('html').evaluate((e) => e.classList.contains('coal')), true);
+      const duplicate = page.locator('.chapter > .chapter-item.affix').first();
+      assert.ok(await duplicate.count());
+      assert.equal(await duplicate.isVisible(), false);
+    });
+
+    test('blank paper folds a leaf without moving the binding or duplicating identifiers', async () => {
+      const { page, count } = await longChapter();
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      const volume = page.locator('.volume');
+      const before = await volume.boundingBox();
+      assert.ok(before);
+      // Bottom outside the text block: actual paper, not a link, paragraph or button.
+      await page.mouse.click(before.x + before.width - 20, before.y + before.height - 24);
+      await page.waitForFunction(() => !!document.querySelector('.turn-leaf'));
+      assert.equal(await page.locator('.turn-leaf').getAttribute('aria-hidden'), 'true');
+      assert.equal(await page.locator('.turn-leaf [id]').count(), 0);
+      assert.deepEqual(await volume.boundingBox(), before, 'cover remains fixed during the turn');
+      await page.waitForFunction(() => !document.querySelector('.turn-leaf'));
+      assert.equal((await folio(page)).first, count.last + 1);
+      await activate(page, '#page-prev');
+      await page.waitForFunction(() => !document.querySelector('.turn-leaf'));
+      assert.deepEqual(await folio(page), count);
+    });
+
+    test('a world change cancels an unfinished paper turn', async () => {
+      const { page } = await longChapter();
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      await activate(page, '#page-next');
+      await page.waitForFunction(() => !!document.querySelector('.turn-leaf'));
+      await activate(page, '#world-toggle');
+      assert.equal(await page.locator('.turn-leaf').count(), 0);
+      assert.equal(await page.locator('html').getAttribute('data-world'), 'real');
+    });
+
+    test('a resize removes stale leaf geometry and leaves paging usable', async () => {
+      const { page } = await longChapter();
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      await activate(page, '#page-next');
+      await page.waitForFunction(() => !!document.querySelector('.turn-leaf'));
+      const viewport = page.viewportSize()!;
+      await page.setViewportSize({ width: viewport.width - 30, height: viewport.height - 30 });
+      await ready(page);
+      await page.waitForFunction(() => !document.querySelector('.turn-leaf'));
+      const at = await folio(page);
+      await activate(page, '#page-prev');
+      await page.waitForFunction(() => !document.querySelector('.turn-leaf'));
+      assert.ok((await folio(page)).first < at.first);
+    });
+
+    test('English large-type list items do not fragment across facing pages', async () => {
+      const page = await open(english.pages[0]!.file, 'magic');
+      for (const scale of [1, 1.5]) {
+        await page.evaluate((value) => document.documentElement.style.setProperty('--reader-scale', String(value)), scale);
+        await page.evaluate(() => dispatchEvent(new Event('resize')));
+        await ready(page);
+        const layout = await page.locator('main.leaves').evaluate((main) => ({
+          paired: getComputedStyle(main).columnCount === '2',
+          height: main.clientHeight,
+          items: [...main.querySelectorAll('li')].map((item) => [...item.getClientRects()].map((r) => ({ x: r.x, top: r.top, bottom: r.bottom, height: r.height }))),
+        }));
+        assert.ok(layout.items.length > 0);
+        // A phone leaf can be shorter than a large-type list item, so it may continue on the next leaf.
+        if (layout.paired) for (const rects of layout.items) {
+          // A large item may be taller than one physical page; only items that fit must remain whole.
+          const fragmentHeight = rects.reduce((sum, rect) => sum + rect.height, 0);
+          if (fragmentHeight <= layout.height + 1) assert.equal(rects.length, 1, 'a page-fitting list item stays on one facing page');
+        }
+        for (let i = 0; i < layout.items.length; i++) for (const a of layout.items[i]!) {
+          for (const following of layout.items.slice(i + 1)) for (const b of following) {
+            if (Math.abs(a.x - b.x) < 1) assert.ok(Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) < 1, 'list items never overlap within a column');
+          }
+        }
+      }
+    });
+
+    test('a normal-motion chapter boundary hands off to the destination document', async () => {
+      const page = await open(english.pages[0]!.file + '#last-page', 'magic');
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      const next = await page.locator('.nav-wide-wrapper a[rel~="next"]').evaluate((anchor) => (anchor as HTMLAnchorElement).href);
+      const from = pathname(page);
+      let releaseReader!: () => void;
+      const readerGate = new Promise<void>((resolve) => { releaseReader = resolve; });
+      await page.route('**/reader.js', async (route) => {
+        await readerGate;
+        await route.continue();
+      });
+      try {
+        await navigate(page, async () => {
+          const commit = page.waitForURL(next, { waitUntil: 'commit' });
+          await page.locator('#page-next').click({ noWaitAfter: true });
+          await commit;
+          assert.notEqual(pathname(page), from);
+          await page.waitForSelector('[data-navigation-handoff-veil]');
+          assert.equal(await page.locator('#content > .volume > main.leaves').evaluate((main) => getComputedStyle(main).visibility), 'hidden', 'the destination keeps real content hidden before reader.js settles');
+          releaseReader();
+          await page.waitForSelector('.turn-leaf');
+          assert.equal(await page.locator('#content > .volume > main.leaves').evaluate((main) => getComputedStyle(main).visibility), 'hidden', 'the destination keeps real content hidden during the fold');
+          await page.waitForFunction(() => !document.querySelector('#content[data-navigation-handoff]') && !document.querySelector('.turn-leaf'));
+          assert.ok(await page.locator('#content > .volume > main.leaves').isVisible());
+          assert.equal(await page.locator('[data-navigation-handoff-veil]').count(), 0);
+        });
+      } finally {
+        await page.unroute('**/reader.js');
+        releaseReader();
+      }
+      assert.notEqual(pathname(page), from);
+    });
+
+    test('search and the repository remain discoverable in the contents', async () => {
+      const page = await open(chapters[1]!, 'real');
+      if (await page.locator('#sidebar').getAttribute('aria-hidden') === 'true') await activate(page, '#sidebar-toggle');
+      assert.equal(await page.locator('#sidebar-search').isVisible(), true);
+      assert.equal(await page.locator('.sidebar-repository span').first().innerText(), 'GitHub');
+      assert.equal(await page.locator('.right-buttons .fa-github').count(), 0);
+      await activate(page, '#sidebar-search');
+      assert.equal(await page.locator('#searchbar').isVisible(), true);
+      await page.locator('#searchbar').pressSequentially('semantic');
+      await searchResults(page, 'semantic');
+      await page.locator('#searchbar').fill('meaning');
+      await searchResults(page, 'meaning');
+    });
+
+    test('rapid blank-paper input does not skip an extra spread', async () => {
+      const { page, count } = await longChapter();
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      const startingFolio = await page.locator('#folio').innerText();
+      const box = (await page.locator('.volume').boundingBox())!;
+      await page.mouse.click(box.x + box.width - 20, box.y + box.height - 24);
+      await page.waitForFunction(() => !!document.querySelector('.turn-leaf'));
+      await page.mouse.click(box.x + box.width - 20, box.y + box.height - 24);
+      assert.equal(await page.locator('#folio').innerText(), startingFolio);
+      await page.waitForFunction(() => !document.querySelector('.turn-leaf'));
+      assert.equal((await folio(page)).first, count.last + 1);
+      assert.equal(await page.locator('.turn-sheet').count(), 0, 'snapshots leave the DOM after the turn');
+      assert.equal(await page.locator('main.leaves').count(), 1);
     });
 
     test('a direct chapter opens without the gateway', async () => {
@@ -398,7 +568,8 @@ for (const profile of selected) {
       assert.ok(chinese, 'the source editions include Chinese');
       const file = route(chinese, chapters[1]!);
       const page = await open(file, 'real');
-      await activate(page, '#search-toggle');
+      if (await page.locator('#sidebar').getAttribute('aria-hidden') === 'true') await activate(page, '#sidebar-toggle');
+      await activate(page, '#sidebar-search');
       const search = page.locator('#searchbar');
       for (const query of ['Rust', '含义', 'Rust']) {
         await search.fill(query);

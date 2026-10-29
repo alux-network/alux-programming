@@ -29,6 +29,7 @@ exclude = ["^/"]
 # [output.katex]
 
 [output.html]
+hash-files = true
 git-repository-url = "https://github.com/alux-network/alux-programming"
 edit-url-template = "https://github.com/alux-network/alux-programming/edit/master/{path}"
 additional-css = ["theme/index.css", "theme/mdbook-admonish.css", "theme/reader.css"]

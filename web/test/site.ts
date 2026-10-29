@@ -10,7 +10,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Language } from '../languages.ts';
-import { languages } from '../languages.ts';
+import { languages, readerName } from '../languages.ts';
 import { mdbook } from '../mdbook.ts';
 
 interface Chapter {
@@ -132,7 +132,8 @@ export function verifySite(root: string, editions: Edition[]): string[] {
       if (open?.[1] !== edition.lang) problems.push(`${where}: lang is ${open?.[1]}, expected ${edition.lang}`);
       if (open?.[2] !== (edition.rtl ? 'rtl' : 'ltr')) problems.push(`${where}: dir is ${open?.[2]}`);
       const title = html.match(/<title>([^<]*)<\/title>/)?.[1] ?? '';
-      if (!decode(title).startsWith(page.title)) problems.push(`${where}: title "${title}" does not name "${page.title}"`);
+      const named = page.file === 'index.html' ? readerName(edition.lang) : page.title;
+      if (!decode(title).startsWith(named)) problems.push(`${where}: title "${title}" does not name "${named}"`);
 
       // Links and assets: external URLs and bare "#" are skipped, root-absolute ones resolve against
       // the site root (public/ and /reader.js), the rest against the page.

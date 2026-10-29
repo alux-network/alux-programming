@@ -94,6 +94,7 @@ export default defineConfig(({ command }) => ({
   publicDir: resolve('public'),
   appType: 'mpa',
   // The book build rewrites book/html; the plugin reloads once it has finished instead.
+  preview: { headers: { 'Cache-Control': 'no-store' } },
   server: { port: 3478, strictPort: true, watch: { ignored: [out + '/**'] } },
   build: {
     outDir: out,

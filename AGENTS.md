@@ -50,6 +50,21 @@ identify the meaning -> find its single source -> derive the rest from it -> add
 
 not a bigger script, a second list, a post-processing pass over HTML, or an explanation in prose only.
 
+## Approved reader experience
+
+Preserve these behaviors through architecture changes. The implementation remains the native mdBook template, CSS and TypeScript module; never revive the former application framework to restore presentation.
+
+- Magic: a full-width facing-page spread on desktop, one leaf on narrow screens. Georgia for Latin body text and serif fallbacks for CJK. Body size is independent of viewport height; changing it never scales the navigation. Warm ivory paper by day, muted forest-green paper and brass by night.
+- Real: a plain white document by day, readable charcoal by night; black/light logos respectively. The theme control switches only day/night. Daylight is the first-visit default, and a manual night choice survives reloads and world changes.
+- Blank paper and the navigation buttons turn pages. Links, selectable text, code and media retain their own actions. A soft-paper fold leaves the binding and ribbon fixed; reduced motion skips it. Cancel stale snapshots on resize/world changes and never duplicate active media in them. Keep the old spread until the fold completes, and ignore repeated input during a turn. The standalone StPageFlip renderer is a presentation dependency, not an application framework or book model.
+- Keep the discoverable search button below bookmarks. Do not duplicate it in the toolbar. Center the GitHub mark and adjacent external-link arrow in the contents footer; expose its name on hover, keyboard focus and through its accessible label.
+- The brand logo returns to the entrance; do not repeat the book-name affix beneath bookmarks. Keep the canonical index chapter in mdBook.
+- Browser/bookmark identity comes from `readerName` in `languages.ts`: simplified Chinese `ALUX 编程`, traditional Chinese `ALUX 程式設計`, other editions `ALUX Programming`. Use the approved warm-gold mark on the deep-green favicon tile; do not substitute the domain name.
+- A first neutral entrance uses country detection, with a short timeout and browser-language fallback. Unsupported countries use English. Later neutral visits remember the last chosen edition; explicit edition links retain their language. A manual choice made during detection wins. Attempt the localized welcome automatically; recover on trusted interaction when browser audio policy blocks it, and stop it on exit.
+- Pagination still measures only the current chapter and labels chapter progress. Do not restore speculative whole-book totals, background pagination or magic scroll mode.
+
+Before refactoring, capture the approved reader at fixed viewport, reading size, edition, chapter, world and theme, and list its preserved interactions. Compare the affected day/night, language and mobile states after migration. Exercise normal-motion turns as well as reduced motion; passing structure tests does not establish visual or interaction fidelity. Explain regressions in the PR using commit evidence, and explicitly own errors introduced by our follow-up implementation. Present a working preview before claiming acceptance.
+
 ## Layout
 
 ```text
@@ -195,3 +210,5 @@ The book author is Tomislav Grospić (@tgrospic); preserve the Croatian ć. READ
 The root English README links to `docs/README.<lang>.md` for every non-English edition in `web/languages.ts`. Keep introductions, edition links, chapter-local pagination descriptions and contributor credits consistent across all eleven languages. Build and maintenance instructions stay canonical in the English README; localized introductions link to them rather than copy commands.
 
 Localized share cards are rendered from `web/social-cards.ts` into `public/social/` at 1200 × 630. Preserve the full author name, original artwork and matching language copy; regenerate from the source rather than editing baked text.
+
+The current experience contract, regression causes and evidence boundaries are recorded in [docs/reader-experience.md](docs/reader-experience.md). An approved visual reference constrains the experience, not the former source architecture: deliberate refinements may improve composition while preserving agreed behavior. Never treat a generated preview, test count or upstream refactor as owner visual approval.

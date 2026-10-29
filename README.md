@@ -32,7 +32,7 @@ cargo install mdbook-linkcheck --version 0.7.7 --locked
 
 ### Reading
 
-The magic world is a paged book with a fixed-width sidebar. Text size, manual language choice and normalized progress within each edition's chapter are remembered locally. Folios explicitly describe chapter progress. CJK search uses the same lazy-loaded mdBook edition index, with substring matching for scripts that mdBook's default word tokenizer does not segment.
+The reader has a day/night toggle with daylight as its first-visit default. The neutral entrance detects the first edition by country (falling back to browser language on failure), then remembers the last choice; explicit edition links remain explicit. Localized welcome audio attempts autoplay and stops on entry into a reading world. The magic world is a paged book with a fixed-width sidebar. Text size, manual language choice and normalized progress within each edition's chapter are remembered locally. Folios explicitly describe chapter progress. CJK search uses the same lazy-loaded mdBook edition index, with substring matching for scripts that mdBook's default word tokenizer does not segment.
 
 ### Develop
 
