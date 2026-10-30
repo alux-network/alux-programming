@@ -743,7 +743,8 @@ for (const profile of selected) {
 
     test('native code copy acknowledges repeated clicks after paging', async () => {
       const page=await open('concepts/branching.html','magic');
-      let checked=0;
+      await page.evaluate(()=>{document.documentElement.dataset.copyEvents='0';document.addEventListener('copy',()=>{document.documentElement.dataset.copyEvents=String(Number(document.documentElement.dataset.copyEvents)+1)});});
+      let checked=0,copyEvents=0;
       const limit=(await folio(page)).total;
       for(let leaf=0;leaf<limit && checked<2;leaf++) {
         const buttons=page.locator('.volume > main.leaves .clip-button');
@@ -752,7 +753,8 @@ for (const profile of selected) {
           const button=buttons.nth(visible[0]!);
           for(let repeat=0;repeat<2;repeat++) {
             if(profile.options.hasTouch) await button.tap(); else await button.click();
-            await page.waitForFunction(([index,label])=>document.querySelectorAll<HTMLElement>('.volume > main.leaves .clip-button')[Number(index)]?.dataset.copyLabel===label,[String(visible[0]),copyLabels.en[1]]);
+            copyEvents++;
+            await page.waitForFunction(([index,label,count])=>Number(document.documentElement.dataset.copyEvents)===Number(count) && document.querySelectorAll<HTMLElement>('.volume > main.leaves .clip-button')[Number(index)]?.dataset.copyLabel===label,[String(visible[0]),copyLabels.en[1],String(copyEvents)]);
           }
           checked++;
         }
