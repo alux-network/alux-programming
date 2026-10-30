@@ -349,7 +349,7 @@ for (const profile of selected) {
       let players=0,posters=0;
       const page=await open(route(chinese,'concepts/branching.html'),'magic',async p=>{
         await p.route('https://www.youtube.com/embed/**',async r=>{players++;await r.fulfill({contentType:'text/html',body:'<!doctype html><title>Video fixture</title>'});});
-        await p.route('https://i.ytimg.com/**',async r=>{posters++;await r.fulfill({contentType:'image/png',body:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aZ1kAAAAASUVORK5CYII=','base64')});});
+        await p.route('https://i.ytimg.com/**',async r=>{posters++;await r.fulfill({contentType:'image/png',body:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=','base64')});});
       });
       const media=page.locator('.volume > main.leaves iframe');
       const spread=await media.evaluate(e=>{const m=e.closest<HTMLElement>('main')!,r=e.getBoundingClientRect(),box=m.getBoundingClientRect();return Math.floor((r.left-box.left)/(m.clientWidth+parseFloat(getComputedStyle(m).columnGap)));});
