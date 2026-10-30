@@ -6,6 +6,8 @@ import type { Language } from './languages.ts';
 
 export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
   "ar": {
+    "Scroll reading": "القراءة بالتمرير",
+    "Page reading": "القراءة بالصفحات",
     "Keyboard shortcuts": "اختصارات لوحة المفاتيح",
     "Turn pages or chapters": "التنقل بين الصفحات أو الفصول",
     "Show keyboard help": "إظهار مساعدة لوحة المفاتيح",
@@ -30,7 +32,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Remove bookmark": "حذف الإشارة المرجعية",
     "Close bookmarks": "إغلاق الإشارات المرجعية",
     "No bookmarks yet.": "لا توجد إشارات مرجعية بعد.",
-    "Toggle table of contents": "إظهار أو إخفاء الفهرس",
+    "Show table of contents": "إظهار الفهرس",
+    "Hide table of contents": "إخفاء الفهرس",
     "Change reading theme": "تغيير سمة القراءة",
     "Choose world": "اختر العالم",
     "ALUX Programming": "برمجة ALUX",
@@ -41,6 +44,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "مرحبًا"
   },
   "de": {
+    "Scroll reading": "Scrollen",
+    "Page reading": "Blättern",
     "Keyboard shortcuts": "Tastenkürzel",
     "Turn pages or chapters": "Seiten oder Kapitel umblättern",
     "Show keyboard help": "Tastaturhilfe anzeigen",
@@ -65,7 +70,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Remove bookmark": "Lesezeichen entfernen",
     "Close bookmarks": "Lesezeichen schließen",
     "No bookmarks yet.": "Noch keine Lesezeichen.",
-    "Toggle table of contents": "Inhaltsverzeichnis ein- oder ausblenden",
+    "Show table of contents": "Inhaltsverzeichnis anzeigen",
+    "Hide table of contents": "Inhaltsverzeichnis ausblenden",
     "Change reading theme": "Lesethema ändern",
     "Choose world": "Welt auswählen",
     "ALUX Programming": "ALUX-Programmierung",
@@ -76,6 +82,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Willkommen"
   },
   "es": {
+    "Scroll reading": "Lectura continua",
+    "Page reading": "Lectura por páginas",
     "Keyboard shortcuts": "Atajos de teclado",
     "Turn pages or chapters": "Pasar páginas o capítulos",
     "Show keyboard help": "Mostrar la ayuda del teclado",
@@ -100,7 +108,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Remove bookmark": "Quitar marcador",
     "Close bookmarks": "Cerrar marcadores",
     "No bookmarks yet.": "Todavía no tienes marcadores.",
-    "Toggle table of contents": "Mostrar u ocultar el índice",
+    "Show table of contents": "Mostrar el índice",
+    "Hide table of contents": "Ocultar el índice",
     "Change reading theme": "Cambiar el tema de lectura",
     "Choose world": "Elegir mundo",
     "ALUX Programming": "Programación ALUX",
@@ -111,6 +120,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Bienvenida"
   },
   "ja": {
+    "Scroll reading": "スクロール表示",
+    "Page reading": "ページ表示",
     "Keyboard shortcuts": "キーボードショートカット",
     "Turn pages or chapters": "ページや章を移動",
     "Show keyboard help": "キーボード操作のヘルプを表示",
@@ -135,7 +146,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Remove bookmark": "ブックマークを削除",
     "Close bookmarks": "ブックマークを閉じる",
     "No bookmarks yet.": "ブックマークはまだありません。",
-    "Toggle table of contents": "目次の表示を切り替え",
+    "Show table of contents": "目次を開く",
+    "Hide table of contents": "目次を閉じる",
     "Change reading theme": "読書テーマを変更",
     "Choose world": "世界を選ぶ",
     "ALUX Programming": "ALUX プログラミング",
@@ -146,6 +158,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "ようこそ"
   },
   "ko": {
+    "Scroll reading": "스크롤 읽기",
+    "Page reading": "페이지 읽기",
     "Keyboard shortcuts": "키보드 단축키",
     "Turn pages or chapters": "페이지 또는 장 이동",
     "Show keyboard help": "키보드 도움말 표시",
@@ -170,7 +184,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Remove bookmark": "북마크 삭제",
     "Close bookmarks": "북마크 닫기",
     "No bookmarks yet.": "아직 북마크가 없습니다.",
-    "Toggle table of contents": "목차 전환",
+    "Show table of contents": "목차 펼치기",
+    "Hide table of contents": "목차 접기",
     "Change reading theme": "읽기 테마 변경",
     "Choose world": "세계 선택",
     "ALUX Programming": "ALUX 프로그래밍",
@@ -181,6 +196,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "환영합니다"
   },
   "ru": {
+    "Scroll reading": "Читать прокруткой",
+    "Page reading": "Читать по страницам",
     "Keyboard shortcuts": "Сочетания клавиш",
     "Turn pages or chapters": "Переход между страницами или главами",
     "Show keyboard help": "Показать справку по клавишам",
@@ -205,7 +222,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Remove bookmark": "Удалить закладку",
     "Close bookmarks": "Закрыть закладки",
     "No bookmarks yet.": "Закладок пока нет.",
-    "Toggle table of contents": "Показать или скрыть оглавление",
+    "Show table of contents": "Показать оглавление",
+    "Hide table of contents": "Скрыть оглавление",
     "Change reading theme": "Изменить тему чтения",
     "Choose world": "Выбрать мир",
     "ALUX Programming": "Программирование ALUX",
@@ -216,6 +234,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Добро пожаловать"
   },
   "uk": {
+    "Scroll reading": "Читати прокручуванням",
+    "Page reading": "Читати сторінками",
     "Keyboard shortcuts": "Сполучення клавіш",
     "Turn pages or chapters": "Перехід між сторінками або розділами",
     "Show keyboard help": "Показати довідку про клавіші",
@@ -240,7 +260,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Remove bookmark": "Видалити закладку",
     "Close bookmarks": "Закрити закладки",
     "No bookmarks yet.": "Закладок поки немає.",
-    "Toggle table of contents": "Перемкнути зміст",
+    "Show table of contents": "Показати зміст",
+    "Hide table of contents": "Сховати зміст",
     "Change reading theme": "Змінити тему читання",
     "Choose world": "Вибрати світ",
     "ALUX Programming": "Програмування ALUX",
@@ -251,6 +272,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Вітаємо"
   },
   "vi": {
+    "Scroll reading": "Đọc cuộn",
+    "Page reading": "Đọc theo trang",
     "Keyboard shortcuts": "Phím tắt",
     "Turn pages or chapters": "Chuyển trang hoặc chương",
     "Show keyboard help": "Hiện hướng dẫn phím tắt",
@@ -275,7 +298,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Remove bookmark": "Xóa dấu trang",
     "Close bookmarks": "Đóng dấu trang",
     "No bookmarks yet.": "Chưa có dấu trang nào.",
-    "Toggle table of contents": "Bật/tắt mục lục",
+    "Show table of contents": "Mở mục lục",
+    "Hide table of contents": "Đóng mục lục",
     "Change reading theme": "Đổi giao diện đọc",
     "Choose world": "Chọn thế giới",
     "ALUX Programming": "Lập trình ALUX",
@@ -286,6 +310,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Chào mừng"
   },
   "zh-hant": {
+    "Scroll reading": "捲動閱讀",
+    "Page reading": "翻頁閱讀",
     "Keyboard shortcuts": "鍵盤快捷鍵",
     "Turn pages or chapters": "翻頁或切換章節",
     "Show keyboard help": "顯示快捷鍵說明",
@@ -310,7 +336,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Remove bookmark": "刪除書籤",
     "Close bookmarks": "關閉書籤",
     "No bookmarks yet.": "還沒有書籤。",
-    "Toggle table of contents": "展開或收起目錄",
+    "Show table of contents": "展開目錄",
+    "Hide table of contents": "收起目錄",
     "Change reading theme": "切換閱讀主題",
     "Choose world": "選擇世界",
     "ALUX Programming": "ALUX 程式設計",
@@ -321,6 +348,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "歡迎"
   },
   "zh": {
+    "Scroll reading": "滚动阅读",
+    "Page reading": "翻页阅读",
     "Keyboard shortcuts": "键盘快捷键",
     "Turn pages or chapters": "翻页或切换章节",
     "Show keyboard help": "显示快捷键帮助",
@@ -345,7 +374,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Remove bookmark": "删除书签",
     "Close bookmarks": "关闭书签",
     "No bookmarks yet.": "还没有书签。",
-    "Toggle table of contents": "展开或收起目录",
+    "Show table of contents": "展开目录",
+    "Hide table of contents": "收起目录",
     "Change reading theme": "切换阅读主题",
     "Choose world": "选择世界",
     "ALUX Programming": "ALUX 编程",
@@ -355,4 +385,208 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Listen to the welcome": "聆听欢迎语",
     "Welcome": "欢迎"
   }
+};
+
+// Approved localized music controls, shared by both reading worlds.
+export type MusicCopy = {
+  music: string;
+  on: string;
+  off: string;
+  volume: string;
+  close: string;
+  promptTitle: string;
+  promptBody: string;
+  withMusic: string;
+  withoutMusic: string;
+  unavailable: string;
+};
+export const musicCopy: Record<Language, MusicCopy> = {
+  en: {
+    music: 'Reading music',
+    on: 'Play music',
+    off: 'Pause music',
+    volume: 'Volume',
+    close: 'Close',
+    promptTitle: 'A little music for this world?',
+    promptBody:
+      'Let the forest breathe softly in the background while you read.',
+    withMusic: 'Read with music',
+    withoutMusic: 'Read without music',
+    unavailable: 'Music could not start. Try again from the music button.'
+  },
+  zh: {
+    music: '阅读音乐',
+    on: '播放音乐',
+    off: '暂停音乐',
+    volume: '音量',
+    close: '关闭',
+    promptTitle: '为这个世界添一点音乐？',
+    promptBody: '让森林的呼吸轻轻陪伴你的阅读。',
+    withMusic: '伴随音乐阅读',
+    withoutMusic: '不播放音乐',
+    unavailable: '音乐暂时无法播放，请点音乐按钮重试。'
+  },
+  'zh-hant': {
+    music: '閱讀音樂',
+    on: '播放音樂',
+    off: '暫停音樂',
+    volume: '音量',
+    close: '關閉',
+    promptTitle: '為這個世界添一點音樂？',
+    promptBody: '讓森林的呼吸輕輕陪伴你的閱讀。',
+    withMusic: '伴隨音樂閱讀',
+    withoutMusic: '不播放音樂',
+    unavailable: '音樂暫時無法播放，請點音樂按鈕重試。'
+  },
+  ja: {
+    music: '読書の音楽',
+    on: '音楽を再生',
+    off: '音楽を一時停止',
+    volume: '音量',
+    close: '閉じる',
+    promptTitle: 'この世界に音楽を添えますか？',
+    promptBody: '森の息吹を背景に、ゆっくり読書をお楽しみください。',
+    withMusic: '音楽と読む',
+    withoutMusic: '音楽なしで読む',
+    unavailable: '音楽を再生できません。音楽ボタンから再試行してください。'
+  },
+  ko: {
+    music: '읽기 음악',
+    on: '음악 재생',
+    off: '음악 일시 정지',
+    volume: '음량',
+    close: '닫기',
+    promptTitle: '이 세계에 음악을 더할까요?',
+    promptBody: '숲의 숨결을 배경으로 편안하게 읽어 보세요.',
+    withMusic: '음악과 함께 읽기',
+    withoutMusic: '음악 없이 읽기',
+    unavailable: '음악을 재생할 수 없습니다. 음악 버튼을 눌러 다시 시도하세요.'
+  },
+  ar: {
+    music: 'موسيقى القراءة',
+    on: 'تشغيل الموسيقى',
+    off: 'إيقاف الموسيقى مؤقتًا',
+    volume: 'مستوى الصوت',
+    close: 'إغلاق',
+    promptTitle: 'هل ترغب في موسيقى لهذا العالم؟',
+    promptBody: 'دع أنفاس الغابة ترافق قراءتك بهدوء.',
+    withMusic: 'القراءة مع الموسيقى',
+    withoutMusic: 'القراءة دون موسيقى',
+    unavailable: 'تعذر تشغيل الموسيقى. حاول مجددًا من زر الموسيقى.'
+  },
+  de: {
+    music: 'Lesemusik',
+    on: 'Musik abspielen',
+    off: 'Musik pausieren',
+    volume: 'Lautstärke',
+    close: 'Schließen',
+    promptTitle: 'Ein wenig Musik für diese Welt?',
+    promptBody: 'Lass den Atem des Waldes deine Lektüre sanft begleiten.',
+    withMusic: 'Mit Musik lesen',
+    withoutMusic: 'Ohne Musik lesen',
+    unavailable:
+      'Die Musik konnte nicht starten. Versuche es über die Musiktaste erneut.'
+  },
+  es: {
+    music: 'Música para leer',
+    on: 'Reproducir música',
+    off: 'Pausar música',
+    volume: 'Volumen',
+    close: 'Cerrar',
+    promptTitle: '¿Un poco de música para este mundo?',
+    promptBody: 'Deja que el aliento del bosque acompañe tu lectura.',
+    withMusic: 'Leer con música',
+    withoutMusic: 'Leer sin música',
+    unavailable:
+      'No se pudo iniciar la música. Vuelve a intentarlo desde el botón.'
+  },
+  vi: {
+    music: 'Nhạc đọc sách',
+    on: 'Phát nhạc',
+    off: 'Tạm dừng nhạc',
+    volume: 'Âm lượng',
+    close: 'Đóng',
+    promptTitle: 'Thêm chút nhạc cho thế giới này nhé?',
+    promptBody: 'Để hơi thở khu rừng dịu dàng đồng hành cùng bạn đọc.',
+    withMusic: 'Đọc cùng âm nhạc',
+    withoutMusic: 'Đọc không nhạc',
+    unavailable: 'Không thể phát nhạc. Hãy thử lại bằng nút âm nhạc.'
+  },
+  ru: {
+    music: 'Музыка для чтения',
+    on: 'Включить музыку',
+    off: 'Приостановить музыку',
+    volume: 'Громкость',
+    close: 'Закрыть',
+    promptTitle: 'Добавить немного музыки в этот мир?',
+    promptBody: 'Пусть дыхание леса мягко сопровождает чтение.',
+    withMusic: 'Читать с музыкой',
+    withoutMusic: 'Читать без музыки',
+    unavailable: 'Не удалось запустить музыку. Попробуйте снова кнопкой музыки.'
+  },
+  uk: {
+    music: 'Музика для читання',
+    on: 'Увімкнути музику',
+    off: 'Призупинити музику',
+    volume: 'Гучність',
+    close: 'Закрити',
+    promptTitle: 'Додати трохи музики до цього світу?',
+    promptBody: 'Нехай подих лісу тихо супроводжує читання.',
+    withMusic: 'Читати з музикою',
+    withoutMusic: 'Читати без музики',
+    unavailable: 'Не вдалося запустити музику. Спробуйте ще раз кнопкою музики.'
+  }
+};
+
+export const musicHints: Record<Language, string[]> = {
+  en: [
+    'Music is on. Click the note to pause.',
+    'Music is off. Click the note to play.'
+  ],
+  zh: ['音乐已开启，点击音符即可关闭。', '音乐已关闭，点击音符即可开启。'],
+  'zh-hant': [
+    '音樂已開啟，點擊音符即可關閉。',
+    '音樂已關閉，點擊音符即可開啟。'
+  ],
+  ja: [
+    '音楽を再生中。音符を押すと停止します。',
+    '音楽は停止中。音符を押すと再生します。'
+  ],
+  ko: [
+    '음악이 켜져 있습니다. 음표를 누르면 꺼집니다.',
+    '음악이 꺼져 있습니다. 음표를 누르면 켜집니다.'
+  ],
+  vi: [
+    'Nhạc đang bật. Nhấn nốt nhạc để tắt.',
+    'Nhạc đang tắt. Nhấn nốt nhạc để bật.'
+  ],
+  de: [
+    'Musik läuft. Zum Pausieren auf die Note klicken.',
+    'Musik ist aus. Zum Abspielen auf die Note klicken.'
+  ],
+  es: [
+    'Música activada. Pulsa la nota para pausarla.',
+    'Música desactivada. Pulsa la nota para reproducirla.'
+  ],
+  ru: [
+    'Музыка включена. Нажмите на ноту, чтобы выключить.',
+    'Музыка выключена. Нажмите на ноту, чтобы включить.'
+  ],
+  uk: [
+    'Музику ввімкнено. Натисніть ноту, щоб вимкнути.',
+    'Музику вимкнено. Натисніть ноту, щоб увімкнути.'
+  ],
+  ar: [
+    'الموسيقى تعمل. اضغط النوتة لإيقافها.',
+    'الموسيقى متوقفة. اضغط النوتة لتشغيلها.'
+  ]
+};
+
+/** Native mdBook retains ownership of copying; these are only its UI labels. */
+export const copyLabels: Record<Language, readonly [string,string,string]> = {
+  en:['Copy code','Copied','Select code to copy'], zh:['复制代码','已复制','请选择代码复制'], 'zh-hant':['複製程式碼','已複製','請選取程式碼複製'],
+  de:['Code kopieren','Kopiert','Code zum Kopieren auswählen'], es:['Copiar código','Copiado','Selecciona el código para copiar'],
+  ja:['コードをコピー','コピーしました','コードを選択してコピー'], ko:['코드 복사','복사됨','코드를 선택하여 복사하세요'],
+  ru:['Копировать код','Скопировано','Выделите код для копирования'], uk:['Копіювати код','Скопійовано','Виділіть код для копіювання'],
+  vi:['Sao chép mã','Đã sao chép','Chọn mã để sao chép'], ar:['نسخ الشيفرة','تم النسخ','حدد الشيفرة لنسخها'],
 };

@@ -103,6 +103,12 @@ describe('the verifier reports', () => {
       }
     });
   }
+  test('a domain substituted for the entrance bookmark name', () => {
+    const dir = copy();
+    const file = path.join(dir, 'index.html');
+    writeFileSync(file, readFileSync(file, 'utf8').replace(/<title>[^<]*<\/title>/, '<title>programming.alux.network</title>'));
+    assert.ok(verify(dir).some((p) => p.startsWith('en/index.html: title')));
+  });
   test('a wrong title', () => {
     const retitled = { ...english, pages: english.pages.map((p) => (p.file === chapter ? { ...p, title: 'Another title' } : p)) };
     assert.ok(verify(copy(), retitled).some((p) => p.startsWith(`en/${chapter}: title`)));

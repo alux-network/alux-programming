@@ -11,7 +11,8 @@ import type { Browser, BrowserContextOptions, BrowserType, Page } from 'playwrig
 import { preview } from 'vite';
 import type { PreviewServer } from 'vite';
 import { expectedSite } from './site.ts';
-import { uiStrings } from '../i18n.ts';
+import { readerPage, outerPage } from './reader-page.ts';
+import { uiStrings, copyLabels } from '../i18n.ts';
 import type { Edition } from './site.ts';
 
 const editions = await expectedSite();
@@ -56,8 +57,26 @@ async function folio(page: Page) {
 
 /** Waits for the reader's font-dependent geometry to settle. */
 async function ready(page: Page) {
+  const settleFrame = () => page.evaluate(() => {
+    document.documentElement.getBoundingClientRect();
+    document.querySelector('main.leaves')?.getBoundingClientRect();
+    return new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+  });
+  // Force the first layout before awaiting fonts: WebKit can expose an already-resolved
+  // document.fonts.ready before layout has requested the page font.
+  await settleFrame();
   await page.evaluate(() => document.fonts.ready);
-  await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+  // mdBook's sidebar/page wrapper uses CSS transitions during viewport changes;
+  // wait for those and one extra ResizeObserver delivery before reading geometry.
+  await page.evaluate(async () => {
+    // WebKit can suspend color transitions on off-column copy controls indefinitely.
+    // Only the native layout transitions matter to this geometry barrier.
+    const running = document.getAnimations().filter((animation) => animation.playState === 'running' &&
+      animation instanceof CSSTransition && /^(transform|margin-left|margin-right|width|height|left|right)$/.test(animation.transitionProperty));
+    await Promise.allSettled(running.map((animation) => animation.finished.catch(() => undefined)));
+  });
+  await page.evaluate(() => document.fonts.ready);
+  await settleFrame();
   await page.waitForFunction(() => {
     const h = document.documentElement;
     return h.dataset.world !== 'magic' || h.dataset.reading === 'scroll' ||
@@ -67,10 +86,19 @@ async function ready(page: Page) {
 
 /** Waits for nonempty native results belonging to the current query, never stale cached results. */
 async function searchResults(page: Page, query: string) {
-  await page.waitForFunction((q) => {
-    const links = [...document.querySelectorAll<HTMLAnchorElement>('#searchresults li a')];
-    return links.length > 0 && links.every((a) => new URL(a.href).searchParams.get('highlight') === q);
-  }, query);
+  try {
+    await page.waitForFunction((q) => {
+      const links = [...document.querySelectorAll<HTMLAnchorElement>('#searchresults li a')];
+      return links.length > 0 && links.every((a) => new URL(a.href).searchParams.get('highlight') === q);
+    }, query);
+  } catch (error) {
+    const state = await page.evaluate(() => ({
+      value: (document.querySelector('#searchbar') as HTMLInputElement | null)?.value,
+      outer: document.querySelector('#searchresults')?.innerHTML.slice(0, 500),
+      count: document.querySelectorAll('#searchresults li a').length,
+    }));
+    throw new Error((error as Error).message + ' ' + JSON.stringify(state));
+  }
   const queries = await page.locator('#searchresults li a').evaluateAll(
     (links) => links.map((a) => new URL((a as HTMLAnchorElement).href).searchParams.get('highlight')));
   assert.ok(queries.length > 0);
@@ -86,7 +114,7 @@ for (const profile of selected) {
     const problems: string[] = [];
     const moving = new WeakSet<Page>();
     before(async () => {
-      browser = await profile.engine.launch({ headless: true });
+      browser = await profile.engine.launch({ headless: true, ...(profile.engine === chromium && process.env.ALUX_BROWSER_CHANNEL ? { channel: process.env.ALUX_BROWSER_CHANNEL } : {}) });
       console.log(profile.name + ': ' + browser.version() + (profile.options.isMobile ? ' (simulation)' : ''));
     });
     after(async () => { await browser?.close(); });
@@ -112,9 +140,9 @@ for (const profile of selected) {
     }
 
     /** Opens an isolated chapter, watching every scenario for script and internal resource errors. */
-    async function open(file: string, world?: 'magic' | 'real') {
+    async function open(file: string, world?: 'magic' | 'real', prepare?: (page:Page)=>Promise<void>) {
       const context = await browser.newContext({ ...profile.options, reducedMotion: 'reduce' });
-      const page = await context.newPage();
+      const page = readerPage(await context.newPage());
       page.setDefaultTimeout(10_000);
       page.on('pageerror', (e) => problems.push('error: ' + e.message));
       page.on('console', (m) => {
@@ -131,19 +159,24 @@ for (const profile of selected) {
       page.on('requestfailed', (r) => {
         // A navigation aborts the old page's pending requests (Firefox: fonts, the favicon). That is a
         // cancellation, not a missing asset; missing assets still fail through their 404 response.
-        const cancelled = /NS_BINDING_ABORTED|ERR_ABORTED/.test(r.failure()?.errorText ?? '');
-        if (r.url().startsWith(base + '/') && !(moving.has(page) && cancelled)) {
+        const cancelled = /^(?:NS_BINDING_ABORTED|(?:net::)?ERR_ABORTED|Load request cancelled)$/.test(r.failure()?.errorText ?? '');
+        // World choice may also pause the reader's forest bed; both are intentional media aborts.
+        const pausedReaderAudio = cancelled &&
+          (/\/audio\/welcome\/[^/]+\.mp3$/.test(r.url()) || /\/audio\/forest-breath\.mp3$/.test(r.url()));
+        if (r.url().startsWith(base + '/') && !pausedReaderAudio && !(moving.has(page) && cancelled)) {
           problems.push('failed: ' + r.url() + ' ' + r.failure()?.errorText);
         }
       });
       if (world) {
         await context.addInitScript((w) => {
+          if (window !== window.top) return;
           if (!localStorage.getItem('alux-reader')) {
             localStorage.setItem('alux-reader', JSON.stringify({ world: w, bookmarks: [] }));
           }
           sessionStorage.setItem('alux-entered', '1');
         }, world);
       }
+      await prepare?.(page);
       await navigate(page, () => page.goto(base + '/' + file));
       await ready(page);
       return page;
@@ -166,6 +199,18 @@ for (const profile of selected) {
       else await page.locator(selector).click();
     }
 
+    /** The paper footer can sit below a phone viewport. Bring this real click target onscreen first. */
+    async function blankFooter(page: Page) {
+      await page.evaluate(() => {
+        const box=document.querySelector('.volume')!.getBoundingClientRect();
+        if(box.bottom>innerHeight) scrollTo(0,scrollY+box.bottom-innerHeight+8);
+      });
+      await ready(page);
+      const box=(await page.locator('.volume').boundingBox())!;
+      assert.ok(box.y+box.height-24 < page.viewportSize()!.height, 'blank click target is onscreen');
+      return box;
+    }
+
     /** Opens the sidebar first when a narrow viewport hides its bookmark entry. */
     async function openBookmarks(page: Page) {
       if (!(await page.locator('#bookmarks-open').isVisible())) await activate(page, '#sidebar-toggle');
@@ -184,6 +229,435 @@ for (const profile of selected) {
       await navigate(page, () => page.goto(base + '/index.html#worlds'));
       await activate(page, '#gateway [data-world="real"]');
       assert.equal(await page.locator('html').getAttribute('data-world'), 'real');
+    });
+
+    test('approved day/night control, stable navigation size and bookmark identity', async () => {
+      const page = await open(route(english, english.pages[0]!.file), 'magic');
+      await page.emulateMedia({ colorScheme: 'dark' });
+      assert.equal(await page.locator('html').evaluate((e) => e.classList.contains('light')), true, 'clean first entry stays daylight');
+      assert.equal(await page.title(), 'ALUX Programming');
+      assert.equal(await page.locator('#theme-list button').count(), 2);
+      const before = await page.locator('#menu-bar').evaluate((e) => e.getBoundingClientRect().height);
+      const sizes=()=>page.evaluate(()=>({body:parseFloat(getComputedStyle(document.querySelector('main.leaves')!).fontSize),directory:parseFloat(getComputedStyle(document.querySelector('.chapter li.chapter-item')!).fontSize),part:parseFloat(getComputedStyle(document.querySelector('.chapter .part-title')!).fontSize),bookmarks:parseFloat(getComputedStyle(document.getElementById('bookmarks-open')!).fontSize),search:parseFloat(getComputedStyle(document.getElementById('sidebar-search')!).fontSize)}));
+      if (profile.options.isMobile) { await activate(page, '#sidebar-toggle'); await ready(page); }
+      const original=await sizes();
+      for(const size of Object.values(original)) assert.equal(size,original.body,'contents and body share the default size');
+      if (profile.options.isMobile) await activate(page, '#sidebar-toggle');
+      await activate(page, '#text-larger');
+      if (profile.options.isMobile) { await activate(page, '#sidebar-toggle'); await ready(page); }
+      const enlarged=await sizes();
+      for(const size of Object.values(enlarged)) assert.equal(size,enlarged.body,'contents and body enlarge together');
+      assert.ok(enlarged.body>original.body);
+
+      if (profile.options.isMobile) { await activate(page, '#sidebar-toggle'); await ready(page); }
+      assert.equal(await page.locator('#menu-bar').evaluate((e) => e.getBoundingClientRect().height), before);
+      await activate(page, '#theme-toggle');
+      assert.equal(await page.locator('html').evaluate((e) => e.classList.contains('coal')), true);
+      assert.equal(await page.locator('#theme-list').isVisible(), false);
+      const expanded=await page.locator('#sidebar-toggle').getAttribute('aria-expanded');
+      assert.equal(await page.locator('#sidebar-toggle').getAttribute('title'),expanded==='true'?'Hide table of contents':'Show table of contents');
+      await activate(page,'#sidebar-toggle'); await ready(page);
+      assert.equal(await page.locator('#sidebar-toggle').getAttribute('title'),expanded==='true'?'Show table of contents':'Hide table of contents');
+      await navigate(page, () => page.reload());
+      assert.equal(await page.locator('html').evaluate((e) => e.classList.contains('coal')), true);
+      const duplicate = page.locator('.chapter > .chapter-item.affix').first();
+      assert.ok(await duplicate.count());
+      assert.equal(await duplicate.isVisible(), false);
+    });
+
+    if (!profile.options.isMobile) test('night static destination and running heads match the settled printed page', async () => {
+      for (const file of ['insights/evm-alg.html','insights/referential-transparency.html']) {
+        const page=await open(route(chinese,file),'magic');
+        await activate(page,'#theme-toggle'); await ready(page);
+        await page.emulateMedia({reducedMotion:'no-preference'});
+        const restingPaper=await page.locator('.volume').evaluate(e=>getComputedStyle(e).backgroundColor);
+        await activate(page,'#page-next');
+        await page.waitForFunction(()=>[...document.querySelectorAll<HTMLElement>('.turn-leaf main.leaves')].some(e=>{
+          const item=e.closest<HTMLElement>('.stf__item')!;
+          const m=new DOMMatrixReadOnly(getComputedStyle(item).transform);
+          return parseFloat(e.style.left)<0 && !!item.style.transform && Math.abs(m.a-1)<.0001 && Math.abs(m.d-1)<.0001 && Math.abs(m.b)<.0001 && Math.abs(m.c)<.0001;
+        }),undefined,{timeout:5000});
+        const printed=await page.evaluate(()=>{
+          const mains=[...document.querySelectorAll<HTMLElement>('.turn-leaf main.leaves')];
+          const target=mains.findLast(e=>{const item=e.closest<HTMLElement>('.stf__item')!;const m=new DOMMatrixReadOnly(getComputedStyle(item).transform);return parseFloat(e.style.left)<0 && !!item.style.transform && Math.abs(m.a-1)<.0001 && Math.abs(m.d-1)<.0001 && Math.abs(m.b)<.0001 && Math.abs(m.c)<.0001;});
+          if (!target) throw new Error('the static destination leaf must be present during the fold');
+          const sheet=target.closest<HTMLElement>('.turn-sheet')!;
+          const rect=(e:Element)=>{const r=e.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height};};
+          return {content:[...target.querySelectorAll('h1,h2,p,li,pre,table')].map(rect),head:rect(sheet.querySelector('.page-head')!),marked:sheet.hasAttribute('data-paper-curl'),background:getComputedStyle(sheet).backgroundColor,image:getComputedStyle(sheet).backgroundImage,shadow:getComputedStyle(sheet).boxShadow,border:getComputedStyle(sheet).borderRightWidth};
+        });
+        assert.equal(await page.locator('.turn-leaf [data-paper-curl]').count(),1,'one actual lifted leaf receives the curve highlight');
+        assert.equal(printed.marked,false,'static destination never receives curl lighting');
+        assert.equal(printed.image,'none','static destination has no temporary gradient');
+        assert.equal(printed.background,restingPaper,'static destination keeps the resting paper color');
+        assert.equal(printed.shadow,'none','static night paper has no extra illuminated rim');
+        assert.equal(printed.border,'0px','the renderer adds no extra gold side border');
+        await page.waitForFunction(()=>!document.querySelector('.turn-leaf'));
+        const settled=await page.evaluate(()=>{
+          const rect=(e:Element)=>{const r=e.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height};};
+          return {content:[...document.querySelectorAll('.volume > main.leaves :is(h1,h2,p,li,pre,table)')].map(rect),head:rect(document.querySelectorAll('.volume > .page-head')[1]!)};
+        });
+        assert.equal(printed.content.length,settled.content.length);
+        for(let i=0;i<printed.content.length;i++) for(const key of ['x','y','width','height'] as const) assert.ok(Math.abs(printed.content[i]![key]-settled.content[i]![key])<1,file+' static destination '+i+' '+key);
+        for(const key of ['x','y','width','height'] as const) assert.ok(Math.abs(printed.head[key]-settled.head[key])<1,file+' running head '+key);
+      }
+    });
+
+    if (!profile.options.isMobile) test('fixed gutter and paper texture stay registered through a full turn', async () => {
+      for(const night of [false,true]) {
+        const page=await open(route(chinese,'rust-dd/laws.html'),'magic');
+        if(night){await activate(page,'#theme-toggle');await ready(page);}
+        await page.emulateMedia({reducedMotion:'no-preference'});
+        const before=await page.locator('.volume').boundingBox();
+        await activate(page,'#page-next');
+        await page.waitForSelector('.turn-leaf .stf__item.--simple');
+        const sampled=await page.evaluate(()=>{
+          const volume=document.querySelector<HTMLElement>('.volume')!,host=document.querySelector<HTMLElement>('.turn-leaf')!;
+          const block=host.querySelector('.stf__block')!,gutter=getComputedStyle(block,'::after'),binding=getComputedStyle(volume,'::before');
+          const cover=volume.getBoundingClientRect(),box=block.getBoundingClientRect();
+          const grain=getComputedStyle(volume).backgroundSize.split(',')[1]?.trim().split(/\s+/).map(Number.parseFloat)??[];
+          const geometry={content:gutter.content,shade:gutter.backgroundImage,originalShade:binding.backgroundImage,
+            x:box.left+parseFloat(gutter.left)-(cover.left+volume.clientLeft+parseFloat(binding.left)),
+            y:box.top+parseFloat(gutter.top)-(cover.top+volume.clientTop+parseFloat(binding.top)),
+            height:box.height-parseFloat(gutter.top)-parseFloat(gutter.bottom)-(volume.clientHeight-parseFloat(binding.top)-parseFloat(binding.bottom)),
+            ribbonAbove:Number(getComputedStyle(volume,'::after').zIndex)>Number(getComputedStyle(host).zIndex),
+            textures:[...host.querySelectorAll<HTMLElement>('.stf__item.--simple')].map(sheet=>{
+              const paper=sheet.querySelector('.turn-sheet-content')!,r=paper.getBoundingClientRect(),style=getComputedStyle(paper),position=style.backgroundPosition.split(',')[1]?.trim().split(/\s+/)??[];
+              return {image:style.backgroundImage,position,
+                x:r.left+parseFloat(position[0]??'NaN')-(cover.left+(cover.width-grain[0]!)/2),
+                y:r.top+parseFloat(position[1]??'NaN')-(cover.top+(cover.height-grain[1]!)/2)};
+            })};
+          return new Promise<{geometry:typeof geometry;samples:{top:number;height:number;scroll:number}[]}>(resolve=>{
+            const samples:{top:number;height:number;scroll:number}[]=[];let finished=0;
+            const sample=()=>{const r=volume.getBoundingClientRect();samples.push({top:r.top,height:r.height,scroll:scrollY});if(!document.querySelector('.turn-leaf'))finished++;if(finished===3)resolve({geometry,samples});else requestAnimationFrame(sample);};sample();
+          });
+        });
+        assert.equal(sampled.geometry.content,'""','the binding shade remains painted above stationary snapshots');
+        assert.equal(sampled.geometry.shade,sampled.geometry.originalShade,'the gutter uses the resting binding material');
+        for(const key of ['x','y','height'] as const) assert.ok(Math.abs(sampled.geometry[key])<1,'gutter '+key+' matches the resting book');
+        assert.ok(sampled.geometry.ribbonAbove,'the fixed ribbon stays above the paper renderer');
+        if(!night) for(const texture of sampled.geometry.textures){
+          assert.ok(texture.image.includes('ivory-paper'),'snapshot retains the actual paper texture');
+          assert.ok(!texture.position.join(' ').includes('%'),'texture phase uses the measured book origin');
+          assert.ok(Math.abs(texture.x)<1 && Math.abs(texture.y)<1,'static paper grain never re-centers at overlay entry');
+        }
+        for(const key of ['top','height','scroll'] as const) assert.ok(Math.max(...sampled.samples.map(s=>s[key]))-Math.min(...sampled.samples.map(s=>s[key]))<1,'full turn never changes '+key);
+        assert.deepEqual(await page.locator('.volume').boundingBox(),before,'binding stays put through overlay removal');
+      }
+    });
+
+    test('video artwork remains on turning paper without replacing the native player', async () => {
+      let players=0,posters=0;
+      const page=await open(route(chinese,'concepts/branching.html'),'magic',async p=>{
+        await p.route('https://www.youtube.com/embed/**',async r=>{players++;await r.fulfill({contentType:'text/html',body:'<!doctype html><title>Video fixture</title>'});});
+        await p.route('https://i.ytimg.com/**',async r=>{posters++;await r.fulfill({contentType:'image/png',body:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=','base64')});});
+      });
+      const media=page.locator('.volume > main.leaves iframe');
+      const spread=await media.evaluate(e=>{const m=e.closest<HTMLElement>('main')!,r=e.getBoundingClientRect(),box=m.getBoundingClientRect();return Math.floor((r.left-box.left)/(m.clientWidth+parseFloat(getComputedStyle(m).columnGap)));});
+      for(let i=0;i<spread;i++)await activate(page,'#page-next');
+      await page.evaluate(()=>{const f=document.querySelector('.volume > main.leaves iframe') as HTMLIFrameElement;(window as any).nativeVideo={element:f,window:f.contentWindow,height:f.closest('figure')!.offsetHeight};});
+      const initialPlayers=players;
+      await page.emulateMedia({reducedMotion:'no-preference'});
+      // Observe inside the browser before triggering the short fold. Multiple protocol
+      // round trips can outlast it on CI, even though the artwork was painted correctly.
+      await page.evaluate(()=>{
+        (window as any).foldMediaState=undefined;
+        const sample=()=>{
+          const copy=document.querySelector<HTMLElement>('.turn-leaf figure:has(.turn-media)');
+          const image=copy?.querySelector<HTMLImageElement>('img');
+          if(!copy?.offsetHeight || !image?.complete || !image.naturalWidth){requestAnimationFrame(sample);return;}
+          const original=(window as any).nativeVideo;
+          (window as any).foldMediaState={live:original.element===document.querySelector('.volume > main.leaves iframe') && original.window===original.element.contentWindow,copyHeight:copy.offsetHeight,sourceHeight:original.height,players:document.querySelectorAll('.turn-leaf iframe,.turn-leaf video,.turn-leaf audio').length,poster:image.src,playMark:getComputedStyle(copy.querySelector('.turn-media')!,'::after').content};
+        };
+        requestAnimationFrame(sample);
+      });
+      await activate(page,'#page-next');
+      await page.waitForFunction(()=>(window as any).foldMediaState);
+      const state=await page.evaluate(()=>(window as any).foldMediaState as {live:boolean;copyHeight:number;sourceHeight:number;players:number;poster:string;playMark:string});
+      assert.equal(state.live,true,'the existing iframe and browsing context are retained');
+      assert.equal(state.copyHeight,state.sourceHeight,'poster preserves the iframe baseline and figure height');
+      assert.equal(state.players,0,'fold artwork creates no duplicate playback');
+      assert.ok(state.poster?.includes('/oaIMMclGuog/hqdefault.jpg'),'artwork comes from this canonical video');
+      assert.equal(state.playMark,'""','the video remains recognizable even before external artwork loads');
+      await page.waitForFunction(()=>!document.querySelector('.turn-leaf'));
+      assert.equal(await media.evaluate(e=>e===(window as any).nativeVideo.element && (e as HTMLIFrameElement).contentWindow===(window as any).nativeVideo.window),true);
+      assert.equal(players,initialPlayers,'turning never reloads the native player');assert.ok(posters>0);
+    });
+
+    if(!profile.options.isMobile) test('long code follows its heading without leaving an almost empty interior leaf', async()=>{
+      const page=await open(route(chinese,'concepts/free_monad.html'),'magic');
+      const placement=await page.locator('#free-monad-type').evaluate(h=>{
+        const heading=h.closest('h3')!,pre=heading.nextElementSibling!,main=heading.closest('main')!,box=main.getBoundingClientRect(),gap=parseFloat(getComputedStyle(main).columnGap),width=(main.clientWidth-gap)/2;
+        const col=(e:Element)=>Math.floor((e.getBoundingClientRect().left-box.left+1)/(width+gap));
+        return {heading:col(heading),code:col(pre),panel:pre.getBoundingClientRect().height,leaf:main.clientHeight};
+      });
+      assert.equal(placement.heading,placement.code,'the section and its code begin on the same leaf');
+      assert.ok(placement.panel<placement.leaf*.8,'long listings leave space for surrounding prose');
+    });
+
+    test('paper begins at the closed corner instead of an already lifted pose', async () => {
+      const page=await open(route(chinese,'insights/index.html'),'magic');
+      await page.emulateMedia({reducedMotion:'no-preference'});
+      await page.evaluate(()=>{
+        (window as any).firstCorner=undefined;
+        const sample=()=>{
+          const e=document.querySelector<HTMLElement>('[data-paper-curl]');
+          if(!e?.style.clipPath){requestAnimationFrame(sample);return;}
+          const values=e.style.clipPath.match(/[-+]?(?:\d*\.)?\d+(?:e[-+]?\d+)?(?=px)/gi)?.map(Number) ?? [];
+          let area=0;
+          for(let i=0;i<values.length;i+=2){const next=(i+2)%values.length;area+=values[i]!*values[next+1]!-values[next]!*values[i+1]!;}
+          (window as any).firstCorner={points:values.length,ratio:Math.abs(area/2)/(e.offsetWidth*e.offsetHeight)};
+        };
+        requestAnimationFrame(sample);
+      });
+      await activate(page,'#page-next');
+      await page.waitForFunction(()=>(window as any).firstCorner,undefined,{timeout:5000});
+      const first=await page.evaluate(()=>(window as any).firstCorner as {points:number;ratio:number});
+      assert.ok(first.points>=6,'the first painted fold has an actual clipping polygon');
+      assert.ok(first.ratio<.006,'the first painted corner is still nearly closed');
+      await page.waitForFunction(()=>!document.querySelector('.turn-leaf'),undefined,{timeout:3000});
+    });
+
+    test('blank paper folds a leaf without moving the binding or duplicating identifiers', async () => {
+      const { page, count } = await longChapter();
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      const volume = page.locator('.volume');
+      const before = await blankFooter(page);
+      assert.ok(before);
+      // Bottom outside the text block: actual paper, not a link, paragraph or button.
+      await page.mouse.click(before.x + before.width - 20, before.y + before.height - 24);
+      await page.waitForFunction(() => !!document.querySelector('.turn-leaf'));
+      // Sample the live short animation in one browser task, rather than round trips that outlast it.
+      const sampled=await page.evaluate(()=>{
+        const leaf=document.querySelector<HTMLElement>('.turn-leaf')!;
+        const source=document.querySelector('.volume > main.leaves')!;
+        const copy=leaf.querySelector('main.leaves')!;
+        const cover=document.querySelector('.volume')!.getBoundingClientRect(),box=leaf.getBoundingClientRect();
+        const read=(main:Element)=>[...main.querySelectorAll('h1,h2,h3,p,li,pre')].map(e=>({height:(e as HTMLElement).offsetHeight,line:getComputedStyle(e).lineHeight,margin:getComputedStyle(e).marginTop,rects:e.getClientRects().length}));
+        const rest=leaf.querySelector('.stf__item.--simple main.leaves')!.getBoundingClientRect(),live=source.getBoundingClientRect();
+        const state={baseline:{x:rest.left-live.left,y:rest.top-live.top},hidden:leaf.getAttribute('aria-hidden'),ids:leaf.querySelectorAll('[id]').length,overflow:getComputedStyle(leaf).overflow,x:box.left-cover.left,y:box.top-cover.top,source:read(source),copy:read(copy)};
+        return new Promise<{state:typeof state;samples:{height:number;scroll:number}[]}>(resolve=>{
+          const samples:{height:number;scroll:number}[]=[];
+          const sample=()=>{samples.push({height:document.documentElement.scrollHeight,scroll:scrollY});if(samples.length===10)resolve({state,samples});else requestAnimationFrame(sample)};sample();
+        });
+      });
+      assert.equal(sampled.state.hidden,'true');
+      assert.equal(sampled.state.ids,0);
+      assert.ok(Math.abs(sampled.state.baseline.x)<1 && Math.abs(sampled.state.baseline.y)<1,'stationary printed text never hops when the overlay appears');
+      assert.equal(sampled.state.overflow,'visible','moving paper may lift beyond the binding');
+      assert.ok(Math.abs(sampled.state.x-17)<1 && Math.abs(sampled.state.y-17)<1,'fold remains aligned with the scrolled cover');
+      assert.deepEqual(await volume.boundingBox(),before,'cover remains fixed during the turn');
+      assert.equal(new Set(sampled.samples.map(s=>s.height)).size,1,'curl does not enlarge the document');
+      assert.equal(new Set(sampled.samples.map(s=>s.scroll)).size,1,'turn never scrolls the desk');
+      assert.deepEqual(sampled.state.copy,sampled.state.source,'moving paper retains heading, paragraph, list and code geometry');
+      await page.waitForFunction(() => !document.querySelector('.turn-leaf'));
+      assert.equal((await folio(page)).first, count.last + 1);
+      await activate(page, '#page-prev');
+      await page.waitForFunction(() => !document.querySelector('.turn-leaf'));
+      assert.deepEqual(await folio(page), count);
+    });
+
+    test('a world change cancels an unfinished paper turn', async () => {
+      const { page } = await longChapter();
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      await activate(page, '#page-next');
+      await page.waitForFunction(() => !!document.querySelector('.turn-leaf'));
+      await activate(page, '#world-toggle');
+      assert.equal(await page.locator('.turn-leaf').count(), 0);
+      assert.equal(await page.locator('html').getAttribute('data-world'), 'real');
+    });
+
+    test('a resize removes stale leaf geometry and leaves paging usable', async () => {
+      const { page } = await longChapter();
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      await activate(page, '#page-next');
+      await page.waitForFunction(() => !!document.querySelector('.turn-leaf'));
+      const viewport = page.viewportSize()!;
+      await page.setViewportSize({ width: viewport.width - 30, height: viewport.height - 30 });
+      await ready(page);
+      await page.waitForFunction(() => !document.querySelector('.turn-leaf'));
+      const at = await folio(page);
+      await activate(page, '#page-prev');
+      await page.waitForFunction(() => !document.querySelector('.turn-leaf'));
+      assert.ok((await folio(page)).first < at.first);
+    });
+
+    test('English large-type list items do not fragment across facing pages', async () => {
+      const page = await open(english.pages[0]!.file, 'magic');
+      for (const scale of [1, 1.5]) {
+        await page.evaluate((value) => document.documentElement.style.setProperty('--reader-scale', String(value)), scale);
+        await page.evaluate(() => dispatchEvent(new Event('resize')));
+        await ready(page);
+        const layout = await page.locator('main.leaves').evaluate((main) => ({
+          paired: getComputedStyle(main).columnCount === '2',
+          height: main.clientHeight,
+          items: [...main.querySelectorAll('li')].map((item) => [...item.getClientRects()].map((r) => ({ x: r.x, top: r.top, bottom: r.bottom, height: r.height }))),
+        }));
+        assert.ok(layout.items.length > 0);
+        // A phone leaf can be shorter than a large-type list item, so it may continue on the next leaf.
+        if (layout.paired) for (const rects of layout.items) {
+          // A large item may be taller than one physical page; only items that fit must remain whole.
+          const fragmentHeight = rects.reduce((sum, rect) => sum + rect.height, 0);
+          if (fragmentHeight <= layout.height + 1) assert.equal(rects.length, 1, 'a page-fitting list item stays on one facing page');
+        }
+        for (let i = 0; i < layout.items.length; i++) for (const a of layout.items[i]!) {
+          for (const following of layout.items.slice(i + 1)) for (const b of following) {
+            if (Math.abs(a.x - b.x) < 1) assert.ok(Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) < 1, 'list items never overlap within a column');
+          }
+        }
+      }
+    });
+
+    test('an over-height code panel stays bounded and scrolls to its final character', async () => {
+      const chapter = english.pages.find((page) => page.file === 'rust-dd/capability-algebras.html');
+      assert.ok(chapter, 'the expected code chapter is present');
+      const page = await open(chapter.file, 'magic');
+      const pre = page.locator('main.leaves pre:has(> .buttons)').first();
+      assert.equal(await pre.count(), 1, 'the code fixture has a copy-enabled code panel');
+      const codePanel = await pre.evaluate((panel) => {
+        const main = panel.closest('main.leaves')!;
+        const code = panel.querySelector('code')!;
+        const copy = panel.querySelector('.clip-button')!;
+        const before = code.textContent ?? '';
+        code.scrollTop = code.scrollHeight;
+        const walker = document.createTreeWalker(code, NodeFilter.SHOW_TEXT);
+        let last: Text | null = null;
+        while (walker.nextNode()) if (walker.currentNode.textContent?.trim()) last = walker.currentNode as Text;
+        const range = document.createRange();
+        if (last) range.setStart(last, Math.max(0, last.length - 1)), range.setEnd(last, last.length);
+        const char = range.getBoundingClientRect();
+        const panelBox = panel.getBoundingClientRect(), codeBox = code.getBoundingClientRect(), copyBox = copy.getBoundingClientRect();
+        const copyRow = panel.querySelector('.buttons')?.getBoundingClientRect();
+        const panelStyle = getComputedStyle(panel), mainBox = main.getBoundingClientRect();
+        const marginTop = parseFloat(panelStyle.marginTop) || 0, marginBottom = parseFloat(panelStyle.marginBottom) || 0;
+        const marginBox = { top: panelBox.top - marginTop, bottom: panelBox.bottom + marginBottom };
+        // The code port starts immediately below the panel's 1px border; allow that
+        // border overlap while rejecting any button overlap with the scrollable text.
+        const overlaps = !(copyBox.right <= codeBox.left || copyBox.left >= codeBox.right || copyBox.bottom <= codeBox.top + 4 || copyBox.top >= codeBox.bottom);
+        return {
+          bounded: panelBox.height <= main.clientHeight + 1,
+          preMarginInsideLeaf: marginBox.top >= mainBox.top - 1 && marginBox.bottom <= mainBox.bottom + 1,
+          codeViewportInsideLeaf: codeBox.bottom <= mainBox.bottom + 1 && codeBox.top >= mainBox.top - 1,
+          atBottom: code.scrollTop >= code.scrollHeight - code.clientHeight - 1,
+          textUnchanged: code.textContent === before,
+          finalCharacterVisible: !!last && char.bottom > codeBox.top && char.top < codeBox.bottom,
+          copyRowComplete: !!copyRow && copyRow.top >= marginBox.top - 1 && copyRow.bottom <= marginBox.bottom + 1 && copyRow.top >= mainBox.top - 1 && copyRow.bottom <= mainBox.bottom + 1,
+          copyDoesNotCoverCode: !overlaps,
+        };
+      });
+      assert.equal(codePanel.bounded, true, 'code panel does not exceed the physical leaf');
+      assert.equal(codePanel.preMarginInsideLeaf, true, 'code panel margin box stays inside the physical leaf');
+      assert.equal(codePanel.codeViewportInsideLeaf, true, 'code viewport bottom stays inside the physical leaf');
+      assert.equal(codePanel.atBottom, true, 'code port scroll reaches the final character');
+      assert.equal(codePanel.textUnchanged, true, 'code scrolling does not change source text');
+      assert.equal(codePanel.finalCharacterVisible, true, 'the final non-empty code character enters the code viewport');
+      assert.equal(codePanel.copyRowComplete, true, 'copy control row stays completely visible inside the leaf');
+      assert.equal(codePanel.copyDoesNotCoverCode, true, 'copy control does not cover the code port');
+    });
+
+    test('a normal-motion chapter boundary retains old paper until the destination is ready', async () => {
+      const page=await open(english.pages[0]!.file+'#last-page','magic');
+      const outer=outerPage(page);
+      await page.emulateMedia({reducedMotion:'no-preference'});
+      const next=await page.locator('.nav-wide-wrapper a[rel~="next"]').evaluate(a=>(a as HTMLAnchorElement).href);
+      const from=outer.url();
+      let release!:()=>void;const gate=new Promise<void>(resolve=>{release=resolve});
+      await page.route('**/reader.js',async route=>{await gate;await route.continue()});
+      try {
+        await navigate(page,async()=>{
+          await page.locator('#page-next').click({noWaitAfter:true});
+          const pending=outer.frameLocator('.pending-chapter');
+          await pending.locator('[data-navigation-handoff-veil]').waitFor({state:'attached'});
+          assert.equal(outer.url(),from,'the old route remains visible while the next reader is gated');
+          assert.equal(await page.locator('#content > .volume > main.leaves').evaluate(m=>getComputedStyle(m).visibility),'visible');
+          assert.equal(await pending.locator('#content > .volume > main.leaves').evaluate(m=>getComputedStyle(m).visibility),'hidden','destination unprepared text stays hidden');
+          release();
+          await outer.waitForURL(next);
+          await page.waitForFunction(()=>!document.querySelector('#content[data-navigation-handoff]')&&!document.querySelector('.turn-leaf'));
+          assert.equal(await outer.locator('.pending-chapter').count(),0);
+          assert.equal(await page.locator('[data-navigation-handoff-veil]').count(),0);
+          const at=await folio(page);
+          const numbers=await page.locator('.volume > .page-foot .page-number').evaluateAll(items=>items.filter(e=>e.getBoundingClientRect().width>0).map(e=>Number(e.textContent)));
+          assert.deepEqual(numbers,at.first===at.last?[at.first]:[at.first,at.last]);
+        });
+      } finally {release();await page.unroute('**/reader.js');}
+    });
+
+    test('two normal-motion page turns change the real page-flip transform before settling', async () => {
+      const { page, count } = await longChapter();
+      assert.ok(count.last < count.total, 'the code fixture has at least one in-chapter spread');
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      for (let turn = 0; turn < 2; turn++) {
+        const before = await folio(page);
+        const click = page.locator('#page-next').click({ noWaitAfter: true });
+        await page.waitForSelector('.turn-leaf .stf__item');
+        const samples = await page.evaluate(() => new Promise<string[]>((resolve) => {
+          const values: string[] = [];
+          let frames = 0;
+          const sample = () => {
+            values.push([...document.querySelectorAll('.turn-leaf .stf__item')].map((item) => getComputedStyle(item).transform).join('|'));
+            if (++frames === 8) resolve(values);
+            else requestAnimationFrame(sample);
+          };
+          requestAnimationFrame(sample);
+        }));
+        assert.ok(new Set(samples).size > 1, `normal turn ${turn + 1} changes stf__item transform across RAF samples`);
+        await click;
+        await page.waitForFunction(() => !document.querySelector('.turn-leaf'));
+        assert.ok((await folio(page)).first > before.first, `normal turn ${turn + 1} advances the folio`);
+        if (turn === 0) await page.waitForTimeout(1200);
+      }
+    });
+
+    test('a resize while destination fonts are pending clears stale paper before commit', async () => {
+      const page=await open(english.pages[0]!.file+'#last-page','magic');
+      const outer=outerPage(page);await page.emulateMedia({reducedMotion:'no-preference'});
+      const next=await page.locator('.nav-wide-wrapper a[rel~="next"]').evaluate(a=>(a as HTMLAnchorElement).href);
+      let releaseReader!:()=>void,releaseFont!:()=>void,fontRequested!:()=>void;
+      const readerGate=new Promise<void>(r=>{releaseReader=r}),fontGate=new Promise<void>(r=>{releaseFont=r}),fontSeen=new Promise<void>(r=>{fontRequested=r});
+      await page.route('**/reader.js',async route=>{await readerGate;await route.continue()});
+      await page.route('**/*.woff2',async route=>{fontRequested();await fontGate;await route.continue()});
+      try {
+        await page.locator('#page-next').click({noWaitAfter:true});
+        const pending=outer.frameLocator('.pending-chapter');
+        await pending.locator('[data-navigation-handoff-veil]').waitFor({state:'attached'});
+        releaseReader();
+        await Promise.race([fontSeen,page.waitForTimeout(1500).then(()=>{throw new Error('destination did not request a gated font')})]);
+        const element=await outer.locator('.pending-chapter').elementHandle();const frame=(await element!.contentFrame())!;
+        await frame.waitForFunction(()=>!!document.querySelector('#folio')?.textContent&&document.fonts.status==='loading');
+        const size=page.viewportSize()!;await page.setViewportSize({width:size.width-80,height:size.height+40});
+        await frame.waitForFunction(()=>!document.querySelector('#content[data-navigation-handoff]')&&!document.querySelector('[data-navigation-handoff-veil]')&&!document.querySelector('[data-navigation-handoff-style]'),undefined,{timeout:1000});
+        releaseFont();await outer.waitForURL(next);await ready(page);
+        assert.ok(await page.locator('#page-next').isEnabled());
+      } finally {releaseReader();releaseFont();await page.unroute('**/reader.js');await page.unroute('**/*.woff2');}
+    });
+
+    test('search and the repository remain discoverable in the contents', async () => {
+      const page = await open(chapters[1]!, 'real');
+      if (await page.locator('#sidebar').getAttribute('aria-hidden') === 'true') await activate(page, '#sidebar-toggle');
+      assert.equal(await page.locator('#sidebar-search').isVisible(), true);
+      assert.equal(await page.locator('.sidebar-repository span').first().innerText(), 'GitHub');
+      assert.equal(await page.locator('.right-buttons .fa-github').count(), 0);
+      await activate(page, '#sidebar-search');
+      assert.equal(await page.locator('#searchbar').isVisible(), true);
+      await page.locator('#searchbar').pressSequentially('semantic');
+      await searchResults(page, 'semantic');
+      await page.locator('#searchbar').fill('meaning');
+      await searchResults(page, 'meaning');
+    });
+
+    test('rapid blank-paper input does not skip an extra spread', async () => {
+      const { page, count } = await longChapter();
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      const startingFolio = await page.locator('#folio').innerText();
+      const box = await blankFooter(page);
+      await page.mouse.click(box.x + box.width - 20, box.y + box.height - 24);
+      await page.waitForFunction(() => !!document.querySelector('.turn-leaf'));
+      await page.mouse.click(box.x + box.width - 20, box.y + box.height - 24);
+      assert.equal(await page.locator('#folio').innerText(), startingFolio);
+      await page.waitForFunction(() => !document.querySelector('.turn-leaf'));
+      assert.equal((await folio(page)).first, count.last + 1);
+      assert.equal(await page.locator('.turn-sheet').count(), 0, 'snapshots leave the DOM after the turn');
+      assert.equal(await page.locator('main.leaves').count(), 1);
     });
 
     test('a direct chapter opens without the gateway', async () => {
@@ -312,21 +786,204 @@ for (const profile of selected) {
       await page.waitForFunction(() => document.documentElement.dataset.world === 'magic');
       await ready(page);
       assert.deepEqual(await folio(page), progress);
+      const table = page.locator('main.leaves .table-wrapper').first();
+      assert.equal(await table.count(), 1, 'the multi-page world-switch fixture contains a table wrapper');
+      const tableViewport = await table.evaluate((wrapper) => {
+        const beforeText = wrapper.textContent;
+        wrapper.scrollTop = wrapper.scrollHeight;
+        const lastRow = wrapper.querySelector('tbody tr:last-child') ?? wrapper.querySelector('tr:last-child');
+        const box = wrapper.getBoundingClientRect();
+        const row = lastRow?.getBoundingClientRect();
+        const rowHeight = row?.height ?? 0;
+        const viewportHeight = wrapper.clientHeight;
+        return {
+          atBottom: wrapper.scrollTop >= wrapper.scrollHeight - wrapper.clientHeight - 1,
+          textUnchanged: wrapper.textContent === beforeText,
+          lastRowVisible: !!row && row.bottom > box.top && row.top < box.bottom,
+          lastRowFits: rowHeight <= viewportHeight + 1,
+          lastRowComplete: !!row && row.bottom <= box.bottom + 1 && row.top >= box.top - 1,
+        };
+      });
+      assert.equal(tableViewport.atBottom, true, 'table wrapper scroll reaches its complete content');
+      assert.equal(tableViewport.textUnchanged, true, 'table wrapper scrolling does not change its text');
+      assert.equal(tableViewport.lastRowVisible, true, 'table wrapper keeps the final row visible');
+      if (tableViewport.lastRowFits) assert.equal(tableViewport.lastRowComplete, true, 'a page-fitting final row remains complete');
     });
 
-    test('the magic world always pages, with a fixed sidebar', async () => {
-      const chapter = chapters[1]!;
-      const context = await browser.newContext({ ...profile.options, reducedMotion: 'reduce' });
-      // A scroll mode saved by an earlier reader version must not apply.
-      await context.addInitScript(() => {
-        localStorage.setItem('alux-reader', JSON.stringify({ world: 'magic', mode: 'scroll', bookmarks: [] }));
-        sessionStorage.setItem('alux-entered', '1');
+    test('magic continuous reading retains its choice, chapter and progress across reloads and mode switches', async () => {
+      const { page } = await longChapter();
+      const content = await page.locator('main.leaves').textContent();
+      await activate(page, '#page-next');
+      const progress = await folio(page);
+      await activate(page, '#reading-mode');
+      await ready(page);
+      assert.equal(await page.locator('html').getAttribute('data-reading'), 'scroll');
+      assert.equal(await page.locator('main.leaves').evaluate((m) => getComputedStyle(m).columnCount), 'auto');
+      assert.equal(await page.locator('main.leaves').textContent(), content);
+      const geometry = await page.evaluate(() => ({ scroll:scrollY, overflow:document.documentElement.scrollHeight-innerHeight }));
+      assert.ok(geometry.overflow > 100, 'the complete chapter scrolls vertically');
+      assert.ok(geometry.scroll > 0, 'the page position transfers into continuous reading');
+      await navigate(page, () => page.reload());
+      assert.equal(await page.locator('html').getAttribute('data-reading'), 'scroll');
+      const reloaded = await page.evaluate(() => scrollY);
+      assert.ok(Math.abs(reloaded-geometry.scroll) < 4, 'continuous progress survives reload');
+      await activate(page, '#reading-mode');
+      await ready(page);
+      assert.equal(await page.locator('html').getAttribute('data-reading'), 'pages');
+      assert.deepEqual(await folio(page), progress, 'switching back restores the spread');
+      assert.equal(await page.locator('main.leaves').textContent(), content);
+      assert.equal(await page.locator('#sidebar-resize-handle').isVisible(), false);
+    });
+
+    test('the outer magic book scrolls on short windows and fills tall windows', async () => {
+      const page = await open(chapters[1]!, 'magic');
+      await page.setViewportSize({width:1280,height:600});
+      await ready(page);
+      const short = await page.evaluate(() => {
+        const volume = document.querySelector('.volume')!.getBoundingClientRect();
+        return {height:volume.height, overflow:document.documentElement.scrollHeight-innerHeight};
       });
-      const page = await context.newPage();
-      await navigate(page, () => page.goto(base + '/' + chapter));
-      assert.equal(await page.locator('#reading-mode').count(), 0, 'no scroll reading control');
-      assert.notEqual(await page.locator('main.leaves').evaluate((m) => getComputedStyle(m).columnCount), 'auto');
-      assert.equal(await page.locator('#sidebar-resize-handle').isVisible(), false, 'no sidebar resize handle');
+      assert.ok(short.height >= 700, 'the spread is not shrunk to fit a short window');
+      assert.ok(short.overflow > 150, 'the entire binding can be scrolled');
+      await page.evaluate(() => scrollTo(0,100));
+      assert.ok(await page.evaluate(() => scrollY) >= 99);
+      await page.setViewportSize({width:1280,height:1500});
+      await ready(page);
+      assert.ok((await page.locator('.volume').boundingBox())!.height > 1100, 'tall windows have no width-based height cap');
+    });
+
+    test('copy controls never float over a folding leaf and return after it settles', async () => {
+      const chapter = chapters.find((file) => file.includes('capability-algebras'))!;
+      assert.ok(chapter);
+      const page = await open(chapter, 'magic');
+      assert.ok(await page.locator('main.leaves pre > .buttons').count(), 'source chapter has copy rows');
+      await page.emulateMedia({reducedMotion:'no-preference'});
+      await activate(page, '#page-next');
+      await page.waitForFunction(() => !!document.querySelector('.turn-leaf'));
+      assert.ok(await page.locator('.turn-leaf .clip-button').count() > 0, 'copy controls remain painted on the moving paper');
+      assert.equal(await page.locator('.turn-leaf').evaluate(e=>(e as HTMLElement).inert), true, 'snapshot controls cannot act');
+      assert.equal(await page.locator('.volume > main.leaves pre > .buttons').first().evaluate((row) => getComputedStyle(row).zIndex), '0', 'live controls stay below the moving leaf');
+      await page.waitForFunction(() => !document.querySelector('.turn-leaf'));
+      assert.equal(await page.locator('.volume > main.leaves pre > .buttons').first().evaluate((row) => getComputedStyle(row).visibility), 'visible');
+      assert.equal(await page.locator('.volume[data-paper-turning]').count(), 0);
+    });
+
+    test('clipped overflow text does not swallow a blank footer click', async () => {
+      const german = editions.find(e=>e.lang==='de')!;
+      const page = await open(route(german,'concepts/free_monad.html'), 'magic');
+      let at = await folio(page);
+      while(at.last<at.total) {
+        const box=await blankFooter(page);
+        // The click point is outside main but previously matched hidden Range rectangles.
+        await page.mouse.click(box.x+box.width-20,box.y+box.height-24);
+        const next=await folio(page);
+        assert.equal(next.first,at.last+1,'each blank-footer click advances');
+        at=next;
+      }
+    });
+
+    test('night Chinese code-heavy chapters fold from blank paper with changing geometry', async () => {
+      for (const chapter of ['rust-dd/semantic-types.html','rust-dd/derived-meaning.html']) {
+        const page = await open(route(chinese, chapter), 'magic');
+        await activate(page, '#theme-toggle');
+        await ready(page);
+        await page.emulateMedia({reducedMotion:'no-preference'});
+        const before = await folio(page);
+        assert.ok(before.last < before.total);
+        const box = await blankFooter(page);
+        await page.mouse.click(box.x+box.width-20,box.y+box.height-24);
+        await page.waitForSelector('.turn-leaf .stf__item');
+        const sampled = await page.evaluate(() => {
+          const actual=document.querySelector<HTMLElement>('.volume > main.leaves')!;
+          const copy=document.querySelector<HTMLElement>('.turn-leaf main.leaves')!;
+          if (!copy) throw new Error('the fold must exist when layout sampling starts');
+          const read=(main:HTMLElement)=>[...main.querySelectorAll<HTMLElement>(':scope > h1,:scope > h2,:scope > h3')].map(h=>({text:h.textContent,x:h.offsetLeft-(h.offsetParent===main?0:main.offsetLeft),y:h.offsetTop-(h.offsetParent===main?0:main.offsetTop),height:h.offsetHeight}));
+          const layout={actual:read(actual),copy:read(copy)};
+          return new Promise<{transforms:string[];layout:typeof layout}>((resolve) => {
+            const transforms:string[]=[];
+            const sample=()=>{ transforms.push([...document.querySelectorAll('.turn-leaf .stf__item')].map(e=>getComputedStyle(e).transform).join('|')); if(transforms.length===12)resolve({transforms,layout});else requestAnimationFrame(sample); };
+            requestAnimationFrame(sample);
+          });
+        });
+        assert.ok(new Set(sampled.transforms).size>1,chapter+' night paper actually bends');
+        assert.deepEqual(sampled.layout.copy,sampled.layout.actual,chapter+' moving paper has the settled page layout');
+        await page.waitForFunction(()=>!document.querySelector('.turn-leaf'));
+        assert.equal((await folio(page)).first,before.last+1);
+      }
+    });
+
+    test('native disclosures keep themed surfaces and update chapter pagination', async () => {
+      const page=await open('insights/operational_semantics.html','magic');
+      const disclosure=page.locator('.volume > main.leaves details').first();
+      assert.ok(await disclosure.count(),'canonical chapter contains a disclosure');
+      const before=await folio(page);
+      await disclosure.locator('summary').click();
+      await page.waitForFunction(()=>document.querySelector('.volume > main.leaves details')?.hasAttribute('open'));
+      await page.waitForFunction(total=>Number(document.getElementById('folio')?.textContent?.split(' / ').pop())>total,before.total);
+      const opened=await folio(page);
+      assert.ok(opened.total>before.total,'expanded content adds actual chapter pages');
+      await page.mouse.move(0,0); // Inspect the resting surface separately from the intentional brass hover tint.
+      const surface=await disclosure.evaluate(e=>{
+        const probe=document.createElement('span');
+        probe.style.cssText='display:none;color:var(--panel-accent);background:color-mix(in srgb,var(--panel-accent) 7%,transparent)';
+        e.append(probe);
+        const expected=getComputedStyle(probe),tint=expected.backgroundColor,accent=expected.color;
+        probe.remove();
+        const summary=e.querySelector('summary')!;
+        return {background:getComputedStyle(summary).backgroundColor,marker:getComputedStyle(summary,'::marker').color,accent,tint,overflow:getComputedStyle(e).overflow};
+      });
+      assert.ok(surface.background==='rgba(0, 0, 0, 0)' || surface.background===surface.tint,'summary is transparent or the intentional theme-accent hover tint');
+      assert.equal(surface.marker,surface.accent,'disclosure marker uses the same theme accent');
+      assert.equal(surface.overflow,'visible','long disclosed content remains fragmentable');
+      await disclosure.locator('summary').click();
+      await page.waitForFunction(()=>!document.querySelector('.volume > main.leaves details')?.hasAttribute('open'));
+      await page.waitForFunction(total=>document.getElementById('folio')?.textContent?.endsWith(' / '+total),before.total);
+      assert.equal((await folio(page)).total,before.total,'closing restores the original page count');
+    });
+
+    test('native code copy acknowledges repeated clicks after paging', async () => {
+      const page=await open('concepts/branching.html','magic');
+      await page.evaluate(()=>{document.documentElement.dataset.copyEvents='0';document.addEventListener('copy',()=>{document.documentElement.dataset.copyEvents=String(Number(document.documentElement.dataset.copyEvents)+1)});});
+      let checked=0,copyEvents=0;
+      const limit=(await folio(page)).total;
+      for(let leaf=0;leaf<limit && checked<2;leaf++) {
+        const buttons=page.locator('.volume > main.leaves .clip-button');
+        const visible=await buttons.evaluateAll(es=>es.map((e,i)=>({i,r:e.getBoundingClientRect()})).filter(({r})=>r.left>0 && r.right<innerWidth && r.top>0 && r.bottom<innerHeight).map(e=>e.i));
+        if(visible.length) {
+          const button=buttons.nth(visible[0]!);
+          for(let repeat=0;repeat<2;repeat++) {
+            if(profile.options.hasTouch) await button.tap(); else await button.click();
+            copyEvents++;
+            await page.waitForFunction(([index,label,count])=>Number(document.documentElement.dataset.copyEvents)===Number(count) && document.querySelectorAll<HTMLElement>('.volume > main.leaves .clip-button')[Number(index)]?.dataset.copyLabel===label,[String(visible[0]),copyLabels.en[1],String(copyEvents)]);
+            await button.dispatchEvent('mouseout');
+            assert.equal(await button.getAttribute('data-copy-label'),copyLabels.en[1],'touch mouseout does not erase the acknowledgement');
+          }
+          checked++;
+        }
+        const at=await folio(page);
+        if(at.last===at.total) break;
+        await activate(page,'#page-next'); await ready(page);
+      }
+      assert.equal(checked,2,'two settled code pages actually copied successfully');
+    });
+
+    test('display equations remain inside their leaf and copy feedback has one coordinated acknowledgement', async () => {
+      const page = await open(route(chinese,'rust-dd/semantic-types.html'), 'magic');
+      for (let index=0;index<2;index++) {
+        const checks = await page.locator('main.leaves').evaluate((main)=>{
+          const styles=getComputedStyle(main);
+          const count=Number(styles.columnCount);
+          const width=(main.clientWidth-(count-1)*(parseFloat(styles.columnGap)||0))/count;
+          return {
+            equations:[...main.querySelectorAll<HTMLElement>('.katex-display')].map(e=>({width:e.getBoundingClientRect().width,limit:width,overflow:getComputedStyle(e).overflowX})),
+            copy:[...main.querySelectorAll<HTMLElement>('.clip-button')].map(e=>({icon:getComputedStyle(e,'::before').backgroundColor,color:getComputedStyle(e).color,filter:getComputedStyle(e,'::before').filter,tooltip:getComputedStyle(e.querySelector('.tooltiptext')!).display}))
+          };
+        });
+        assert.ok(checks.equations.length>0 && checks.copy.length>0);
+        for(const equation of checks.equations) { assert.ok(equation.width<=equation.limit+1); assert.equal(equation.overflow,'auto'); }
+        for(const copy of checks.copy) { assert.equal(copy.icon,copy.color); assert.equal(copy.filter,'none'); assert.equal(copy.tooltip,'none'); }
+        await activate(page,'#theme-toggle'); await ready(page);
+      }
     });
 
     test('resize and orientation changes retain progress, content and usable controls', async () => {
@@ -398,7 +1055,8 @@ for (const profile of selected) {
       assert.ok(chinese, 'the source editions include Chinese');
       const file = route(chinese, chapters[1]!);
       const page = await open(file, 'real');
-      await activate(page, '#search-toggle');
+      if (await page.locator('#sidebar').getAttribute('aria-hidden') === 'true') await activate(page, '#sidebar-toggle');
+      await activate(page, '#sidebar-search');
       const search = page.locator('#searchbar');
       for (const query of ['Rust', '含义', 'Rust']) {
         await search.fill(query);
@@ -429,20 +1087,47 @@ for (const profile of selected) {
       assert.match(await page.locator('#searchresults-header').innerText(), /搜索/);
     });
 
+    test('directory and chapter changes retain the outer document and uninterrupted music', async () => {
+      const {page}=await longChapter(chinese,1);
+      const outer=outerPage(page);
+      if(await outer.evaluate(()=>(document.getElementById('persistent-music') as HTMLAudioElement).paused)) await activate(page,'#music-toggle');
+      await outer.waitForFunction(()=>!(document.getElementById('persistent-music') as HTMLAudioElement).paused);
+      await outer.evaluate(()=>{
+        const audio=document.getElementById('persistent-music') as HTMLAudioElement;
+        (window as any).readerIdentity={doc:document,audio,start:audio.currentTime,pauses:0};
+        audio.addEventListener('pause',()=>{(window as any).readerIdentity.pauses++});
+      });
+      const destination='rust-dd/derived-meaning.html';
+      if(await page.locator('#sidebar').getAttribute('aria-hidden')==='true')await activate(page,'#sidebar-toggle');
+      await activate(page,`.chapter a[href$="${destination}"]`);
+      await ready(page);
+      assert.ok(outer.url().endsWith('/zh/'+destination));
+      await page.emulateMedia({reducedMotion:'no-preference'});
+      await activate(page,'#page-next');
+      await page.waitForFunction(()=>!document.querySelector('.turn-leaf'));
+      await navigate(page,()=>page.goBack());
+      const state=await outer.evaluate(()=>{
+        const saved=(window as any).readerIdentity;
+        return {document:saved.doc===document,audio:saved.audio===document.getElementById('persistent-music'),paused:saved.audio.paused,pauses:saved.pauses,advanced:saved.audio.currentTime>saved.start};
+      });
+      assert.deepEqual(state,{document:true,audio:true,paused:false,pauses:0,advanced:true});
+      assert.equal(await outer.locator('.chapter-frame').count(),1,'only the committed native document remains');
+    });
+
     test('audio plays after activation and pauses when navigating away', async () => {
       const page = await open(chapters[0]!, 'real');
       await activate(page, '#music-toggle');
-      await page.waitForFunction(() => {
-        const music = document.getElementById('music') as HTMLAudioElement;
+      await outerPage(page).waitForFunction(() => {
+        const music = document.getElementById('persistent-music') as HTMLAudioElement;
         return !music.paused && music.currentTime > 0;
       });
       await activate(page, '#music-toggle');
-      assert.equal(await page.locator('#music').evaluate((a) => (a as HTMLAudioElement).paused), true);
+      assert.equal(await outerPage(page).locator('#persistent-music').evaluate((a) => (a as HTMLAudioElement).paused), true);
       await activate(page, '#music-toggle');
-      await page.waitForFunction(() => !(document.getElementById('music') as HTMLAudioElement).paused);
+      await outerPage(page).waitForFunction(() => !(document.getElementById('persistent-music') as HTMLAudioElement).paused);
       // Register after the reader, so the observation witnesses its real pagehide cleanup.
-      await page.evaluate(() => addEventListener('pagehide', () => {
-        sessionStorage.setItem('test-audio-paused', String((document.getElementById('music') as HTMLAudioElement).paused));
+      await outerPage(page).evaluate(() => addEventListener('pagehide', () => {
+        sessionStorage.setItem('test-audio-paused', String((document.getElementById('persistent-music') as HTMLAudioElement).paused));
       }));
       await navigate(page, () => page.goto(base + '/' + chapters[1]!));
       assert.equal(await page.evaluate(() => sessionStorage.getItem('test-audio-paused')), 'true');

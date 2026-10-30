@@ -7,7 +7,7 @@ import { spawn } from 'node:child_process';
 import { cp, mkdir, mkdtemp, rename, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { languages } from './languages.ts';
+import { languages, readerName } from './languages.ts';
 
 /** Runs `mdbook build` in the repository root with `env` overriding book.toml (MDBOOK_A__B = a.b). */
 export function mdbook(env: Record<string, string> = {}): Promise<void> {
@@ -63,6 +63,7 @@ export async function buildBook(out = 'book/html'): Promise<void> {
       await mdbook({
         // Read by localize.ts and written to <html lang> by the template.
         MDBOOK_BOOK__LANGUAGE: code,
+        MDBOOK_BOOK__TITLE: readerName(code),
         MDBOOK_BUILD__BUILD_DIR: path.join(stage, code),
         // mdBook's 404 page resolves its links against site-url.
         MDBOOK_OUTPUT__HTML__SITE_URL: en ? '/' : `/${code}/`,

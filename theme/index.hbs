@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>{{ title }}</title>
+        <title>{{#if is_index}}{{ book_title }}{{else}}{{ title }}{{/if}}</title>
         {{#if is_print }}
         <meta name="robots" content="noindex">
         {{/if}}
@@ -16,16 +16,21 @@
         {{> head}}
 
         <!-- ALUX reader: social card, book font, reading preferences applied before first paint -->
-        <meta property="og:title" content="{{ title }}">
+        <meta property="og:title" content="{{#if is_index}}{{ book_title }}{{else}}{{ title }}{{/if}}">
         <meta property="og:description" content="{{ description }}">
         <meta property="og:image" content="https://programming.alux.network/social/alux-programming-{{ language }}.jpg">
         <meta name="twitter:card" content="summary_large_image">
         <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
         <script>
+            if (window.parent === window && !document.documentElement.hasAttribute('data-print') && new URL(location.href).searchParams.get('reader') !== 'native') {
+                document.documentElement.dataset.shellLoading = '';
+                setTimeout(function () { document.documentElement.removeAttribute('data-shell-loading'); }, 2000);
+            }
             try {
                 const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
                 document.documentElement.dataset.world = {{#if is_print}}'real'{{else}}reader.world || 'real'{{/if}};
                 document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+                document.documentElement.dataset.reading = reader.mode === 'scroll' ? 'scroll' : 'pages';
             } catch (e) {
                 document.documentElement.dataset.world = 'real';
             }
@@ -41,13 +46,13 @@
         <meta name="description" content="{{ description }}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
+        <meta name="application-name" content="{{ book_title }}">
+        <meta name="apple-mobile-web-app-title" content="{{ book_title }}">
 
-        {{#if favicon_svg}}
-        <link rel="icon" href="{{ resource "favicon.svg" }}">
-        {{/if}}
-        {{#if favicon_png}}
-        <link rel="shortcut icon" href="{{ resource "favicon.png" }}">
-        {{/if}}
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+        <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+        <link rel="shortcut icon" href="/favicon.ico">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
         <link rel="stylesheet" href="{{ resource "css/variables.css" }}">
         <link rel="stylesheet" href="{{ resource "css/general.css" }}">
         <link rel="stylesheet" href="{{ resource "css/chrome.css" }}">
@@ -121,10 +126,15 @@
 
         <!-- Set the theme before any content is loaded, prevents flash -->
         <script>
-            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            const default_theme = default_light_theme;
             let theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
-            if (theme === null || theme === undefined) { theme = default_theme; }
+            // Keep the approved daylight default and migrate old manual night preferences.
+            if (!theme) {
+                try { theme = localStorage.getItem('alux-reading-theme') === 'dark' || localStorage.getItem('alux-night') === 'true' ? 'coal' : 'light'; } catch(e) { theme = 'light'; }
+            }
+            theme = ['coal', 'navy', 'ayu'].includes(theme) ? 'coal' : 'light';
+            try { localStorage.setItem('mdbook-theme', theme); } catch(e) { }
             const html = document.documentElement;
             html.classList.remove('{{ default_theme }}')
             html.classList.add(theme);
@@ -162,11 +172,23 @@
                 <span data-i18n>My bookmarks</span>
                 <span id="bookmark-count" class="bookmark-count">0</span>
             </button>
+            {{#if search_enabled}}
+            <button id="sidebar-search" class="sidebar-search" type="button" aria-controls="searchbar">
+                <i class="fa fa-search" aria-hidden="true"></i>
+                <span data-i18n>Search the book</span><kbd>Ctrl K</kbd>
+            </button>
+            {{/if}}
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
                 <iframe class="sidebar-iframe-outer" src="{{ path_to_root }}toc.html"></iframe>
             </noscript>
+            {{#if git_repository_url}}
+            <a class="sidebar-repository" href="{{git_repository_url}}" aria-label="GitHub">
+                <i class="fa {{git_repository_icon}}" aria-hidden="true"></i>
+                <span>GitHub</span><span class="repository-arrow" aria-hidden="true">↗</span>
+            </a>
+            {{/if}}
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
             </div>
@@ -203,29 +225,25 @@
                 <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle table of contents" aria-label="Toggle table of contents" data-i18n aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Show table of contents" aria-label="Show table of contents" data-i18n aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
                         </label>
                         <!-- The popup is positioned from this wrapper, so it opens under its toggle wherever the toolbar puts it. -->
                         <div class="theme-menu">
-                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change reading theme" aria-label="Change reading theme" data-i18n>
                             <i class="fa fa-moon-o"></i>
                         </button>
-                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        <ul id="theme-list" class="theme-popup" aria-hidden="true" inert>
+                            <li><button class="theme" id="light" tabindex="-1">Light</button></li>
+                            <li><button class="theme" id="coal" tabindex="-1">Dark</button></li>
                         </ul>
                         </div>
                         {{#if search_enabled}}
-                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                        <button id="search-toggle" class="icon-button toolbar-search" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
                         {{/if}}
-                        <button id="music-toggle" class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
+                        <button id="music-toggle" data-reader-music class="icon-button" type="button" title="Play music" aria-label="Play music" aria-pressed="false" data-i18n>
                             <i class="fa fa-music"></i>
                         </button>
                         <button id="bookmark-toggle" class="bookmark-button" type="button" aria-pressed="false">
@@ -233,6 +251,9 @@
                         </button>
                         <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
                         <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                        <button id="reading-mode" class="icon-button reading-mode" type="button" title="Scroll reading" aria-label="Scroll reading" aria-pressed="false" data-i18n>
+                            <i id="reading-mode-icon" class="fa fa-file-text-o" aria-hidden="true"></i><span id="reading-mode-label" data-i18n>Scroll reading</span>
+                        </button>
                     </div>
 
                     <span class="menu-title"></span>
@@ -241,11 +262,6 @@
                         <button id="world-toggle" class="world-link" type="button">
                             <span id="world-toggle-label" data-i18n>Magic world</span> <span aria-hidden="true">↗</span>
                         </button>
-                        {{#if git_repository_url}}
-                        <a href="{{git_repository_url}}" title="Git repository" aria-label="Git repository">
-                            <i id="git-repository-button" class="fa {{git_repository_icon}}"></i>
-                        </a>
-                        {{/if}}
                         <!-- Styled like the theme menu; reader.ts fills it with links to this page in every edition. -->
                         <div class="theme-menu language-menu">
                             <button id="language-toggle" class="icon-button" type="button" title="Language" aria-label="Language" data-i18n aria-haspopup="true" aria-expanded="false" aria-controls="language-list">
@@ -284,9 +300,52 @@
                 </script>
 
                 <div id="content" class="content">
+                    <!-- A one-navigation paper handoff hides the native destination first frame until reader.js settles it. -->
+                    <script>
+                    (function () {
+                        var key = 'alux-navigation-handoff-v1', maxAge = 5000, raw, handoff, now = Date.now();
+                        try { raw = sessionStorage.getItem(key); sessionStorage.removeItem(key); } catch (e) { return; }
+                        if (!raw || raw.length > 820000) return;
+                        try { handoff = JSON.parse(raw); } catch (e) { return; }
+                        if (document.documentElement.dataset.world !== 'magic' || document.documentElement.dataset.reading === 'scroll' || !handoff || handoff.version !== 1 || handoff.target !== location.href ||
+                            typeof handoff.createdAt !== 'number' || now - handoff.createdAt < -1000 || now - handoff.createdAt > maxAge ||
+                            !handoff.viewport || Math.abs(innerWidth - handoff.viewport.width) > 2 || Math.abs(innerHeight - handoff.viewport.height) > 2 || Math.abs(devicePixelRatio - handoff.viewport.dpr) > .1 ||
+                            !handoff.volume || ![handoff.volume.x, handoff.volume.y, handoff.volume.width, handoff.volume.height].every(Number.isFinite) || handoff.volume.width <= 0 || handoff.volume.height <= 0 ||
+                            !Array.isArray(handoff.sheets) || !handoff.sheets.length || handoff.sheets.length > 4 ||
+                            handoff.sheets.some(function (sheet) { return typeof sheet !== 'string' || sheet.length > 280000 || !/^<div\b/i.test(sheet); })) return;
+                        var style = document.createElement('style');
+                        style.dataset.navigationHandoffStyle = '';
+                        style.textContent = '#content[data-navigation-handoff] > .volume > :is(main.leaves,.page-head,.page-foot) { visibility: hidden; }';
+                        document.head.appendChild(style);
+                        this.dataset.navigationHandoff = '1';
+                        var veil = document.createElement('div');
+                        veil.dataset.navigationHandoffVeil = '';
+                        veil.dataset.direction = handoff.direction;
+                        veil.className = 'volume navigation-veil';
+                        veil.inert = true;
+                        veil.setAttribute('aria-hidden', 'true');
+                        veil.style.cssText = 'position:fixed;z-index:20;overflow:hidden;pointer-events:none;' +
+                            'left:' + Number(handoff.volume.x) + 'px;top:' + Number(handoff.volume.y) + 'px;' +
+                            'width:' + Number(handoff.volume.width) + 'px;height:' + Number(handoff.volume.height) + 'px;margin:0;';
+                        veil.innerHTML = handoff.sheets.join('');
+                        veil.querySelectorAll('script,iframe,video,audio').forEach(function (node) { node.remove(); });
+                        veil.querySelectorAll('[id]').forEach(function (node) { node.removeAttribute('id'); });
+                        Array.from(veil.children).forEach(function (sheet, index) {
+                            sheet.style.position = 'absolute'; sheet.style.top = '14px';
+                            sheet.style.left = (14 + index * parseFloat(sheet.style.width)) + 'px';
+                        });
+                        this.insertBefore(veil, this.firstChild);
+                        var content = this;
+                        setTimeout(function () {
+                            content.removeAttribute('data-navigation-handoff');
+                            veil.remove(); style.remove();
+                        }, 5000);
+                    }).call(document.getElementById('content'));
+                    </script>
                     <div class="volume">
-                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
-                        <div class="page-head" aria-hidden="true"><span class="running-part"></span><span class="running-book" data-i18n>ALUX Programming</span></div>
+                        <span class="book-corners" aria-hidden="true"></span>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span></div>
+                        <div class="page-head" aria-hidden="true"><span class="running-part"></span></div>
                         <main class="leaves">
                             {{{ content }}}
                         </main>
@@ -298,7 +357,6 @@
                             <i class="fa fa-long-arrow-left" aria-hidden="true"></i> <span id="page-prev-label" data-i18n>Previous page</span>
                         </button>
                         <span class="folio-center">
-                            <span class="folio-book" data-i18n>ALUX Programming</span>
                             <span id="folio" class="folio" aria-live="polite"></span>
                         </span>
                         <button id="page-next" class="page-turn" type="button">
@@ -424,7 +482,17 @@
         {{#each additional_js}}
         <script src="{{ resource this}}"></script>
         {{/each}}
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                document.documentElement.setAttribute('data-native-ready', '');
+                document.dispatchEvent(new Event('alux-native-ready'));
+            }, { once: true });
+        </script>
         <!-- ALUX reader, bundled by Vite from web/reader.ts -->
+        <section id="music-notice" data-reader-music class="music-notice" hidden aria-live="polite">
+            <div class="music-notice-heading"><p id="music-notice-hint"></p><button id="music-notice-close" type="button">×</button></div>
+            <label class="music-volume"><span id="music-volume-label"></span><input id="music-volume" type="range" min="0" max="1" step="0.01"><output id="music-volume-value"></output></label>
+        </section>
         <script type="module" src="/reader.js"></script>
         {{#if search_js}}
         <!-- Keep initial URL searches behind the reader's CJK matching extension. -->

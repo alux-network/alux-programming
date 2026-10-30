@@ -23,3 +23,8 @@ export const languages = [
 
 // The language codes, as a union type, so a typo in a code is a type error.
 export type Language = (typeof languages)[number]['code'];
+
+/** Returns the approved browser and bookmark name, independent of content translation. */
+export function readerName(code: Language): string {
+  return code === 'zh' ? 'ALUX 编程' : code === 'zh-hant' ? 'ALUX 程式設計' : 'ALUX Programming';
+}
