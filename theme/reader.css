@@ -227,6 +227,7 @@ html[data-world="magic"] :is(.nav-wide-wrapper, .nav-wrapper) { display: none; }
 html[data-world="magic"] #content { padding: 0 12px; }
 html[data-world="magic"] .volume {
   --leaf-height: calc(var(--book-height) - 134px);
+  --binding-shade: linear-gradient(90deg, transparent, #0000000f 40%, #00000026 50%, #0000000f 60%, transparent);
   position: relative;
   box-sizing: border-box;
   width: var(--book-width);
@@ -249,7 +250,7 @@ html[data-world="magic"] .volume::before {
   inset: 17px auto 17px calc(50% - 30px);
   width: 60px;
   pointer-events: none;
-  background: linear-gradient(90deg, transparent, #0000000f 40%, #00000026 50%, #0000000f 60%, transparent);
+  background: var(--binding-shade);
   z-index: 1;
 }
 html[data-world="magic"] .volume::after {
@@ -348,8 +349,12 @@ html[data-world="magic"] main.leaves .admonition-title { color: var(--reader-mut
 .paper-fold-renderer { position: absolute; z-index: 4; pointer-events: none; overflow: visible; }
 .paper-fold-renderer[hidden] { display: none !important; }
 .turn-sheet { background: var(--reader-paper); overflow: hidden; }
-:root.light .turn-sheet { background: linear-gradient(#f2eadc99, #f2eadc99), url('/ivory-paper.webp') center / 626px 626px, var(--reader-paper); }
+:root.light .turn-sheet-content { background: linear-gradient(#f2eadc99, #f2eadc99), url('/ivory-paper.webp') center / 626px 626px, var(--reader-paper); }
 .turn-sheet-content { position: absolute; inset: 0; overflow: hidden; }
+/* The fixed binding sits above resting snapshots (z1/3), below the curling leaf (z5). */
+@media (min-width:900px) {
+  .paper-fold-renderer .stf__block::after { content:""; position:absolute; inset:3px auto 3px calc(50% - 30px); width:60px; background:var(--binding-shade); z-index:4; pointer-events:none; }
+}
 html[data-world="magic"] #content .turn-sheet main.leaves { margin: 0; }
 
 /* Bookmarks: a sheet in the reader's colors; the backdrop click closes it. */

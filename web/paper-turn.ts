@@ -92,6 +92,7 @@ export function paperTurn(main: HTMLElement) {
     const portrait = getComputedStyle(main).columnCount === '1';
     const count = portrait ? 1 : 2;
     const width = (outer.width - 34) / count, height = outer.height - 34;
+    const grain = getComputedStyle(volume).backgroundSize.split(',')[1]?.trim().split(/\s+/).map(Number.parseFloat);
     return Array.from({ length: count }, (_, side) => {
       const sheet = document.createElement('div');
       sheet.className = 'turn-sheet';
@@ -100,6 +101,11 @@ export function paperTurn(main: HTMLElement) {
       sheet.style.height = height + 'px';
       const clip = document.createElement('div');
       clip.className = 'turn-sheet-content';
+      // The whole book owns the paper grain. Keep its tile phase when each half is
+      // painted separately; a re-centered texture makes entry/settling look like a jump.
+      if (grain?.length === 2 && grain.every(Number.isFinite)) {
+        clip.style.backgroundPosition = `center, ${(outer.width-grain[0]!)/2-17-side*width}px ${(outer.height-grain[1]!)/2-17}px, center`;
+      }
       const window = document.createElement('div');
       window.className = 'turn-text-window';
       window.style.cssText = `position:absolute;overflow:hidden;width:${body.width}px;height:${body.height}px;left:${body.left - outer.left - 17 - side * width}px;top:${body.top - outer.top - 17}px`;

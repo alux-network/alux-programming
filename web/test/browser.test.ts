@@ -301,6 +301,49 @@ for (const profile of selected) {
       }
     });
 
+    if (!profile.options.isMobile) test('fixed gutter and paper texture stay registered through a full turn', async () => {
+      for(const night of [false,true]) {
+        const page=await open(route(chinese,'rust-dd/laws.html'),'magic');
+        if(night){await activate(page,'#theme-toggle');await ready(page);}
+        await page.emulateMedia({reducedMotion:'no-preference'});
+        const before=await page.locator('.volume').boundingBox();
+        await activate(page,'#page-next');
+        await page.waitForSelector('.turn-leaf .stf__item.--simple');
+        const sampled=await page.evaluate(()=>{
+          const volume=document.querySelector<HTMLElement>('.volume')!,host=document.querySelector<HTMLElement>('.turn-leaf')!;
+          const block=host.querySelector('.stf__block')!,gutter=getComputedStyle(block,'::after'),binding=getComputedStyle(volume,'::before');
+          const cover=volume.getBoundingClientRect(),box=block.getBoundingClientRect();
+          const grain=getComputedStyle(volume).backgroundSize.split(',')[1]?.trim().split(/\s+/).map(Number.parseFloat)??[];
+          const geometry={content:gutter.content,shade:gutter.backgroundImage,originalShade:binding.backgroundImage,
+            x:box.left+parseFloat(gutter.left)-(cover.left+volume.clientLeft+parseFloat(binding.left)),
+            y:box.top+parseFloat(gutter.top)-(cover.top+volume.clientTop+parseFloat(binding.top)),
+            height:box.height-parseFloat(gutter.top)-parseFloat(gutter.bottom)-(volume.clientHeight-parseFloat(binding.top)-parseFloat(binding.bottom)),
+            ribbonAbove:Number(getComputedStyle(volume,'::after').zIndex)>Number(getComputedStyle(host).zIndex),
+            textures:[...host.querySelectorAll<HTMLElement>('.stf__item.--simple')].map(sheet=>{
+              const paper=sheet.querySelector('.turn-sheet-content')!,r=paper.getBoundingClientRect(),style=getComputedStyle(paper),position=style.backgroundPosition.split(',')[1]?.trim().split(/\s+/)??[];
+              return {image:style.backgroundImage,position,
+                x:r.left+parseFloat(position[0]??'NaN')-(cover.left+(cover.width-grain[0]!)/2),
+                y:r.top+parseFloat(position[1]??'NaN')-(cover.top+(cover.height-grain[1]!)/2)};
+            })};
+          return new Promise<{geometry:typeof geometry;samples:{top:number;height:number;scroll:number}[]}>(resolve=>{
+            const samples:{top:number;height:number;scroll:number}[]=[];let finished=0;
+            const sample=()=>{const r=volume.getBoundingClientRect();samples.push({top:r.top,height:r.height,scroll:scrollY});if(!document.querySelector('.turn-leaf'))finished++;if(finished===3)resolve({geometry,samples});else requestAnimationFrame(sample);};sample();
+          });
+        });
+        assert.equal(sampled.geometry.content,'""','the binding shade remains painted above stationary snapshots');
+        assert.equal(sampled.geometry.shade,sampled.geometry.originalShade,'the gutter uses the resting binding material');
+        for(const key of ['x','y','height'] as const) assert.ok(Math.abs(sampled.geometry[key])<1,'gutter '+key+' matches the resting book');
+        assert.ok(sampled.geometry.ribbonAbove,'the fixed ribbon stays above the paper renderer');
+        if(!night) for(const texture of sampled.geometry.textures){
+          assert.ok(texture.image.includes('ivory-paper'),'snapshot retains the actual paper texture');
+          assert.ok(!texture.position.join(' ').includes('%'),'texture phase uses the measured book origin');
+          assert.ok(Math.abs(texture.x)<1 && Math.abs(texture.y)<1,'static paper grain never re-centers at overlay entry');
+        }
+        for(const key of ['top','height','scroll'] as const) assert.ok(Math.max(...sampled.samples.map(s=>s[key]))-Math.min(...sampled.samples.map(s=>s[key]))<1,'full turn never changes '+key);
+        assert.deepEqual(await page.locator('.volume').boundingBox(),before,'binding stays put through overlay removal');
+      }
+    });
+
     test('paper begins at the closed corner instead of an already lifted pose', async () => {
       const page=await open(route(chinese,'insights/index.html'),'magic');
       await page.emulateMedia({reducedMotion:'no-preference'});
