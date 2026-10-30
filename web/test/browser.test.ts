@@ -357,13 +357,22 @@ for (const profile of selected) {
       await page.evaluate(()=>{const f=document.querySelector('.volume > main.leaves iframe') as HTMLIFrameElement;(window as any).nativeVideo={element:f,window:f.contentWindow,height:f.closest('figure')!.offsetHeight};});
       const initialPlayers=players;
       await page.emulateMedia({reducedMotion:'no-preference'});
-      await activate(page,'#page-next');
-      await page.waitForSelector('.turn-leaf .turn-media img');
-      await page.waitForFunction(()=>[...document.querySelectorAll<HTMLImageElement>('.turn-leaf .turn-media img')].every(i=>i.complete && i.naturalWidth>0));
-      const state=await page.evaluate(()=>{
-        const original=(window as any).nativeVideo,copy=document.querySelector<HTMLElement>('.turn-leaf figure:has(.turn-media)')!;
-        return {live:original.element===document.querySelector('.volume > main.leaves iframe') && original.window===original.element.contentWindow,copyHeight:copy.offsetHeight,sourceHeight:original.height,players:document.querySelectorAll('.turn-leaf iframe,.turn-leaf video,.turn-leaf audio').length,poster:copy.querySelector<HTMLImageElement>('img')?.src,playMark:getComputedStyle(copy.querySelector('.turn-media')!,'::after').content};
+      // Observe inside the browser before triggering the short fold. Multiple protocol
+      // round trips can outlast it on CI, even though the artwork was painted correctly.
+      await page.evaluate(()=>{
+        (window as any).foldMediaState=undefined;
+        const sample=()=>{
+          const copy=document.querySelector<HTMLElement>('.turn-leaf figure:has(.turn-media)');
+          const image=copy?.querySelector<HTMLImageElement>('img');
+          if(!copy?.offsetHeight || !image?.complete || !image.naturalWidth){requestAnimationFrame(sample);return;}
+          const original=(window as any).nativeVideo;
+          (window as any).foldMediaState={live:original.element===document.querySelector('.volume > main.leaves iframe') && original.window===original.element.contentWindow,copyHeight:copy.offsetHeight,sourceHeight:original.height,players:document.querySelectorAll('.turn-leaf iframe,.turn-leaf video,.turn-leaf audio').length,poster:image.src,playMark:getComputedStyle(copy.querySelector('.turn-media')!,'::after').content};
+        };
+        requestAnimationFrame(sample);
       });
+      await activate(page,'#page-next');
+      await page.waitForFunction(()=>(window as any).foldMediaState);
+      const state=await page.evaluate(()=>(window as any).foldMediaState as {live:boolean;copyHeight:number;sourceHeight:number;players:number;poster:string;playMark:string});
       assert.equal(state.live,true,'the existing iframe and browsing context are retained');
       assert.equal(state.copyHeight,state.sourceHeight,'poster preserves the iframe baseline and figure height');
       assert.equal(state.players,0,'fold artwork creates no duplicate playback');
