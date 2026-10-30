@@ -140,7 +140,7 @@ for (const profile of selected) {
     }
 
     /** Opens an isolated chapter, watching every scenario for script and internal resource errors. */
-    async function open(file: string, world?: 'magic' | 'real') {
+    async function open(file: string, world?: 'magic' | 'real', prepare?: (page:Page)=>Promise<void>) {
       const context = await browser.newContext({ ...profile.options, reducedMotion: 'reduce' });
       const page = readerPage(await context.newPage());
       page.setDefaultTimeout(10_000);
@@ -176,6 +176,7 @@ for (const profile of selected) {
           sessionStorage.setItem('alux-entered', '1');
         }, world);
       }
+      await prepare?.(page);
       await navigate(page, () => page.goto(base + '/' + file));
       await ready(page);
       return page;
@@ -342,6 +343,46 @@ for (const profile of selected) {
         for(const key of ['top','height','scroll'] as const) assert.ok(Math.max(...sampled.samples.map(s=>s[key]))-Math.min(...sampled.samples.map(s=>s[key]))<1,'full turn never changes '+key);
         assert.deepEqual(await page.locator('.volume').boundingBox(),before,'binding stays put through overlay removal');
       }
+    });
+
+    test('video artwork remains on turning paper without replacing the native player', async () => {
+      let players=0,posters=0;
+      const page=await open(route(chinese,'concepts/branching.html'),'magic',async p=>{
+        await p.route('https://www.youtube.com/embed/**',async r=>{players++;await r.fulfill({contentType:'text/html',body:'<!doctype html><title>Video fixture</title>'});});
+        await p.route('https://i.ytimg.com/**',async r=>{posters++;await r.fulfill({contentType:'image/png',body:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aZ1kAAAAASUVORK5CYII=','base64')});});
+      });
+      const media=page.locator('.volume > main.leaves iframe');
+      const spread=await media.evaluate(e=>{const m=e.closest<HTMLElement>('main')!,r=e.getBoundingClientRect(),box=m.getBoundingClientRect();return Math.floor((r.left-box.left)/(m.clientWidth+parseFloat(getComputedStyle(m).columnGap)));});
+      for(let i=0;i<spread;i++)await activate(page,'#page-next');
+      await page.evaluate(()=>{const f=document.querySelector('.volume > main.leaves iframe') as HTMLIFrameElement;(window as any).nativeVideo={element:f,window:f.contentWindow,height:f.closest('figure')!.offsetHeight};});
+      const initialPlayers=players;
+      await page.emulateMedia({reducedMotion:'no-preference'});
+      await activate(page,'#page-next');
+      await page.waitForSelector('.turn-leaf .turn-media img');
+      await page.waitForFunction(()=>[...document.querySelectorAll<HTMLImageElement>('.turn-leaf .turn-media img')].every(i=>i.complete && i.naturalWidth>0));
+      const state=await page.evaluate(()=>{
+        const original=(window as any).nativeVideo,copy=document.querySelector<HTMLElement>('.turn-leaf figure:has(.turn-media)')!;
+        return {live:original.element===document.querySelector('.volume > main.leaves iframe') && original.window===original.element.contentWindow,copyHeight:copy.offsetHeight,sourceHeight:original.height,players:document.querySelectorAll('.turn-leaf iframe,.turn-leaf video,.turn-leaf audio').length,poster:copy.querySelector<HTMLImageElement>('img')?.src,playMark:getComputedStyle(copy.querySelector('.turn-media')!,'::after').content};
+      });
+      assert.equal(state.live,true,'the existing iframe and browsing context are retained');
+      assert.equal(state.copyHeight,state.sourceHeight,'poster preserves the iframe baseline and figure height');
+      assert.equal(state.players,0,'fold artwork creates no duplicate playback');
+      assert.ok(state.poster?.includes('/oaIMMclGuog/hqdefault.jpg'),'artwork comes from this canonical video');
+      assert.equal(state.playMark,'""','the video remains recognizable even before external artwork loads');
+      await page.waitForFunction(()=>!document.querySelector('.turn-leaf'));
+      assert.equal(await media.evaluate(e=>e===(window as any).nativeVideo.element && (e as HTMLIFrameElement).contentWindow===(window as any).nativeVideo.window),true);
+      assert.equal(players,initialPlayers,'turning never reloads the native player');assert.ok(posters>0);
+    });
+
+    if(!profile.options.isMobile) test('long code follows its heading without leaving an almost empty interior leaf', async()=>{
+      const page=await open(route(chinese,'concepts/free_monad.html'),'magic');
+      const placement=await page.locator('#free-monad-type').evaluate(h=>{
+        const heading=h.closest('h3')!,pre=heading.nextElementSibling!,main=heading.closest('main')!,box=main.getBoundingClientRect(),gap=parseFloat(getComputedStyle(main).columnGap),width=(main.clientWidth-gap)/2;
+        const col=(e:Element)=>Math.floor((e.getBoundingClientRect().left-box.left+1)/(width+gap));
+        return {heading:col(heading),code:col(pre),panel:pre.getBoundingClientRect().height,leaf:main.clientHeight};
+      });
+      assert.equal(placement.heading,placement.code,'the section and its code begin on the same leaf');
+      assert.ok(placement.panel<placement.leaf*.8,'long listings leave space for surrounding prose');
     });
 
     test('paper begins at the closed corner instead of an already lifted pose', async () => {

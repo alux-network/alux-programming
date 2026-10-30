@@ -3,16 +3,31 @@
 // StPageFlip is the same standalone renderer used by the approved reader, without its old framework.
 import { PageFlip } from 'page-flip';
 
+// Inert media artwork is derived from the current native chapter, never another player.
+const mediaArtwork = new WeakMap<HTMLElement, HTMLImageElement>();
+
+/** Warms the current chapter's video artwork without creating a second playback context. */
+function prepareMedia(main: HTMLElement) {
+  for (const media of main.querySelectorAll<HTMLElement>('iframe,video')) {
+    let url = media instanceof HTMLVideoElement ? media.poster : '';
+    if (media instanceof HTMLIFrameElement) {
+      const source = new URL(media.src,document.baseURI);
+      const match = source.pathname.match(/^\/embed\/([\w-]{11})$/);
+      if (/^(www\.)?youtube(-nocookie)?\.com$/.test(source.hostname) && match) url = `https://i.ytimg.com/vi/${match[1]}/hqdefault.jpg`;
+    }
+    if (!url) continue;
+    const image = new Image();
+    image.alt = '';
+    image.referrerPolicy = 'no-referrer';
+    image.decoding = 'async';
+    image.src = url;
+    mediaArtwork.set(media,image);
+  }
+}
+
 /** Copies a book surface without identifiers, running media or executable chapter scripts. */
 function snapshot(source: HTMLElement): HTMLElement {
   const copy = source.cloneNode(true) as HTMLElement;
-  const media = source.querySelectorAll<HTMLElement>('iframe,video,audio,script');
-  copy.querySelectorAll<HTMLElement>('iframe,video,audio,script').forEach((element, index) => {
-    const style = getComputedStyle(media[index]!);
-    const placeholder = document.createElement('div');
-    placeholder.style.cssText = `width:${style.width};height:${style.height};margin:${style.margin}`;
-    element.replaceWith(placeholder);
-  });
   // A snapshot can cross into another chapter directory; retain the already-selected asset URL.
   const originals = source.querySelectorAll<HTMLImageElement>('img');
   copy.querySelectorAll<HTMLImageElement>('img').forEach((img,index) => {
@@ -22,6 +37,20 @@ function snapshot(source: HTMLElement): HTMLElement {
     img.removeAttribute('sizes');
   });
   copy.querySelectorAll('picture source').forEach((source) => source.remove());
+  const media = source.querySelectorAll<HTMLElement>('iframe,video,audio,script');
+  copy.querySelectorAll<HTMLElement>('iframe,video,audio,script').forEach((element,index)=>{
+    const original=media[index]!,style=getComputedStyle(original);
+    const placeholder=document.createElement('div');
+    // An inline replaced iframe has a baseline and border box. A bare block div changes
+    // figure height and all later column breaks even when its nominal height matches.
+    placeholder.style.cssText=`width:${style.width};height:${style.height};margin:${style.margin};padding:${style.padding};border:${style.border};box-sizing:${style.boxSizing};display:${style.display==='inline'?'inline-block':style.display};vertical-align:${style.verticalAlign}`;
+    if(original.matches('iframe,video')) {
+      placeholder.className='turn-media';
+      const artwork=mediaArtwork.get(original);
+      if(artwork) placeholder.append(artwork.cloneNode(true));
+    }
+    element.replaceWith(placeholder);
+  });
   // Nested table scroll positions must survive the engine's own cloneNode of the reverse leaf.
   const tables = source.querySelectorAll<HTMLElement>('.table-wrapper');
   copy.querySelectorAll<HTMLElement>('.table-wrapper').forEach((port,index) => {
@@ -51,6 +80,7 @@ function snapshot(source: HTMLElement): HTMLElement {
 
 /** Owns one soft-page renderer for this document; exposes only show, cancel and active state. */
 export function paperTurn(main: HTMLElement) {
+  prepareMedia(main);
   const volume = main.parentElement!;
   const host = document.createElement('div');
   host.className = 'paper-fold-renderer';

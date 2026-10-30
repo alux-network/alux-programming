@@ -351,6 +351,11 @@ html[data-world="magic"] main.leaves .admonition-title { color: var(--reader-mut
 .turn-sheet { background: var(--reader-paper); overflow: hidden; }
 :root.light .turn-sheet-content { background: linear-gradient(#f2eadc99, #f2eadc99), url('/ivory-paper.webp') center / 626px 626px, var(--reader-paper); }
 .turn-sheet-content { position: absolute; inset: 0; overflow: hidden; }
+.turn-media { position:relative; overflow:hidden; background:#181818; }
+.turn-media > img { position:absolute; inset:0; width:100%; height:100%; max-height:none !important; object-fit:cover; }
+.turn-media::after { content:""; position:absolute; left:calc(50% - 32px); top:calc(50% - 22px); width:64px; height:44px; border-radius:12px; background:#f03; }
+.turn-media::before { content:""; position:absolute; z-index:1; left:calc(50% - 7px); top:calc(50% - 11px); border-block:11px solid transparent; border-inline-start:19px solid #fff; }
+
 /* The fixed binding sits above resting snapshots (z1/3), below the curling leaf (z5). */
 @media (min-width:900px) {
   .paper-fold-renderer .stf__block::after { content:""; position:absolute; inset:3px auto 3px calc(50% - 30px); width:60px; background:var(--binding-shade); z-index:4; pointer-events:none; }
@@ -808,8 +813,12 @@ html[data-world="magic"] pre:hover > .buttons, html[data-world="magic"] pre:focu
 
 /* Copy remains discoverable on paper and touch screens; its control row never covers code. */
 html[data-world="magic"] main.leaves pre > .buttons { opacity:1; visibility:visible; }
-html[data-world="magic"] main.leaves pre:has(> .buttons) { display:inline-block; vertical-align:top; width:100%; max-height:calc(var(--leaf-height) - 2 * var(--book-font)); box-sizing:border-box; margin-block:var(--book-font); padding-top:56px; overflow:hidden; border:1px solid var(--reader-rule); background:var(--reader-code-paper); }
-html[data-world="magic"] main.leaves pre:has(> .buttons) > code { max-height:calc(var(--leaf-height) - 2 * var(--book-font) - 58px); box-sizing:border-box; overflow:auto; padding:10px; border:0; background:transparent; font-size:.82em; line-height:1.65; }
+html[data-world="magic"] main.leaves pre:has(> .buttons) { display:inline-block; vertical-align:top; width:100%; --code-panel-height:calc(var(--leaf-height) - 2 * var(--book-font)); max-height:var(--code-panel-height); box-sizing:border-box; margin-block:var(--book-font); padding-top:56px; overflow:hidden; border:1px solid var(--reader-rule); background:var(--reader-code-paper); }
+html[data-world="magic"] main.leaves pre:has(> .buttons) > code { max-height:calc(var(--code-panel-height) - 58px); box-sizing:border-box; overflow:auto; padding:10px; border:0; background:transparent; font-size:.82em; line-height:1.65; }
+/* Leave room for the section heading and prose before a long, locally scrollable listing. */
+@media (min-width:900px) {
+  html[data-world="magic"][data-reading="pages"] main.leaves pre:has(> .buttons) { --code-panel-height:min(calc(var(--leaf-height) - 2 * var(--book-font)),calc(var(--leaf-height) * .7)); }
+}
 @media (hover:none) { pre > .buttons { opacity:1; visibility:visible; } html[data-world="real"] main.leaves pre:has(> .buttons) > code { padding-block-start:48px; } }
 
 /* The desk can scroll vertically without shrinking the book into a short landscape card. */
