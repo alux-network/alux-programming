@@ -522,6 +522,19 @@ main.parentElement!.addEventListener('click', (event) => {
   turn((event.clientX < box.left + box.width / 2) !== rtl ? -1 : 1);
 });
 
+// Expanded native details can add columns without changing the fixed main viewport dimensions.
+// Keep the disclosure on screen rather than scaling its old ratio into a different spread.
+main.addEventListener('toggle', (event) => {
+  if (!paged() || !(event.target instanceof HTMLDetailsElement)) return;
+  const summary=event.target.querySelector('summary');
+  if (!summary) return;
+  cancelTurn();
+  fragmentPending=false;
+  restorePending=false;
+  show(spreadOf(summary));
+  remember();
+}, true);
+
 // Column count depends on fonts and images, so settle again once they have loaded.
 document.fonts.ready.then(async () => {
   settleFonts();

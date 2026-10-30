@@ -234,7 +234,18 @@ for (const profile of selected) {
       assert.equal(await page.title(), 'ALUX Programming');
       assert.equal(await page.locator('#theme-list button').count(), 2);
       const before = await page.locator('#menu-bar').evaluate((e) => e.getBoundingClientRect().height);
+      const sizes=()=>page.evaluate(()=>({body:parseFloat(getComputedStyle(document.querySelector('main.leaves')!).fontSize),directory:parseFloat(getComputedStyle(document.querySelector('.chapter li.chapter-item')!).fontSize),part:parseFloat(getComputedStyle(document.querySelector('.chapter .part-title')!).fontSize),bookmarks:parseFloat(getComputedStyle(document.getElementById('bookmarks-open')!).fontSize),search:parseFloat(getComputedStyle(document.getElementById('sidebar-search')!).fontSize)}));
+      if (profile.options.isMobile) { await activate(page, '#sidebar-toggle'); await ready(page); }
+      const original=await sizes();
+      for(const size of Object.values(original)) assert.equal(size,original.body,'contents and body share the default size');
+      if (profile.options.isMobile) await activate(page, '#sidebar-toggle');
       await activate(page, '#text-larger');
+      if (profile.options.isMobile) { await activate(page, '#sidebar-toggle'); await ready(page); }
+      const enlarged=await sizes();
+      for(const size of Object.values(enlarged)) assert.equal(size,enlarged.body,'contents and body enlarge together');
+      assert.ok(enlarged.body>original.body);
+
+      if (profile.options.isMobile) { await activate(page, '#sidebar-toggle'); await ready(page); }
       assert.equal(await page.locator('#menu-bar').evaluate((e) => e.getBoundingClientRect().height), before);
       await activate(page, '#theme-toggle');
       assert.equal(await page.locator('html').evaluate((e) => e.classList.contains('coal')), true);
@@ -739,6 +750,35 @@ for (const profile of selected) {
         await page.waitForFunction(()=>!document.querySelector('.turn-leaf'));
         assert.equal((await folio(page)).first,before.last+1);
       }
+    });
+
+    test('native disclosures keep themed surfaces and update chapter pagination', async () => {
+      const page=await open('insights/operational_semantics.html','magic');
+      const disclosure=page.locator('.volume > main.leaves details').first();
+      assert.ok(await disclosure.count(),'canonical chapter contains a disclosure');
+      const before=await folio(page);
+      await disclosure.locator('summary').click();
+      await page.waitForFunction(()=>document.querySelector('.volume > main.leaves details')?.hasAttribute('open'));
+      await page.waitForFunction(total=>Number(document.getElementById('folio')?.textContent?.split(' / ').pop())>total,before.total);
+      const opened=await folio(page);
+      assert.ok(opened.total>before.total,'expanded content adds actual chapter pages');
+      await page.mouse.move(0,0); // Inspect the resting surface separately from the intentional brass hover tint.
+      const surface=await disclosure.evaluate(e=>{
+        const probe=document.createElement('span');
+        probe.style.cssText='display:none;color:var(--panel-accent);background:color-mix(in srgb,var(--panel-accent) 7%,transparent)';
+        e.append(probe);
+        const expected=getComputedStyle(probe),tint=expected.backgroundColor,accent=expected.color;
+        probe.remove();
+        const summary=e.querySelector('summary')!;
+        return {background:getComputedStyle(summary).backgroundColor,marker:getComputedStyle(summary,'::marker').color,accent,tint,overflow:getComputedStyle(e).overflow};
+      });
+      assert.ok(surface.background==='rgba(0, 0, 0, 0)' || surface.background===surface.tint,'summary is transparent or the intentional theme-accent hover tint');
+      assert.equal(surface.marker,surface.accent,'disclosure marker uses the same theme accent');
+      assert.equal(surface.overflow,'visible','long disclosed content remains fragmentable');
+      await disclosure.locator('summary').click();
+      await page.waitForFunction(()=>!document.querySelector('.volume > main.leaves details')?.hasAttribute('open'));
+      await page.waitForFunction(total=>document.getElementById('folio')?.textContent?.endsWith(' / '+total),before.total);
+      assert.equal((await folio(page)).total,before.total,'closing restores the original page count');
     });
 
     test('native code copy acknowledges repeated clicks after paging', async () => {

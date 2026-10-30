@@ -12,7 +12,7 @@ The only new runtime dependency is pinned `page-flip@2.0.7`, a standalone soft-p
 
 | Area | Contract |
 | --- | --- |
-| Defaults | Daylight on a clean visit; saved manual night choice persists. Two themes only. Text scaling affects content, not navigation. |
+| Defaults | Daylight on a clean visit; saved manual night choice persists. Two themes only. Text scaling applies equally to prose and contents; toolbar controls stay fixed. |
 | Book | Full available desktop width, facing leaves; one leaf on narrow screens. Height follows the viewport with a readable minimum; the whole binding remains vertically scrollable, with no width-based height cap. Ivory paper or muted forest-green paper, brass binding, fixed corner details and textured ribbon. |
 | Reading mode | Magic offers paged and continuous reading over the same chapter. Keep the selected mode and normalized progress on reload/world/language changes; the toolbar remains reachable while scrolling. |
 | Typography | Latin body 24px, CJK 22px, Arabic 26px at scale 1. Body line height 1.8, CJK 1.9. Display lettering uses Cormorant Garamond with appropriate localized fallbacks. Toolbar labels use one sans-serif family and aligned controls. |
@@ -80,3 +80,7 @@ Mobile WebKit retained old fragmented line boxes after switching from CSS column
 A later owner check identified a remaining 3px text hop: fixed fold placement used the former absolute layer's 14px padding-box offset, while snapshots subtract 17px from the border box. Both now use the same 17px cover origin. Frame/scroll stability alone cannot prove content alignment; compare the printed baseline too.
 
 Palette evidence uses the final CSS cascade, not the first historical token definition: the old materials layer already used ivory `#f1e8d4` and forest paper `#202820`, which remain. The real reader restores the old final neutral backgrounds `#f5f5f5` (day) / `#202020` (night), with text `#303030` / `#c9c9c9`, sidebars `#ebebeb` / `#181818`, and coordinated code/table surfaces. These are low-glare design choices, not a medical eye-protection claim. The owner also requested a clearer 18px chapter folio, 20px reading-mode label with a 23px icon, and readable volume controls without a duplicate pause/play text action.
+
+The owner clarified that the directory and body must have equal language-aware default sizes and scale together with A−/A+. They now share the same computed font variable; toolbar controls retain fixed geometry. Native details/summary and source-injected admonition styles are both themed, including their borders, summary backgrounds and disclosure markers. Display math uses the body-sized KaTeX base rather than the native 1.21em enlargement.
+
+After viewing the restored gray day palette, the owner requested lighter real-world surfaces: day background #f7f7f4, sidebar #efefeb and code #eeefeb refine the historical #f5f5f5/#ebebeb baseline; night remains #202020/#181818. This is a deliberate visual refinement, not an assertion that the old palette had those lighter values. Opening native details now updates column pagination while keeping the clicked summary's spread; long details content remains fragmentable.

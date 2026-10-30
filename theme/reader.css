@@ -24,6 +24,7 @@
   --reader-serif: Georgia, "Times New Roman", "Noto Serif CJK SC", "Songti SC", serif;
   --reader-display: "Cormorant Garamond", Georgia, serif;
   --reading-size: 24px;
+  --reader-font:calc(var(--reading-size) * var(--reader-scale, 1));
   --book-leading: 1.8;
   --reader-sans: Inter, "Segoe UI", Arial, "Noto Sans CJK SC", sans-serif;
   --reader-paper: #f1e8d4;
@@ -202,7 +203,7 @@ html[data-world="magic"] {
 }
 html[data-world="magic"] #content { --book-width: 100%; }
 html[data-world="magic"] .chapter li.chapter-item,
-html[data-world="magic"] .sidebar-bookmarks { font-size: 20px; }
+html[data-world="magic"] .sidebar-bookmarks { font-size:var(--reader-font); }
 html[data-world="magic"] .sidebar { color: var(--reader-ink); border-inline-end: 1px solid var(--reader-rule); }
 html[data-world="magic"] :is(.brand, .sidebar-bookmarks, .chapter li a, .chapter li.part-title) { color: var(--reader-ink); font-family: var(--reader-serif); }
 html[data-world="magic"] .chapter li.part-title { color: var(--reader-accent); padding: 16px 0 0; margin: 20px 0 10px; border-top: 1px solid var(--reader-rule); }
@@ -489,8 +490,8 @@ html[data-gateway] body { overflow: hidden; }
 .brand { padding-block: 26px 22px; }
 .brand-logo { height: auto; aspect-ratio: 256 / 239; object-fit: contain; }
 .brand-subtitle { margin-top: 5px; }
-.chapter li.part-title { font-size: 2.1rem; font-weight: 500; }
-.chapter li.chapter-item { font-size: 2.05rem; margin-block: 12px; }
+.chapter li.part-title { font-size:var(--reader-font); font-weight:500; }
+.chapter li.chapter-item { font-size:var(--reader-font); margin-block:12px; }
 .chapter li.chapter-item > a { padding-block: 3px; }
 #bookmark-label { display: none; }
 :root.coal[data-world="magic"] .brand-logo { content: url("/alux-bronze-night.webp"); }
@@ -500,7 +501,7 @@ html[data-world="real"] .brand-logo { content: url("/alux-black.png"); filter: n
 :root.coal[data-world="real"] .brand-logo { content: url("/alux-black.png"); filter: invert(1); }
 /* The logo already links to the entrance; do not repeat the book name in the contents. */
 .chapter > .chapter-item.affix:first-child { display: none; }
-:root.light[data-world="real"] { --bg: #f5f5f5; --fg: #303030; --sidebar-bg: #ebebeb; --sidebar-fg: #303030; --links: #536b67; --sidebar-active: #303030; --table-header-bg:#e5e5e5; --table-alternate-bg:#ededed; --table-border-color:#d9d9d9; --quote-bg:#ededed; }
+:root.light[data-world="real"] { --bg: #f7f7f4; --fg: #303030; --sidebar-bg: #efefeb; --sidebar-fg: #303030; --links: #536b67; --sidebar-active: #303030; --table-header-bg:#e9ebe6; --table-alternate-bg:#f1f2ee; --table-border-color:#daddd7; --quote-bg:#f1f2ee; }
 :root.coal[data-world="real"] { --bg: #202020; --fg: #c9c9c9; --sidebar-bg: #181818; --sidebar-fg: #c9c9c9; --links: #a5b8b4; --sidebar-active: #d4d4d4; --icons: #b1b1b1; --icons-hover: #d4d4d4; --table-header-bg:#292929; --table-alternate-bg:#242424; --table-border-color:#3b3b3b; --quote-bg:#181818; }
 html[data-world="magic"] main.leaves,
 html[data-world="magic"] main.leaves :is(blockquote, .admonition, .admonition-content),
@@ -860,6 +861,22 @@ html[data-reader-shell],html[data-reader-shell] body.reader-shell { margin:0; wi
 html[data-shell-loading] body { visibility:hidden; }
 
 /* Restore the original low-glare neutral document surfaces independently of syntax colors. */
-:root.light[data-world="real"] main.leaves :is(pre,pre > code) { background:#ededed; }
+:root.light[data-world="real"] main.leaves :is(pre,pre > code) { background:#eeefeb; }
 :root.coal[data-world="real"] main.leaves :is(pre,pre > code) { background:#181818; }
 html[data-world="real"] main.leaves pre:has(> .buttons) > code { color:var(--syntax-ink); }
+
+/* Body and contents share the same language-aware size and saved A−/A+ scale. */
+#sidebar :is(.sidebar-bookmarks,.sidebar-search) { font-size:var(--reader-font); }
+#content main.leaves { --panel-border:var(--table-border-color); --panel-accent:var(--links); --panel-bg:color-mix(in srgb,var(--fg) 3%,transparent); }
+html[data-world="magic"] #content main.leaves { --panel-border:var(--reader-rule); --panel-accent:var(--reader-accent); --panel-bg:color-mix(in srgb,var(--reader-trim) 6%,transparent); }
+/* Native details and late admonition styles must not reintroduce blue/white panels. */
+#content main.leaves :is(details,.admonition) { border:1px solid var(--panel-border); border-inline-start:3px solid var(--panel-accent); background:var(--panel-bg); color:inherit; border-radius:2px; }
+#content main.leaves details > summary { background:transparent; color:inherit; padding:.6em .85em; }
+#content main.leaves :is(details > summary,.admonition-title)::marker { color:var(--panel-accent); }
+#content main.leaves :is(details > summary,.admonition-title):hover { background:color-mix(in srgb,var(--panel-accent) 7%,transparent); }
+#content main.leaves .admonition > .admonition-title { background:transparent; color:inherit; }
+#content main.leaves .katex-display > .katex { font-size:1em; }
+
+html[data-world="magic"] #content main.leaves details { overflow:visible; break-inside:auto; }
+#content main.leaves details > summary { break-after:avoid; }
+html[data-world="real"] .music-volume input { accent-color:var(--links); }
