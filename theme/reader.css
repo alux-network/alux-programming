@@ -328,7 +328,7 @@ html[data-world="magic"] main.leaves .admonition-title { color: var(--reader-mut
 }
 .folio-center { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .folio-book { font: 2.4rem var(--reader-serif); color: var(--reader-muted); }
-.folio { font: 1.4rem var(--mono-font); letter-spacing: 0.06em; color: var(--reader-muted); }
+.folio { font: 1.8rem/1.5 var(--mono-font); letter-spacing: 0.025em; color: var(--reader-muted); }
 .page-turn {
   display: inline-flex;
   align-items: center;
@@ -500,8 +500,8 @@ html[data-world="real"] .brand-logo { content: url("/alux-black.png"); filter: n
 :root.coal[data-world="real"] .brand-logo { content: url("/alux-black.png"); filter: invert(1); }
 /* The logo already links to the entrance; do not repeat the book name in the contents. */
 .chapter > .chapter-item.affix:first-child { display: none; }
-:root.light[data-world="real"] { --bg: #fff; --fg: #30332f; --sidebar-bg: #f5f5f5; --sidebar-fg: #30332f; --links: #536b67; --sidebar-active: #30332f; }
-:root.coal[data-world="real"] { --bg: #292c2f; --fg: #eee; --sidebar-bg: #202326; --sidebar-fg: #eee; --links: #a5b8b4; --sidebar-active: #eee; --icons: #b1b1b1; --icons-hover: #fff; }
+:root.light[data-world="real"] { --bg: #f5f5f5; --fg: #303030; --sidebar-bg: #ebebeb; --sidebar-fg: #303030; --links: #536b67; --sidebar-active: #303030; --table-header-bg:#e5e5e5; --table-alternate-bg:#ededed; --table-border-color:#d9d9d9; --quote-bg:#ededed; }
+:root.coal[data-world="real"] { --bg: #202020; --fg: #c9c9c9; --sidebar-bg: #181818; --sidebar-fg: #c9c9c9; --links: #a5b8b4; --sidebar-active: #d4d4d4; --icons: #b1b1b1; --icons-hover: #d4d4d4; --table-header-bg:#292929; --table-alternate-bg:#242424; --table-border-color:#3b3b3b; --quote-bg:#181818; }
 html[data-world="magic"] main.leaves,
 html[data-world="magic"] main.leaves :is(blockquote, .admonition, .admonition-content),
 html[data-world="magic"] main.leaves :is(h1,h2,h3,h4,h5,h6) > a.header {
@@ -739,9 +739,8 @@ html[data-world="magic"] .music-notice { background: var(--reader-paper); color:
 .music-notice-heading p { margin: 0; flex: 1; }
 .music-notice button { background: transparent; border: 0; color: inherit; cursor: pointer; font: inherit; }
 #music-notice-close { padding: 0 4px; font: 24px/1 var(--reader-sans); }
-#music-notice-action { margin-top: 12px; padding: 4px 0; text-decoration: underline; text-underline-offset: 4px; }
-.music-volume { display: flex; align-items: center; gap: 10px; margin-top: 12px; font-size: 14px; }
-.music-volume input { min-width: 0; width: 100%; accent-color: var(--reader-accent); }
+.music-volume { display:flex; align-items:center; gap:12px; margin-top:14px; min-height:44px; font:16px/1.5 var(--reader-sans); }
+.music-volume input { min-width:0; width:100%; min-height:28px; accent-color:var(--reader-accent); cursor:pointer; }
 .music-volume output { min-width: 3.5em; text-align: end; }
 
 /* Search has one discoverable entry in the directory; the native hidden button still serves Ctrl+K. */
@@ -821,7 +820,7 @@ html[data-world="magic"] main.leaves pre:has(> .buttons) { border-color:#b3a68d;
 /* Never paint an interactive copy control outside the paper being folded. */
 .volume[data-paper-turning] > main.leaves pre > .buttons { z-index:0; pointer-events:none; transition:none; }
 #reading-mode { display:none; }
-html[data-world="magic"] #reading-mode { width:auto; display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:0 12px; font:17px/1.4 var(--reader-sans); color:var(--reader-ink); white-space:nowrap; }
+html[data-world="magic"] #reading-mode { width:auto; display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:0 12px; font:20px/1.4 var(--reader-sans); color:var(--reader-ink); white-space:nowrap; }
 html[data-world="magic"][data-reading="scroll"] .volume { padding:42px 40px; }
 html[data-world="magic"][data-reading="scroll"] #content main.leaves { columns:auto; height:auto; overflow:visible; max-width:960px; margin-inline:auto; }
 html[data-world="magic"][data-reading="scroll"] .volume > :is(.page-head,.page-foot),
@@ -829,6 +828,7 @@ html[data-world="magic"][data-reading="scroll"] .volume::before,
 html[data-world="magic"][data-reading="scroll"] .volume::after,
 html[data-world="magic"][data-reading="scroll"] .folio-center { display:none; }
 html[data-world="magic"][data-reading="scroll"] main.leaves :is(pre:has(> .buttons),pre:has(> .buttons) > code,.table-wrapper) { max-height:none; }
+#reading-mode-icon { font-size:23px; line-height:1; }
 @media(max-width:899px) {
   html[data-world="magic"] #reading-mode { width:44px; min-height:44px; padding:0 8px; font-size:15px; }
   #reading-mode-label { display:none; }
@@ -858,3 +858,8 @@ html[data-reader-shell],html[data-reader-shell] body.reader-shell { margin:0; wi
 .reader-shell .chapter-frame { position:fixed; inset:0; width:100%; height:100%; border:0; display:block; background:var(--bg); }
 .reader-shell .pending-chapter { opacity:0; pointer-events:none; }
 html[data-shell-loading] body { visibility:hidden; }
+
+/* Restore the original low-glare neutral document surfaces independently of syntax colors. */
+:root.light[data-world="real"] main.leaves :is(pre,pre > code) { background:#ededed; }
+:root.coal[data-world="real"] main.leaves :is(pre,pre > code) { background:#181818; }
+html[data-world="real"] main.leaves pre:has(> .buttons) > code { color:var(--syntax-ink); }

@@ -681,7 +681,6 @@ function placeMusicNotice() {
 /** Updates the existing hint without reopening a notice the reader dismissed. */
 function updateMusicNotice(state: MusicNoticeState) {
   $('music-notice-hint').textContent = musicHints[lang][state.playing ? 0 : 1]!;
-  $('music-notice-action').textContent = state.playing ? copy.off : copy.on;
   $<HTMLInputElement>('music-volume').value = String(music.volume);
   $('music-volume-value').textContent = Math.round(music.volume * 100) + '%';
 }
@@ -700,7 +699,6 @@ readingMusic = bindReadingMusic({
   },
 });
 $('music-notice-close').addEventListener('click', () => readingMusic!.closeNotice());
-$('music-notice-action').addEventListener('click', () => music.paused ? readingMusic!.toggle() : readingMusic!.stop());
 $('music-volume').addEventListener('input', () => readingMusic!.setVolume(Number($<HTMLInputElement>('music-volume').value)));
 document.addEventListener('click', (event) => {
   if (!(event.target as Element).closest('#music-notice, #music-toggle, .world-choice, #world-toggle')) readingMusic!.closeNotice();

@@ -12,7 +12,7 @@ import { preview } from 'vite';
 import type { PreviewServer } from 'vite';
 import { expectedSite } from './site.ts';
 import { readerPage, outerPage } from './reader-page.ts';
-import { uiStrings } from '../i18n.ts';
+import { uiStrings, copyLabels } from '../i18n.ts';
 import type { Edition } from './site.ts';
 
 const editions = await expectedSite();
@@ -262,7 +262,8 @@ for (const profile of selected) {
         const copy=leaf.querySelector('main.leaves')!;
         const cover=document.querySelector('.volume')!.getBoundingClientRect(),box=leaf.getBoundingClientRect();
         const read=(main:Element)=>[...main.querySelectorAll('h1,h2,h3,p,li,pre')].map(e=>({height:(e as HTMLElement).offsetHeight,line:getComputedStyle(e).lineHeight,margin:getComputedStyle(e).marginTop,rects:e.getClientRects().length}));
-        const state={hidden:leaf.getAttribute('aria-hidden'),ids:leaf.querySelectorAll('[id]').length,overflow:getComputedStyle(leaf).overflow,x:box.left-cover.left,y:box.top-cover.top,source:read(source),copy:read(copy)};
+        const rest=leaf.querySelector('.stf__item.--simple main.leaves')!.getBoundingClientRect(),live=source.getBoundingClientRect();
+        const state={baseline:{x:rest.left-live.left,y:rest.top-live.top},hidden:leaf.getAttribute('aria-hidden'),ids:leaf.querySelectorAll('[id]').length,overflow:getComputedStyle(leaf).overflow,x:box.left-cover.left,y:box.top-cover.top,source:read(source),copy:read(copy)};
         return new Promise<{state:typeof state;samples:{height:number;scroll:number}[]}>(resolve=>{
           const samples:{height:number;scroll:number}[]=[];
           const sample=()=>{samples.push({height:document.documentElement.scrollHeight,scroll:scrollY});if(samples.length===10)resolve({state,samples});else requestAnimationFrame(sample)};sample();
@@ -270,8 +271,9 @@ for (const profile of selected) {
       });
       assert.equal(sampled.state.hidden,'true');
       assert.equal(sampled.state.ids,0);
+      assert.ok(Math.abs(sampled.state.baseline.x)<1 && Math.abs(sampled.state.baseline.y)<1,'stationary printed text never hops when the overlay appears');
       assert.equal(sampled.state.overflow,'visible','moving paper may lift beyond the binding');
-      assert.ok(Math.abs(sampled.state.x-14)<1 && Math.abs(sampled.state.y-14)<1,'fold remains aligned with the scrolled cover');
+      assert.ok(Math.abs(sampled.state.x-17)<1 && Math.abs(sampled.state.y-17)<1,'fold remains aligned with the scrolled cover');
       assert.deepEqual(await volume.boundingBox(),before,'cover remains fixed during the turn');
       assert.equal(new Set(sampled.samples.map(s=>s.height)).size,1,'curl does not enlarge the document');
       assert.equal(new Set(sampled.samples.map(s=>s.scroll)).size,1,'turn never scrolls the desk');
@@ -737,6 +739,28 @@ for (const profile of selected) {
         await page.waitForFunction(()=>!document.querySelector('.turn-leaf'));
         assert.equal((await folio(page)).first,before.last+1);
       }
+    });
+
+    test('native code copy acknowledges repeated clicks after paging', async () => {
+      const page=await open('concepts/branching.html','magic');
+      let checked=0;
+      const limit=(await folio(page)).total;
+      for(let leaf=0;leaf<limit && checked<2;leaf++) {
+        const buttons=page.locator('.volume > main.leaves .clip-button');
+        const visible=await buttons.evaluateAll(es=>es.map((e,i)=>({i,r:e.getBoundingClientRect()})).filter(({r})=>r.left>0 && r.right<innerWidth && r.top>0 && r.bottom<innerHeight).map(e=>e.i));
+        if(visible.length) {
+          const button=buttons.nth(visible[0]!);
+          for(let repeat=0;repeat<2;repeat++) {
+            if(profile.options.hasTouch) await button.tap(); else await button.click();
+            await page.waitForFunction(([index,label])=>document.querySelectorAll<HTMLElement>('.volume > main.leaves .clip-button')[Number(index)]?.dataset.copyLabel===label,[String(visible[0]),copyLabels.en[1]]);
+          }
+          checked++;
+        }
+        const at=await folio(page);
+        if(at.last===at.total) break;
+        await activate(page,'#page-next'); await ready(page);
+      }
+      assert.equal(checked,2,'two settled code pages actually copied successfully');
     });
 
     test('display equations remain inside their leaf and copy feedback has one coordinated acknowledgement', async () => {

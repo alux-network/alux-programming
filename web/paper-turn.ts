@@ -127,13 +127,15 @@ export function paperTurn(main: HTMLElement) {
     const portrait = before.length === 1;
     const width = parseFloat(before[0]!.style.width), height = parseFloat(before[0]!.style.height);
     const pages = backwards ? [...after, ...before] : [...before, ...after];
-    // Fixed paper can curl beyond the cover without enlarging document overflow or moving scrollbars.
+    // Snapshots subtract 17px from cover coordinates (3px border + 14px inner trim).
+    // Fixed positioning must include that border, unlike an absolute padding-box origin.
+    // Paper can curl beyond the cover without enlarging document overflow or moving scrollbars.
     const cover = volume.getBoundingClientRect();
     Object.assign(host.style, { position: 'fixed', left: '0px', top: '0px', width: width * before.length + 'px', height: height + 'px', minWidth: '0', minHeight: '0' });
     host.hidden = false;
     const origin = host.getBoundingClientRect();
-    host.style.left = cover.left + 14 - origin.left + 'px';
-    host.style.top = cover.top + 14 - origin.top + 'px';
+    host.style.left = cover.left + 17 - origin.left + 'px';
+    host.style.top = cover.top + 17 - origin.top + 'px';
     host.hidden = false;
     host.classList.add('turn-leaf');
     completion = done;
