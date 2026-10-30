@@ -476,7 +476,7 @@ for (const profile of selected) {
       const { page, count } = await longChapter();
       await page.emulateMedia({ reducedMotion: 'no-preference' });
       const startingFolio = await page.locator('#folio').innerText();
-      const box = (await page.locator('.volume').boundingBox())!;
+      const box = await blankFooter(page);
       await page.mouse.click(box.x + box.width - 20, box.y + box.height - 24);
       await page.waitForFunction(() => !!document.querySelector('.turn-leaf'));
       await page.mouse.click(box.x + box.width - 20, box.y + box.height - 24);
@@ -700,7 +700,7 @@ for (const profile of selected) {
       const page = await open(route(german,'concepts/free_monad.html'), 'magic');
       let at = await folio(page);
       while(at.last<at.total) {
-        const box=(await page.locator('.volume').boundingBox())!;
+        const box=await blankFooter(page);
         // The click point is outside main but previously matched hidden Range rectangles.
         await page.mouse.click(box.x+box.width-20,box.y+box.height-24);
         const next=await folio(page);

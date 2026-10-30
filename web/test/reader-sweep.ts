@@ -8,7 +8,11 @@ import { preview } from 'vite';
 import { expectedSite } from './site.ts';
 import { readerPage } from './reader-page.ts';
 const editions=await expectedSite();
-const digest=()=>createHash('sha256').update(readdirSync('book/html').filter(f=>/^reader-.*\.(js|css)$/.test(f)).sort().map(f=>f+readFileSync('book/html/'+f)).join('')).digest('hex');
+const digest=()=>{
+  const files=['reader.js',...readdirSync('book/html/theme').filter(f=>/^reader-.*\.css$/.test(f)).map(f=>'theme/'+f)];
+  assert.ok(files.length>=2,'built reader script and stylesheet exist before hashing');
+  return createHash('sha256').update(files.sort().map(f=>f+readFileSync('book/html/'+f)).join('')).digest('hex');
+};
 const bundle=digest();
 const server=await preview({preview:{host:'127.0.0.1',port:0,open:false},logLevel:'silent'});
 const base=server.resolvedUrls!.local[0]!;
