@@ -21,10 +21,12 @@ let routes=0, turns=0, equations=0, copyControls=0;
 try {
   for(const theme of ['light','coal']) for(const world of ['magic','real']) {
     const context=await browser.newContext({viewport:{width:1600,height:1200},reducedMotion:'reduce'});
-    await context.addInitScript(({theme,world})=>{
+    await context.addInitScript(({theme,world,origin})=>{
+      // The browser also runs init scripts in cross-origin media frames. Seed only our reader.
+      if(location.origin!==origin)return;
       if(!localStorage.getItem('alux-reader')) localStorage.setItem('alux-reader',JSON.stringify({world,mode:'pages',bookmarks:[]}));
       localStorage.setItem('mdbook-theme',theme); sessionStorage.setItem('alux-entered','1');
-    },{theme,world});
+    },{theme,world,origin:new URL(base).origin});
     const page=readerPage(await context.newPage());
     const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
     for(const edition of editions) {
