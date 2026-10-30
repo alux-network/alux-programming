@@ -113,7 +113,7 @@ export function paperTurn(main: HTMLElement) {
         const rect = original.getBoundingClientRect();
         if (!rect.width || (count === 2 && (rect.left > outer.left + outer.width / 2 ? 1 : 0) !== side)) continue;
         const detail = snapshot(original);
-        detail.style.cssText = `position:absolute;left:${rect.left - outer.left - 17 - side * width}px;top:${rect.top - outer.top - 17}px;width:${rect.width}px;height:${rect.height}px;right:auto;bottom:auto;margin:0`;
+        detail.style.cssText = `position:absolute;box-sizing:border-box;left:${rect.left - outer.left - 17 - side * width}px;top:${rect.top - outer.top - 17}px;width:${rect.width}px;height:${rect.height}px;right:auto;bottom:auto;margin:0`;
         clip.append(detail);
       }
       return sheet;
@@ -144,7 +144,7 @@ export function paperTurn(main: HTMLElement) {
     if (!engine) {
       engine = new PageFlip(host, {
         width, height, size: 'fixed', autoSize: false, usePortrait: portrait, showCover: false,
-        flippingTime: 700, drawShadow: true, maxShadowOpacity: document.documentElement.classList.contains('coal') ? .65 : .3,
+        flippingTime: 700, drawShadow: true, maxShadowOpacity: document.documentElement.classList.contains('coal') ? .22 : .3,
         useMouseEvents: false, mobileScrollSupport: false, showPageCorners: false,
       });
       engine.loadFromHTML(pages);
@@ -160,7 +160,7 @@ export function paperTurn(main: HTMLElement) {
         if (started && data === 'read') { started = false; queueMicrotask(finish); }
       });
     } else {
-      Object.assign(engine.getSettings(), { width, height, minWidth: width, maxWidth: width, minHeight: height, maxHeight: height, usePortrait: portrait, maxShadowOpacity: document.documentElement.classList.contains('coal') ? .65 : .3 });
+      Object.assign(engine.getSettings(), { width, height, minWidth: width, maxWidth: width, minHeight: height, maxHeight: height, usePortrait: portrait, maxShadowOpacity: document.documentElement.classList.contains('coal') ? .22 : .3 });
       engine.updateFromHtml(pages);
       engine.update();
     }

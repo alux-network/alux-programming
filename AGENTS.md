@@ -236,9 +236,13 @@ Keep the pending frame inert. Reject stale ready callbacks, retain only the comm
 
 - Compare static printed text in the animation overlay to live page coordinates as well as checking the cover and scroll position. Fixed overlays use a border-box origin: the paper inset is 17px (3px binding border plus 14px trim), not the old absolute layer's 14px.
 - The historical real-world low-glare day background was #f5f5f5/sidebar #ebebeb. The owner found that rendition too gray on 2026-10-30; the refined day surface is #f7f7f4/text #303030/sidebar #efefeb. Night stays #202020/text #c9c9c9/sidebar #181818. Magic paper remains ivory #f1e8d4/forest #202820. Read historical CSS in import/cascade order before comparing colors. Low-glare UI is not a medical eye-protection claim.
-- Folio progress is the sole center label: keep it legible at 18px. Reading-mode icon/label use the toolbar optical rhythm. Music volume controls remain clear and touchable; no duplicate pause/play text action inside the popup.
+- Folio progress is the sole center label: keep it legible at 20px. Reading-mode icon/label use the toolbar optical rhythm. Music volume controls remain clear and touchable; no duplicate pause/play text action inside the popup.
 
 - Owner correction on 2026-10-30: directory labels, bookmark/search text and prose use the same language-aware default size (Latin24px,CJK22px,Arabic26px) and stored scale. Number prefixes remain a quieter secondary layer; wrapped titles keep their hanging alignment. Toolbar geometry stays independent. Display math uses a 1em KaTeX base rather than the native 1.21em enlargement.
 - Check ordinary native details/summary separately from mdBook admonitions: both need world/theme-coordinated surfaces, borders and disclosure markers. Late source-injected admonition styles must not reintroduce blue/white or cyan panels into paper themes.
 
 - Opening/closing native details changes column overflow without resizing the leaf viewport: update the folio and preserve the clicked summary's spread. Long disclosed content must fragment across leaves rather than clip inside overflow:hidden.
+
+- Directory action names follow the native expanded state: “Show table of contents” / “Hide table of contents”, localized in every edition. Keep the icon; never expose a combined show/hide instruction as its tooltip.
+- Running-head snapshots use border-box sizing for measured bounding rectangles: the reproduced content-box copy added 10px padding plus 1px rule to a 31px head, making it 42px. Compare the head rule and static destination paragraphs/tables before and after settling, including later spreads.
+- Static night sheets must share the live paper color without extra illuminated rims or gold side borders. Limit curl shading to the fold renderer; the stationary book and page edges must not brighten or lose their surface during a turn.

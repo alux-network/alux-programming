@@ -102,6 +102,14 @@ function label(el: HTMLElement, key: string) {
   el.setAttribute('aria-label', t(key));
 }
 
+// mdBook owns the directory state; name the action that the current state makes available.
+const sidebarToggle = $('sidebar-toggle');
+function labelDirectoryAction() {
+  label(sidebarToggle, sidebarToggle.getAttribute('aria-expanded') === 'true' ? 'Hide table of contents' : 'Show table of contents');
+}
+labelDirectoryAction();
+new MutationObserver(labelDirectoryAction).observe(sidebarToggle, {attributes:true, attributeFilter:['aria-expanded']});
+
 // Localize the native clipboard feedback without replacing mdBook's clipboard handler.
 for (const button of document.querySelectorAll<HTMLButtonElement>('#content > .volume:not(.navigation-veil) > main pre .clip-button')) {
   const [action, success, failure] = copyLabels[lang];

@@ -329,7 +329,7 @@ html[data-world="magic"] main.leaves .admonition-title { color: var(--reader-mut
 }
 .folio-center { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .folio-book { font: 2.4rem var(--reader-serif); color: var(--reader-muted); }
-.folio { font: 1.8rem/1.5 var(--mono-font); letter-spacing: 0.025em; color: var(--reader-muted); }
+.folio { font: 2rem/1.5 var(--mono-font); letter-spacing: 0.025em; color: var(--reader-muted); }
 .page-turn {
   display: inline-flex;
   align-items: center;
@@ -769,7 +769,7 @@ pre > .buttons button { min-width: 36px; min-height: 36px; border-radius: 4px; c
 html[data-world="magic"] pre > .buttons button { color: var(--reader-ink); background: var(--reader-paper); border: 1px solid var(--reader-rule); }
 pre .tooltiptext { width: max-content; max-width: min(260px,60vw); white-space: nowrap; overflow-wrap: normal; word-break: normal; left: auto; right: 0; top: -38px; transform: none; font: 14px/1.4 var(--reader-sans); }
 html[data-world="magic"] pre .tooltiptext { background: var(--reader-ink); color: var(--reader-paper); }
-:root.coal .turn-sheet { box-shadow: inset 0 0 35px #c4ae8310; }
+
 :root:is(:lang(zh),:lang(zh-hant),:lang(ja)) .world-choice { font-family: "Noto Serif CJK SC", "Songti SC", SimSun, serif; }
 :root:lang(ko) .world-choice { font-family: "Malgun Gothic", sans-serif; }
 :root:lang(ar) .world-choice { font-family: "Noto Naskh Arabic", "Traditional Arabic", serif; }
@@ -844,8 +844,8 @@ pre > .buttons .clip-button .tooltiptext { display:none !important; }
 html[data-world="magic"] #menu-bar { position:sticky; top:0 !important; z-index:101; }
 html[data-world="magic"] main.leaves .katex-display { display:inline-block; box-sizing:border-box; width:100%; max-width:100%; overflow-x:auto; overflow-y:hidden; vertical-align:top; padding-block:6px; }
 html[data-world="magic"] main.leaves .katex-display > .katex { display:block; width:max-content; min-width:100%; }
-:root.coal .turn-sheet { box-shadow:inset -22px 0 32px -16px #050b08bb, inset 8px 0 24px -20px #e0cc9c80; }
-:root.coal .paper-fold-renderer .stf__item { border-inline-end:1px solid #b9a17266; }
+:root.coal .turn-sheet { box-shadow:none; }
+:root.coal .paper-fold-renderer .stf__item { border:0; }
 
 /* overflow:hidden on body creates a non-scrolling sticky container under the root scroller. */
 html[data-world="magic"]:not([data-gateway]) body { overflow-x:clip; overflow-y:visible; }

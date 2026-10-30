@@ -69,7 +69,10 @@ async function ready(page: Page) {
   // mdBook's sidebar/page wrapper uses CSS transitions during viewport changes;
   // wait for those and one extra ResizeObserver delivery before reading geometry.
   await page.evaluate(async () => {
-    const running = document.getAnimations().filter((animation) => animation.playState === 'running');
+    // WebKit can suspend color transitions on off-column copy controls indefinitely.
+    // Only the native layout transitions matter to this geometry barrier.
+    const running = document.getAnimations().filter((animation) => animation.playState === 'running' &&
+      animation instanceof CSSTransition && /^(transform|margin-left|margin-right|width|height|left|right)$/.test(animation.transitionProperty));
     await Promise.allSettled(running.map((animation) => animation.finished.catch(() => undefined)));
   });
   await page.evaluate(() => document.fonts.ready);
@@ -250,11 +253,47 @@ for (const profile of selected) {
       await activate(page, '#theme-toggle');
       assert.equal(await page.locator('html').evaluate((e) => e.classList.contains('coal')), true);
       assert.equal(await page.locator('#theme-list').isVisible(), false);
+      const expanded=await page.locator('#sidebar-toggle').getAttribute('aria-expanded');
+      assert.equal(await page.locator('#sidebar-toggle').getAttribute('title'),expanded==='true'?'Hide table of contents':'Show table of contents');
+      await activate(page,'#sidebar-toggle'); await ready(page);
+      assert.equal(await page.locator('#sidebar-toggle').getAttribute('title'),expanded==='true'?'Show table of contents':'Hide table of contents');
       await navigate(page, () => page.reload());
       assert.equal(await page.locator('html').evaluate((e) => e.classList.contains('coal')), true);
       const duplicate = page.locator('.chapter > .chapter-item.affix').first();
       assert.ok(await duplicate.count());
       assert.equal(await duplicate.isVisible(), false);
+    });
+
+    if (!profile.options.isMobile) test('night static destination and running heads match the settled printed page', async () => {
+      for (const file of ['insights/evm-alg.html','insights/referential-transparency.html']) {
+        const page=await open(route(chinese,file),'magic');
+        await activate(page,'#theme-toggle'); await ready(page);
+        await page.emulateMedia({reducedMotion:'no-preference'});
+        await activate(page,'#page-next');
+        await page.waitForFunction(()=>[...document.querySelectorAll<HTMLElement>('.turn-leaf main.leaves')].some(e=>{
+          const item=e.closest<HTMLElement>('.stf__item')!;
+          const m=new DOMMatrixReadOnly(getComputedStyle(item).transform);
+          return parseFloat(e.style.left)<0 && !!item.style.transform && Math.abs(m.a-1)<.0001 && Math.abs(m.d-1)<.0001 && Math.abs(m.b)<.0001 && Math.abs(m.c)<.0001;
+        }),undefined,{timeout:5000});
+        const printed=await page.evaluate(()=>{
+          const mains=[...document.querySelectorAll<HTMLElement>('.turn-leaf main.leaves')];
+          const target=mains.findLast(e=>{const item=e.closest<HTMLElement>('.stf__item')!;const m=new DOMMatrixReadOnly(getComputedStyle(item).transform);return parseFloat(e.style.left)<0 && !!item.style.transform && Math.abs(m.a-1)<.0001 && Math.abs(m.d-1)<.0001 && Math.abs(m.b)<.0001 && Math.abs(m.c)<.0001;});
+          if (!target) throw new Error('the static destination leaf must be present during the fold');
+          const sheet=target.closest<HTMLElement>('.turn-sheet')!;
+          const rect=(e:Element)=>{const r=e.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height};};
+          return {content:[...target.querySelectorAll('h1,h2,p,li,pre,table')].map(rect),head:rect(sheet.querySelector('.page-head')!),shadow:getComputedStyle(sheet).boxShadow,border:getComputedStyle(sheet).borderRightWidth};
+        });
+        assert.equal(printed.shadow,'none','static night paper has no extra illuminated rim');
+        assert.equal(printed.border,'0px','the renderer adds no extra gold side border');
+        await page.waitForFunction(()=>!document.querySelector('.turn-leaf'));
+        const settled=await page.evaluate(()=>{
+          const rect=(e:Element)=>{const r=e.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height};};
+          return {content:[...document.querySelectorAll('.volume > main.leaves :is(h1,h2,p,li,pre,table)')].map(rect),head:rect(document.querySelectorAll('.volume > .page-head')[1]!)};
+        });
+        assert.equal(printed.content.length,settled.content.length);
+        for(let i=0;i<printed.content.length;i++) for(const key of ['x','y','width','height'] as const) assert.ok(Math.abs(printed.content[i]![key]-settled.content[i]![key])<1,file+' static destination '+i+' '+key);
+        for(const key of ['x','y','width','height'] as const) assert.ok(Math.abs(printed.head[key]-settled.head[key])<1,file+' running head '+key);
+      }
     });
 
     test('blank paper folds a leaf without moving the binding or duplicating identifiers', async () => {
