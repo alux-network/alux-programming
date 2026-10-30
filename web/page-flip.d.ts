@@ -15,9 +15,10 @@ declare module 'page-flip' {
     getSettings(): Settings;
     update(): void;
     turnToPage(index: number): void;
-    flipNext(corner: 'bottom'): void;
-    flipPrev(corner: 'bottom'): void;
+    getBoundsRect(): {left:number;top:number;width:number;height:number;pageWidth:number};
+    getFlipController(): {start(point:{x:number;y:number}):boolean;fold(point:{x:number;y:number}):void;stopMove():void};
+    getState(): string;
     on(event: 'changeState', listener: (event: { data: string }) => void): void;
-    getRender(): { drawFrame(): void; finishAnimation(): void; setFlippingPage(page: { getElement(): HTMLElement } | null): void };
+    getRender(): { convertToGlobal(point:{x:number;y:number}):{x:number;y:number}; drawFrame(): void; finishAnimation(): void; setFlippingPage(page: { getElement(): HTMLElement } | null): void };
   }
 }

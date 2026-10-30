@@ -847,7 +847,7 @@ html[data-world="magic"] main.leaves .katex-display > .katex { display:block; wi
 :root.coal .turn-sheet { box-shadow:none; }
 :root.coal .paper-fold-renderer .stf__item { border:0; }
 /* A mild light-facing curve belongs only to the lifted paper, never the static destination. */
-:root.coal .paper-fold-renderer [data-paper-curl] { background:linear-gradient(105deg,#2e392e 0%,#263126 24%,#202820 72%,#1c251e 100%); }
+:root.coal .paper-fold-renderer [data-paper-curl] { background:linear-gradient(105deg,color-mix(in srgb,var(--reader-paper),#2e392e var(--curl-light,0%)) 0%,color-mix(in srgb,var(--reader-paper),#263126 var(--curl-light,0%)) 24%,var(--reader-paper) 72%,color-mix(in srgb,var(--reader-paper),#1c251e var(--curl-light,0%)) 100%); }
 
 /* overflow:hidden on body creates a non-scrolling sticky container under the root scroller. */
 html[data-world="magic"]:not([data-gateway]) body { overflow-x:clip; overflow-y:visible; }

@@ -127,7 +127,9 @@ for (const button of document.querySelectorAll<HTMLButtonElement>('#content > .v
       button.dataset.copyLabel = translated;
       clearTimeout(reset);
       reset = setTimeout(() => { button.classList.remove('tooltipped'); button.dataset.copyLabel = action; },1800);
-    } else if (!text) button.dataset.copyLabel = action;
+    }
+    // mdBook clears its hidden tooltip on mouseout, including synthesized touch mouse
+    // events. Keep the visible acknowledgement for its own timer instead of flickering.
   }).observe(message,{childList:true,characterData:true,subtree:true});
 }
 

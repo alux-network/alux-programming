@@ -248,3 +248,6 @@ Keep the pending frame inert. Reject stale ready callbacks, retain only the comm
 - Static night sheets must share the live paper color without extra illuminated rims or gold side borders. Limit curl shading to the fold renderer; the stationary book and page edges must not brighten or lose their surface during a turn.
 
 - Preserve visible night curling: only the actual PageFlip flippingPage gets the restrained light-facing gradient; a non-simple bottom destination is still stationary. Do not identify moving paper by `:not(.--simple)` alone. Static paper/trim remain unchanged.
+
+- A continuous fold must start and finish at the resting paper pose. The pinned renderer's automatic flip starts at height/10, causing a visible corner jump on tall leaves. Drive its public drag API from the closed edge; in portrait mode call the first fold in the same frame as start so the renderer cannot discard its temporary leaf. Keep native release/cancel cleanup and verify both directions, portrait and chapter handoffs. Fade curl-only lighting to the base material at both ends.
+- Native clipboard tooltip clearing on mouseout must not erase the separate visible acknowledgement. Keep feedback on its own short timer and check a fresh native copy event on each activation, including repeated touch input.

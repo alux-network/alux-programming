@@ -71,6 +71,7 @@ export function paperTurn(main: HTMLElement) {
     completion = undefined;
     cancelAnimationFrame(frame);
     clearTimeout(timer);
+    if (engine?.getState() === 'user_fold') engine.getFlipController().stopMove();
     engine?.getRender()?.finishAnimation();
     host.hidden = true;
     host.classList.remove('turn-leaf');
@@ -162,7 +163,7 @@ export function paperTurn(main: HTMLElement) {
       };
       let started = false;
       engine.on('changeState', ({ data }) => {
-        if (data === 'flipping') started = true;
+        if (data === 'flipping' || data === 'user_fold') started = true;
         // Finish after upstream clears its animation; cancelling from inside its callback is reentrant.
         if (started && data === 'read') { started = false; queueMicrotask(finish); }
       });
@@ -176,7 +177,25 @@ export function paperTurn(main: HTMLElement) {
     frame = requestAnimationFrame(() => { frame = requestAnimationFrame(() => {
       if (!active) return;
       onStart?.();
-      if (backwards) engine!.flipPrev('bottom'); else engine!.flipNext('bottom');
+      const rect = engine!.getBoundsRect(), controller = engine!.getFlipController();
+      if (!controller.start({x:backwards ? 10 : rect.left + rect.pageWidth * 2 - 10,y:rect.height-2})) { finish(); return; }
+      // Native flip() jumps directly to a height/10 lifted corner. Drive its public drag
+      // adapter from the closed edge, then let its native release perform the final commit.
+      let began: number | undefined;
+      const curl = (time: number) => {
+        if (!active) return;
+        began ??= time;
+        const progress = Math.min(1,(time-began)/700), eased = (1-Math.cos(Math.PI*progress))/2;
+        const light = Math.sin(Math.PI*eased);
+        host.style.setProperty('--curl-light',(light*100).toFixed(3)+'%');
+        controller.fold(engine!.getRender().convertToGlobal({x:(rect.pageWidth-1)*(1-2*eased),y:rect.height-1-light*rect.height*.08}));
+        if (progress < 1) frame=requestAnimationFrame(curl);
+        else controller.stopMove();
+      };
+      host.style.setProperty('--curl-light','0%');
+      // Portrait start() creates a temporary leaf. Paint its closed pose in this same
+      // callback, before upstream's next frame can discard that not-yet-active copy.
+      curl(performance.now());
     }); });
     timer = setTimeout(finish, 1100);
   }

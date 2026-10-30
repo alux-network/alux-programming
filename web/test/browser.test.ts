@@ -269,6 +269,7 @@ for (const profile of selected) {
         const page=await open(route(chinese,file),'magic');
         await activate(page,'#theme-toggle'); await ready(page);
         await page.emulateMedia({reducedMotion:'no-preference'});
+        const restingPaper=await page.locator('.volume').evaluate(e=>getComputedStyle(e).backgroundColor);
         await activate(page,'#page-next');
         await page.waitForFunction(()=>[...document.querySelectorAll<HTMLElement>('.turn-leaf main.leaves')].some(e=>{
           const item=e.closest<HTMLElement>('.stf__item')!;
@@ -281,9 +282,12 @@ for (const profile of selected) {
           if (!target) throw new Error('the static destination leaf must be present during the fold');
           const sheet=target.closest<HTMLElement>('.turn-sheet')!;
           const rect=(e:Element)=>{const r=e.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height};};
-          return {content:[...target.querySelectorAll('h1,h2,p,li,pre,table')].map(rect),head:rect(sheet.querySelector('.page-head')!),shadow:getComputedStyle(sheet).boxShadow,border:getComputedStyle(sheet).borderRightWidth};
+          return {content:[...target.querySelectorAll('h1,h2,p,li,pre,table')].map(rect),head:rect(sheet.querySelector('.page-head')!),marked:sheet.hasAttribute('data-paper-curl'),background:getComputedStyle(sheet).backgroundColor,image:getComputedStyle(sheet).backgroundImage,shadow:getComputedStyle(sheet).boxShadow,border:getComputedStyle(sheet).borderRightWidth};
         });
         assert.equal(await page.locator('.turn-leaf [data-paper-curl]').count(),1,'one actual lifted leaf receives the curve highlight');
+        assert.equal(printed.marked,false,'static destination never receives curl lighting');
+        assert.equal(printed.image,'none','static destination has no temporary gradient');
+        assert.equal(printed.background,restingPaper,'static destination keeps the resting paper color');
         assert.equal(printed.shadow,'none','static night paper has no extra illuminated rim');
         assert.equal(printed.border,'0px','the renderer adds no extra gold side border');
         await page.waitForFunction(()=>!document.querySelector('.turn-leaf'));
@@ -295,6 +299,29 @@ for (const profile of selected) {
         for(let i=0;i<printed.content.length;i++) for(const key of ['x','y','width','height'] as const) assert.ok(Math.abs(printed.content[i]![key]-settled.content[i]![key])<1,file+' static destination '+i+' '+key);
         for(const key of ['x','y','width','height'] as const) assert.ok(Math.abs(printed.head[key]-settled.head[key])<1,file+' running head '+key);
       }
+    });
+
+    test('paper begins at the closed corner instead of an already lifted pose', async () => {
+      const page=await open(route(chinese,'insights/index.html'),'magic');
+      await page.emulateMedia({reducedMotion:'no-preference'});
+      await page.evaluate(()=>{
+        (window as any).firstCorner=undefined;
+        const sample=()=>{
+          const e=document.querySelector<HTMLElement>('[data-paper-curl]');
+          if(!e?.style.clipPath){requestAnimationFrame(sample);return;}
+          const values=e.style.clipPath.match(/[-+]?(?:\d*\.)?\d+(?:e[-+]?\d+)?(?=px)/gi)?.map(Number) ?? [];
+          let area=0;
+          for(let i=0;i<values.length;i+=2){const next=(i+2)%values.length;area+=values[i]!*values[next+1]!-values[next]!*values[i+1]!;}
+          (window as any).firstCorner={points:values.length,ratio:Math.abs(area/2)/(e.offsetWidth*e.offsetHeight)};
+        };
+        requestAnimationFrame(sample);
+      });
+      await activate(page,'#page-next');
+      await page.waitForFunction(()=>(window as any).firstCorner,undefined,{timeout:5000});
+      const first=await page.evaluate(()=>(window as any).firstCorner as {points:number;ratio:number});
+      assert.ok(first.points>=6,'the first painted fold has an actual clipping polygon');
+      assert.ok(first.ratio<.006,'the first painted corner is still nearly closed');
+      await page.waitForFunction(()=>!document.querySelector('.turn-leaf'),undefined,{timeout:3000});
     });
 
     test('blank paper folds a leaf without moving the binding or duplicating identifiers', async () => {
@@ -835,6 +862,8 @@ for (const profile of selected) {
             if(profile.options.hasTouch) await button.tap(); else await button.click();
             copyEvents++;
             await page.waitForFunction(([index,label,count])=>Number(document.documentElement.dataset.copyEvents)===Number(count) && document.querySelectorAll<HTMLElement>('.volume > main.leaves .clip-button')[Number(index)]?.dataset.copyLabel===label,[String(visible[0]),copyLabels.en[1],String(copyEvents)]);
+            await button.dispatchEvent('mouseout');
+            assert.equal(await button.getAttribute('data-copy-label'),copyLabels.en[1],'touch mouseout does not erase the acknowledgement');
           }
           checked++;
         }
