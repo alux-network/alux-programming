@@ -197,7 +197,7 @@ html[data-world="real"] .volume > :is(.page-head, .page-foot), html[data-world="
 html[data-world="magic"], html[data-world="magic"] :is(body, .page-wrapper, .page, .menu-bar, .sidebar, #search-wrapper) { background: var(--reader-desk); }
 /* The spread fills the available desk; type size does not depend on window height. */
 html[data-world="magic"] {
-  --book-height: max(420px, calc(100dvh - var(--reader-toolbar-height, 130px) - 104px));
+  --book-height: max(720px, calc(100svh - var(--reader-toolbar-height, 130px) - 132px));
   --book-font: calc(var(--reading-size) * var(--reader-scale, 1));
 }
 html[data-world="magic"] #content { --book-width: 100%; }
@@ -230,7 +230,7 @@ html[data-world="magic"] .volume {
   box-sizing: border-box;
   width: var(--book-width);
   max-width: none;
-  margin: 8px auto 0;
+  margin: 24px auto 0;
   padding: 72px 40px 62px;
   color: var(--reader-ink);
   background: linear-gradient(#f2eadc99, #f2eadc99), url("/ivory-paper.webp") center / 626px 626px, var(--reader-paper);
@@ -295,7 +295,10 @@ html[data-world="magic"] #content main.leaves {
 }
 html[data-world="magic"] main.leaves > :first-child { margin-top: 0; }
 html[data-world="magic"] main.leaves :is(h1, h2, h3, h4) { color: var(--reader-ink); font-weight: 500; }
-html[data-world="magic"] main.leaves :is(h2, h3, h4) { break-after: avoid; }
+/* Atomic headings keep WebKit's live and cloned column breaks identical. */
+html[data-world="magic"] main.leaves :is(h1,h2,h3,h4,h5,h6) { display:inline-block; vertical-align:top; box-sizing:border-box; width:100%; break-inside:avoid; }
+html[data-world="magic"] main.leaves :is(h2,h3,h4) { break-after:avoid; margin-block:1.1em .55em; line-height:1.35; }
+html[data-world="real"] main.leaves :is(h2,h3,h4) { margin-block:1.65em .65em; line-height:1.35; }
 html[data-world="magic"] #content main.leaves h1 { font-size: 2.2em; line-height: 1.2; }
 html[data-world="magic"]:is(:lang(zh), :lang(zh-hant), :lang(ja), :lang(ko)) #content main.leaves h1 { font-size: 2em; line-height: 1.3; }
 html[data-world="magic"] main.leaves :is(ul, ol) > li { break-inside: avoid; }
@@ -341,7 +344,7 @@ html[data-world="magic"] main.leaves .admonition-title { color: var(--reader-mut
 [dir="rtl"] .page-turn i { transform: scaleX(-1); }
 
 /* Soft paper bends inside the binding; neither the frame nor ribbon participates. */
-.paper-fold-renderer { position: absolute; z-index: 4; pointer-events: none; overflow: hidden; }
+.paper-fold-renderer { position: absolute; z-index: 4; pointer-events: none; overflow: visible; }
 .paper-fold-renderer[hidden] { display: none !important; }
 .turn-sheet { background: var(--reader-paper); overflow: hidden; }
 :root.light .turn-sheet { background: linear-gradient(#f2eadc99, #f2eadc99), url('/ivory-paper.webp') center / 626px 626px, var(--reader-paper); }
@@ -535,7 +538,7 @@ html[data-world="magic"] .volume {
   .world-choice strong { font-size: clamp(2.4rem, 6vw, 3.4rem); }
   .world-enter { font-size: 1.8rem; }
   html[data-world="magic"] #content { padding-inline: 12px; }
-  html[data-world="magic"] .volume { --leaf-height: max(280px, calc(100dvh - 390px)); padding: 68px 24px 54px; }
+  html[data-world="magic"] .volume { --leaf-height: max(460px, calc(100svh - 320px)); padding: 68px 24px 54px; }
   html[data-world="magic"] #content main.leaves { height: var(--leaf-height); }
   html[data-world="magic"] :is(.page-head, .page-foot) {
     width: calc(100% - 48px); inset-inline-start: 24px;
@@ -572,14 +575,17 @@ html[data-world="magic"] main.leaves :is(td, th) { padding: .5em .65em; }
 /* Upright type labels match the book; mathematical operators retain their KaTeX glyphs. */
 html[data-world="magic"] .katex .mathsf { font-family: KaTeX_Main, 'Times New Roman', serif; }
 html[data-world="magic"] .hljs { color: var(--reader-ink); background: transparent; }
-html[data-world="magic"] .hljs :is(.hljs-keyword, .hljs-selector-tag, .hljs-literal) { color: #815c39; }
-html[data-world="magic"] .hljs :is(.hljs-string, .hljs-type, .hljs-built_in) { color: #626b4e; }
-html[data-world="magic"] .hljs :is(.hljs-number, .hljs-title) { color: #896544; }
-html[data-world="magic"] .hljs .hljs-comment { color: #8b8069; }
-:root.coal[data-world="magic"] .hljs :is(.hljs-keyword, .hljs-selector-tag, .hljs-literal) { color: #c4ae83; }
-:root.coal[data-world="magic"] .hljs :is(.hljs-string, .hljs-type, .hljs-built_in) { color: #a6b58f; }
-:root.coal[data-world="magic"] .hljs :is(.hljs-number, .hljs-title) { color: #c4a77f; }
-:root.coal[data-world="magic"] .hljs .hljs-comment { color: #939e8a; }
+/* Quiet syntax colors follow each world's material instead of native bright accents. */
+:root { --syntax-ink:#374337; --syntax-keyword:#85451c; --syntax-string:#435e34; --syntax-type:#2e5d61; --syntax-meta:#705229; --syntax-comment:#5e634f; }
+:root.coal { --syntax-ink:#bdc1b6; --syntax-keyword:#c4ae83; --syntax-string:#a6b58f; --syntax-type:#b2c4b3; --syntax-meta:#c4a77f; --syntax-comment:#939e8a; }
+:root.light[data-world="real"] { --syntax-ink:#303b38; --syntax-keyword:#6b4e76; --syntax-string:#3b6856; --syntax-type:#3f6570; --syntax-meta:#795a3e; --syntax-comment:#6e7773; --inline-code-color:#405953; }
+:root.coal[data-world="real"] { --syntax-ink:#c6d1ce; --syntax-keyword:#cab6d5; --syntax-string:#a1c4af; --syntax-type:#a9c8d0; --syntax-meta:#c8b69a; --syntax-comment:#8e9c98; --inline-code-color:#bed1c9; }
+html[data-world] .hljs { color:var(--syntax-ink); }
+html[data-world] .hljs :is(.hljs-keyword,.hljs-selector-tag,.hljs-literal) { color:var(--syntax-keyword); }
+html[data-world] .hljs .hljs-string { color:var(--syntax-string); }
+html[data-world] .hljs :is(.hljs-type,.hljs-title,.hljs-built_in) { color:var(--syntax-type); }
+html[data-world] .hljs :is(.hljs-number,.hljs-meta,.hljs-attribute,.hljs-symbol) { color:var(--syntax-meta); }
+html[data-world] .hljs .hljs-comment { color:var(--syntax-comment); }
 
 /* Section artwork keeps the approved small illustration scale in both worlds. */
 #content main img:is([src$="semantic-view.png"], [src$="design-by-meaning-rust.png"], [src$="concepts.png"], [src$="insights.png"]) { display: block; width: auto; max-width: 100%; max-height: 150px; margin: 24px auto; object-fit: contain; }
@@ -768,7 +774,7 @@ html[data-world="magic"] pre .tooltiptext { background: var(--reader-ink); color
 :root:lang(ko) .world-choice { font-family: "Malgun Gothic", sans-serif; }
 :root:lang(ar) .world-choice { font-family: "Noto Naskh Arabic", "Traditional Arabic", serif; }
 :root:is(:lang(zh),:lang(zh-hant),:lang(ja),:lang(ko)) .world-choice strong { font-size: clamp(28px,2.6vw,46px); letter-spacing: .045em; }
-@media (min-width:900px) { html[data-world="magic"] #content { container-type: inline-size; } html[data-world="magic"] .volume { --book-height: min(calc(100dvh - var(--reader-toolbar-height,140px) - 104px), 78cqw); } }
+
 @media (max-width:899px) {
   .menu-bar :is(#sidebar-toggle,#theme-toggle,#music-toggle,#bookmark-toggle,.text-size) { width:44px; height:44px; min-height:44px; }
   #theme-toggle svg { width:23px; height:23px; }
@@ -797,6 +803,58 @@ html[data-world="magic"] pre:hover > .buttons, html[data-world="magic"] pre:focu
 
 /* Copy remains discoverable on paper and touch screens; its control row never covers code. */
 html[data-world="magic"] main.leaves pre > .buttons { opacity:1; visibility:visible; }
-html[data-world="magic"] main.leaves pre:has(> .buttons) { display:inline-block; vertical-align:top; width:100%; max-height:calc(var(--leaf-height) - 2 * var(--book-font)); box-sizing:border-box; margin-block:var(--book-font); padding-top:56px; overflow:hidden; border:1px solid var(--reader-rule); background:color-mix(in srgb,var(--reader-trim) 14%,var(--reader-paper)); }
+html[data-world="magic"] main.leaves pre:has(> .buttons) { display:inline-block; vertical-align:top; width:100%; max-height:calc(var(--leaf-height) - 2 * var(--book-font)); box-sizing:border-box; margin-block:var(--book-font); padding-top:56px; overflow:hidden; border:1px solid var(--reader-rule); background:var(--reader-code-paper); }
 html[data-world="magic"] main.leaves pre:has(> .buttons) > code { max-height:calc(var(--leaf-height) - 2 * var(--book-font) - 58px); box-sizing:border-box; overflow:auto; padding:10px; border:0; background:transparent; font-size:.82em; line-height:1.65; }
 @media (hover:none) { pre > .buttons { opacity:1; visibility:visible; } html[data-world="real"] main.leaves pre:has(> .buttons) > code { padding-block-start:48px; } }
+
+/* The desk can scroll vertically without shrinking the book into a short landscape card. */
+html[data-world="magic"]:not([data-gateway]) { overflow-y:auto; }
+html[data-world="magic"] .page-wrapper { min-height:100svh; }
+html[data-world="magic"] .folio-bar { padding-bottom:36px; }
+html[data-world="magic"] .page { background:radial-gradient(ellipse at 45% 25%,#fff5da00,#ede1c3 50%,#d2bc9570 100%); }
+:root.coal[data-world="magic"] .page { background:#18211c; }
+:root { --reader-code-paper:#e8e0cf; }
+:root.coal { --reader-code-paper:#2c392b; }
+html[data-world="magic"] main.leaves pre:has(> .buttons) { border-color:#b3a68d; }
+:root.coal[data-world="magic"] main.leaves pre:has(> .buttons) { border-color:#4e5638; }
+
+/* Never paint an interactive copy control outside the paper being folded. */
+.volume[data-paper-turning] > main.leaves pre > .buttons { z-index:0; pointer-events:none; transition:none; }
+#reading-mode { display:none; }
+html[data-world="magic"] #reading-mode { width:auto; display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:0 12px; font:17px/1.4 var(--reader-sans); color:var(--reader-ink); white-space:nowrap; }
+html[data-world="magic"][data-reading="scroll"] .volume { padding:42px 40px; }
+html[data-world="magic"][data-reading="scroll"] #content main.leaves { columns:auto; height:auto; overflow:visible; max-width:960px; margin-inline:auto; }
+html[data-world="magic"][data-reading="scroll"] .volume > :is(.page-head,.page-foot),
+html[data-world="magic"][data-reading="scroll"] .volume::before,
+html[data-world="magic"][data-reading="scroll"] .volume::after,
+html[data-world="magic"][data-reading="scroll"] .folio-center { display:none; }
+html[data-world="magic"][data-reading="scroll"] main.leaves :is(pre:has(> .buttons),pre:has(> .buttons) > code,.table-wrapper) { max-height:none; }
+@media(max-width:899px) {
+  html[data-world="magic"] #reading-mode { width:44px; min-height:44px; padding:0 8px; font-size:15px; }
+  #reading-mode-label { display:none; }
+  html[data-world="magic"][data-reading="scroll"] .volume { padding:32px 24px; }
+}
+
+/* One copy acknowledgement: the button label. Native floating feedback is redundant. */
+pre > .buttons .clip-button { display:inline-flex; align-items:center; gap:6px; font:14px/1.4 var(--reader-sans); }
+pre > .buttons .clip-button::after { content:attr(data-copy-label); white-space:nowrap; }
+pre > .buttons .clip-button::before { content:""; display:inline-block; width:18px; height:18px; flex:none; background:currentColor; filter:none !important; mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-width='1.7' stroke-linejoin='round' d='M9 9h11v12H9zM15 9V3H4v12h5'/%3E%3C/svg%3E") center/contain no-repeat; }
+pre > .buttons .clip-button .tooltiptext { display:none !important; }
+html[data-world="magic"] #menu-bar { position:sticky; top:0 !important; z-index:101; }
+html[data-world="magic"] main.leaves .katex-display { display:inline-block; box-sizing:border-box; width:100%; max-width:100%; overflow-x:auto; overflow-y:hidden; vertical-align:top; padding-block:6px; }
+html[data-world="magic"] main.leaves .katex-display > .katex { display:block; width:max-content; min-width:100%; }
+:root.coal .turn-sheet { box-shadow:inset -22px 0 32px -16px #050b08bb, inset 8px 0 24px -20px #e0cc9c80; }
+:root.coal .paper-fold-renderer .stf__item { border-inline-end:1px solid #b9a17266; }
+
+/* overflow:hidden on body creates a non-scrolling sticky container under the root scroller. */
+html[data-world="magic"]:not([data-gateway]) body { overflow-x:clip; overflow-y:visible; }
+
+/* The moving paper can lift beyond the cover; only its printed content clips to the leaf. */
+html[data-world="magic"] #content { overflow:visible; }
+.paper-fold-renderer.turn-leaf, .paper-fold-renderer .stf__wrapper { overflow:visible; }
+
+/* A stable viewport and audio element surround native chapter documents. */
+html[data-reader-shell],html[data-reader-shell] body.reader-shell { margin:0; width:100%; height:100%; overflow:hidden; }
+.reader-shell .chapter-frame { position:fixed; inset:0; width:100%; height:100%; border:0; display:block; background:var(--bg); }
+.reader-shell .pending-chapter { opacity:0; pointer-events:none; }
+html[data-shell-loading] body { visibility:hidden; }

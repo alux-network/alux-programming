@@ -11,6 +11,7 @@ import type { Browser, BrowserContextOptions, BrowserType, Page } from 'playwrig
 import { preview } from 'vite';
 import type { PreviewServer } from 'vite';
 import { expectedSite } from './site.ts';
+import { readerPage, outerPage } from './reader-page.ts';
 import { uiStrings } from '../i18n.ts';
 import type { Edition } from './site.ts';
 
@@ -138,7 +139,7 @@ for (const profile of selected) {
     /** Opens an isolated chapter, watching every scenario for script and internal resource errors. */
     async function open(file: string, world?: 'magic' | 'real') {
       const context = await browser.newContext({ ...profile.options, reducedMotion: 'reduce' });
-      const page = await context.newPage();
+      const page = readerPage(await context.newPage());
       page.setDefaultTimeout(10_000);
       page.on('pageerror', (e) => problems.push('error: ' + e.message));
       page.on('console', (m) => {
@@ -194,6 +195,18 @@ for (const profile of selected) {
       else await page.locator(selector).click();
     }
 
+    /** The paper footer can sit below a phone viewport. Bring this real click target onscreen first. */
+    async function blankFooter(page: Page) {
+      await page.evaluate(() => {
+        const box=document.querySelector('.volume')!.getBoundingClientRect();
+        if(box.bottom>innerHeight) scrollTo(0,scrollY+box.bottom-innerHeight+8);
+      });
+      await ready(page);
+      const box=(await page.locator('.volume').boundingBox())!;
+      assert.ok(box.y+box.height-24 < page.viewportSize()!.height, 'blank click target is onscreen');
+      return box;
+    }
+
     /** Opens the sidebar first when a narrow viewport hides its bookmark entry. */
     async function openBookmarks(page: Page) {
       if (!(await page.locator('#bookmarks-open').isVisible())) await activate(page, '#sidebar-toggle');
@@ -237,14 +250,32 @@ for (const profile of selected) {
       const { page, count } = await longChapter();
       await page.emulateMedia({ reducedMotion: 'no-preference' });
       const volume = page.locator('.volume');
-      const before = await volume.boundingBox();
+      const before = await blankFooter(page);
       assert.ok(before);
       // Bottom outside the text block: actual paper, not a link, paragraph or button.
       await page.mouse.click(before.x + before.width - 20, before.y + before.height - 24);
       await page.waitForFunction(() => !!document.querySelector('.turn-leaf'));
-      assert.equal(await page.locator('.turn-leaf').getAttribute('aria-hidden'), 'true');
-      assert.equal(await page.locator('.turn-leaf [id]').count(), 0);
-      assert.deepEqual(await volume.boundingBox(), before, 'cover remains fixed during the turn');
+      // Sample the live short animation in one browser task, rather than round trips that outlast it.
+      const sampled=await page.evaluate(()=>{
+        const leaf=document.querySelector<HTMLElement>('.turn-leaf')!;
+        const source=document.querySelector('.volume > main.leaves')!;
+        const copy=leaf.querySelector('main.leaves')!;
+        const cover=document.querySelector('.volume')!.getBoundingClientRect(),box=leaf.getBoundingClientRect();
+        const read=(main:Element)=>[...main.querySelectorAll('h1,h2,h3,p,li,pre')].map(e=>({height:(e as HTMLElement).offsetHeight,line:getComputedStyle(e).lineHeight,margin:getComputedStyle(e).marginTop,rects:e.getClientRects().length}));
+        const state={hidden:leaf.getAttribute('aria-hidden'),ids:leaf.querySelectorAll('[id]').length,overflow:getComputedStyle(leaf).overflow,x:box.left-cover.left,y:box.top-cover.top,source:read(source),copy:read(copy)};
+        return new Promise<{state:typeof state;samples:{height:number;scroll:number}[]}>(resolve=>{
+          const samples:{height:number;scroll:number}[]=[];
+          const sample=()=>{samples.push({height:document.documentElement.scrollHeight,scroll:scrollY});if(samples.length===10)resolve({state,samples});else requestAnimationFrame(sample)};sample();
+        });
+      });
+      assert.equal(sampled.state.hidden,'true');
+      assert.equal(sampled.state.ids,0);
+      assert.equal(sampled.state.overflow,'visible','moving paper may lift beyond the binding');
+      assert.ok(Math.abs(sampled.state.x-14)<1 && Math.abs(sampled.state.y-14)<1,'fold remains aligned with the scrolled cover');
+      assert.deepEqual(await volume.boundingBox(),before,'cover remains fixed during the turn');
+      assert.equal(new Set(sampled.samples.map(s=>s.height)).size,1,'curl does not enlarge the document');
+      assert.equal(new Set(sampled.samples.map(s=>s.scroll)).size,1,'turn never scrolls the desk');
+      assert.deepEqual(sampled.state.copy,sampled.state.source,'moving paper retains heading, paragraph, list and code geometry');
       await page.waitForFunction(() => !document.querySelector('.turn-leaf'));
       assert.equal((await folio(page)).first, count.last + 1);
       await activate(page, '#page-prev');
@@ -350,53 +381,32 @@ for (const profile of selected) {
       assert.equal(codePanel.copyDoesNotCoverCode, true, 'copy control does not cover the code port');
     });
 
-    test('a normal-motion chapter boundary hands off to the destination document', async () => {
-      const page = await open(english.pages[0]!.file + '#last-page', 'magic');
-      await page.emulateMedia({ reducedMotion: 'no-preference' });
-      const next = await page.locator('.nav-wide-wrapper a[rel~="next"]').evaluate((anchor) => (anchor as HTMLAnchorElement).href);
-      const from = pathname(page);
-      let releaseReader!: () => void;
-      const readerGate = new Promise<void>((resolve) => { releaseReader = resolve; });
-      await page.route('**/reader.js', async (route) => {
-        await readerGate;
-        await route.continue();
-      });
+    test('a normal-motion chapter boundary retains old paper until the destination is ready', async () => {
+      const page=await open(english.pages[0]!.file+'#last-page','magic');
+      const outer=outerPage(page);
+      await page.emulateMedia({reducedMotion:'no-preference'});
+      const next=await page.locator('.nav-wide-wrapper a[rel~="next"]').evaluate(a=>(a as HTMLAnchorElement).href);
+      const from=outer.url();
+      let release!:()=>void;const gate=new Promise<void>(resolve=>{release=resolve});
+      await page.route('**/reader.js',async route=>{await gate;await route.continue()});
       try {
-        await navigate(page, async () => {
-          const commit = page.waitForURL(next, { waitUntil: 'commit' });
-          await page.locator('#page-next').click({ noWaitAfter: true });
-          await commit;
-          assert.notEqual(pathname(page), from);
-          await page.waitForSelector('[data-navigation-handoff-veil]');
-          assert.equal(await page.locator('#content > .volume > main.leaves').evaluate((main) => getComputedStyle(main).visibility), 'hidden', 'the destination keeps real content hidden before reader.js settles');
-          const turnLeafSeen = page.evaluate(() => new Promise<string>((resolve) => {
-            const visibility = () => getComputedStyle(document.querySelector('#content > .volume:not(.navigation-veil) > main.leaves')!).visibility;
-            if (document.querySelector('.turn-leaf')) { resolve(visibility()); return; }
-            const observer = new MutationObserver(() => {
-              if (document.querySelector('.turn-leaf')) { observer.disconnect(); resolve(visibility()); }
-            });
-            observer.observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
-          }));
-          releaseReader();
-          assert.equal(await turnLeafSeen, 'hidden', 'the destination keeps real content hidden during the fold');
-          await page.waitForFunction(() => !document.querySelector('#content[data-navigation-handoff]') && !document.querySelector('.turn-leaf'));
-          assert.ok(await page.locator('#content > .volume > main.leaves').isVisible());
-          assert.equal(await page.locator('[data-navigation-handoff-veil]').count(), 0);
-          const destinationFolio = await folio(page);
-          const destinationNumbers = await page.locator('#content > .volume:not(.navigation-veil) > .page-foot .page-number').evaluateAll((numbers) => numbers
-            .filter((number) => {
-              const style = getComputedStyle(number), rect = number.getBoundingClientRect();
-              return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0;
-            })
-            .map((number) => Number(number.textContent)));
-          const expectedNumbers = destinationFolio.last === destinationFolio.first ? [destinationFolio.first] : [destinationFolio.first, destinationFolio.last];
-          assert.deepEqual(destinationNumbers, expectedNumbers, 'canonical page numbers match the visible folio after handoff');
+        await navigate(page,async()=>{
+          await page.locator('#page-next').click({noWaitAfter:true});
+          const pending=outer.frameLocator('.pending-chapter');
+          await pending.locator('[data-navigation-handoff-veil]').waitFor({state:'attached'});
+          assert.equal(outer.url(),from,'the old route remains visible while the next reader is gated');
+          assert.equal(await page.locator('#content > .volume > main.leaves').evaluate(m=>getComputedStyle(m).visibility),'visible');
+          assert.equal(await pending.locator('#content > .volume > main.leaves').evaluate(m=>getComputedStyle(m).visibility),'hidden','destination unprepared text stays hidden');
+          release();
+          await outer.waitForURL(next);
+          await page.waitForFunction(()=>!document.querySelector('#content[data-navigation-handoff]')&&!document.querySelector('.turn-leaf'));
+          assert.equal(await outer.locator('.pending-chapter').count(),0);
+          assert.equal(await page.locator('[data-navigation-handoff-veil]').count(),0);
+          const at=await folio(page);
+          const numbers=await page.locator('.volume > .page-foot .page-number').evaluateAll(items=>items.filter(e=>e.getBoundingClientRect().width>0).map(e=>Number(e.textContent)));
+          assert.deepEqual(numbers,at.first===at.last?[at.first]:[at.first,at.last]);
         });
-      } finally {
-        await page.unroute('**/reader.js');
-        releaseReader();
-      }
-      assert.notEqual(pathname(page), from);
+      } finally {release();await page.unroute('**/reader.js');}
     });
 
     test('two normal-motion page turns change the real page-flip transform before settling', async () => {
@@ -425,41 +435,27 @@ for (const profile of selected) {
       }
     });
 
-    test('a resize while destination fonts are pending clears the handoff and leaves paging usable', async () => {
-      const page = await open(english.pages[0]!.file + '#last-page', 'magic');
-      await page.emulateMedia({ reducedMotion: 'no-preference' });
-      const next = await page.locator('.nav-wide-wrapper a[rel~="next"]').evaluate((anchor) => (anchor as HTMLAnchorElement).href);
-      let releaseReader!: () => void;
-      let releaseFont!: () => void;
-      let fontRequested!: () => void;
-      const readerGate = new Promise<void>((resolve) => { releaseReader = resolve; });
-      const fontGate = new Promise<void>((resolve) => { releaseFont = resolve; });
-      const fontSeen = new Promise<void>((resolve) => { fontRequested = resolve; });
-      await page.route('**/reader.js', async (route) => { await readerGate; await route.continue(); });
-      await page.route('**/*.woff2', async (route) => { fontRequested(); await fontGate; await route.continue(); });
+    test('a resize while destination fonts are pending clears stale paper before commit', async () => {
+      const page=await open(english.pages[0]!.file+'#last-page','magic');
+      const outer=outerPage(page);await page.emulateMedia({reducedMotion:'no-preference'});
+      const next=await page.locator('.nav-wide-wrapper a[rel~="next"]').evaluate(a=>(a as HTMLAnchorElement).href);
+      let releaseReader!:()=>void,releaseFont!:()=>void,fontRequested!:()=>void;
+      const readerGate=new Promise<void>(r=>{releaseReader=r}),fontGate=new Promise<void>(r=>{releaseFont=r}),fontSeen=new Promise<void>(r=>{fontRequested=r});
+      await page.route('**/reader.js',async route=>{await readerGate;await route.continue()});
+      await page.route('**/*.woff2',async route=>{fontRequested();await fontGate;await route.continue()});
       try {
-        const commit = page.waitForURL(next, { waitUntil: 'commit' });
-        await page.locator('#page-next').click({ noWaitAfter: true });
-        await commit;
-        await page.waitForSelector('[data-navigation-handoff-veil]');
+        await page.locator('#page-next').click({noWaitAfter:true});
+        const pending=outer.frameLocator('.pending-chapter');
+        await pending.locator('[data-navigation-handoff-veil]').waitFor({state:'attached'});
         releaseReader();
-        await Promise.race([
-          fontSeen,
-          page.waitForTimeout(1500).then(() => { throw new Error('destination did not request a gated font'); }),
-        ]);
-        await page.waitForFunction(() => !!document.querySelector('#folio')?.textContent && document.fonts.status === 'loading');
-        const size = page.viewportSize()!;
-        await page.setViewportSize({ width: size.width - 80, height: size.height + 40 });
-        await page.waitForFunction(() => !document.querySelector('#content[data-navigation-handoff]') && !document.querySelector('[data-navigation-handoff-veil]') && !document.querySelector('[data-navigation-handoff-style]'), { timeout: 1000 });
-        releaseFont();
-        await page.waitForFunction(() => !!document.querySelector('#folio')?.textContent);
-        assert.ok(await page.locator('#page-next').isEnabled(), 'paging controls remain usable after a pending-font resize');
-      } finally {
-        releaseReader();
-        releaseFont();
-        await page.unroute('**/reader.js');
-        await page.unroute('**/*.woff2');
-      }
+        await Promise.race([fontSeen,page.waitForTimeout(1500).then(()=>{throw new Error('destination did not request a gated font')})]);
+        const element=await outer.locator('.pending-chapter').elementHandle();const frame=(await element!.contentFrame())!;
+        await frame.waitForFunction(()=>!!document.querySelector('#folio')?.textContent&&document.fonts.status==='loading');
+        const size=page.viewportSize()!;await page.setViewportSize({width:size.width-80,height:size.height+40});
+        await frame.waitForFunction(()=>!document.querySelector('#content[data-navigation-handoff]')&&!document.querySelector('[data-navigation-handoff-veil]')&&!document.querySelector('[data-navigation-handoff-style]'),undefined,{timeout:1000});
+        releaseFont();await outer.waitForURL(next);await ready(page);
+        assert.ok(await page.locator('#page-next').isEnabled());
+      } finally {releaseReader();releaseFont();await page.unroute('**/reader.js');await page.unroute('**/*.woff2');}
     });
 
     test('search and the repository remain discoverable in the contents', async () => {
@@ -641,19 +637,125 @@ for (const profile of selected) {
       if (tableViewport.lastRowFits) assert.equal(tableViewport.lastRowComplete, true, 'a page-fitting final row remains complete');
     });
 
-    test('the magic world always pages, with a fixed sidebar', async () => {
-      const chapter = chapters[1]!;
-      const context = await browser.newContext({ ...profile.options, reducedMotion: 'reduce' });
-      // A scroll mode saved by an earlier reader version must not apply.
-      await context.addInitScript(() => {
-        localStorage.setItem('alux-reader', JSON.stringify({ world: 'magic', mode: 'scroll', bookmarks: [] }));
-        sessionStorage.setItem('alux-entered', '1');
+    test('magic continuous reading retains its choice, chapter and progress across reloads and mode switches', async () => {
+      const { page } = await longChapter();
+      const content = await page.locator('main.leaves').textContent();
+      await activate(page, '#page-next');
+      const progress = await folio(page);
+      await activate(page, '#reading-mode');
+      await ready(page);
+      assert.equal(await page.locator('html').getAttribute('data-reading'), 'scroll');
+      assert.equal(await page.locator('main.leaves').evaluate((m) => getComputedStyle(m).columnCount), 'auto');
+      assert.equal(await page.locator('main.leaves').textContent(), content);
+      const geometry = await page.evaluate(() => ({ scroll:scrollY, overflow:document.documentElement.scrollHeight-innerHeight }));
+      assert.ok(geometry.overflow > 100, 'the complete chapter scrolls vertically');
+      assert.ok(geometry.scroll > 0, 'the page position transfers into continuous reading');
+      await navigate(page, () => page.reload());
+      assert.equal(await page.locator('html').getAttribute('data-reading'), 'scroll');
+      const reloaded = await page.evaluate(() => scrollY);
+      assert.ok(Math.abs(reloaded-geometry.scroll) < 4, 'continuous progress survives reload');
+      await activate(page, '#reading-mode');
+      await ready(page);
+      assert.equal(await page.locator('html').getAttribute('data-reading'), 'pages');
+      assert.deepEqual(await folio(page), progress, 'switching back restores the spread');
+      assert.equal(await page.locator('main.leaves').textContent(), content);
+      assert.equal(await page.locator('#sidebar-resize-handle').isVisible(), false);
+    });
+
+    test('the outer magic book scrolls on short windows and fills tall windows', async () => {
+      const page = await open(chapters[1]!, 'magic');
+      await page.setViewportSize({width:1280,height:600});
+      await ready(page);
+      const short = await page.evaluate(() => {
+        const volume = document.querySelector('.volume')!.getBoundingClientRect();
+        return {height:volume.height, overflow:document.documentElement.scrollHeight-innerHeight};
       });
-      const page = await context.newPage();
-      await navigate(page, () => page.goto(base + '/' + chapter));
-      assert.equal(await page.locator('#reading-mode').count(), 0, 'no scroll reading control');
-      assert.notEqual(await page.locator('main.leaves').evaluate((m) => getComputedStyle(m).columnCount), 'auto');
-      assert.equal(await page.locator('#sidebar-resize-handle').isVisible(), false, 'no sidebar resize handle');
+      assert.ok(short.height >= 700, 'the spread is not shrunk to fit a short window');
+      assert.ok(short.overflow > 150, 'the entire binding can be scrolled');
+      await page.evaluate(() => scrollTo(0,100));
+      assert.ok(await page.evaluate(() => scrollY) >= 99);
+      await page.setViewportSize({width:1280,height:1500});
+      await ready(page);
+      assert.ok((await page.locator('.volume').boundingBox())!.height > 1100, 'tall windows have no width-based height cap');
+    });
+
+    test('copy controls never float over a folding leaf and return after it settles', async () => {
+      const chapter = chapters.find((file) => file.includes('capability-algebras'))!;
+      assert.ok(chapter);
+      const page = await open(chapter, 'magic');
+      assert.ok(await page.locator('main.leaves pre > .buttons').count(), 'source chapter has copy rows');
+      await page.emulateMedia({reducedMotion:'no-preference'});
+      await activate(page, '#page-next');
+      await page.waitForFunction(() => !!document.querySelector('.turn-leaf'));
+      assert.ok(await page.locator('.turn-leaf .clip-button').count() > 0, 'copy controls remain painted on the moving paper');
+      assert.equal(await page.locator('.turn-leaf').evaluate(e=>(e as HTMLElement).inert), true, 'snapshot controls cannot act');
+      assert.equal(await page.locator('.volume > main.leaves pre > .buttons').first().evaluate((row) => getComputedStyle(row).zIndex), '0', 'live controls stay below the moving leaf');
+      await page.waitForFunction(() => !document.querySelector('.turn-leaf'));
+      assert.equal(await page.locator('.volume > main.leaves pre > .buttons').first().evaluate((row) => getComputedStyle(row).visibility), 'visible');
+      assert.equal(await page.locator('.volume[data-paper-turning]').count(), 0);
+    });
+
+    test('clipped overflow text does not swallow a blank footer click', async () => {
+      const german = editions.find(e=>e.lang==='de')!;
+      const page = await open(route(german,'concepts/free_monad.html'), 'magic');
+      let at = await folio(page);
+      while(at.last<at.total) {
+        const box=(await page.locator('.volume').boundingBox())!;
+        // The click point is outside main but previously matched hidden Range rectangles.
+        await page.mouse.click(box.x+box.width-20,box.y+box.height-24);
+        const next=await folio(page);
+        assert.equal(next.first,at.last+1,'each blank-footer click advances');
+        at=next;
+      }
+    });
+
+    test('night Chinese code-heavy chapters fold from blank paper with changing geometry', async () => {
+      for (const chapter of ['rust-dd/semantic-types.html','rust-dd/derived-meaning.html']) {
+        const page = await open(route(chinese, chapter), 'magic');
+        await activate(page, '#theme-toggle');
+        await ready(page);
+        await page.emulateMedia({reducedMotion:'no-preference'});
+        const before = await folio(page);
+        assert.ok(before.last < before.total);
+        const box = await blankFooter(page);
+        await page.mouse.click(box.x+box.width-20,box.y+box.height-24);
+        await page.waitForSelector('.turn-leaf .stf__item');
+        const sampled = await page.evaluate(() => {
+          const actual=document.querySelector<HTMLElement>('.volume > main.leaves')!;
+          const copy=document.querySelector<HTMLElement>('.turn-leaf main.leaves')!;
+          if (!copy) throw new Error('the fold must exist when layout sampling starts');
+          const read=(main:HTMLElement)=>[...main.querySelectorAll<HTMLElement>(':scope > h1,:scope > h2,:scope > h3')].map(h=>({text:h.textContent,x:h.offsetLeft-(h.offsetParent===main?0:main.offsetLeft),y:h.offsetTop-(h.offsetParent===main?0:main.offsetTop),height:h.offsetHeight}));
+          const layout={actual:read(actual),copy:read(copy)};
+          return new Promise<{transforms:string[];layout:typeof layout}>((resolve) => {
+            const transforms:string[]=[];
+            const sample=()=>{ transforms.push([...document.querySelectorAll('.turn-leaf .stf__item')].map(e=>getComputedStyle(e).transform).join('|')); if(transforms.length===12)resolve({transforms,layout});else requestAnimationFrame(sample); };
+            requestAnimationFrame(sample);
+          });
+        });
+        assert.ok(new Set(sampled.transforms).size>1,chapter+' night paper actually bends');
+        assert.deepEqual(sampled.layout.copy,sampled.layout.actual,chapter+' moving paper has the settled page layout');
+        await page.waitForFunction(()=>!document.querySelector('.turn-leaf'));
+        assert.equal((await folio(page)).first,before.last+1);
+      }
+    });
+
+    test('display equations remain inside their leaf and copy feedback has one coordinated acknowledgement', async () => {
+      const page = await open(route(chinese,'rust-dd/semantic-types.html'), 'magic');
+      for (let index=0;index<2;index++) {
+        const checks = await page.locator('main.leaves').evaluate((main)=>{
+          const styles=getComputedStyle(main);
+          const count=Number(styles.columnCount);
+          const width=(main.clientWidth-(count-1)*(parseFloat(styles.columnGap)||0))/count;
+          return {
+            equations:[...main.querySelectorAll<HTMLElement>('.katex-display')].map(e=>({width:e.getBoundingClientRect().width,limit:width,overflow:getComputedStyle(e).overflowX})),
+            copy:[...main.querySelectorAll<HTMLElement>('.clip-button')].map(e=>({icon:getComputedStyle(e,'::before').backgroundColor,color:getComputedStyle(e).color,filter:getComputedStyle(e,'::before').filter,tooltip:getComputedStyle(e.querySelector('.tooltiptext')!).display}))
+          };
+        });
+        assert.ok(checks.equations.length>0 && checks.copy.length>0);
+        for(const equation of checks.equations) { assert.ok(equation.width<=equation.limit+1); assert.equal(equation.overflow,'auto'); }
+        for(const copy of checks.copy) { assert.equal(copy.icon,copy.color); assert.equal(copy.filter,'none'); assert.equal(copy.tooltip,'none'); }
+        await activate(page,'#theme-toggle'); await ready(page);
+      }
     });
 
     test('resize and orientation changes retain progress, content and usable controls', async () => {
@@ -757,20 +859,47 @@ for (const profile of selected) {
       assert.match(await page.locator('#searchresults-header').innerText(), /搜索/);
     });
 
+    test('directory and chapter changes retain the outer document and uninterrupted music', async () => {
+      const {page}=await longChapter(chinese,1);
+      const outer=outerPage(page);
+      if(await outer.evaluate(()=>(document.getElementById('persistent-music') as HTMLAudioElement).paused)) await activate(page,'#music-toggle');
+      await outer.waitForFunction(()=>!(document.getElementById('persistent-music') as HTMLAudioElement).paused);
+      await outer.evaluate(()=>{
+        const audio=document.getElementById('persistent-music') as HTMLAudioElement;
+        (window as any).readerIdentity={doc:document,audio,start:audio.currentTime,pauses:0};
+        audio.addEventListener('pause',()=>{(window as any).readerIdentity.pauses++});
+      });
+      const destination='rust-dd/derived-meaning.html';
+      if(await page.locator('#sidebar').getAttribute('aria-hidden')==='true')await activate(page,'#sidebar-toggle');
+      await activate(page,`.chapter a[href$="${destination}"]`);
+      await ready(page);
+      assert.ok(outer.url().endsWith('/zh/'+destination));
+      await page.emulateMedia({reducedMotion:'no-preference'});
+      await activate(page,'#page-next');
+      await page.waitForFunction(()=>!document.querySelector('.turn-leaf'));
+      await navigate(page,()=>page.goBack());
+      const state=await outer.evaluate(()=>{
+        const saved=(window as any).readerIdentity;
+        return {document:saved.doc===document,audio:saved.audio===document.getElementById('persistent-music'),paused:saved.audio.paused,pauses:saved.pauses,advanced:saved.audio.currentTime>saved.start};
+      });
+      assert.deepEqual(state,{document:true,audio:true,paused:false,pauses:0,advanced:true});
+      assert.equal(await outer.locator('.chapter-frame').count(),1,'only the committed native document remains');
+    });
+
     test('audio plays after activation and pauses when navigating away', async () => {
       const page = await open(chapters[0]!, 'real');
       await activate(page, '#music-toggle');
-      await page.waitForFunction(() => {
-        const music = document.getElementById('music') as HTMLAudioElement;
+      await outerPage(page).waitForFunction(() => {
+        const music = document.getElementById('persistent-music') as HTMLAudioElement;
         return !music.paused && music.currentTime > 0;
       });
       await activate(page, '#music-toggle');
-      assert.equal(await page.locator('#music').evaluate((a) => (a as HTMLAudioElement).paused), true);
+      assert.equal(await outerPage(page).locator('#persistent-music').evaluate((a) => (a as HTMLAudioElement).paused), true);
       await activate(page, '#music-toggle');
-      await page.waitForFunction(() => !(document.getElementById('music') as HTMLAudioElement).paused);
+      await outerPage(page).waitForFunction(() => !(document.getElementById('persistent-music') as HTMLAudioElement).paused);
       // Register after the reader, so the observation witnesses its real pagehide cleanup.
-      await page.evaluate(() => addEventListener('pagehide', () => {
-        sessionStorage.setItem('test-audio-paused', String((document.getElementById('music') as HTMLAudioElement).paused));
+      await outerPage(page).evaluate(() => addEventListener('pagehide', () => {
+        sessionStorage.setItem('test-audio-paused', String((document.getElementById('persistent-music') as HTMLAudioElement).paused));
       }));
       await navigate(page, () => page.goto(base + '/' + chapters[1]!));
       assert.equal(await page.evaluate(() => sessionStorage.getItem('test-audio-paused')), 'true');

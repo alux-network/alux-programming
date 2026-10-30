@@ -4,7 +4,7 @@ This file is the compact engineering authority for humans and coding agents work
 
 ## Product
 
-The ALUX programming guidelines: one mdBook, published in 11 languages, with a reader that adds a magic world (a paged two-column book) and a real world (the plain mdBook page), a gateway to choose between them, text size, bookmarks and reading music.
+The ALUX programming guidelines: one mdBook, published in 11 languages, with a reader that adds a magic world (a facing-page book or continuous reading) and a real world (the plain mdBook page), a gateway to choose between them, text size, bookmarks and reading music.
 
 mdBook defines the book. Application configuration defines additional pages. Everything else is a derivation of those two, verification included. Do not turn this repository into a web application, a static-site generator or a second book model beside mdBook.
 
@@ -18,7 +18,7 @@ Meaning:
 Book    = mdBook's book: ordered parts and chapters (path, name, content)
 Edition = Language -> Book          (localize: swap content and names, keep paths)
 Site    = Edition per language, rendered to pages at /<lang>/<path>.html
-Reader  = World -> view of a page   (magic: spreads of columns, real: the page)
+Reader  = World x ReadingMode -> view of a page (magic: spreads or continuous, real: the page)
 ```
 
 The primitives are `SUMMARY.md` with the English chapters, `languages.ts`, and the translations. Everything else is an interpretation of them:
@@ -58,14 +58,14 @@ Preserve these behaviors through architecture changes. The implementation remain
 - Real: a plain white document by day, readable charcoal by night; black/light logos respectively. The theme control switches only day/night. Daylight is the first-visit default, and a manual night choice survives reloads and world changes.
 - Blank paper and the navigation buttons turn pages. Links, selectable text, code and media retain their own actions. A soft-paper fold leaves the binding and ribbon fixed; reduced motion skips it. Cancel stale snapshots on resize/world changes and never duplicate active media in them. Keep the old spread until the fold completes, and ignore repeated input during a turn. The standalone StPageFlip renderer is a presentation dependency, not an application framework or book model.
 - Keep code and table scrollports bounded by the actual leaf, including margins; their final line/row and copy controls must remain reachable. Snapshot scroll positions are visual only. Keep the paper renderer clock live while idle, and invalidate pending destination veils as well as active folds when geometry changes.
-- Pause music on hidden documents, consume navigation resume checkpoints once, and preserve live playback position across world toggles.
+- Pause music when the actual reader tab is hidden or left. The outer shell owns one audio element; replacing an inner chapter must not pause/reseek it. Dispose departing chapter listeners without stopping shared media. Consume navigation resume checkpoints once, and preserve live playback position across world toggles.
 - Keep the discoverable search button below bookmarks. Do not duplicate it in the toolbar. Center the GitHub mark and adjacent external-link arrow in the contents footer; expose its name on hover, keyboard focus and through its accessible label.
 - The brand logo returns to the entrance; do not repeat the book-name affix beneath bookmarks. Keep the canonical index chapter in mdBook.
 - Browser/bookmark identity comes from `readerName` in `languages.ts`: simplified Chinese `ALUX 编程`, traditional Chinese `ALUX 程式設計`, other editions `ALUX Programming`. Use the approved warm-gold mark on the deep-green favicon tile; do not substitute the domain name.
 - A first neutral entrance uses country detection, with a short timeout and browser-language fallback. Unsupported countries use English. Later neutral visits remember the last chosen edition; explicit edition links retain their language. A manual choice made during detection wins. Attempt the localized welcome automatically; recover on trusted interaction when browser audio policy blocks it, and stop it on exit.
-- Pagination still measures only the current chapter and labels chapter progress. Do not restore speculative whole-book totals, background pagination or magic scroll mode.
+- Pagination still measures only the current chapter and labels chapter progress. Do not restore speculative whole-book totals or background pagination. Magic also offers an explicit continuous-reading toggle over the same chapter, with the choice and normalized progress retained.
 
-Before refactoring, capture the approved reader at fixed viewport, reading size, edition, chapter, world and theme, and list its preserved interactions. Compare the affected day/night, language and mobile states after migration. Exercise normal-motion turns as well as reduced motion; passing structure tests does not establish visual or interaction fidelity. Explain regressions in the PR using commit evidence, and explicitly own errors introduced by our follow-up implementation. Present a working preview before claiming acceptance.
+Before refactoring, capture the approved reader at fixed viewport, reading size, edition, chapter, world and theme, and list its preserved interactions. Compare the affected day/night, language and mobile states after migration. Exercise normal-motion turns as well as reduced motion; passing structure tests does not establish visual or interaction fidelity. Explain regressions in the PR using commit evidence, and explain the observed post-refactor differences, technical causes and shared prevention steps. Present a working preview before claiming acceptance.
 
 ## Layout
 
@@ -132,7 +132,7 @@ CI runs `npm ci`, `npm run check`, `npm run build`, `npm test`, in that order. R
 - Static files go in `public/` and are linked root-absolute (`/concepts.png`). Nothing static lives in `src/`. The HTML-only asset preprocessor runs after native admonish and katex, using parser source positions to change actual image destinations. Do not rewrite Markdown with line/fence heuristics or serialize whole chapters; preserve literal code, image labels, titles and shared link definitions.
 - TypeScript only, ESM, imports with `.ts` extensions. No Python, no shell scripts in the build.
 - No frameworks in the reader. It is one module binding the template's markup by element id.
-- The magic world is always a paged book: no scroll reading mode in it. Continuous scrolling is the real world.
+- The magic world defaults to a paged book and also offers a persistent continuous-reading toggle. Both presentations keep the same mdBook chapter. The outer book remains vertically scrollable; never shrink its height to force it into the viewport.
 - The magic world's sidebar has a fixed width: no resize handle there. The real world keeps mdBook's resizable sidebar.
 - Builds are deterministic and atomic: the same sources give byte-identical output, and a failed build leaves the previous site untouched. Once the replacement succeeds, backup cleanup is best effort: report any retained backup without treating publication as failed or suppressing the dev reload.
 
@@ -214,3 +214,22 @@ The root English README links to `docs/README.<lang>.md` for every non-English e
 Localized share cards are rendered from `web/social-cards.ts` into `public/social/` at 1200 × 630. Preserve the full author name, original artwork and matching language copy; regenerate from the source rather than editing baked text.
 
 The current experience contract, regression causes and evidence boundaries are recorded in [docs/reader-experience.md](docs/reader-experience.md). An approved visual reference constrains the experience, not the former source architecture: deliberate refinements may improve composition while preserving agreed behavior. Never treat a generated preview, test count or upstream refactor as owner visual approval.
+
+## 2026-10-30 owner corrections and regression checks
+
+- Preserve both outer vertical book scrolling and the explicit magic paged/continuous switch. Neither substitutes for the other. Keep mode/progress across reloads and make the toolbar reachable while scrolling. A width-to-height cap must not shrink the book in a tall window.
+- Paper is flexible, not a rigid rectangle trapped inside the cover. Keep the binding/ribbon fixed, allow the moving leaf to lift outside the frame, and clip only its printed content. Check a real changing fold, not merely a changed page number or an animation class.
+- Font completion must not cancel a fold. Snapshot text can request fonts; defer that remeasurement until the fold settles. Actual viewport/world/mode changes still cancel stale geometry.
+- Range rectangles include clipped code/table text. Blank-paper hit testing must respect clipping and the actual leaf viewport; invisible text must never swallow a blank click. Keep native selection, controls, links and local scrollbars.
+- Equations must stay within their own leaf with horizontal scrolling when needed, without rewriting math. Copy feedback is one nonwrapping acknowledgement, with a current-color mark and no duplicate native tooltip or blue hover filter.
+- Check both worlds and both themes across all edition routes. Record route/turn coverage separately from normal-motion checks, emulated profiles, CI and owner visual approval. Use `node web/test/reader-sweep.ts` after building for the exhaustive route sweep. Do not claim visual acceptance from a green test count.
+- Owner corrections describe product intent and must travel with the code/PR: coherent material/color, discoverable controls, comfortable spacing, complete content and believable physical page motion. Explain each regression's commit evidence and fix to Tomislav Grospić; describe observed post-refactor differences, technical causes and shared prevention steps without assigning personal blame.
+- Do not generate or update screenshots until the owner explicitly requests them again.
+
+### Persistent chapter container
+
+The owner explicitly approved this lifecycle change on 2026-10-30: directory clicks, turns and chapter changes should feel continuous and must not restart music. `reader-shell.ts` holds one outer audio element and loads native mdBook documents in same-origin frames. The old visible chapter stays until the destination fonts and reader geometry are ready; only then commit the frame and canonical URL. Preserve back/forward, anchors, edition identity, search and native `?reader=native` fallback. The shell owns no second book or pagination model.
+
+Keep the pending frame inert. Reject stale ready callbacks, retain only the committed frame, clean up departed listeners, and keep the reading toolbar reachable. Fixed-position turning paper may lift beyond the cover without increasing scroll height; a turn must never move the desk or create a scrollbar. Preserve non-rendering sibling relationships in snapshots and unitless heading line-height; both affect pagination. Copy controls stay visible and inert on the turning paper, while live controls remain below it.
+
+- Keep magic headings atomic and use explicit section spacing/leading. WebKit can otherwise place a live long heading beyond its leaf while moving the cloned heading to the next column. `break-inside:avoid` on a block heading alone was insufficient in the reproduced case; verify source and snapshot coordinates, not just font names or total page count.

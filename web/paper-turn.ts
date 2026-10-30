@@ -41,6 +41,9 @@ function snapshot(source: HTMLElement): HTMLElement {
     text.append(...port.childNodes);
     port.append(text);
   });
+  // The host is inert: copy controls remain printed on the moving leaf, with no live actions.
+  // Keep non-rendering siblings for :first-child rules without loading another stylesheet.
+  copy.querySelectorAll('link[rel=stylesheet]').forEach((link) => link.removeAttribute('href'));
   copy.removeAttribute('id');
   copy.querySelectorAll('[id]').forEach((element) => element.removeAttribute('id'));
   return copy;
@@ -64,6 +67,7 @@ export function paperTurn(main: HTMLElement) {
   /** Discards a turn when the user changes world or geometry; never fires obsolete navigation. */
   function cancel() {
     active = false;
+    delete volume.dataset.paperTurning;
     completion = undefined;
     cancelAnimationFrame(frame);
     clearTimeout(timer);
@@ -100,7 +104,8 @@ export function paperTurn(main: HTMLElement) {
       window.style.cssText = `position:absolute;overflow:hidden;width:${body.width}px;height:${body.height}px;left:${body.left - outer.left - 17 - side * width}px;top:${body.top - outer.top - 17}px`;
       const copy = snapshot(main);
       // StPageFlip clones the reverse leaf. CSS offsets survive cloning; scrollLeft does not.
-      copy.style.cssText = `position:absolute;overflow:visible;width:${body.width}px;height:${body.height}px;left:${-main.scrollLeft}px;top:0;margin:0`;
+      const layout = getComputedStyle(main);
+      copy.style.cssText = `column-count:${layout.columnCount};column-gap:${layout.columnGap};column-fill:${layout.columnFill};font-family:${layout.fontFamily};font-size:${layout.fontSize};line-height:var(--book-leading);position:absolute;overflow:visible;width:${body.width}px;height:${body.height}px;left:${-main.scrollLeft}px;top:0;margin:0`;
       window.append(copy);
       clip.append(window);
       sheet.append(clip);
@@ -122,15 +127,22 @@ export function paperTurn(main: HTMLElement) {
     const portrait = before.length === 1;
     const width = parseFloat(before[0]!.style.width), height = parseFloat(before[0]!.style.height);
     const pages = backwards ? [...after, ...before] : [...before, ...after];
-    Object.assign(host.style, { position: 'absolute', left: '14px', top: '14px', width: width * before.length + 'px', height: height + 'px', minWidth: '0', minHeight: '0' });
+    // Fixed paper can curl beyond the cover without enlarging document overflow or moving scrollbars.
+    const cover = volume.getBoundingClientRect();
+    Object.assign(host.style, { position: 'fixed', left: '0px', top: '0px', width: width * before.length + 'px', height: height + 'px', minWidth: '0', minHeight: '0' });
+    host.hidden = false;
+    const origin = host.getBoundingClientRect();
+    host.style.left = cover.left + 14 - origin.left + 'px';
+    host.style.top = cover.top + 14 - origin.top + 'px';
     host.hidden = false;
     host.classList.add('turn-leaf');
     completion = done;
     active = true;
+    volume.dataset.paperTurning = '';
     if (!engine) {
       engine = new PageFlip(host, {
         width, height, size: 'fixed', autoSize: false, usePortrait: portrait, showCover: false,
-        flippingTime: 700, drawShadow: true, maxShadowOpacity: document.documentElement.classList.contains('coal') ? .55 : .25,
+        flippingTime: 700, drawShadow: true, maxShadowOpacity: document.documentElement.classList.contains('coal') ? .65 : .3,
         useMouseEvents: false, mobileScrollSupport: false, showPageCorners: false,
       });
       engine.loadFromHTML(pages);
@@ -146,7 +158,7 @@ export function paperTurn(main: HTMLElement) {
         if (started && data === 'read') { started = false; queueMicrotask(finish); }
       });
     } else {
-      Object.assign(engine.getSettings(), { width, height, minWidth: width, maxWidth: width, minHeight: height, maxHeight: height, usePortrait: portrait });
+      Object.assign(engine.getSettings(), { width, height, minWidth: width, maxWidth: width, minHeight: height, maxHeight: height, usePortrait: portrait, maxShadowOpacity: document.documentElement.classList.contains('coal') ? .65 : .3 });
       engine.updateFromHtml(pages);
       engine.update();
     }

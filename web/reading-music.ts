@@ -21,6 +21,7 @@ export interface ReadingMusicOptions {
   volumeStorage?: Pick<Storage, 'getItem' | 'setItem'>;
   events?: Pick<Window, 'addEventListener' | 'removeEventListener'>;
   isHidden?: () => boolean;
+  keepPlayingOnPageHide?: boolean;
 }
 
 /** Creates the reading-music controller and returns entry, toggle and teardown operations. */
@@ -29,6 +30,7 @@ export function bindReadingMusic(options: ReadingMusicOptions) {
     audio, button, prefs, save, isGateway,
     labels = { play: 'Play music', pause: 'Pause music' },
     notice,
+    keepPlayingOnPageHide = false,
     positionStorage = globalThis.sessionStorage,
     volumeStorage = globalThis.localStorage,
     events = globalThis.window,
@@ -36,7 +38,7 @@ export function bindReadingMusic(options: ReadingMusicOptions) {
   } = options;
   let world: ReadingWorld | undefined;
   let disposed = false;
-  let resumeConsumed = false;
+  let resumeConsumed = keepPlayingOnPageHide && audio.dataset.aluxMusicEntered === 'true';
   let noticeOpen = false;
   let noticeTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -74,7 +76,7 @@ export function bindReadingMusic(options: ReadingMusicOptions) {
   };
   const onPlay = () => render();
   const onPause = () => render();
-  const onPageHide = () => { remember(); audio.pause(); };
+  const onPageHide = () => { remember(); if (keepPlayingOnPageHide) dispose(true); else audio.pause(); };
   const onPageShow = (event: PageTransitionEvent) => { if (event.persisted) play(); };
   const onVisibilityChange = () => {
     if (isHidden()) audio.pause();
@@ -123,10 +125,12 @@ export function bindReadingMusic(options: ReadingMusicOptions) {
   /** Enters a reading world, showing its closeable music notice and restoring position. */
   const enter = (next: ReadingWorld) => {
     if (disposed || isGateway()) return;
-    audio.pause();
+    if (!keepPlayingOnPageHide) audio.pause();
     world = next;
+    if (!shouldAutoplay()) audio.pause();
     if (!resumeConsumed) {
       resumeConsumed = true;
+      if (keepPlayingOnPageHide) audio.dataset.aluxMusicEntered = 'true';
       const resume = position();
       if (resume > 0) {
         try { audio.currentTime = resume; } catch {}
@@ -155,10 +159,10 @@ export function bindReadingMusic(options: ReadingMusicOptions) {
   };
 
   /** Disposes listeners, preserves the current position, and stops music. */
-  const dispose = () => {
+  const dispose = (keepPlaying = false) => {
     if (disposed) return;
     disposed = true;
-    audio.pause();
+    if (!keepPlaying) audio.pause();
     closeNotice();
     clearTimeout(noticeTimer);
     audio.removeEventListener('play', onPlay);

@@ -6,6 +6,8 @@ import type { Language } from './languages.ts';
 
 export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
   "ar": {
+    "Scroll reading": "القراءة بالتمرير",
+    "Page reading": "القراءة بالصفحات",
     "Keyboard shortcuts": "اختصارات لوحة المفاتيح",
     "Turn pages or chapters": "التنقل بين الصفحات أو الفصول",
     "Show keyboard help": "إظهار مساعدة لوحة المفاتيح",
@@ -41,6 +43,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "مرحبًا"
   },
   "de": {
+    "Scroll reading": "Scrollen",
+    "Page reading": "Blättern",
     "Keyboard shortcuts": "Tastenkürzel",
     "Turn pages or chapters": "Seiten oder Kapitel umblättern",
     "Show keyboard help": "Tastaturhilfe anzeigen",
@@ -76,6 +80,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Willkommen"
   },
   "es": {
+    "Scroll reading": "Lectura continua",
+    "Page reading": "Lectura por páginas",
     "Keyboard shortcuts": "Atajos de teclado",
     "Turn pages or chapters": "Pasar páginas o capítulos",
     "Show keyboard help": "Mostrar la ayuda del teclado",
@@ -111,6 +117,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Bienvenida"
   },
   "ja": {
+    "Scroll reading": "スクロール表示",
+    "Page reading": "ページ表示",
     "Keyboard shortcuts": "キーボードショートカット",
     "Turn pages or chapters": "ページや章を移動",
     "Show keyboard help": "キーボード操作のヘルプを表示",
@@ -146,6 +154,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "ようこそ"
   },
   "ko": {
+    "Scroll reading": "스크롤 읽기",
+    "Page reading": "페이지 읽기",
     "Keyboard shortcuts": "키보드 단축키",
     "Turn pages or chapters": "페이지 또는 장 이동",
     "Show keyboard help": "키보드 도움말 표시",
@@ -181,6 +191,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "환영합니다"
   },
   "ru": {
+    "Scroll reading": "Читать прокруткой",
+    "Page reading": "Читать по страницам",
     "Keyboard shortcuts": "Сочетания клавиш",
     "Turn pages or chapters": "Переход между страницами или главами",
     "Show keyboard help": "Показать справку по клавишам",
@@ -216,6 +228,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Добро пожаловать"
   },
   "uk": {
+    "Scroll reading": "Читати прокручуванням",
+    "Page reading": "Читати сторінками",
     "Keyboard shortcuts": "Сполучення клавіш",
     "Turn pages or chapters": "Перехід між сторінками або розділами",
     "Show keyboard help": "Показати довідку про клавіші",
@@ -251,6 +265,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Вітаємо"
   },
   "vi": {
+    "Scroll reading": "Đọc cuộn",
+    "Page reading": "Đọc theo trang",
     "Keyboard shortcuts": "Phím tắt",
     "Turn pages or chapters": "Chuyển trang hoặc chương",
     "Show keyboard help": "Hiện hướng dẫn phím tắt",
@@ -286,6 +302,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Chào mừng"
   },
   "zh-hant": {
+    "Scroll reading": "捲動閱讀",
+    "Page reading": "翻頁閱讀",
     "Keyboard shortcuts": "鍵盤快捷鍵",
     "Turn pages or chapters": "翻頁或切換章節",
     "Show keyboard help": "顯示快捷鍵說明",
@@ -321,6 +339,8 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "歡迎"
   },
   "zh": {
+    "Scroll reading": "滚动阅读",
+    "Page reading": "翻页阅读",
     "Keyboard shortcuts": "键盘快捷键",
     "Turn pages or chapters": "翻页或切换章节",
     "Show keyboard help": "显示快捷键帮助",

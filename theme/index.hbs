@@ -22,10 +22,15 @@
         <meta name="twitter:card" content="summary_large_image">
         <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
         <script>
+            if (window.parent === window && !document.documentElement.hasAttribute('data-print') && new URL(location.href).searchParams.get('reader') !== 'native') {
+                document.documentElement.dataset.shellLoading = '';
+                setTimeout(function () { document.documentElement.removeAttribute('data-shell-loading'); }, 2000);
+            }
             try {
                 const reader = JSON.parse(localStorage.getItem('alux-reader')) || {};
                 document.documentElement.dataset.world = {{#if is_print}}'real'{{else}}reader.world || 'real'{{/if}};
                 document.documentElement.style.setProperty('--reader-scale', reader.scale || 1);
+                document.documentElement.dataset.reading = reader.mode === 'scroll' ? 'scroll' : 'pages';
             } catch (e) {
                 document.documentElement.dataset.world = 'real';
             }
@@ -246,6 +251,9 @@
                         </button>
                         <button id="text-smaller" class="icon-button text-size" type="button" title="Decrease text size" aria-label="Decrease text size" data-i18n>A−</button>
                         <button id="text-larger" class="icon-button text-size" type="button" title="Increase text size" aria-label="Increase text size" data-i18n>A+</button>
+                        <button id="reading-mode" class="icon-button reading-mode" type="button" title="Scroll reading" aria-label="Scroll reading" aria-pressed="false" data-i18n>
+                            <i id="reading-mode-icon" class="fa fa-file-text-o" aria-hidden="true"></i><span id="reading-mode-label" data-i18n>Scroll reading</span>
+                        </button>
                     </div>
 
                     <span class="menu-title"></span>
@@ -299,7 +307,7 @@
                         try { raw = sessionStorage.getItem(key); sessionStorage.removeItem(key); } catch (e) { return; }
                         if (!raw || raw.length > 820000) return;
                         try { handoff = JSON.parse(raw); } catch (e) { return; }
-                        if (document.documentElement.dataset.world !== 'magic' || !handoff || handoff.version !== 1 || handoff.target !== location.href ||
+                        if (document.documentElement.dataset.world !== 'magic' || document.documentElement.dataset.reading === 'scroll' || !handoff || handoff.version !== 1 || handoff.target !== location.href ||
                             typeof handoff.createdAt !== 'number' || now - handoff.createdAt < -1000 || now - handoff.createdAt > maxAge ||
                             !handoff.viewport || Math.abs(innerWidth - handoff.viewport.width) > 2 || Math.abs(innerHeight - handoff.viewport.height) > 2 || Math.abs(devicePixelRatio - handoff.viewport.dpr) > .1 ||
                             !handoff.volume || ![handoff.volume.x, handoff.volume.y, handoff.volume.width, handoff.volume.height].every(Number.isFinite) || handoff.volume.width <= 0 || handoff.volume.height <= 0 ||
@@ -474,6 +482,12 @@
         {{#each additional_js}}
         <script src="{{ resource this}}"></script>
         {{/each}}
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                document.documentElement.setAttribute('data-native-ready', '');
+                document.dispatchEvent(new Event('alux-native-ready'));
+            }, { once: true });
+        </script>
         <!-- ALUX reader, bundled by Vite from web/reader.ts -->
         <section id="music-notice" data-reader-music class="music-notice" hidden aria-live="polite">
             <div class="music-notice-heading"><p id="music-notice-hint"></p><button id="music-notice-close" type="button">×</button></div>
