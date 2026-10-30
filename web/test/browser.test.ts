@@ -283,6 +283,7 @@ for (const profile of selected) {
           const rect=(e:Element)=>{const r=e.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height};};
           return {content:[...target.querySelectorAll('h1,h2,p,li,pre,table')].map(rect),head:rect(sheet.querySelector('.page-head')!),shadow:getComputedStyle(sheet).boxShadow,border:getComputedStyle(sheet).borderRightWidth};
         });
+        assert.equal(await page.locator('.turn-leaf [data-paper-curl]').count(),1,'one actual lifted leaf receives the curve highlight');
         assert.equal(printed.shadow,'none','static night paper has no extra illuminated rim');
         assert.equal(printed.border,'0px','the renderer adds no extra gold side border');
         await page.waitForFunction(()=>!document.querySelector('.turn-leaf'));

@@ -246,3 +246,5 @@ Keep the pending frame inert. Reject stale ready callbacks, retain only the comm
 - Directory action names follow the native expanded state: “Show table of contents” / “Hide table of contents”, localized in every edition. Keep the icon; never expose a combined show/hide instruction as its tooltip.
 - Running-head snapshots use border-box sizing for measured bounding rectangles: the reproduced content-box copy added 10px padding plus 1px rule to a 31px head, making it 42px. Compare the head rule and static destination paragraphs/tables before and after settling, including later spreads.
 - Static night sheets must share the live paper color without extra illuminated rims or gold side borders. Limit curl shading to the fold renderer; the stationary book and page edges must not brighten or lose their surface during a turn.
+
+- Preserve visible night curling: only the actual PageFlip flippingPage gets the restrained light-facing gradient; a non-simple bottom destination is still stationary. Do not identify moving paper by `:not(.--simple)` alone. Static paper/trim remain unchanged.

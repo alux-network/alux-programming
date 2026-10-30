@@ -18,6 +18,6 @@ declare module 'page-flip' {
     flipNext(corner: 'bottom'): void;
     flipPrev(corner: 'bottom'): void;
     on(event: 'changeState', listener: (event: { data: string }) => void): void;
-    getRender(): { drawFrame(): void; finishAnimation(): void };
+    getRender(): { drawFrame(): void; finishAnimation(): void; setFlippingPage(page: { getElement(): HTMLElement } | null): void };
   }
 }

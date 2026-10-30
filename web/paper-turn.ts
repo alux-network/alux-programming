@@ -153,6 +153,13 @@ export function paperTurn(main: HTMLElement) {
       const renderer = engine.getRender(), drawFrame = renderer.drawFrame.bind(renderer);
       // Keep upstream's timer current even while idle; the next animation starts from that clock.
       renderer.drawFrame = () => { if (active) drawFrame(); };
+      // The bottom destination is also non-simple; only the engine's actual curled leaf catches light.
+      const setFlippingPage = renderer.setFlippingPage.bind(renderer);
+      renderer.setFlippingPage = (page) => {
+        host.querySelectorAll('[data-paper-curl]').forEach(element => element.removeAttribute('data-paper-curl'));
+        setFlippingPage(page);
+        page?.getElement().setAttribute('data-paper-curl', '');
+      };
       let started = false;
       engine.on('changeState', ({ data }) => {
         if (data === 'flipping') started = true;
