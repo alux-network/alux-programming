@@ -12,6 +12,7 @@ import type { PreviewServer } from 'vite';
 import { expectedSite } from './site.ts';
 import { sourceChapters, selectChapters } from './chapter-selection.ts';
 import { readerPage, outerPage } from './reader-page.ts';
+import { virtualMedia } from './virtual-media.ts';
 import { uiStrings, copyLabels } from '../i18n.ts';
 import type { Edition } from './site.ts';
 
@@ -169,6 +170,7 @@ for (const profile of selected) {
     /** Opens an isolated chapter, watching every scenario for script and internal resource errors. */
     async function open(file: string, world?: 'magic' | 'real', prepare?: (page:Page)=>Promise<void>) {
       const context = await browser.newContext({ ...profile.options, reducedMotion: 'reduce' });
+      await context.addInitScript(virtualMedia);
       const page = readerPage(await context.newPage());
       page.setDefaultTimeout(10_000);
       page.on('pageerror', (e) => problems.push('error: ' + e.message));
@@ -2278,10 +2280,9 @@ for (const profile of selected) {
       }
     });
 
-    for (const world of ['real', 'magic'] as const) test('current chapter printing retains all content and the live ' + world + ' reader', async () => {
+    test('current chapter printing retains all content and the live magic reader', async () => {
       const { page } = await longChapter();
       await activate(page, '#page-next');
-      if (world === 'real') { await activate(page, '#world-toggle'); await ready(page); }
       const outer = outerPage(page);
       const contents = await page.locator('main.leaves').textContent();
       const state = () => page.evaluate(() => ({
@@ -2313,6 +2314,19 @@ for (const profile of selected) {
       assert.ok(await outer.evaluate(() => (window as any).printedFrame === document.querySelector('.chapter-frame:not(.pending-chapter)') &&
         (window as any).printedAudio === document.getElementById('persistent-music')), 'the same chapter and audio remain live');
       assert.equal(await outer.locator('.chapter-print').count(), 0);
+    });
+
+    test('the real world prints the current chapter natively', async () => {
+      // The real world is mdBook's own page: no shell, so browser Print reads the document itself.
+      const page = await open(chapters[1]!, 'real');
+      assert.equal(page.mainFrame().childFrames().length, 0, 'no chapter shell');
+      assert.equal(await page.evaluate(() => document.documentElement.hasAttribute('data-reader')), false);
+      await page.emulateMedia({ media: 'print' });
+      const main = page.locator('#content main');
+      assert.ok(await main.isVisible());
+      assert.ok(((await main.textContent()) ?? '').trim().length > 0);
+      assert.equal(await page.locator('#sidebar').isVisible(), false, "mdBook's print style hides the sidebar");
+      await page.emulateMedia({ media: 'screen' });
     });
 
     test('print pages retain the complete book without changing the saved world', async () => {

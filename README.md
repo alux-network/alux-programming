@@ -106,7 +106,7 @@ Text size, bookmarks, reading music and the language picker are in the menu bar.
 ```
 src/            book content (Markdown), with SUMMARY.md as the table of contents
 src/**/*.<lang>.md  translations, next to their English chapter
-theme/          page template (index.hbs), reader.css, CSS, mdbook-admonish assets
+theme/          head.hbs and header.hbs (the reader's script tags), CSS, favicons, mdbook-admonish assets
 web/            TypeScript: languages.ts, reader.ts and i18n.ts (bundled to /reader.js), localize.ts (translation preprocessor), mdbook.ts (builds every edition)
 web/test/       site, translation, build and browser tests (`npm test`)
 public/         images, fonts, art, audio and social cards, copied once to the site root

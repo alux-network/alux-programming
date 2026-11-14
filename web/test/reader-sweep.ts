@@ -1,7 +1,7 @@
 // Exhaustive content-route diagnosis. No screenshots, downloads or source rewrites.
 // Run after npm run build: node web/test/reader-sweep.ts
 import assert from 'node:assert/strict';
-import { readFileSync,readdirSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { chromium } from 'playwright';
 import { preview } from 'vite';
@@ -9,7 +9,7 @@ import { expectedSite } from './site.ts';
 import { readerPage } from './reader-page.ts';
 const editions=await expectedSite();
 const digest=()=>{
-  const files=['reader.js',...readdirSync('book/html/theme').filter(f=>/^reader-.*\.css$/.test(f)).map(f=>'theme/'+f)];
+  const files=['reader.js','reader.css'];
   assert.ok(files.length>=2,'built reader script and stylesheet exist before hashing');
   return createHash('sha256').update(files.sort().map(f=>f+readFileSync('book/html/'+f)).join('')).digest('hex');
 };

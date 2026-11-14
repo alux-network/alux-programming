@@ -1,6 +1,8 @@
-// Builds the site: mdBook renders every edition into book/html, then Vite adds the reader bundle
-// (/reader.js from web/reader.ts) and public/ (/…). In dev, Vite serves the reader from source
-// and rebuilds the book when its sources change.
+// Builds the site: mdBook renders every edition into book/html, then Vite adds the reader from web/
+// (/world.js and /reader-style.js, which theme/head.hbs and header.hbs load on every page, and
+// /reader.js, /native-ready.js and /reader.css, which they load for the magic world and the
+// entrance) and public/ (/…). In dev, Vite serves them from source and rebuilds the book when its
+// sources change.
 import { mkdir, mkdtemp, rm, readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { basename, dirname, join, resolve } from 'node:path';
@@ -11,6 +13,13 @@ import { buildBook, replaceDirectory } from './web/mdbook.ts';
 const out = resolve('book/html');
 const reader = resolve('web/reader.ts');
 const nativeReady = resolve('web/native-ready.ts');
+const world = resolve('web/world.ts');
+const readerStyle = resolve('web/reader-style.ts');
+const readerCss = resolve('web/reader.css');
+// Root-absolute names the pages request, each served from its web/ source.
+const entries: Record<string, string> = {
+  '/reader.js': reader, '/native-ready.js': nativeReady, '/world.js': world, '/reader-style.js': readerStyle,
+};
 const pageFlipPackage = createRequire(import.meta.url).resolve('page-flip/package.json');
 const pageFlipLicense = '/*! StPageFlip\n' + await readFile(join(dirname(pageFlipPackage), 'LICENSE'), 'utf8') + '\n*/';
 const bookSources = ['src', 'theme', 'book.toml', 'web/localize.ts', 'web/public-assets.ts', 'web/mdbook-assets.ts', 'web/mdbook.ts'].map((path) => normalizePath(resolve(path)));
@@ -76,13 +85,17 @@ function mdbook(): Plugin {
         await rm(staged, { recursive: true, force: true });
       }
     },
-    // The pages load /reader.js; in dev that is the TypeScript source.
+    // In dev the pages' scripts and stylesheet are their web/ sources.
     resolveId(id) {
-      if (id === '/reader.js') return reader;
-      if (id === '/native-ready.js') return nativeReady;
+      return entries[id];
     },
     // `vite` (npm start): build the book now and again whenever a book source changes.
     async configureServer(server) {
+      // A stylesheet requested by <link> bypasses resolveId in dev, so serve the source directly.
+      server.middlewares.use('/reader.css', async (_, response) => {
+        response.setHeader('Content-Type', 'text/css');
+        response.end(await readFile(readerCss));
+      });
       server.watcher.add(bookSources);
       server.watcher.on('all', (_, file) => {
         file = normalizePath(file);
@@ -105,8 +118,12 @@ export default defineConfig(({ command }) => ({
     outDir: out,
     emptyOutDir: false,
     rollupOptions: {
-      input: { reader, 'native-ready': nativeReady },
-      output: { entryFileNames: '[name].js', banner: pageFlipLicense },
+      // world.js and reader-style.js run as classic scripts, so neither may import a shared chunk.
+      input: { reader, 'native-ready': nativeReady, world, 'reader-style': readerStyle, 'reader-sheet': readerCss },
+      output: {
+        entryFileNames: '[name].js', banner: pageFlipLicense,
+        assetFileNames: (asset) => asset.names.includes('reader-sheet.css') ? 'reader.css' : 'assets/[name]-[hash][extname]',
+      },
     },
   },
   plugins: [mdbook()],

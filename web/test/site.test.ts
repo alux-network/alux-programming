@@ -88,8 +88,8 @@ describe('the verifier reports', () => {
   });
   test('a missing asset', () => {
     const dir = copy();
-    rmSync(path.join(dir, 'reader.js'));
-    assert.ok(verify(dir).some((p) => p.includes('broken link /reader.js')));
+    rmSync(path.join(dir, 'world.js'));
+    assert.ok(verify(dir).some((p) => p.includes('broken link /world.js')));
   });
   for (const generated of ['404.html', 'print.html', 'toc.html']) {
     test('broken links, assets and anchors in ' + generated, () => {

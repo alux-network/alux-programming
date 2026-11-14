@@ -914,3 +914,6 @@ html[data-world="real"] .music-volume input { accent-color:var(--links); }
 
 .turn-media-label { position:absolute; inset:0; display:grid; place-items:center; padding:1em; font:inherit; color:var(--reader-ink); background:var(--reader-paper); text-align:center; }
 .turn-media:has(.turn-media-label)::before,.turn-media:has(.turn-media-label)::after { display:none; }
+
+/* Lifts the veil world.ts sets before this stylesheet applies. */
+body { visibility: visible; }

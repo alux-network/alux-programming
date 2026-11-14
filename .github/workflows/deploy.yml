@@ -46,15 +46,6 @@ jobs:
         mdbook-katex --version
         mdbook-linkcheck --version
 
-    - name: Prepare headless audio
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y pulseaudio pulseaudio-utils
-        pulseaudio --start --exit-idle-time=-1
-        pactl load-module module-null-sink sink_name=reader_test
-        pactl set-default-sink reader_test
-        pactl info
-
     - name: 🔨 Build
       run: |
         npm ci

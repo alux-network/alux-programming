@@ -54,8 +54,8 @@ not a bigger script, a second list, a post-processing pass over HTML, or an expl
 
 Preserve the reader's product intent through architecture changes:
 
-- Worlds and modes: magic offers facing pages on wide screens, one leaf on narrow screens and continuous reading; real offers the native document. Both retain chapter progress, text size, bookmarks and search.
-- Themes and typography: magic pairs ivory daylight with muted forest-green night paper and brass details; real pairs light neutral daylight with charcoal night. Prose, contents, bookmarks and search share the edition's reading scale.
+- Worlds and modes: magic offers facing pages on wide screens, one leaf on narrow screens and continuous reading; real is mdBook's own page, loaded and scrolled natively. Both share bookmarks and search; magic alone has text size and retains chapter progress.
+- Themes and typography: magic pairs ivory daylight with muted forest-green night paper and brass details, and its prose, contents, bookmarks and search share the edition's reading scale. Real is mdBook's own rendering, unchanged except two links: the sidebar's first entry leads to the entrance's choice of worlds and the header title to the edition's root.
 - Turns: paper folds visibly while the cover, binding, gutter and ribbon stay fixed. Text, selection, links, controls and media keep their native actions. Reduced motion reveals the destination directly.
 - Music: one shared reading track continues across chapters, with direct play/pause and volume controls. Magic entry enables it; real entry starts it off. Welcome narration belongs to the visible entrance.
 - Entrance and identity: balanced world choices, localized welcome, country/browser-language fallback and a remembered manual edition. The logo returns to the entrance; page identity comes from each edition's `readerName`.
@@ -66,8 +66,8 @@ Preserve the reader's product intent through architecture changes:
 ```text
 src/            the book: SUMMARY.md and English chapters (canonical)
 src/**/*.<lang>.md  translations, next to their English chapter
-theme/          index.hbs (mdBook's page template plus the reader markup), reader.css
-web/            TypeScript, run by Node directly (type stripping) or bundled by Vite
+theme/          head.hbs and header.hbs (the reader's script tags), index.css, favicons; mdBook's own template
+web/            TypeScript, run by Node directly (type stripping) or bundled by Vite; the reader's markup and reader.css
 web/test/       node:test suites
 public/         static files served at the site root: images, fonts, audio, social cards
 vite.config.ts  builds the book, then the reader bundle and public/ into book/html
@@ -79,8 +79,10 @@ Data flows one way:
 book.toml + src/ + languages.ts
     -> mdBook per edition (localize.ts swaps in translations; native admonish and katex expand content)
     -> mdbook-assets.ts normalizes parsed image destinations for the HTML renderer only
-    -> theme/index.hbs renders pages
-    -> Vite adds /reader.js (reader.ts) and public/
+    -> mdBook's own template renders pages; head.hbs/header.hbs add /world.js and /reader-style.js
+    -> Vite adds the reader (world.js, reader-style.js, reader.js, native-ready.js, reader.css) and public/
+    -> in the browser, world.ts leaves the real world as mdBook's page, or loads the reader, whose
+       magic-markup.ts adds the magic world's markup and the entrance
     -> book/html
 ```
 
@@ -90,7 +92,7 @@ Read authority in this order:
 
 1. `src/SUMMARY.md`, `book.toml` and the English chapters define the book.
 2. `web/languages.ts` defines the editions.
-3. `theme/index.hbs` defines the page markup; `web/reader.ts` and `theme/reader.css` only bind and style it.
+3. mdBook's own template defines the page; `web/magic-markup.ts` adds the reader's markup, which `web/reader.ts` and `web/reader.css` bind and style.
 4. The tests in `web/test/` witness the meaning, with expectations derived from 1 and 2.
 5. `book/html` is output. Never edit it and never derive an expectation from it.
 6. Prose (README, this file) summarizes the artifacts above.
@@ -103,7 +105,7 @@ If these disagree, state the mismatch and fix the smallest authoritative layer t
 2. `book.toml`, `src/SUMMARY.md`
 3. `web/languages.ts`, `web/mdbook.ts`, `web/localize.ts`
 4. `vite.config.ts`
-5. `theme/index.hbs`, then `web/reader.ts` and `theme/reader.css`
+5. `theme/head.hbs`, `web/world.ts`, then `web/magic-markup.ts`, `web/reader.ts` and `web/reader.css`
 6. `web/test/site.ts` and the tests
 
 ## Commands
@@ -116,7 +118,7 @@ npm run build   # every edition into book/html
 npm test        # needs a build; site, translation and determinism tests
 ```
 
-CI runs `npm ci`, `npm run check`, `npm run build`, `npm test`, in that order. Run them before finishing. Headless Linux audio tests need a running PulseAudio server with a virtual output sink, as provisioned in CI; retain decoder and playback assertions. Run one build at a time: stop `npm start` before `npm run build`, they write the same directory. Run `npm test` after `npm run build`, not after a dev rebuild: in dev, Vite serves `/reader.js` and `public/` itself, so `book/html` lacks them and the site test reports broken links. mdBook and its preprocessors (mdbook-admonish, mdbook-katex, mdbook-linkcheck) must be on `PATH`.
+CI runs `npm ci`, `npm run check`, `npm run build`, `npm test`, in that order. Run them before finishing. Run one build at a time: stop `npm start` before `npm run build`, they write the same directory. Run `npm test` after `npm run build`, not after a dev rebuild: in dev, Vite serves `/reader.js` and `public/` itself, so `book/html` lacks them and the site test reports broken links. mdBook and its preprocessors (mdbook-admonish, mdbook-katex, mdbook-linkcheck) must be on `PATH`.
 
 ## Rules
 
@@ -125,7 +127,7 @@ CI runs `npm ci`, `npm run check`, `npm run build`, `npm test`, in that order. R
 - Every edition has the same chapter paths. A translation changes text, never URLs, code, math, link targets, media or heading levels.
 - Static files go in `public/` and are linked root-absolute (`/concepts.png`). Nothing static lives in `src/`. The HTML-only asset preprocessor runs after native admonish and katex, using parser source positions to change actual image destinations. Do not rewrite Markdown with line/fence heuristics or serialize whole chapters; preserve literal code, image labels, titles and shared link definitions.
 - TypeScript only, ESM, imports with `.ts` extensions. No Python, no shell scripts in the build.
-- No frameworks in the reader. It is one module binding the template's markup by element id.
+- No frameworks in the reader. It is one module binding the markup `magic-markup.ts` adds to mdBook's page, by element id.
 - The magic world defaults to a paged book and also offers a persistent continuous-reading toggle. Both presentations keep the same mdBook chapter. The outer book remains vertically scrollable; never shrink its height to force it into the viewport.
 - The magic world's sidebar has a fixed width: no resize handle there. The real world keeps mdBook's resizable sidebar.
 - Builds are deterministic and atomic: the same sources give byte-identical output, and a failed build leaves the previous site untouched. Once the replacement succeeds, backup cleanup is best effort: report any retained backup without treating publication as failed or suppressing the dev reload.
@@ -156,7 +158,7 @@ Every file is a template for the next change, so comments carry the reasoning a 
 - `site.test.ts`: the built site against the editions derived from mdBook's book JSON (`book-json.ts` renderer): pages, `lang`/`dir`, titles, links, assets and anchors, plus broken-copy negative tests.
 - `translations.test.ts`: each translation keeps its English chapter's code, math, link targets, media and heading levels.
 - `build.test.ts`: two complete mdBook + Vite builds are identical; a failed reader bundle preserves the previous site. `mdbook.test.ts` checks directory replacement and rollback.
-- `browser.test.ts`: the same reader specs in Chromium, Firefox and WebKit, plus Android/iPhone simulations, against `vite preview`. Routes come from `expectedSite()`; no copied page list. `npm test` requires all three pinned Playwright engines (`npx playwright install chromium firefox webkit`); missing engines fail instead of skipping. `ALUX_BROWSER_PROFILE` optionally selects one named profile for diagnosis. Visual design and physical-device acceptance are not asserted.
+- `browser.test.ts`: the same reader specs in Chromium, Firefox and WebKit, plus Android/iPhone simulations, against `vite preview`. Routes come from `expectedSite()`; no copied page list. `npm test` requires all three pinned Playwright engines (`npx playwright install chromium firefox webkit`); missing engines fail instead of skipping. `ALUX_BROWSER_PROFILE` optionally selects one named profile for diagnosis. Media plays on a virtual clock (`virtual-media.ts`), so no audio device is needed. Visual design and physical-device acceptance are not asserted.
 
 A new check goes into `verifySite` or `protectedContent` together with a negative test. Derive expected routes from `expectedSite()`; never hardcode a page list.
 
@@ -166,7 +168,7 @@ A new check goes into `verifySite` or `protectedContent` together with a negativ
 - **Translation:** `chapter.<lang>.md` next to the English file, with `<!-- reader: {"title", "sourceHash"} -->`; `localize.ts` reports the current hash when stale.
 - **Language:** see the header of `web/languages.ts`.
 - **UI label:** English text in the template with `data-i18n` or `t('…')` in `reader.ts`, then every language in `i18n.ts`.
-- **Reader feature:** markup in `theme/index.hbs`, behavior in `reader.ts`, style in `reader.css`, state documented in the `reader.ts` header.
+- **Reader feature:** markup in `web/magic-markup.ts`, behavior in `reader.ts`, style in `web/reader.css`, state documented in the `reader.ts` header. Never in the real world: it is mdBook's own page.
 
 ## Gotchas
 
@@ -195,7 +197,7 @@ A new check goes into `verifySite` or `protectedContent` together with a negativ
 
 ## Reader continuity
 
-The alux-reader preferences retain the manual language and normalized progress keyed by edition and chapter. Explicit fragments take precedence on entry; changing views restores the current progress. Folios are chapter-local. Responsive relayout preserves normalized progress; aggregate print pages use the real layout without changing the saved world. CJK substring search reads mdBook's existing lazy edition index; do not create a second content index. Keep native control keyboard behavior when handling paging shortcuts.
+The alux-reader preferences retain the manual language and the magic world's normalized progress keyed by edition and chapter. Explicit fragments take precedence on entry; changing views restores the current progress. The real world is mdBook's page and keeps no reader state. Folios are chapter-local. Responsive relayout preserves normalized progress; aggregate print pages use the real layout without changing the saved world. CJK substring search reads mdBook's existing lazy edition index; do not create a second content index. Keep native control keyboard behavior when handling paging shortcuts.
 
 ## Attribution
 

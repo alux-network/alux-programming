@@ -132,11 +132,13 @@ export function verifySite(root: string, editions: Edition[]): string[] {
       if (open?.[1] !== edition.lang) problems.push(`${where}: lang is ${open?.[1]}, expected ${edition.lang}`);
       if (open?.[2] !== (edition.rtl ? 'rtl' : 'ltr')) problems.push(`${where}: dir is ${open?.[2]}`);
       const title = html.match(/<title>([^<]*)<\/title>/)?.[1] ?? '';
-      const named = page.file === 'index.html' ? readerName(edition.lang) : page.title;
-      if (!decode(title).startsWith(named)) problems.push(`${where}: title "${title}" does not name "${named}"`);
+      // mdBook titles a page "<chapter> - <book>", and each edition's book is named readerName.
+      const named = decode(title);
+      if (!named.startsWith(page.title)) problems.push(`${where}: title "${title}" does not name "${page.title}"`);
+      if (page.title && !named.endsWith(readerName(edition.lang))) problems.push(`${where}: title "${title}" does not end with "${readerName(edition.lang)}"`);
 
       // Links and assets: external URLs and bare "#" are skipped, root-absolute ones resolve against
-      // the site root (public/ and /reader.js), the rest against the page.
+      // the site root (public/ and the reader's files from web/), the rest against the page.
       for (const link of attr(html, /\s(?:href|src)="([^"]+)"/g)) {
         if (/^(?:[a-z]+:|\/\/|#$)/i.test(link)) continue;
         const [target, fragment] = link.split('#') as [string, string | undefined];

@@ -29,7 +29,8 @@ export function chapterShell(): ShellBridge | undefined {
 
 /** Returns true when this document has become the shell rather than a bound chapter. */
 export function mountReaderShell(): boolean {
-  if (window.parent !== window || document.documentElement.hasAttribute('data-print') ||
+  // The real world is mdBook's own page: its links, history and scrolling stay native.
+  if (window.parent !== window || document.documentElement.dataset.world !== 'magic' || document.documentElement.hasAttribute('data-print') ||
       new URL(location.href).searchParams.get('reader') === 'native' || /\/(?:print|toc|404)\.html$/.test(location.pathname)) return false;
   // A generated error document may be served at an unsupported requested pathname.
   if (!location.pathname.endsWith('/') && !location.pathname.endsWith('.html')) return false;

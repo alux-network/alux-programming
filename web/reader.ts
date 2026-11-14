@@ -1,28 +1,33 @@
 // ALUX reader: worlds, the magic book, text size, bookmarks, music and languages.
 //
-// The markup lives in theme/index.hbs; this module only binds it. In the magic world the chapter
-// is laid out by CSS columns (two per spread) and a page turn scrolls one spread.
+// mdBook's template renders the page; magic-markup.ts adds the reader's markup and this module
+// binds it. In the magic world the chapter is laid out by CSS columns (two per spread) and a page
+// turn scrolls one spread.
 //
-// Bundled by Vite to /reader.js and loaded by every page as a module, after mdBook's own scripts.
-// Element ids used here are defined in theme/index.hbs; renaming one means changing both. State:
+// Bundled by Vite to /reader.js; world.ts loads it as a module in the magic world and the entrance.
+// Element ids used here are defined in magic-markup.ts; renaming one means changing both. State:
 // - localStorage 'alux-reader' (Prefs): world, text scale, music on/off and bookmarks; shared by all
 //   editions, since they are served from one origin.
-// - Prefs also keeps the last entrance language and per-edition chapter progress.
+// - Prefs also keeps the last entrance language and per-edition chapter progress of the magic world.
 // - sessionStorage 'alux-entered': the gateway was passed in this tab.
 // - sessionStorage 'alux-music-time': music position handed to the next page.
-// - <html data-world | data-gateway> and --reader-scale: what theme/reader.css reads.
+// - <html data-world | data-gateway> and --reader-scale: what web/reader.css reads.
 import { uiStrings, musicCopy, musicHints, copyLabels } from './i18n.ts';
 import { bindReadingMusic } from './reading-music.ts';
 import type { MusicNoticeState } from './reading-music.ts';
 import { chooseEntranceLanguage, bindWelcome } from './entrance.ts';
 import { paperTurn } from './paper-turn.ts';
 import { mountReaderShell, chapterShell } from './reader-shell.ts';
+import { buildMagicMarkup } from './magic-markup.ts';
 import type { Language } from './languages.ts';
 import { languages, readerName } from './languages.ts';
 
 // Set by mdBook's page template.
 declare const path_to_root: string;
 
+// world.ts loads this module only for the magic world and the entrance; mdBook's page gets the
+// reader's markup before anything binds it.
+buildMagicMarkup();
 // Native deferred scripts finish binding before the outer document becomes the shell.
 if (window.parent === window && !document.documentElement.hasAttribute('data-native-ready')) {
   document.addEventListener('alux-native-ready', () => { if (!mountReaderShell()) bindChapter(); }, { once: true });
@@ -47,7 +52,7 @@ interface Prefs {
 
 const html = document.documentElement;
 const printing = html.hasAttribute('data-print');
-// Elements by id; the template guarantees they exist on every page.
+// Elements by id; magic-markup.ts guarantees they exist on every reader page.
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const lang = (languages.find((l) => l.code === html.lang)?.code ?? 'en') as Language;
 // The UI label for the English `key` in this edition's language.
@@ -232,9 +237,11 @@ if (gateway) {
   const welcome = $<HTMLAudioElement>('welcome-audio');
   let disposeWelcome: (() => void) | undefined;
   let entranceReady = false;
+  // A return to the choice (#worlds) is not a first welcome: the narration waits for its button.
+  let returning = location.hash === '#worlds';
   const startWelcome = () => {
     disposeWelcome?.();
-    disposeWelcome = entranceReady && (!shell || shell.isActive(window)) && html.hasAttribute('data-gateway')
+    disposeWelcome = entranceReady && !returning && (!shell || shell.isActive(window)) && html.hasAttribute('data-gateway')
       ? bindWelcome(welcome, () => html.hasAttribute('data-gateway')) : undefined;
   };
   activateEntrance = startWelcome;
@@ -271,7 +278,9 @@ if (gateway) {
   addEventListener('pagehide', () => disposeWelcome?.());
   addEventListener('pageshow', event => { if (event.persisted) startWelcome(); });
   addEventListener('hashchange', () => {
-    if (location.hash === '#worlds') html.dataset.gateway = '';
+    if (location.hash !== '#worlds') return;
+    returning = true;
+    html.dataset.gateway = '';
   });
 }
 
@@ -458,8 +467,13 @@ function settle() {
   }
 }
 
-/** Saves normalized progress in the edition and chapter before navigation or world changes. */
+/** Saves the magic world's normalized progress in the edition and chapter before navigation. */
 function remember() {
+  if (magic()) saveProgress();
+}
+
+/** Saves normalized progress in the edition and chapter, carried by a world change. */
+function saveProgress() {
   if (printing) return;
   const ratio = paged() ? readingRatio
     : scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight);
@@ -495,6 +509,13 @@ function setWorld(world: World) {
   }
   const changed = html.dataset.world !== world;
   html.dataset.world = world;
+  // Magic chapters live in the shell and real ones are mdBook's own pages without the reader, so
+  // choosing a world reloads this chapter in its context. The entrance's own first render, still
+  // showing its choice, stays.
+  if (!printing && !html.hasAttribute('data-gateway') && (world === 'real' || (changed && !shell))) {
+    (shell ? window.top! : window).location.assign(location.href);
+    return;
+  }
   if (changed) shell?.invalidate(window);
   if (changed) resetTextFlow();
   $('world-toggle-label').textContent = t(world === 'magic' ? 'Real world' : 'Magic world');
@@ -528,7 +549,7 @@ $('reading-mode').addEventListener('click', () => {
   if (paged()) scrollTo(0, 0);
   else requestAnimationFrame(restoreScroll);
 });
-$('world-toggle').addEventListener('click', () => { remember(); restorePending = true; fragmentPending = false; setWorld(magic() ? 'real' : 'magic'); requestAnimationFrame(restoreScroll); });
+$('world-toggle').addEventListener('click', () => { saveProgress(); restorePending = true; fragmentPending = false; setWorld(magic() ? 'real' : 'magic'); requestAnimationFrame(restoreScroll); });
 $('page-prev').addEventListener('click', () => turn(-1));
 $('page-next').addEventListener('click', () => turn(1));
 main.parentElement!.addEventListener('click', (event) => {
