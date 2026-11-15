@@ -410,6 +410,23 @@ export function bindChapter(ctx: ChapterContext): () => void {
     if (!link || link.target || link.hasAttribute('download')) return;
     const target = new URL(link.href);
     if (target.origin !== location.origin || !target.pathname.startsWith(magicUrl(lang))) return;
+    if (link.closest('#sidebar .chapter')) {
+      event.preventDefault();
+      remember();
+      // Choosing a chapter means its beginning, even when it is already open.
+      const destination = lang + ':' + target.pathname.slice(magicUrl(lang).length);
+      prefs.positions = { ...prefs.positions, [destination]: 0 };
+      save();
+      if (target.pathname === location.pathname) {
+        cancelTurn();
+        fragmentPending = false;
+        restorePending = false;
+        show(0);
+        scrollTo(0, 0);
+      }
+      ctx.navigate(target.pathname);
+      return;
+    }
     if (target.pathname === location.pathname && target.search === location.search) return;
     event.preventDefault();
     remember();

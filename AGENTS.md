@@ -198,7 +198,7 @@ A new check goes into `verifySite` or `protectedContent` together with a negativ
 
 ## Reader continuity
 
-The alux-reader preferences (`web/magic/prefs.ts`) retain the manual language, the reading mode, text size, bookmarks and the magic world's normalized progress keyed by edition and chapter. Explicit fragments and bookmarks take precedence on entry; changing size or mode keeps the current progress. The real world is mdBook's page and keeps no reader state. Folios are chapter-local. Responsive relayout preserves normalized progress. Search reads the edition's book JSON; do not create a second content index.
+The alux-reader preferences (`web/magic/prefs.ts`) retain the manual language, the reading mode, text size, bookmarks and the magic world's normalized progress keyed by edition and chapter. Explicit fragments and bookmarks take precedence on entry; changing size or mode keeps the current progress. The real world is mdBook's page and keeps no reader state. Sidebar chapter selections always open the chapter at its beginning, including the current chapter. Folios are chapter-local. Responsive relayout preserves normalized progress. Search reads the edition's book JSON; do not create a second content index.
 
 ## Attribution
 

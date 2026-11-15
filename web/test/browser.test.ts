@@ -209,6 +209,34 @@ for (const profile of selected) {
       assert.equal(await page.evaluate(() => document.documentElement.dataset.reading), 'scroll', 'continuous reading is remembered');
     });
 
+    test('sidebar selections open the chapter beginning despite saved progress', async () => {
+      await visit();
+      await read(page, 'en/' + longChapter);
+      await page.click('#page-next');
+      assert.ok((await folio(page)).first > 1, 'starts with progress to reset');
+      await sidebar(page);
+      const chapterLink = page.locator(`#sidebar .chapter a[href="/magic/en/${longChapter}"]`);
+      await chapterLink.click();
+      assert.equal((await folio(page)).first, 1, 'selecting the current chapter resets it');
+
+      await page.click('#page-next');
+      assert.ok((await folio(page)).first > 1);
+      await sidebar(page);
+      await page.locator('#sidebar .chapter a').first().click();
+      await chapterReady(page);
+      await sidebar(page);
+      await chapterLink.click();
+      await chapterReady(page);
+      assert.equal((await folio(page)).first, 1, 'returning through the sidebar ignores saved progress');
+
+      await page.click('#reading-mode');
+      await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
+      await page.waitForFunction(() => scrollY > 0);
+      await sidebar(page);
+      await chapterLink.click();
+      await page.waitForFunction(() => scrollY === 0);
+    });
+
     test('chapter links are app routes with plain browser history', async () => {
       await visit();
       await read(page, 'en/index.html');

@@ -34,7 +34,7 @@ Alternatively, open the repository in VS Code with the Dev Containers extension 
 
 ### Reading
 
-The magic world (`/magic/`) has a day/night toggle with daylight as its default. Its entrance detects the first edition by country (falling back to browser language on failure), then remembers the last choice. Localized welcome narration plays only from its button on the entrance and stops on entry into a world. The magic world is a paged book with a fixed-width sidebar. Text size, reading mode, language and normalized progress within each edition's chapter are remembered locally. Folios describe chapter progress. Search is mdBook's own, over the edition's search index, with substring matching for scripts that mdBook's default word tokenizer does not segment (CJK).
+The magic world (`/magic/`) has a day/night toggle with daylight as its default. Its entrance detects the first edition by country (falling back to browser language on failure), then remembers the last choice. Localized welcome narration plays only from its button on the entrance and stops on entry into a world. The magic world is a paged book with a fixed-width sidebar. Text size, reading mode, language and normalized progress within each edition's chapter are remembered locally. Sidebar chapter selections always open the chapter at its beginning. Folios describe chapter progress. Search is mdBook's own, over the edition's search index, with substring matching for scripts that mdBook's default word tokenizer does not segment (CJK).
 
 ### Develop
 
