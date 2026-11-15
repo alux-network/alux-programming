@@ -1,6 +1,5 @@
-// Neutral-entry helpers: choose an edition before the reader redirects, and play the
-// gateway welcome without leaking audio after the gateway is gone. The reader owns
-// routing and the audio element; this module only interprets their current state.
+// Neutral-entry helpers: choose the edition the entrance opens in, from a saved manual choice, the
+// visitor country or the browser language.
 import { languages, countryLanguage } from './languages.ts';
 import type { Language } from './languages.ts';
 
@@ -63,33 +62,4 @@ export async function chooseEntranceLanguage(
   } finally {
     clearTimeout(timer!);
   }
-}
-
-/** Binds gateway autoplay and trusted first-interaction recovery, returning its complete teardown. */
-export function bindWelcome(audio: Pick<HTMLAudioElement, 'play' | 'pause' | 'ended'>, isGateway: () => boolean): () => void {
-  let bound = true;
-  const stopIfOutside = () => { if (bound && !isGateway()) audio.pause(); };
-  const tryPlay = (event?: Event) => {
-    if (!bound || !isGateway() || document.visibilityState !== 'visible') { audio.pause(); return; }
-    if (event && !event.isTrusted) return;
-    if (audio.ended) return;
-    try { void Promise.resolve(audio.play()).catch(() => undefined); } catch { /* browser rejected synchronously */ }
-  };
-  const onInteraction = (event: Event) => tryPlay(event);
-  const onVisibility = () => { if (document.visibilityState !== 'visible') audio.pause(); else tryPlay(); };
-  tryPlay();
-  document.addEventListener('pointerdown', onInteraction, true);
-  document.addEventListener('keydown', onInteraction, true);
-  document.addEventListener('visibilitychange', onVisibility);
-  const observer = typeof MutationObserver === 'undefined' ? undefined : new MutationObserver(stopIfOutside);
-  observer?.observe(document.documentElement, { attributes: true, attributeFilter: ['data-gateway'] });
-  return () => {
-    if (!bound) return;
-    bound = false;
-    observer?.disconnect();
-    document.removeEventListener('pointerdown', onInteraction, true);
-    document.removeEventListener('keydown', onInteraction, true);
-    document.removeEventListener('visibilitychange', onVisibility);
-    audio.pause();
-  };
 }

@@ -17,8 +17,13 @@ after = ["admonish", "katex"]
 command = "mdbook-admonish"
 assets_version = "3.0.3" # do not edit: managed by `mdbook-admonish install`
 
+# The magic world's renderer (magic-book.ts, enabled by mdbook.ts) receives finished callout HTML.
+[preprocessor.admonish.renderer.magic]
+render_mode = "html"
+
+# KaTeX renders math for both worlds: the HTML pages and the magic world's book JSON.
 [preprocessor.katex]
-renderers = ["html"]
+renderers = ["html", "magic"]
 
 [output]
 

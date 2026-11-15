@@ -26,7 +26,8 @@ test('two clean builds are identical', async () => {
   const first = path.join(work, 'first'), second = path.join(work, 'second');
   for (const outDir of [first, second]) {
     await build({ configFile: path.resolve('vite.config.ts'), build: { outDir }, logLevel: 'warn' });
-    assert.ok(readFileSync(path.join(outDir, 'reader.js')).length, 'reader bundle is included');
+    assert.ok(readFileSync(path.join(outDir, 'real.js')).length, 'the real world script is included');
+    assert.ok(readFileSync(path.join(outDir, 'magic/index.html')).length, 'the magic app is included');
     assert.ok(readFileSync(path.join(outDir, 'forest-gateway.webp')).length, 'public assets are included');
   }
   const a = hashes(first), b = hashes(second);
@@ -34,13 +35,13 @@ test('two clean builds are identical', async () => {
   assert.deepEqual([...a].filter(([file, hash]) => b.get(file) !== hash).map(([file]) => file), [], 'same contents');
 });
 
-test('a failed reader bundle leaves the previous complete site untouched', async () => {
+test('a failed app bundle leaves the previous complete site untouched', async () => {
   const outDir = path.join(work, 'previous');
   mkdirSync(outDir);
   writeFileSync(path.join(outDir, 'index.html'), 'previous complete site');
   await assert.rejects(build({
     configFile: path.resolve('vite.config.ts'),
-    build: { outDir, rollupOptions: { input: path.join(work, 'missing-reader.ts') } },
+    build: { outDir, rollupOptions: { input: path.join(work, 'missing-app.ts') } },
     logLevel: 'silent',
   }));
   assert.deepEqual(readdirSync(outDir), ['index.html']);

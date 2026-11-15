@@ -1,4 +1,5 @@
-// Runs mdBook for every edition: English at <out>, each translation at <out>/<lang>.
+// Runs mdBook for every edition: English at <out>, each translation at <out>/<lang>, and each
+// edition's book for the magic world at <out>/magic/data/<lang>.json.
 //
 // Editions differ only in mdBook configuration, passed as MDBOOK_* environment overrides of
 // book.toml; there is no per-language book.toml and no generated source tree. The translation
@@ -7,7 +8,11 @@ import { spawn } from 'node:child_process';
 import { cp, mkdir, mkdtemp, rename, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { languages, readerName } from './languages.ts';
+
+// The magic world's renderer; mdBook runs renderers in their destination, so the path is absolute.
+const magicRenderer = fileURLToPath(new URL('./magic-book.ts', import.meta.url)).replaceAll('\\', '/');
 
 /** Runs `mdbook build` in the repository root with `env` overriding book.toml (MDBOOK_A__B = a.b). */
 export function mdbook(env: Record<string, string> = {}): Promise<void> {
@@ -67,12 +72,17 @@ export async function buildBook(out = 'book/html'): Promise<void> {
         MDBOOK_BUILD__BUILD_DIR: path.join(stage, code),
         // mdBook's 404 page resolves its links against site-url.
         MDBOOK_OUTPUT__HTML__SITE_URL: en ? '/' : `/${code}/`,
+        MDBOOK_OUTPUT__MAGIC__COMMAND: `node "${magicRenderer}"`,
       });
     }
     // Finish all copying before touching the live output; the final swap only renames directories.
     await cp(path.join(stage, 'en', 'html'), assembled, { recursive: true });
     for (const { code } of languages.slice(1)) {
       await cp(path.join(stage, code, 'html'), path.join(assembled, code), { recursive: true });
+    }
+    // The magic world reads each edition's book from /magic/data/<lang>.json.
+    for (const { code } of languages) {
+      await cp(path.join(stage, code, 'magic', 'book.json'), path.join(assembled, 'magic', 'data', code + '.json'));
     }
     await replaceDirectory(assembled, out);
   } finally {

@@ -9,6 +9,8 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseFragment, serialize } from 'parse5';
+import type { MagicItem } from '../magic-book.ts';
 import type { Language } from '../languages.ts';
 import { languages, readerName } from '../languages.ts';
 import { mdbook } from '../mdbook.ts';
@@ -35,8 +37,6 @@ export interface Edition {
 
 // Pages mdBook writes besides the chapters.
 const bookPages = ['404.html', 'print.html', 'toc.html'];
-// Fragments the reader handles itself instead of scrolling to an element.
-const appFragments = new Set(['worlds', 'last-page']);
 
 const renderer = fileURLToPath(new URL('./book-json.ts', import.meta.url));
 
@@ -99,8 +99,9 @@ const attr = (html: string, tag: RegExp) => [...html.matchAll(tag)].map((m) => m
 /** Every problem found in the built site at `root`, compared with the expected editions. */
 export function verifySite(root: string, editions: Edition[]): string[] {
   const problems: string[] = [];
-  // Other editions are subdirectories of the English one, so English skips them when listing pages.
-  const otherEditions = new Set(languages.map((l) => l.code).filter((c) => c !== 'en'));
+  // Other editions are subdirectories of the English one, so English skips them when listing pages,
+  // and so does the magic world, which has its own routes under /magic/.
+  const otherEditions = new Set([...languages.map((l) => l.code).filter((c) => c !== 'en'), 'magic']);
   const ids = new Map<string, Set<string>>();
   const idsOf = (file: string) => {
     let found = ids.get(file);
@@ -117,6 +118,26 @@ export function verifySite(root: string, editions: Edition[]): string[] {
       problems.push(`${edition.lang}: edition is missing`);
       continue;
     }
+    // The magic world: the edition's book and its app at every page path (/magic/<lang>/<file>).
+    // Each chapter's HTML is the content of mdBook's own page for it, as parsed DOM.
+    const magicBook = path.join(root, 'magic/data', edition.lang + '.json');
+    if (!existsSync(magicBook)) problems.push(`${edition.lang}: missing magic book`);
+    else {
+      const items = (JSON.parse(readFileSync(magicBook, 'utf8')) as { items: MagicItem[] }).items;
+      for (const item of items) {
+        if (!('path' in item)) continue;
+        const file = path.join(base, item.path);
+        if (!existsSync(file)) continue;
+        const page = readFileSync(file, 'utf8');
+        const main = page.slice(page.indexOf('<main>') + 6, page.lastIndexOf('</main>'));
+        if (sameDom(item.html) !== sameDom(main)) problems.push(`${edition.lang}: magic chapter ${item.path} differs from mdBook's page`);
+      }
+    }
+    const magic = path.join(root, 'magic', edition.lang);
+    const routes = new Set(existsSync(magic) ? htmlFiles(magic, new Set()) : []);
+    for (const page of edition.pages) if (!routes.has(page.file)) problems.push(`${edition.lang}: missing magic route ${page.file}`);
+    for (const file of routes) if (!edition.pages.some((page) => page.file === file)) problems.push(`${edition.lang}: unexpected magic route ${file}`);
+
     const expected = new Map(edition.pages.map((page) => [page.file, page]));
     for (const file of bookPages) expected.set(file, { file, title: '' });
     const actual = new Set(htmlFiles(base, edition.lang === 'en' ? otherEditions : new Set()));
@@ -138,7 +159,7 @@ export function verifySite(root: string, editions: Edition[]): string[] {
       if (page.title && !named.endsWith(readerName(edition.lang))) problems.push(`${where}: title "${title}" does not end with "${readerName(edition.lang)}"`);
 
       // Links and assets: external URLs and bare "#" are skipped, root-absolute ones resolve against
-      // the site root (public/ and the reader's files from web/), the rest against the page.
+      // the site root (public/ and Vite's files), the rest against the page.
       for (const link of attr(html, /\s(?:href|src)="([^"]+)"/g)) {
         if (/^(?:[a-z]+:|\/\/|#$)/i.test(link)) continue;
         const [target, fragment] = link.split('#') as [string, string | undefined];
@@ -151,12 +172,25 @@ export function verifySite(root: string, editions: Edition[]): string[] {
           problems.push(`${where}: broken link ${link}`);
           continue;
         }
-        if (fragment && !appFragments.has(fragment) && resolved.endsWith('.html') && !idsOf(resolved).has(decodeURIComponent(fragment)))
+        if (fragment && resolved.endsWith('.html') && !idsOf(resolved).has(decodeURIComponent(fragment)))
           problems.push(`${where}: broken anchor ${link}`);
       }
     }
   }
   return problems;
+}
+
+/**
+ * Returns HTML as parsed and serialized DOM, so spelling (entities, void tags, quotes) does not
+ * count. Two differences are meaning-preserving and normalized: images resolve against the page in
+ * mdBook (../x.png) and against the site root in the magic world (/x.png), and the magic world's
+ * KaTeX stylesheet link has no href (the app bundles KaTeX).
+ */
+function sameDom(html: string): string {
+  return serialize(parseFragment(html
+    .replace(/(<img[^>]*\ssrc=")(?:\.\.\/|\.\/)*\/?([^"/:][^"]*")/g, '$1/$2')
+    .replace(/<link rel="stylesheet" href="[^"]*katex[^"]*">/g, '<link rel="stylesheet">')))
+    .replace(/\s+/g, ' ').replace(/> </g, '><').trim();
 }
 
 /** Decodes the HTML entities mdBook writes in <title>. */
