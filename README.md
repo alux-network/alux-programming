@@ -30,6 +30,8 @@ cargo install mdbook-katex --version 0.9.4 --locked
 cargo install mdbook-linkcheck --version 0.7.7 --locked
 ```
 
+Alternatively, open the repository in VS Code with the Dev Containers extension and choose "Reopen in Container". `.devcontainer/` builds an image with Node 24, mdBook and its preprocessors, and the Playwright browsers `npm test` needs; `npm ci` runs on creation and port 3478 is forwarded for `npm start`.
+
 ### Reading
 
 The magic world (`/magic/`) has a day/night toggle with daylight as its default. Its entrance detects the first edition by country (falling back to browser language on failure), then remembers the last choice. Localized welcome narration plays only from its button on the entrance and stops on entry into a world. The magic world is a paged book with a fixed-width sidebar. Text size, reading mode, language and normalized progress within each edition's chapter are remembered locally. Folios describe chapter progress. Search is mdBook's own, over the edition's search index, with substring matching for scripts that mdBook's default word tokenizer does not segment (CJK).

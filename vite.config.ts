@@ -182,7 +182,8 @@ export default defineConfig({
   appType: 'mpa',
   // The book build rewrites book/html; the plugin reloads once it has finished instead.
   preview: { headers: { 'Cache-Control': 'no-store' } },
-  server: { port: 3478, strictPort: true, watch: { ignored: [out + '/**'] } },
+  // ALUX_DEV_HOST lets a container listen beyond its loopback (see .devcontainer/devcontainer.json).
+  server: { host: process.env.ALUX_DEV_HOST, port: 3478, strictPort: true, watch: { ignored: [out + '/**'] } },
   build: {
     outDir: out,
     emptyOutDir: false,

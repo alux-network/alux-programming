@@ -1,0 +1,38 @@
+{
+  "name": "ALUX programming",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "remoteUser": "node",
+  // Browsers need more shared memory than Docker's 64 MB default, or pages stall (Playwright's advice).
+  "runArgs": ["--ipc=host", "--init"],
+  // node_modules lives in a volume: native packages differ between the host and the container.
+  "mounts": [
+    "source=alux-programming-node-modules,target=${containerWorkspaceFolder}/node_modules,type=volume"
+  ],
+  "postCreateCommand": "sudo chown node node_modules && npm ci",
+  // Vite listens on every interface so VS Code's port forwarding reaches it.
+  "containerEnv": {
+    "ALUX_DEV_HOST": "0.0.0.0"
+  },
+  "forwardPorts": [
+    3478
+  ],
+  // Only the user holds the SSH key: no agent is forwarded and VS Code never fetches by itself.
+  // Remote operations (fetch, pull, push) are run by the user on the host.
+  "remoteEnv": {
+    "SSH_AUTH_SOCK": ""
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "git.autofetch": false
+      }
+    }
+  },
+  "portsAttributes": {
+    "3478": {
+      "label": "npm start"
+    }
+  }
+}
