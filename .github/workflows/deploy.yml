@@ -10,8 +10,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: ${{ github.event_name == 'pull_request' && format('reader-pr-{0}', github.event.pull_request.number) || 'pages' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   publish:
@@ -49,7 +49,6 @@ jobs:
     - name: 🔨 Build
       run: |
         npm ci
-        npx playwright install --with-deps chromium firefox webkit
         npm run check
         npm run build
         npm test

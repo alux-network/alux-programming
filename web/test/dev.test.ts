@@ -22,7 +22,6 @@ test('dev startup waits for the book and watched edits reload despite failed bac
     await writeFile(path.join(fixture, 'src/SUMMARY.md'), '# Summary\n\n[Fixture](index.md)\n');
     const chapter = path.join(fixture, 'src/index.md');
     await writeFile(chapter, '# Fixture\n\nInitial fixture content.\n');
-    await writeFile(path.join(fixture, 'web/reader.ts'), 'export {};');
     process.chdir(fixture);
     server = await createServer({
       configFile: path.join(project, 'vite.config.ts'),
@@ -34,7 +33,6 @@ test('dev startup waits for the book and watched edits reload despite failed bac
     const response = await fetch(base + 'index.html');
     assert.equal(response.status, 200, 'first request succeeds');
     assert.match(await response.text(), /Initial fixture content/);
-    const invalidation = t.mock.method(server.moduleGraph, 'invalidateAll');
     const reload = t.mock.method(server.ws, 'send');
     const remove = fs.rm;
     let retained = '';
@@ -63,12 +61,11 @@ test('dev startup waits for the book and watched edits reload despite failed bac
     assert.ok(retained, 'the injected backup-cleanup failure was exercised');
     assert.ok(warning.mock.callCount() > 0, 'retained backup is reported');
     assert.ok(existsSync(retained), 'the failed cleanup leaves the backup available');
-    assert.ok(invalidation.mock.callCount() > 0, 'published files invalidate cached transforms');
     const messages: unknown[] = reload.mock.calls.map((call) => call.arguments[0]);
     assert.ok(messages.some((message) => typeof message === 'object' && message !== null && 'type' in message && message.type === 'full-reload'), 'successful publication still reloads the browser');
   } finally {
     await server?.close();
     process.chdir(project);
-    await rm(fixture, { recursive: true, force: true });
+    await rm(fixture, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
   }
 });

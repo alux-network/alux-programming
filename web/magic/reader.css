@@ -1,0 +1,913 @@
+/* ALUX reader. `html[data-world]` is the reading world: "real" is the quiet document reader,
+   "magic" a bound two-page volume. `html[data-gateway]` shows the world choice on the index. */
+
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("/fonts/cormorant-garamond-latin-500-normal.woff2") format("woff2");
+  font-weight: 400 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("/fonts/cormorant-garamond-latin-600-normal.woff2") format("woff2");
+  font-weight: 600 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("/fonts/cormorant-garamond-latin-500-italic.woff2") format("woff2");
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  --reader-serif: Georgia, "Times New Roman", "Noto Serif CJK SC", "Songti SC", serif;
+  --reader-display: "Cormorant Garamond", Georgia, serif;
+  --reading-size: 24px;
+  --reader-font:calc(var(--reading-size) * var(--reader-scale, 1));
+  --book-leading: 1.8;
+  --reader-sans: Inter, "Segoe UI", Arial, "Noto Sans CJK SC", sans-serif;
+  --reader-paper: #f1e8d4;
+  --reader-ink: #514331;
+  --reader-muted: #8a7a5c;
+  --reader-accent: #8a5a2b;
+  --reader-rule: #d9ccb0;
+  --reader-cover: #1f3326;
+  --reader-trim: #b39a63;
+  --reader-desk: #ede1c3;
+  --reader-gap: 96px;
+}
+:root:is(.coal, .navy, .ayu) {
+  --reader-paper: #202820;
+  --reader-ink: #c7c9bc;
+  --reader-muted: #a0aa9b;
+  --reader-accent: #b9a172;
+  --reader-rule: #3c4637;
+  --reader-cover: #18211c;
+  --reader-trim: #81734e;
+  --reader-desk: #18211c;
+}
+
+/* Both worlds: the reader's sidebar, toolbar and quiet admonitions. */
+html { font-family: var(--reader-sans); }
+.sidebar { display: flex; flex-direction: column; }
+.sidebar .sidebar-scrollbox { position: static; flex: 1; padding: 0 22px 22px; }
+.brand:link, .brand:visited { color: var(--sidebar-fg); }
+.brand {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 14px;
+  align-items: center;
+  padding: 30px 22px 24px;
+  color: var(--sidebar-fg);
+  text-decoration: none !important;
+}
+.brand-logo { grid-row: span 2; width: 62px; }
+.brand-name { font: 500 3.8rem/1 var(--reader-display); letter-spacing: 0.14em; }
+.brand-subtitle { font: 600 2rem/1.25 var(--reader-display); letter-spacing: 0.06em; padding-inline-start: 2px; }
+.sidebar-bookmarks {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 22px 12px;
+  padding: 8px 0;
+  border: 0;
+  background: none;
+  color: var(--sidebar-fg);
+  font: 2.2rem var(--reader-sans);
+  cursor: pointer;
+}
+/* Search is discoverable beside the contents, with the same native search behind both buttons. */
+.sidebar-search {
+  display: flex; align-items: center; gap: 12px; min-height: 44px;
+  margin: 0 22px 12px; padding: 10px 12px;
+  color: var(--sidebar-fg); border: 1px solid var(--theme-popup-border);
+  background: transparent; font: 18px var(--reader-sans); cursor: pointer; text-align: start;
+}
+.sidebar-search kbd { margin-inline-start: auto; font: 11px var(--mono-font); color: inherit; opacity: .65; }
+.sidebar-repository {
+  display: flex; align-items: center; gap: 12px; padding: 16px 22px;
+  border-top: 1px solid var(--theme-popup-border); color: var(--sidebar-fg); text-decoration: none; font-size: 20px; justify-content: center; min-height: 58px; box-sizing: border-box;
+}
+.sidebar-repository > .fa { font-size: 26px; }
+.sidebar-repository > span:not(.repository-arrow) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.repository-arrow { margin-inline-start: 0; opacity: .65; font: 16px var(--reader-sans); }
+html[data-world="magic"] :is(.sidebar-search, .sidebar-repository) {
+  color: var(--reader-ink); border-color: var(--reader-rule); font-family: var(--reader-serif);
+}
+.sidebar-search:hover, .sidebar-repository:hover { background: color-mix(in srgb, currentColor 5%, transparent); }
+
+/* The bookmark count: readable but quiet, a muted number in a hairline pill. */
+.bookmark-count {
+  margin-inline-start: auto; min-width: 1.7em; padding: 0.05em 0.5em; box-sizing: border-box;
+  font-size: 0.85em; line-height: 1.4; text-align: center; font-variant-numeric: lining-nums tabular-nums;
+  color: color-mix(in srgb, var(--sidebar-fg) 65%, var(--sidebar-bg));
+  border: 1px solid color-mix(in srgb, var(--sidebar-fg) 25%, var(--sidebar-bg)); border-radius: 999px;
+}
+html[data-world="magic"] .bookmark-count { color: var(--reader-muted); border-color: var(--reader-rule); }
+/* Parts are numbered I, II, …; chapters restart in each part: 1.1, 1.2, … (01, 02 in the book). */
+.chapter { counter-reset: part; margin: 0; padding: 0; }
+.chapter li.part-title { counter-increment: part; counter-reset: chapter; font-size: 2.4rem; margin: 26px 0 12px; }
+.chapter li.part-title::before { content: counter(part, upper-roman) "."; margin-inline-end: 12px; }
+.chapter li.chapter-item { font-size: 1.9rem; line-height: 1.5; margin-block: 10px; }
+.chapter li.chapter-item:not(.affix) { counter-increment: chapter; }
+.chapter li.chapter-item:not(.affix) > a::before { content: counter(part) "." counter(chapter) ". "; font-weight: 700; }
+/* index.css sizes the prefix chapter on its own; it reads like the other chapters. */
+.chapter li.chapter-item.expanded.affix > a { font-size: inherit; }
+.chapter li.spacer, .chapter li.chapter-item:empty { display: none; }
+
+.menu-bar { height: auto; padding: 14px 20px; border-bottom: 1px solid var(--theme-popup-border); }
+.menu-bar .icon-button, .menu-bar a, .menu-bar button { font-size: 2rem; }
+.menu-title { flex: 1; }
+.right-buttons, .left-buttons { display: flex; align-items: center; gap: 4px; }
+.bookmark-button, .world-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: none;
+  color: var(--icons);
+  font: 1.7rem var(--reader-sans) !important;
+  cursor: pointer;
+}
+/* Music and bookmark are icon buttons of one size; a frame shows only while they are on. */
+:is(#music-toggle, #bookmark-toggle, #theme-toggle, #sidebar-toggle) {
+  box-sizing: border-box; height: var(--menu-bar-height); width: 50px; padding: 0;
+  justify-content: center; border: 1px solid transparent; border-radius: 4px;
+}
+#language-toggle {
+  box-sizing: border-box; height: var(--menu-bar-height); padding: 0 12px;
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid transparent; border-radius: 4px; font: 2rem var(--reader-sans);
+}
+#bookmark-toggle { font-size: 2rem !important; }
+.world-link { font-size: 2rem !important; }
+.text-size { font: 2rem var(--reader-sans) !important; }
+.language { display: inline-flex; align-items: center; gap: 8px; color: var(--icons); font-size: 2rem; }
+.language-picker {
+  padding: 6px 4px;
+  border: 0;
+  border-bottom: 1px solid var(--theme-popup-border);
+  background: transparent;
+  color: var(--fg);
+  font: 2.2rem var(--reader-sans);
+  cursor: pointer;
+}
+.language-picker option { color: #242424; background: #fff; }
+/* A toolbar button lights up while what it controls is on or open. */
+:is(#music-toggle, #bookmark-toggle)[aria-pressed="true"],
+:is(#theme-toggle, #language-toggle)[aria-expanded="true"],
+html.sidebar-visible #sidebar-toggle { border-color: var(--theme-popup-border); background: var(--theme-hover); color: var(--icons-hover); }
+
+/* Reading size affects the content only; navigation keeps its approved stable size. */
+:root { font-size: 62.5%; }
+:root:is(:lang(zh), :lang(zh-hant), :lang(ja), :lang(ko)) { --reading-size: 22px; --book-leading: 1.9; }
+:root:lang(ar) { --reading-size: 26px; }
+#content main { font-size: calc(var(--reading-size) * var(--reader-scale, 1)); line-height: 1.8; }
+#content main h1 { font-size: 2.4em; line-height: 1.2; }
+#content main > h1:first-of-type img, #content main > p:first-child > img:only-child { display: none; }
+.admonition, .admonition.admonish-note, .admonition.admonish-quote, .admonition.admonish-warning {
+  margin: 1.6em 0;
+  padding: 0.8em 1em;
+  border: 1px solid var(--theme-popup-border);
+  border-inline-start: 4px solid var(--links);
+  border-radius: 0;
+  box-shadow: none;
+  background: color-mix(in srgb, var(--fg) 4%, transparent);
+  /* mdbook-admonish gives the Rust theme its dark sidebar colors; the tint above is light. */
+  color: inherit;
+  font-size: 1em;
+}
+.admonition .admonition-anchor-link:is(:link, :visited) { color: inherit; }
+.admonition > :is(.admonition-title, summary.admonition-title) {
+  margin: 0;
+  padding: 0 0 0.3em;
+  border: 0;
+  background: none;
+  font-weight: 400;
+}
+.admonition > :is(.admonition-title, summary.admonition-title)::before { display: none; }
+.admonition > div:not(.admonition-title) { padding: 0; }
+
+/* Real world: the chapter as one scrolling page. */
+html[data-world="real"] .volume > :is(.page-head, .page-foot), html[data-world="real"] .folio-bar { display: none; }
+
+/* Magic world: two CSS columns are two pages; overflow columns are the next spreads. */
+html[data-world="magic"], html[data-world="magic"] :is(body, .page-wrapper, .page, .menu-bar, .sidebar, #search-wrapper) { background: var(--reader-desk); }
+/* The spread fills the available desk; type size does not depend on window height. */
+html[data-world="magic"] {
+  --book-height: max(720px, calc(100svh - var(--reader-toolbar-height, 130px) - 132px));
+  --book-font: calc(var(--reading-size) * var(--reader-scale, 1));
+}
+html[data-world="magic"] #content { --book-width: 100%; }
+html[data-world="magic"] .chapter li.chapter-item,
+html[data-world="magic"] .sidebar-bookmarks { font-size:var(--reader-font); }
+html[data-world="magic"] .sidebar { color: var(--reader-ink); border-inline-end: 1px solid var(--reader-rule); }
+html[data-world="magic"] :is(.brand, .sidebar-bookmarks, .chapter li a, .chapter li.part-title) { color: var(--reader-ink); font-family: var(--reader-serif); }
+html[data-world="magic"] .chapter li.part-title { color: var(--reader-accent); padding: 16px 0 0; margin: 20px 0 10px; border-top: 1px solid var(--reader-rule); }
+html[data-world="magic"] .chapter > .part-title { margin-top: 8px; }
+html[data-world="magic"] .chapter > .part-title ~ .part-title { margin-top: 20px; }
+html[data-world="magic"] .chapter li a.active { color: var(--reader-accent); }
+html[data-world="magic"] .chapter li.chapter-item:not(.affix) > a::before {
+  content: counter(chapter, decimal-leading-zero);
+  display: inline-block;
+  width: 3.4rem;
+  font: 400 13px var(--mono-font);
+  color: var(--reader-muted);
+}
+html[data-world="magic"] .chapter li.part-title::before { font-size: 0.75em; margin-inline-end: 18px; }
+html[data-world="magic"] .menu-bar { border: 0; --icons: var(--reader-ink); --icons-hover: var(--reader-accent); }
+html[data-world="magic"] :is(.menu-bar .icon-button, .menu-bar a, .bookmark-button, .world-link, .text-size, .language, .language-picker) { color: var(--reader-ink); }
+html[data-world="magic"] :is(#music-toggle, #bookmark-toggle)[aria-pressed="true"],
+html[data-world="magic"] :is(#theme-toggle, #language-toggle)[aria-expanded="true"],
+html[data-world="magic"].sidebar-visible #sidebar-toggle { border-color: var(--reader-rule); background: color-mix(in srgb, var(--reader-trim) 18%, transparent); }
+html[data-world="magic"] :is(.nav-wide-wrapper, .nav-wrapper) { display: none; }
+html[data-world="magic"] #content { padding: 0 12px; }
+html[data-world="magic"] .volume {
+  --paper-border: 3px;
+  --paper-trim: 14px;
+  --paper-inset: calc(var(--paper-border) + var(--paper-trim));
+  --leaf-height: calc(var(--book-height) - 134px);
+  --binding-shade: linear-gradient(90deg, transparent, #0000000f 40%, #00000026 50%, #0000000f 60%, transparent);
+  position: relative;
+  box-sizing: border-box;
+  width: var(--book-width);
+  max-width: none;
+  margin: 24px auto 0;
+  padding: 72px 40px 62px;
+  color: var(--reader-ink);
+  background: linear-gradient(#f2eadc99, #f2eadc99), url("/ivory-paper.webp") center / 626px 626px, var(--reader-paper);
+  border: var(--paper-border) solid var(--reader-trim);
+  outline: 12px solid var(--reader-cover);
+  outline-offset: -15px;
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 16px var(--reader-cover), inset 0 0 0 var(--paper-inset) var(--reader-trim),
+    0 6px 0 -2px #77715a, 0 16px 28px #0003;
+}
+:root.coal[data-world="magic"] .volume { background: var(--reader-paper); }
+html[data-world="magic"] .volume::before {
+  content: "";
+  position: absolute;
+  inset: var(--paper-inset) auto var(--paper-inset) calc(50% - 30px);
+  width: 60px;
+  pointer-events: none;
+  background: var(--binding-shade);
+  z-index: 1;
+}
+html[data-world="magic"] .volume::after {
+  content: "";
+  position: absolute;
+  left: calc(50% - 12px);
+  bottom: -6px;
+  width: 24px;
+  height: 65px;
+  background: transparent url("/book-ribbon.webp") center bottom / 85px auto no-repeat;
+  filter: drop-shadow(1px 2px 1px #24180f45);
+  z-index: 8;
+}
+.page-head, .page-foot { display: none; }
+html[data-world="magic"] :is(.page-head, .page-foot) {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  width: calc(50% - 40px - var(--reader-gap) / 2);
+  color: var(--reader-muted);
+}
+html[data-world="magic"] .page-head {
+  top: 26px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--reader-rule);
+  font: 1.7rem var(--reader-serif);
+}
+html[data-world="magic"] .page-foot { bottom: 30px; font: 1.6rem var(--mono-font); }
+html[data-world="magic"] .running-book { font: 1.4rem var(--mono-font); letter-spacing: 0.06em; }
+html[data-world="magic"] :is(.page-head, .page-foot):nth-of-type(odd) { inset-inline-start: 40px; }
+html[data-world="magic"] .page-head:nth-of-type(2), html[data-world="magic"] .page-foot:nth-of-type(4) { inset-inline-end: 40px; }
+/* #content in the selector: the shared #content main rule sets a smaller size. */
+html[data-world="magic"] #content main.leaves {
+  max-width: none;
+  margin: 0;
+  height: var(--leaf-height);
+  columns: 2;
+  column-gap: var(--reader-gap);
+  column-fill: auto;
+  overflow: hidden;
+  font-family: var(--reader-serif);
+  font-size: var(--book-font);
+  line-height: var(--book-leading);
+}
+html[data-world="magic"] main.leaves > :first-child { margin-top: 0; }
+html[data-world="magic"] main.leaves :is(h1, h2, h3, h4) { color: var(--reader-ink); font-weight: 500; }
+/* Atomic headings keep WebKit's live and cloned column breaks identical. */
+html[data-world="magic"] main.leaves :is(h1,h2,h3,h4,h5,h6) { display:inline-block; vertical-align:top; box-sizing:border-box; width:100%; break-inside:avoid; }
+html[data-world="magic"] main.leaves :is(h1,h2,h3,h4,h5,h6)[data-reader-heading-split] { display:block; break-inside:auto; }
+html[data-world="magic"] main.leaves :is(h2,h3,h4) { break-after:avoid; margin-block:1.1em .55em; line-height:1.35; }
+html[data-world="real"] main.leaves :is(h2,h3,h4) { margin-block:1.65em .65em; line-height:1.35; }
+html[data-world="magic"] #content main.leaves h1 { font-size: 2.2em; line-height: 1.2; }
+html[data-world="magic"]:is(:lang(zh), :lang(zh-hant), :lang(ja), :lang(ko)) #content main.leaves h1 { font-size: 2em; line-height: 1.3; }
+html[data-world="magic"] main.leaves :is(ul, ol) > li { break-inside: avoid; }
+html[data-world="magic"] main.leaves :is(a, a:visited):not(.header) { color: var(--reader-accent); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--reader-accent) 40%, transparent); }
+html[data-world="magic"] main.leaves :is(img, video, iframe) { max-width: 100%; max-height: 60vh; object-fit: contain; }
+html[data-world="magic"] main.leaves pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+html[data-world="magic"] main.leaves :is(pre, table, img, figure, .katex-display) { break-inside: avoid; }
+html[data-world="magic"] main.leaves .admonition { break-inside: auto; }
+html[data-world="magic"] main.leaves pre > code { background: color-mix(in srgb, var(--reader-trim) 14%, transparent); border: 1px solid var(--reader-rule); }
+html[data-world="magic"] main.leaves :not(pre) > code { background: color-mix(in srgb, var(--reader-trim) 16%, transparent); }
+html[data-world="magic"] main.leaves .admonition {
+  border-color: var(--reader-rule);
+  border-inline-start: 3px solid var(--reader-trim);
+  background: color-mix(in srgb, var(--reader-trim) 8%, transparent);
+}
+html[data-world="magic"] main.leaves .admonition-title { color: var(--reader-muted); break-after: avoid; }
+
+.folio-bar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  box-sizing: border-box;
+  width: var(--book-width);
+  margin: 0 auto;
+  padding: 16px 20px 24px;
+  color: var(--reader-ink);
+}
+.folio-center { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.folio-book { font: 2.4rem var(--reader-serif); color: var(--reader-muted); }
+.folio { font: 2rem/1.5 var(--mono-font); letter-spacing: 0.025em; color: var(--reader-muted); }
+.page-turn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  border: 0;
+  background: none;
+  color: var(--reader-ink);
+  font: 2.4rem var(--reader-serif);
+  cursor: pointer;
+}
+#page-next { justify-self: end; }
+.page-turn:disabled { opacity: 0.35; cursor: default; }
+[dir="rtl"] .page-turn i { transform: scaleX(-1); }
+
+/* Soft paper bends inside the binding; neither the frame nor ribbon participates. */
+.paper-fold-renderer { position: absolute; z-index: 4; pointer-events: none; overflow: visible; }
+.paper-fold-renderer[hidden] { display: none !important; }
+.turn-sheet { background: var(--reader-paper); overflow: hidden; }
+:root.light .turn-sheet-content { background: linear-gradient(#f2eadc99, #f2eadc99), url('/ivory-paper.webp') center / 626px 626px, var(--reader-paper); }
+.turn-sheet-content { position: absolute; inset: 0; overflow: hidden; }
+.turn-media { position:relative; overflow:hidden; background:#181818; }
+.turn-media > img { position:absolute; inset:0; width:100%; height:100%; max-height:none !important; object-fit:cover; }
+.turn-media::after { content:""; position:absolute; left:calc(50% - 32px); top:calc(50% - 22px); width:64px; height:44px; border-radius:12px; background:#f03; }
+.turn-media::before { content:""; position:absolute; z-index:1; left:calc(50% - 7px); top:calc(50% - 11px); border-block:11px solid transparent; border-inline-start:19px solid #fff; }
+
+/* The fixed binding sits above resting snapshots (z1/3), below the curling leaf (z5). */
+@media (min-width:900px) {
+  .paper-fold-renderer .stf__block::after { content:""; position:absolute; inset:3px auto 3px calc(50% - 30px); width:60px; background:var(--binding-shade); z-index:4; pointer-events:none; }
+}
+html[data-world="magic"] #content .turn-sheet main.leaves { margin: 0; }
+
+/* Bookmarks: a sheet in the reader's colors; the backdrop click closes it. */
+.bookmarks {
+  width: min(460px, calc(100vw - 32px));
+  padding: 0;
+  border: 1px solid var(--theme-popup-border);
+  border-radius: 6px;
+  color: var(--fg);
+  background: var(--bg);
+  box-shadow: 0 18px 48px #0004;
+  font-family: var(--reader-sans);
+}
+html[data-world="magic"] .bookmarks {
+  border: 3px solid var(--reader-trim);
+  color: var(--reader-ink);
+  background: linear-gradient(#f2eadc99, #f2eadc99), url("/ivory-paper.webp") center / 626px 626px, var(--reader-paper);
+  font-family: var(--reader-serif);
+}
+:root:is(.coal, .navy, .ayu)[data-world="magic"] .bookmarks { background-image: none; }
+.bookmarks::backdrop { background: #10140f80; backdrop-filter: blur(2px); }
+.bookmarks-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--theme-popup-border);
+}
+html[data-world="magic"] .bookmarks-head { border-color: var(--reader-rule); }
+/* Not a heading element: mdBook turns every rendered heading into an anchor link. */
+.bookmarks-title { display: flex; align-items: center; gap: 10px; margin: 0; font: 500 2.4rem/1.2 var(--reader-serif); }
+.bookmarks-close, .bookmark-remove {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  opacity: 0.7;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+.bookmarks-close:hover, .bookmark-remove:hover, .bookmarks-close:focus-visible, .bookmark-remove:focus-visible {
+  opacity: 1;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  outline: none;
+}
+.bookmarks-empty { margin: 0; padding: 22px 20px 26px; color: var(--icons); font-size: 1.7rem; }
+.bookmarks:not(.is-empty) .bookmarks-empty { display: none; }
+.bookmark-list { margin: 0; padding: 6px 0 10px; list-style: none; max-height: 60vh; overflow-y: auto; }
+.bookmark-list li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 12px 4px 20px; }
+.bookmark-list li + li { border-top: 1px solid color-mix(in srgb, var(--theme-popup-border) 60%, transparent); }
+.bookmark-list a { flex: 1; min-width: 0; padding: 8px 0; color: inherit; font-size: var(--reader-font); text-decoration: none; overflow-wrap: anywhere; }
+.bookmark-list a:hover, .bookmark-list a:focus-visible { color: var(--links); text-decoration: underline; }
+html[data-world="magic"] .bookmark-list a:is(:hover, :focus-visible) { color: var(--reader-accent); }
+
+/* Gateway: the world choice in the forest, in front of the index page. */
+.gateway { display: none; }
+html[data-gateway] .gateway {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  grid-template-columns: 1fr minmax(0, min(56svh, 800px, 48vw)) 1fr;
+  align-items: center;
+  overflow: hidden;
+  color: #efe3c4;
+  background: linear-gradient(#0002, #0004), url("/forest-gateway.webp") center / cover, #1b2419;
+}
+html[data-gateway] body { overflow: hidden; }
+.gateway-wizard { width: 100%; max-height: 92svh; align-self: center; object-fit: contain; pointer-events: none; }
+.world-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  border: 0;
+  background: none;
+  color: #ecd9ae;
+  font-family: var(--reader-display);
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+.world-choice.real { color: #d5e1ea; }
+.world-choice > .fa { font-size: 3.2rem; opacity: 0.9; }
+.world-choice strong { font-size: clamp(3rem, 3vw, 5rem); font-weight: 500; letter-spacing: .01em; line-height: 1.35; }
+.world-enter { padding-top: 20px; border-top: 1px solid currentColor; font-size: 2.6rem; font-weight: 600; line-height: 1.5; letter-spacing: .025em; }
+.world-choice:hover { transform: translateY(-5px); }
+.gateway-welcome, .gateway .language {
+  position: absolute;
+  top: 32px;
+  padding: 10px 16px;
+  border: 1px solid #ffffff2e;
+  border-radius: 4px;
+  background: #0f1a14b3;
+  color: #efe3c4;
+}
+.gateway-welcome { inset-inline-start: 32px; font: 500 2.2rem/1.4 var(--reader-display); cursor: pointer; }
+.gateway .language { inset-inline-end: 32px; font-size: 2.3rem; }
+.gateway .language-picker { color: #efe3c4; border: 0; font-weight: 600; }
+
+@media (max-width: 899px) {
+  :root { --reader-gap: 40px; }
+  .menu-bar { flex-wrap: wrap; row-gap: 4px; padding: 8px 12px; }
+  .menu-title { display: none; }
+  .left-buttons { order: 2; width: 100%; justify-content: space-between; }
+  .right-buttons { order: 1; width: 100%; justify-content: flex-end; }
+  #bookmark-label { display: none; }
+  .language-picker { font-size: 1.8rem; }
+  html[data-world="magic"] .volume { padding: 80px 24px 64px; }
+  html[data-world="magic"] .volume::before, html[data-world="magic"] .volume::after,
+  html[data-world="magic"] :is(.page-head:nth-of-type(2), .page-foot:nth-of-type(4)) { display: none; }
+  html[data-world="magic"] :is(.page-head, .page-foot) { width: calc(100% - 80px); inset-inline-start: 40px; }
+  html[data-world="magic"] .page-head { top: 32px; }
+  html[data-world="magic"] .page-foot { bottom: 26px; }
+  html[data-world="magic"] .volume { padding: 76px 40px 60px; }
+  html[data-world="magic"] #content main.leaves { columns: 1; height: var(--leaf-height); font-size: var(--book-font); }
+  .folio-bar { padding: 10px 4px 16px; }
+  .page-turn { font-size: 2.4rem; }
+  .folio-book, #page-prev-label, #page-next-label { display: none; }
+  html[data-gateway] .gateway { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr auto; }
+  .gateway-wizard { grid-column: 1 / -1; grid-row: 1; max-height: 70vh; }
+  .world-choice { grid-row: 2; padding-bottom: 40px; }
+  .gateway .language { inset-inline-end: 16px; }
+  .gateway-welcome { inset-inline-start: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .world-choice { transition: none; }
+}
+
+
+/* Continue the approved forest-and-brass treatment within mdBook's template. */
+/* The default width only: mdBook derives --sidebar-width from --sidebar-target-width, which its
+   resize handle sets, so overriding --sidebar-width itself would freeze the sidebar. */
+:root { --sidebar-target-width: clamp(240px, 20vw, 320px); }
+.brand { padding-block: 26px 22px; }
+.brand-logo { height: auto; aspect-ratio: 256 / 239; object-fit: contain; }
+.brand-subtitle { margin-top: 5px; }
+.chapter li.part-title { font-size:var(--reader-font); font-weight:500; }
+.chapter li.chapter-item { font-size:var(--reader-font); margin-block:12px; }
+.chapter li.chapter-item > a { padding-block: 3px; }
+#bookmark-label { display: none; }
+:root.coal[data-world="magic"] .brand-logo { content: url("/alux-bronze-night.webp"); }
+html[data-world="real"] .brand:link, html[data-world="real"] .brand:visited { color: var(--sidebar-fg); }
+html[data-world="real"] .chapter a.active { color: var(--sidebar-fg); font-weight: 600; }
+html[data-world="real"] .brand-logo { content: url("/alux-black.png"); filter: none; }
+:root.coal[data-world="real"] .brand-logo { content: url("/alux-black.png"); filter: invert(1); }
+/* The logo already links to the entrance; do not repeat the book name in the contents. */
+.chapter > .chapter-item.affix:first-child { display: none; }
+:root.light[data-world="real"] { --bg: #f7f7f4; --fg: #303030; --sidebar-bg: #efefeb; --sidebar-fg: #303030; --links: #536b67; --sidebar-active: #303030; --table-header-bg:#e9ebe6; --table-alternate-bg:#f1f2ee; --table-border-color:#daddd7; --quote-bg:#f1f2ee; }
+:root.coal[data-world="real"] { --bg: #202020; --fg: #c9c9c9; --sidebar-bg: #181818; --sidebar-fg: #c9c9c9; --links: #a5b8b4; --sidebar-active: #d4d4d4; --icons: #b1b1b1; --icons-hover: #d4d4d4; --table-header-bg:#292929; --table-alternate-bg:#242424; --table-border-color:#3b3b3b; --quote-bg:#181818; }
+html[data-world="magic"] main.leaves,
+html[data-world="magic"] main.leaves :is(blockquote, .admonition, .admonition-content),
+html[data-world="magic"] main.leaves :is(h1,h2,h3,h4,h5,h6) > a.header {
+  color: var(--reader-ink);
+}
+html[data-world="magic"] main.leaves blockquote {
+  margin-inline: 0;
+  border-inline-start: 1px solid var(--reader-rule);
+  background: color-mix(in srgb, var(--reader-trim) 6%, transparent);
+}
+html[data-world="magic"] .volume {
+  border-radius: 7px;
+  box-shadow: inset 0 0 0 2px var(--reader-cover), inset 0 0 0 3px var(--reader-trim),
+    inset 0 0 0 12px var(--reader-cover), inset 0 0 0 13px color-mix(in srgb, var(--reader-trim) 70%, var(--reader-cover)),
+    0 3px 0 -1px #77715a, 0 6px 0 -2px #a79b78, 0 16px 30px #0003;
+}
+@media (min-width: 900px) {
+  .menu-bar { display: flex; flex-wrap: wrap; row-gap: 8px; padding: 12px 24px; }
+  .menu-bar .right-buttons { order: 1; width: 100%; justify-content: flex-end; }
+  .menu-bar .left-buttons { order: 2; width: 100%; justify-content: flex-end; gap: 10px; }
+  .menu-title { display: none; }
+  .menu-bar .icon-button { min-width: 36px; }
+}
+@media (max-width: 899px) {
+  :root { --sidebar-width: min(var(--sidebar-target-width), 300px, calc(100vw - 48px)); }
+  .brand-logo { width: 54px; }
+  .brand-name { font-size: 3.2rem; }
+  .menu-bar .icon-button { min-width: 36px; min-height: 40px; }
+  .left-buttons { flex-wrap: wrap; justify-content: flex-start; gap: 4px; }
+  .gateway-welcome, .gateway .language { top: 16px; padding: 8px; }
+  .gateway-welcome { font-size: 1.4rem; max-width: 42vw; }
+  .gateway .language { max-width: 44vw; }
+  .gateway .language-picker { max-width: 36vw; font-size: 1.5rem; }
+  .world-choice strong { font-size: clamp(2.4rem, 6vw, 3.4rem); }
+  .world-enter { font-size: 1.8rem; }
+  html[data-world="magic"] #content { padding-inline: 12px; }
+  html[data-world="magic"] .volume { --leaf-height: max(460px, calc(100svh - 320px)); padding: 68px 24px 54px; }
+  html[data-world="magic"] #content main.leaves { height: var(--leaf-height); }
+  html[data-world="magic"] :is(.page-head, .page-foot) {
+    width: calc(100% - 48px); inset-inline-start: 24px;
+  }
+  }
+
+/* One directory rhythm, independent of title length or which chapter is active. */
+.chapter li.chapter-item:not(.affix) > a {
+  display: grid; grid-template-columns: 32px minmax(0, 1fr); align-items: baseline;
+  column-gap: 0; line-height: 1.5; overflow-wrap: break-word;
+}
+.chapter li.chapter-item:not(.affix) > a::before { display: block; width: auto; grid-column: 1; white-space: nowrap; }
+html[data-world="real"] .chapter li.chapter-item:not(.affix) > a { grid-template-columns: 4ch minmax(0, 1fr); column-gap: .45em; }
+.chapter li.part-title { display: grid; grid-template-columns: 32px minmax(0, 1fr); align-items: baseline; line-height: 1.5; }
+.chapter li.part-title::before { margin: 0; }
+html[data-world="magic"] .chapter li.part-title::before { margin: 0; }
+
+/* Native mdBook sets a tighter line-height on p/ul/ol; keep the book's approved prose rhythm. */
+#content main.leaves :is(p, ul, ol) { line-height: inherit; }
+html[data-world="magic"] main.leaves li + li { margin-top: .55em; }
+html[data-world="real"] main.leaves li + li { margin-top: .4em; }
+html[data-world="real"] #content main.leaves h1 { font-size: 1.8em; line-height: 1.25; }
+html[data-world="real"] #content main.leaves h2 { font-size: 1.4em; }
+html[data-world="real"] #content main.leaves pre { line-height: 1.65; }
+html[data-world="magic"] {
+  --table-header-bg: color-mix(in srgb, var(--reader-trim) 16%, var(--reader-paper));
+  --table-alternate-bg: color-mix(in srgb, var(--reader-trim) 6%, var(--reader-paper));
+  --table-border-color: color-mix(in srgb, var(--reader-trim) 32%, var(--reader-paper));
+}
+/* Keep a tall table in one scrollport: WebKit otherwise fragments its rows differently after a world switch. */
+html[data-world="magic"] main.leaves .table-wrapper { display: inline-block; vertical-align: top; width: 100%; max-height: var(--leaf-height); overflow: auto; break-inside: avoid; }
+html[data-world="magic"] main.leaves table { color: var(--reader-ink); line-height: 1.65; font-size: .92em; }
+html[data-world="magic"] main.leaves :is(td, th) { padding: .5em .65em; }
+/* Upright type labels match the book; mathematical operators retain their KaTeX glyphs. */
+html[data-world="magic"] .katex .mathsf { font-family: KaTeX_Main, 'Times New Roman', serif; }
+html[data-world="magic"] .hljs { color: var(--reader-ink); background: transparent; }
+/* Quiet syntax colors follow each world's material instead of native bright accents. */
+:root { --syntax-ink:#374337; --syntax-keyword:#85451c; --syntax-string:#435e34; --syntax-type:#2e5d61; --syntax-meta:#705229; --syntax-comment:#5e634f; }
+:root.coal { --syntax-ink:#bdc1b6; --syntax-keyword:#c4ae83; --syntax-string:#a6b58f; --syntax-type:#b2c4b3; --syntax-meta:#c4a77f; --syntax-comment:#939e8a; }
+:root.light[data-world="real"] { --syntax-ink:#303b38; --syntax-keyword:#6b4e76; --syntax-string:#3b6856; --syntax-type:#3f6570; --syntax-meta:#795a3e; --syntax-comment:#6e7773; --inline-code-color:#405953; }
+:root.coal[data-world="real"] { --syntax-ink:#c6d1ce; --syntax-keyword:#cab6d5; --syntax-string:#a1c4af; --syntax-type:#a9c8d0; --syntax-meta:#c8b69a; --syntax-comment:#8e9c98; --inline-code-color:#bed1c9; }
+html[data-world] .hljs { color:var(--syntax-ink); }
+html[data-world] .hljs :is(.hljs-keyword,.hljs-selector-tag,.hljs-literal) { color:var(--syntax-keyword); }
+html[data-world] .hljs .hljs-string { color:var(--syntax-string); }
+html[data-world] .hljs :is(.hljs-type,.hljs-title,.hljs-built_in) { color:var(--syntax-type); }
+html[data-world] .hljs :is(.hljs-number,.hljs-meta,.hljs-attribute,.hljs-symbol) { color:var(--syntax-meta); }
+html[data-world] .hljs .hljs-comment { color:var(--syntax-comment); }
+
+/* Section artwork keeps the approved small illustration scale in both worlds. */
+#content main img:is([src$="semantic-view.png"], [src$="design-by-meaning-rust.png"], [src$="concepts.png"], [src$="insights.png"]) { display: block; width: auto; max-width: 100%; max-height: 150px; margin: 24px auto; object-fit: contain; }
+
+
+@media (max-width: 899px) {
+  .left-buttons { display: flex; flex-wrap: nowrap; justify-content: flex-end; gap: 3px; }
+  .left-buttons > :is(.icon-button, .bookmark-button) { width: 100%; min-height: 44px; margin: 0; box-sizing: border-box; justify-content: center; }
+  html[data-world="magic"] .volume > :is(.page-head, .page-foot):nth-of-type(n) {
+    inset-inline-start: 24px; inset-inline-end: auto; width: calc(100% - 48px); gap: 8px;
+  }
+  .running-part { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .running-book { max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+html[data-gateway] .gateway :is(.language, .language-picker) { color: #efe3c4; }
+
+/* mdBook's hover-driven sticky state can move a touch target between touchend and click. */
+@media (hover: none) {
+  html[data-world="magic"] #menu-bar { position: sticky; top: 0 !important; }
+}
+
+/* Theme menu: anchored to its toggle and drawn in the reader's colors. mdBook positions the popup
+   against the whole menu bar, which breaks once the toolbar is rearranged. */
+.theme-menu { position: relative; display: flex; }
+.menu-bar .theme-menu .theme-popup {
+  left: auto; right: auto; inset-inline-start: 0; top: calc(100% + 6px);
+  /* max-content: sized by its items, not by the narrow wrapper it is positioned from. */
+  width: max-content; min-width: 150px; padding: 6px 0; font-size: 1.6rem;
+  color: var(--reader-ink); background: var(--reader-paper);
+  border: 1px solid var(--reader-rule); border-radius: 6px; box-shadow: 0 10px 28px #0003;
+}
+.menu-bar .theme-menu .theme-popup .theme { padding: 6px 18px; color: inherit; font-size: inherit; }
+.menu-bar .theme-menu .theme-popup .theme:hover,
+.menu-bar .theme-menu .theme-popup .theme:focus-visible { background: color-mix(in srgb, var(--reader-accent) 14%, transparent); }
+@media (max-width: 899px) {
+  .left-buttons > .theme-menu > .icon-button { width: 100%; min-height: 44px; margin: 0; justify-content: center; }
+}
+
+/* Search opens as a modal over the blurred page. mdBook still owns the panel and its open state
+   (the .hidden class); reader.ts only closes it on a backdrop click. The real world draws it in
+   the mdBook theme's colors and fonts, the magic world in the book's. */
+#search-wrapper {
+  --search-desk: var(--bg); --search-paper: var(--bg); --search-ink: var(--fg);
+  --search-rule: var(--theme-popup-border); --search-muted: var(--icons); --search-accent: var(--links);
+  --search-font: inherit;
+}
+html[data-world="magic"] #search-wrapper {
+  --search-desk: var(--reader-desk); --search-paper: var(--reader-paper); --search-ink: var(--reader-ink);
+  --search-rule: var(--reader-rule); --search-muted: var(--reader-muted); --search-accent: var(--reader-accent);
+  --search-font: var(--reader-serif);
+}
+html[data-world] #search-wrapper:not(.hidden) {
+  position: fixed; inset: 0; z-index: 1100;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 12vh 16px 16px; box-sizing: border-box;
+  background: color-mix(in srgb, var(--search-desk) 55%, transparent);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+#search-wrapper :is(.searchbar-outer, .searchresults-outer) {
+  width: min(720px, 100%); max-width: none; margin: 0; box-sizing: border-box;
+  color: var(--search-ink); background: var(--search-paper);
+  border: 1px solid var(--search-rule); border-radius: 8px; box-shadow: 0 16px 40px #0003;
+}
+#search-wrapper .searchbar-outer { padding: 10px; }
+#search-wrapper .searchresults-outer { max-height: 60vh; overflow: auto; padding: 8px 16px; }
+#search-wrapper #searchbar {
+  height: auto; padding: 12px 18px; box-sizing: border-box;
+  font-family: var(--search-font); font-size: var(--reader-font);
+  color: var(--search-ink); background: transparent;
+  border: 0; border-bottom: 1px solid var(--search-rule); border-radius: 0;
+}
+#search-wrapper #searchbar::placeholder { color: var(--search-muted); font-style: italic; }
+#search-wrapper #searchbar:focus { outline: none; border-bottom-color: var(--search-accent); box-shadow: none; }
+#search-wrapper .searchresults-header { font-family: var(--search-font); font-size: calc(var(--reader-font) * .85); font-weight: 500; color: var(--search-muted); }
+#search-wrapper #searchresults a { font-family: var(--search-font); font-size: var(--reader-font); color: var(--search-accent); }
+#search-wrapper #searchresults .teaser { font-family: var(--search-font); font-size: var(--reader-font); line-height: 1.55; color: var(--search-ink); }
+#search-wrapper #searchbar::-webkit-search-cancel-button {
+  -webkit-appearance: none; appearance: none; width: 18px; height: 18px; cursor: pointer;
+  background: var(--search-muted);
+  mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'><path d='M3 3l12 12M15 3L3 15' stroke='black' stroke-width='1.6'/></svg>") center / contain no-repeat;
+}
+
+/* The language list is the only visible popup; themes use the two-state toolbar button. */
+.menu-bar .theme-menu .theme-popup .theme { display: flex; align-items: center; gap: 10px; font-family: inherit; box-sizing: border-box; }
+.menu-bar .theme-menu .theme-popup .theme::after {
+  order: -1; width: 1.2em; text-align: center;
+  font: normal 1em/1 FontAwesome; color: var(--reader-accent);
+}
+.menu-bar .theme-menu .theme-popup .theme-selected::before { order: 1; margin-inline: auto 0; color: var(--reader-accent); }
+html[data-world="magic"] .menu-bar .theme-menu .theme-popup {
+  padding: 10px 4px; font-family: var(--reader-serif); font-size: 2rem;
+  border: 1px solid var(--reader-trim); border-radius: 8px;
+  box-shadow: inset 0 0 0 3px var(--reader-paper), inset 0 0 0 4px var(--reader-rule), 0 14px 30px #0004;
+}
+html[data-world="magic"] .menu-bar .theme-menu .theme-popup .theme { padding: 7px 22px; }
+
+/* Scrollbars in the reader's colors: thin bronze on the sidebar, quiet elsewhere. Standard
+   properties for Chrome and Firefox, ::-webkit-scrollbar for Safari. */
+html { scrollbar-color: var(--reader-rule) transparent; }
+#search-wrapper .searchresults-outer, #bookmarks, main.leaves {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--reader-trim) 70%, transparent) transparent;
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--reader-trim) 60%, transparent);
+  border: 3px solid transparent; border-radius: 10px; background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover { background-color: var(--reader-trim); }
+/* The sidebar's scrollbar: hairline thin, in the selected mdBook theme's scrollbar color moved
+   toward the sidebar background, so it is darker in dark themes and lighter in light ones. */
+.sidebar { --sidebar-scrollbar: color-mix(in srgb, var(--scrollbar) 40%, var(--sidebar-bg)); }
+html[data-world="magic"] .sidebar { --sidebar-scrollbar: color-mix(in srgb, var(--scrollbar) 40%, var(--reader-desk)); }
+@supports not selector(::-webkit-scrollbar) {
+  .sidebar .sidebar-scrollbox { scrollbar-width: thin; scrollbar-color: var(--sidebar-scrollbar) transparent; }
+}
+.sidebar .sidebar-scrollbox::-webkit-scrollbar { width: 4px; }
+.sidebar .sidebar-scrollbox::-webkit-scrollbar-track { background: transparent; }
+.sidebar .sidebar-scrollbox::-webkit-scrollbar-thumb { background: var(--sidebar-scrollbar); border: 0; border-radius: 4px; }
+@supports selector(::-webkit-scrollbar) {
+  /* scrollbar-color is inherited from html, and any value turns the ::-webkit-scrollbar rules off. */
+  .sidebar .sidebar-scrollbox { scrollbar-color: auto; scrollbar-width: auto; }
+}
+
+/* Magic world: the sidebar has a fixed width (AGENTS.md). Its width is set directly, past the
+   --sidebar-target-width that mdBook's resize handle drives, and the handle is hidden. */
+html[data-world="magic"] { --sidebar-width: clamp(240px, 20vw, 320px); }
+html[data-world="magic"] #sidebar-resize-handle { display: none; }
+@media (max-width: 899px) {
+  html[data-world="magic"] { --sidebar-width: min(300px, calc(100vw - 48px)); }
+}
+
+/* The language menu reuses the theme menu's look; it sits at the toolbar's end, so it opens
+   leftwards from its button. Its items are links. */
+.menu-bar .language-menu .theme-popup { inset-inline-start: auto; inset-inline-end: 0; }
+.menu-bar .theme-menu .theme-popup a.theme { text-decoration: none; white-space: nowrap; }
+html[data-world="magic"] #language-toggle { color: var(--reader-ink); }
+
+#theme-list { display: none !important; }
+
+.music-notice {
+  position: fixed; z-index: 1200; width: min(330px, calc(100vw - 24px)); padding: 16px;
+  box-sizing: border-box; border: 1px solid var(--theme-popup-border); border-radius: 8px;
+  background: var(--bg); color: var(--fg); font: 16px/1.5 var(--reader-sans); box-shadow: 0 12px 32px #0002;
+}
+.music-notice[hidden] { display: none; }
+html[data-world="magic"] .music-notice { background: var(--reader-paper); color: var(--reader-ink); border-color: var(--reader-rule); font-family: var(--reader-serif); }
+.music-notice-heading { display: flex; align-items: start; gap: 12px; }
+.music-notice-heading p { margin: 0; flex: 1; }
+.music-notice button { background: transparent; border: 0; color: inherit; cursor: pointer; font: inherit; }
+#music-notice-close { padding: 0 4px; font: 24px/1 var(--reader-sans); }
+.music-volume { display:flex; align-items:center; gap:12px; margin-top:14px; min-height:44px; font:16px/1.5 var(--reader-sans); }
+.music-volume input { min-width:0; width:100%; min-height:28px; accent-color:var(--reader-accent); cursor:pointer; }
+.music-volume output { min-width: 3.5em; text-align: end; }
+
+/* Search has one discoverable entry in the directory; the native hidden button still serves Ctrl+K. */
+.toolbar-search { display: none !important; }
+.sidebar-repository::after {
+  content: 'GitHub'; position: absolute; inset-block-end: calc(100% + 6px); inset-inline-start: 50%;
+  transform: translateX(-50%); padding: 6px 10px; border: 1px solid var(--theme-popup-border);
+  background: var(--bg); color: var(--fg); font: 14px/1.3 var(--reader-sans); border-radius: 4px;
+  opacity: 0; pointer-events: none; white-space: nowrap;
+}
+.sidebar-repository { position: relative; }
+.sidebar-repository:is(:hover,:focus-visible)::after { opacity: 1; }
+html[data-world="magic"] .sidebar-repository::after { background: var(--reader-paper); color: var(--reader-ink); border-color: var(--reader-rule); }
+/* All toolbar controls share a stable optical center and target, independent of reading size. */
+.menu-bar .left-buttons > :is(button,.theme-menu) { flex: 0 0 auto; }
+.menu-bar :is(#sidebar-toggle,#theme-toggle,#music-toggle,#bookmark-toggle,.text-size) { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; min-height: 48px; padding: 0; line-height: 1; }
+#theme-toggle svg { width: 27px; height: 27px; display: block; }
+.menu-bar :is(#sidebar-toggle,#music-toggle,#bookmark-toggle) .fa { font-size: 23px; line-height: 1; }
+.menu-bar :is(.world-link,#language-toggle) { font-family: var(--reader-sans); font-size: 20px !important; line-height: 1.4; }
+:root.coal[data-world="magic"] .brand-logo { filter: saturate(.85) brightness(.88) contrast(1.02); }
+:root.coal[data-world="magic"] .brand { color: #e1e4d6; }
+/* The copied message is a horizontal UI label, never part of the wrapped code text. */
+pre > .buttons { top: 8px; right: 8px; }
+pre > .buttons button { min-width: 36px; min-height: 36px; border-radius: 4px; color: var(--fg); }
+html[data-world="magic"] pre > .buttons button { color: var(--reader-ink); background: var(--reader-paper); border: 1px solid var(--reader-rule); }
+/* Copy feedback belongs above the frame, outside the chapter's clipped page columns. */
+.code-copy-notice { position:fixed; z-index:1200; width:max-content; max-width:calc(100vw - 16px); box-sizing:border-box; padding:5px 8px; border-radius:6px; background:var(--reader-ink); color:var(--reader-paper); font:14px/1.4 var(--reader-sans); pointer-events:none; }
+
+:root:is(:lang(zh),:lang(zh-hant),:lang(ja)) .world-choice { font-family: "Noto Serif CJK SC", "Songti SC", SimSun, serif; }
+:root:lang(ko) .world-choice { font-family: "Malgun Gothic", sans-serif; }
+:root:lang(ar) .world-choice { font-family: "Noto Naskh Arabic", "Traditional Arabic", serif; }
+:root:is(:lang(zh),:lang(zh-hant),:lang(ja),:lang(ko)) .world-choice strong { font-size: clamp(28px,2.6vw,46px); letter-spacing: .045em; }
+
+@media (max-width:899px) {
+  .menu-bar :is(#sidebar-toggle,#theme-toggle,#music-toggle,#bookmark-toggle,.text-size) { width:44px; height:44px; min-height:44px; }
+  #theme-toggle svg { width:23px; height:23px; }
+  .gateway-wizard { width:min(86vw,39svh,430px); justify-self:center; }
+  .gateway-welcome { font-size:20px; }
+  .gateway .language-picker { font-size:19px; }
+  .world-choice strong, :root:is(:lang(zh),:lang(zh-hant),:lang(ja),:lang(ko)) .world-choice strong { font-size:29px; }
+  .world-enter { font-size:21px; padding-top:18px; }
+}
+
+/* Small binding details stay fixed while the leaves move. */
+.book-corners { display:none; }
+html[data-world="magic"] .book-corners { display:block; pointer-events:none; position:absolute; inset:4px; z-index:7; border-radius:4px; background:
+linear-gradient(var(--reader-trim),var(--reader-trim)) left top/24px 1px no-repeat,
+linear-gradient(var(--reader-trim),var(--reader-trim)) left top/1px 24px no-repeat,
+linear-gradient(var(--reader-trim),var(--reader-trim)) right top/24px 1px no-repeat,
+linear-gradient(var(--reader-trim),var(--reader-trim)) right top/1px 24px no-repeat,
+linear-gradient(var(--reader-trim),var(--reader-trim)) left bottom/24px 1px no-repeat,
+linear-gradient(var(--reader-trim),var(--reader-trim)) left bottom/1px 24px no-repeat,
+linear-gradient(var(--reader-trim),var(--reader-trim)) right bottom/24px 1px no-repeat,
+linear-gradient(var(--reader-trim),var(--reader-trim)) right bottom/1px 24px no-repeat; }
+.music-volume > span { white-space:nowrap; flex-shrink:0; }
+html[data-world="magic"] pre:focus-within > .buttons { opacity:1; visibility:visible; }
+
+/* mdBook floats code controls over the listing; only the code contributes to pagination. */
+html[data-world="magic"] main.leaves pre > .buttons { display:flex; white-space:normal; right:24px; }
+html[data-world="magic"] main.leaves pre:has(> .buttons) { display:inline-block; vertical-align:top; width:100%; --code-panel-height:calc(var(--leaf-height) - 2 * var(--book-font)); max-height:var(--code-panel-height); box-sizing:border-box; margin-block:var(--book-font); padding:0; overflow:visible; border:1px solid var(--reader-rule); background:var(--reader-code-paper); }
+html[data-world="magic"] main.leaves pre:has(> .buttons) > code { max-height:calc(var(--code-panel-height) - 2px); box-sizing:border-box; overflow:auto; padding:10px; border:0; background:transparent; font-size:.82em; line-height:1.65; }
+html[data-world="magic"] main.leaves pre:has(> .result) > code:not(.result) { max-height:calc(var(--code-panel-height) * .65); }
+html[data-world="magic"] main.leaves pre > code.result { max-height:calc(var(--code-panel-height) * .3); border-top:1px solid var(--reader-rule); }
+/* Long listings own one full leaf; execution divides that same box between source and output. */
+html[data-world="magic"][data-reading="pages"] main.leaves pre:has(> .buttons) { --code-panel-height:var(--leaf-height); margin-block:0; }
+html[data-world="magic"][data-reading="pages"] main.leaves pre:has(> .result) { display:inline-grid; height:var(--code-run-height,var(--leaf-height)); grid-template-rows:minmax(0,1fr) auto; }
+html[data-world="magic"][data-reading="pages"] main.leaves pre:has(> .result) > code { min-height:0; max-height:none; margin:0; }
+/* Short results use their natural height; longer output scrolls after four lines. */
+html[data-world="magic"][data-reading="pages"] main.leaves pre > code.result { max-height:min(calc(var(--code-run-height,var(--leaf-height)) * .2),calc(4lh + 12px)); padding-block:6px; }
+@media (hover:none) { pre > .buttons { opacity:1; visibility:visible; } html[data-world="real"] main.leaves pre:has(> .buttons) > code { padding-block-start:48px; } }
+
+/* The desk can scroll vertically without shrinking the book into a short landscape card. */
+html[data-world="magic"]:not([data-gateway]) { overflow-y:auto; }
+html[data-world="magic"] .page-wrapper { min-height:100svh; }
+html[data-world="magic"] .folio-bar { padding-bottom:36px; }
+html[data-world="magic"] .page { background:radial-gradient(ellipse at 45% 25%,#fff5da00,#ede1c3 50%,#d2bc9570 100%); }
+:root.coal[data-world="magic"] .page { background:#18211c; }
+:root { --reader-code-paper:#e8e0cf; }
+:root.coal { --reader-code-paper:#2c392b; }
+html[data-world="magic"] main.leaves pre:has(> .buttons) { border-color:#b3a68d; }
+:root.coal[data-world="magic"] main.leaves pre:has(> .buttons) { border-color:#4e5638; }
+
+/* Never paint an interactive copy control outside the paper being folded. */
+.volume[data-paper-turning] > main.leaves pre > .buttons { z-index:0; pointer-events:none; transition:none; }
+#reading-mode { display:none; }
+html[data-world="magic"] #reading-mode { width:auto; display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:0 12px; font:20px/1.4 var(--reader-sans); color:var(--reader-ink); white-space:nowrap; }
+html[data-world="magic"][data-reading="scroll"] .volume { padding:42px 40px; }
+html[data-world="magic"][data-reading="scroll"] #content main.leaves { columns:auto; height:auto; overflow:visible; max-width:960px; margin-inline:auto; }
+html[data-world="magic"][data-reading="scroll"] .volume > :is(.page-head,.page-foot),
+html[data-world="magic"][data-reading="scroll"] .volume::before,
+html[data-world="magic"][data-reading="scroll"] .volume::after,
+html[data-world="magic"][data-reading="scroll"] .folio-center { display:none; }
+html[data-world="magic"][data-reading="scroll"] main.leaves :is(pre:has(> .buttons),pre:has(> .buttons) > code,.table-wrapper) { max-height:none; }
+#reading-mode-icon { font-size:23px; line-height:1; }
+@media(max-width:899px) {
+  html[data-world="magic"] #reading-mode { width:44px; min-height:44px; padding:0 8px; font-size:15px; }
+  #reading-mode-label { display:none; }
+  html[data-world="magic"][data-reading="scroll"] .volume { padding:32px 24px; }
+}
+@media(max-width:359px) {
+  html[data-world="magic"] .left-buttons { display:grid; grid-template-columns:repeat(4,minmax(44px,1fr)); justify-items:center; }
+  html[data-world="magic"] .left-buttons > :is(.icon-button,.bookmark-button) { width:44px; min-width:44px; }
+  html[data-world="magic"] #sidebar-toggle-anchor:checked ~ .page-wrapper #sidebar-toggle { justify-self:start; margin-inline-start:-8px; }
+}
+
+html[data-world="magic"] #menu-bar { position:sticky; top:0 !important; z-index:101; }
+html[data-world="magic"] main.leaves .katex-display { display:inline-block; box-sizing:border-box; width:100%; max-width:100%; overflow-x:auto; overflow-y:hidden; vertical-align:top; padding-block:6px; }
+html[data-world="magic"] main.leaves .katex-display > .katex { display:block; width:max-content; min-width:100%; }
+:root.coal .turn-sheet { box-shadow:none; }
+:root.coal .paper-fold-renderer .stf__item { border:0; }
+/* A mild light-facing curve belongs only to the lifted paper, never the static destination. */
+:root.coal .paper-fold-renderer [data-paper-curl] { background:linear-gradient(105deg,color-mix(in srgb,var(--reader-paper),#2e392e var(--curl-light,0%)) 0%,color-mix(in srgb,var(--reader-paper),#263126 var(--curl-light,0%)) 24%,var(--reader-paper) 72%,color-mix(in srgb,var(--reader-paper),#1c251e var(--curl-light,0%)) 100%); }
+
+/* overflow:hidden on body creates a non-scrolling sticky container under the root scroller. */
+html[data-world="magic"]:not([data-gateway]) body { overflow-x:clip; overflow-y:visible; }
+
+/* The moving paper can lift beyond the cover; only its printed content clips to the leaf. */
+html[data-world="magic"] #content { overflow:visible; }
+.paper-fold-renderer.turn-leaf, .paper-fold-renderer .stf__wrapper { overflow:visible; }
+
+/* A stable viewport and audio element surround native chapter documents. */
+html[data-reader-shell],html[data-reader-shell] body.reader-shell { margin:0; width:100%; height:100%; overflow:hidden; }
+.reader-shell .chapter-frame { position:fixed; inset:0; width:100%; height:100%; border:0; display:block; background:var(--bg); }
+.reader-shell .pending-chapter { opacity:0; pointer-events:none; }
+.reader-shell .chapter-print { display:none; }
+@media print {
+  html[data-reader-shell],html[data-reader-shell] body.reader-shell { height:auto; overflow:visible; }
+  .reader-shell:has(.chapter-print) .chapter-frame { display:none; }
+  .reader-shell #content.chapter-print { display:block; }
+  .chapter-print :is(.folio-bar,.page-head,.page-foot,.buttons),.chapter-print .volume::before,.chapter-print .volume::after { display:none; }
+}
+html[data-shell-loading] body { visibility:hidden; }
+
+/* Restore the original low-glare neutral document surfaces independently of syntax colors. */
+:root.light[data-world="real"] main.leaves :is(pre,pre > code) { background:#eeefeb; }
+:root.coal[data-world="real"] main.leaves :is(pre,pre > code) { background:#181818; }
+html[data-world="real"] main.leaves pre:has(> .buttons) > code { color:var(--syntax-ink); }
+
+/* Body and contents share the same language-aware size and saved A−/A+ scale. */
+#sidebar :is(.sidebar-bookmarks,.sidebar-search) { font-size:var(--reader-font); }
+#content main.leaves { --panel-border:var(--table-border-color); --panel-accent:var(--links); --panel-bg:color-mix(in srgb,var(--fg) 3%,transparent); }
+html[data-world="magic"] #content main.leaves { --panel-border:var(--reader-rule); --panel-accent:var(--reader-accent); --panel-bg:color-mix(in srgb,var(--reader-trim) 6%,transparent); }
+/* Native details and late admonition styles must not reintroduce blue/white panels. */
+#content main.leaves :is(details,.admonition) { border:1px solid var(--panel-border); border-inline-start:3px solid var(--panel-accent); background:var(--panel-bg); color:inherit; border-radius:2px; }
+#content main.leaves details > summary { background:transparent; color:inherit; padding:.6em .85em; }
+#content main.leaves :is(details > summary,.admonition-title)::marker { color:var(--panel-accent); }
+#content main.leaves :is(details > summary,.admonition-title):hover { background:color-mix(in srgb,var(--panel-accent) 7%,transparent); }
+#content main.leaves .admonition > .admonition-title { background:transparent; color:inherit; }
+#content main.leaves .katex-display > .katex { font-size:1em; }
+
+html[data-world="magic"] #content main.leaves details { overflow:visible; break-inside:auto; }
+#content main.leaves details > summary { break-after:avoid; }
+html[data-world="real"] .music-volume input { accent-color:var(--links); }
+
+.turn-media-label { position:absolute; inset:0; display:grid; place-items:center; padding:1em; font:inherit; color:var(--reader-ink); background:var(--reader-paper); text-align:center; }
+.turn-media:has(.turn-media-label)::before,.turn-media:has(.turn-media-label)::after { display:none; }

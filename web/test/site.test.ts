@@ -88,8 +88,32 @@ describe('the verifier reports', () => {
   });
   test('a missing asset', () => {
     const dir = copy();
-    rmSync(path.join(dir, 'reader.js'));
-    assert.ok(verify(dir).some((p) => p.includes('broken link /reader.js')));
+    rmSync(path.join(dir, 'real.js'));
+    assert.ok(verify(dir).some((p) => p.includes('broken link /real.js')));
+  });
+  test('a missing magic book', () => {
+    const dir = copy();
+    rmSync(path.join(dir, 'magic/data/en.json'));
+    assert.ok(verify(dir).includes('en: missing magic book'));
+  });
+  test('a removed magic route', () => {
+    const dir = copy();
+    rmSync(path.join(dir, 'magic/en', chapter));
+    assert.ok(verify(dir).includes(`en: missing magic route ${chapter}`));
+  });
+  test("a magic chapter whose HTML differs from mdBook's page", () => {
+    const dir = copy();
+    const file = path.join(dir, 'magic/data/en.json');
+    const book = JSON.parse(readFileSync(file, 'utf8'));
+    const item = book.items.find((i: { path?: string }) => i.path === chapter);
+    item.html = item.html.replace('</h1>', '</h1><p>stray</p>');
+    writeFileSync(file, JSON.stringify(book));
+    assert.ok(verify(dir).includes(`en: magic chapter ${chapter} differs from mdBook's page`));
+  });
+  test('an unexpected magic route', () => {
+    const dir = copy();
+    writeFileSync(path.join(dir, 'magic/en/stray.html'), '<html></html>');
+    assert.ok(verify(dir).includes('en: unexpected magic route stray.html'));
   });
   for (const generated of ['404.html', 'print.html', 'toc.html']) {
     test('broken links, assets and anchors in ' + generated, () => {
@@ -103,6 +127,12 @@ describe('the verifier reports', () => {
       }
     });
   }
+  test('a domain substituted for the entrance bookmark name', () => {
+    const dir = copy();
+    const file = path.join(dir, 'index.html');
+    writeFileSync(file, readFileSync(file, 'utf8').replace(/<title>[^<]*<\/title>/, '<title>programming.alux.network</title>'));
+    assert.ok(verify(dir).some((p) => p.startsWith('en/index.html: title')));
+  });
   test('a wrong title', () => {
     const retitled = { ...english, pages: english.pages.map((p) => (p.file === chapter ? { ...p, title: 'Another title' } : p)) };
     assert.ok(verify(copy(), retitled).some((p) => p.startsWith(`en/${chapter}: title`)));
