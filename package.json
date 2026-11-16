@@ -6,7 +6,8 @@
     "start": "vite",
     "build": "vite build",
     "check": "tsc",
-    "test": "node --test --test-concurrency=1 web/test/*.test.ts"
+    "test": "node --test --test-concurrency=1 web/test/*.test.ts",
+    "test:browser": "node --test --test-concurrency=1 web/test/browser/*.test.ts"
   },
   "devDependencies": {
     "@types/node": "24",

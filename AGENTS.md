@@ -117,10 +117,11 @@ npm install     # once
 npm start       # dev server on http://localhost:3478, rebuilds the book on change
 npm run check   # tsc, no emit
 npm run build   # every edition into book/html
-npm test        # needs a build; site, translation and determinism tests
+npm test        # needs a build; non-browser tests, also run in CI
+npm run test:browser # optional browser tests; needs Playwright engines and a build
 ```
 
-CI runs `npm ci`, `npm run check`, `npm run build`, `npm test`, in that order. Run them before finishing. Run one build at a time: stop `npm start` before `npm run build`, they write the same directory. Run `npm test` after `npm run build`, not after a dev rebuild: in dev, Vite serves `/reader.js` and `public/` itself, so `book/html` lacks them and the site test reports broken links. mdBook and its preprocessors (mdbook-admonish, mdbook-katex, mdbook-linkcheck) must be on `PATH`.
+Automatic CI runs `npm ci`, `npm run check`, `npm run build`, `npm test`, in that order, without installing or launching browsers. Run them before finishing. Run one build at a time: stop `npm start` before `npm run build`, they write the same directory. Run `npm test` after `npm run build`, not after a dev rebuild: in dev, Vite serves `/reader.js` and `public/` itself, so `book/html` lacks them and the site test reports broken links. mdBook and its preprocessors (mdbook-admonish, mdbook-katex, mdbook-linkcheck) must be on `PATH`.
 
 ## Rules
 
@@ -155,12 +156,14 @@ Every file is a template for the next change, so comments carry the reasoning a 
 
 ## Tests
 
+The **📚 Extended browser tests** GitHub workflow runs only through `workflow_dispatch` (Actions → 📚 Extended browser tests → Run workflow), using the development container and `npm run test:browser`. Push and pull-request checks run only the non-browser suite.
+
 - `dev.test.ts`: startup waits for a complete initial edition build; a real watched edit triggers a rebuild, including Windows paths.
 - `public-assets.test.ts`: chapter-relative image paths for native print rendering, literal code preservation, exact HTML source attributes and reference images; a native preprocessor fixture checks admonitions in chapter and print pages.
 - `site.test.ts`: the built site against the editions derived from mdBook's book JSON (`book-json.ts` renderer): pages, `lang`/`dir`, titles, links, assets and anchors, the magic world's book and routes, and each magic chapter's HTML equal to mdBook's page content, plus broken-copy negative tests.
 - `translations.test.ts`: each translation keeps its English chapter's code, math, link targets, media and heading levels.
-- `build.test.ts`: two complete mdBook + Vite builds are identical; a failed app bundle preserves the previous site. `mdbook.test.ts` checks directory replacement and rollback.
-- `browser.test.ts`: the magic world and entrance in Chromium, Firefox and WebKit, plus Android/iPhone simulations, against `vite preview`. The real world is mdBook's page, covered by `site.test.ts`. Routes come from `expectedSite()`; no copied page list. `npm test` requires all three pinned Playwright engines (`npx playwright install chromium firefox webkit`); missing engines fail instead of skipping. `ALUX_BROWSER_PROFILE` optionally selects one named profile for diagnosis. Media playback is stubbed in the page, so no audio device is needed. Visual design and physical-device acceptance are not asserted.
+- `build.test.ts`: two complete mdBook + Vite builds are identical; a failed app bundle preserves the previous site. `mdbook.test.ts` checks directory replacement and rollback. `stpageflip-adapter.test.ts` checks the pinned dependency version without a browser; `browser/stpageflip-adapter.test.ts` checks the installed HTML engine and broken-hook counterexamples in the extended suite.
+- `browser/reader.test.ts` (extended suite): the magic world and entrance in Chromium, Firefox and WebKit, plus Android/iPhone simulations, against `vite preview`. The real world is mdBook's page, covered by `site.test.ts`. Routes come from `expectedSite()`; no copied page list. `npm run test:browser` requires all three pinned Playwright engines (`npx playwright install chromium firefox webkit`); missing engines fail instead of skipping. `ALUX_BROWSER_PROFILE` optionally selects one named profile for diagnosis. Media playback is stubbed in the page, so no audio device is needed. Visual design and physical-device acceptance are not asserted.
 
 A new check goes into `verifySite` or `protectedContent` together with a negative test. Derive expected routes from `expectedSite()`; never hardcode a page list.
 

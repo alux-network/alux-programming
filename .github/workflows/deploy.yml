@@ -49,7 +49,6 @@ jobs:
     - name: 🔨 Build
       run: |
         npm ci
-        npx playwright install --with-deps chromium firefox webkit
         npm run check
         npm run build
         npm test

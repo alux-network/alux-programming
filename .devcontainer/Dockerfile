@@ -1,4 +1,4 @@
-# Development image for VS Code Dev Containers: everything `npm start` and `npm test` need.
+# Development image for VS Code Dev Containers: everything development and extended browser tests need.
 # Tool versions match .github/workflows/deploy.yml; change both together.
 
 # mdBook and its preprocessors, built once; only the binaries reach the final image.

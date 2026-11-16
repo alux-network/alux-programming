@@ -9,8 +9,8 @@ import { chromium, devices, firefox, webkit } from 'playwright';
 import type { Browser, BrowserContext, BrowserContextOptions, BrowserType, Page } from 'playwright';
 import { preview } from 'vite';
 import type { PreviewServer } from 'vite';
-import { uiStrings } from '../i18n.ts';
-import { expectedSite } from './site.ts';
+import { uiStrings } from '../../i18n.ts';
+import { expectedSite } from '../site.ts';
 
 const editions = await expectedSite();
 const english = editions.find((e) => e.lang === 'en')!;

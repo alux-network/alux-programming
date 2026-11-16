@@ -30,7 +30,7 @@ cargo install mdbook-katex --version 0.9.4 --locked
 cargo install mdbook-linkcheck --version 0.7.7 --locked
 ```
 
-Alternatively, open the repository in VS Code with the Dev Containers extension and choose "Reopen in Container". `.devcontainer/` builds an image with Node 24, mdBook and its preprocessors, and the Playwright browsers `npm test` needs; `npm ci` runs on creation and port 3478 is forwarded for `npm start`.
+Alternatively, open the repository in VS Code with the Dev Containers extension and choose "Reopen in Container". `.devcontainer/` builds an image with Node 24, mdBook and its preprocessors, and the Playwright browsers `npm run test:browser` needs; `npm ci` runs on creation and port 3478 is forwarded for `npm start`.
 
 ### Reading
 
@@ -67,14 +67,22 @@ npm run check    # type-check web/ and vite.config.ts
 After `npm run build` (and not while `npm start` is running, since both write `book/html`):
 
 ```sh
-npx playwright install chromium firefox webkit   # once per Playwright version
 npm test
 ```
 
 - **Site** (`web/test/site.test.ts`): the expected site comes from mdBook's own book for every edition (a renderer, `web/test/book-json.ts`, saves the book mdBook parsed, after the translation preprocessor). Every chapter page must exist in every edition with its `lang`, `dir` and title, no unexpected page may exist, and every link, anchor and asset must resolve. Negative tests check that a missing edition, wrong language or direction, removed or extra page, renamed chapter, broken anchor, missing asset and wrong title are each reported.
 - **Translations** (`web/test/translations.test.ts`): every `chapter.<lang>.md` keeps its English chapter's code blocks, math, link targets, embedded media and heading levels.
 - **Build** (`web/test/build.test.ts`): two complete mdBook + Vite builds are identical; a failed app bundle preserves the previous site.
-- **Browser** (`web/test/browser.test.ts`): the magic world and its entrance on desktop Chromium, Firefox and WebKit, plus iPad Mini/WebKit, Pixel 7/Chromium and iPhone 13/WebKit simulations: edition choice, both world entries, chapter order in every edition, page turns across chapters, RTL keys, remembered position, text size and mode, history, fragments, rendered math and callouts, CJK search, bookmarks, language switching and music. The real world is mdBook's own page, covered by the site test. Missing engines fail the run. Set `ALUX_BROWSER_PROFILE` to a name from the profile list in that test file to diagnose just that profile.
+The default suite runs without browsers and is the suite used by CI. Run the extended browser checks separately:
+
+```sh
+npx playwright install --with-deps chromium firefox webkit   # once per Playwright version
+npm run test:browser
+```
+
+To run these checks on GitHub, open **Actions → 📚 Extended browser tests → Run workflow** and select the branch. This manual workflow uses the development container's pinned tools and browser engines. The workflow must be present on the default branch for GitHub to offer the button.
+
+- **Browser** (`web/test/browser/reader.test.ts`): the magic world and its entrance on desktop Chromium, Firefox and WebKit, plus iPad Mini/WebKit, Pixel 7/Chromium and iPhone 13/WebKit simulations: edition choice, both world entries, chapter order in every edition, page turns across chapters, RTL keys, remembered position, text size and mode, history, fragments, rendered math and callouts, CJK search, bookmarks, language switching and music. The real world is mdBook's own page, covered by the site test. Missing engines fail the run. Set `ALUX_BROWSER_PROFILE` to a name from the profile list in that test file to diagnose just that profile.
 
 The site must be served from the server root, because the files in `public/` are linked from it (`/wizard-standing.webp`, `/audio/…`).
 
@@ -111,7 +119,7 @@ src/**/*.<lang>.md  translations, next to their English chapter
 theme/          head.hbs (loads /real.js), CSS, favicons, mdbook-admonish assets
 web/            TypeScript: languages.ts, i18n.ts, localize.ts (translation preprocessor), magic-book.ts (JSON renderer), mdbook.ts (builds every edition), real.ts
 web/magic/      the magic world's React app: main.tsx (routes), Gateway.tsx, Reader.tsx (markup), chapter.ts (paging and folds), reader.css
-web/test/       site, translation, build and browser tests (`npm test`)
+web/test/       non-browser tests (`npm test`) and browser/ (`npm run test:browser`)
 public/         images, fonts, art, audio and social cards, copied once to the site root
 vite.config.ts  build: mdBook editions, then the magic app and /real.js; dev server with rebuild and reload
 book.toml       mdBook config: preprocessors (localize, admonish, katex), linkcheck, HTML output
@@ -127,7 +135,7 @@ book/           generated output (git-ignored)
 
 ## Publishing
 
-On every push to `master`, GitHub Actions ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)) runs `npm ci`, `npm run check`, `npm run build` and `npm test`, and publishes `book/html` to the `github-pages` branch. Pull requests targeting `master` or `npm-ws`, and pushes to `fix/**`, run the same checks without publishing. CI installs all three Playwright engines and their system dependencies; only pushes to `master` publish.
+On every push to `master`, GitHub Actions ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)) runs `npm ci`, `npm run check`, `npm run build` and `npm test`, and publishes `book/html` to the `github-pages` branch. Pull requests targeting `master` or `npm-ws`, and pushes to `fix/**`, run the same checks without publishing. Automatic CI runs only non-browser tests and does not install Playwright browsers. Extended browser checks run separately with `npm run test:browser` or the manual **📚 Extended browser tests** workflow; only pushes to `master` publish.
 
 ## Contributors
 
