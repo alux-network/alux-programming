@@ -104,22 +104,32 @@ export function prepareCode(main: HTMLElement, lang: Language, signal: AbortSign
   notice.className = 'code-copy-notice';
   notice.setAttribute('role', 'status');
   let reset: ReturnType<typeof setTimeout>;
+  let noticeButton: HTMLElement | undefined;
+  /** Keeps visible feedback attached to its button as click-induced scrolling settles. */
+  function placeCopyNotice() {
+    if (!notice.isConnected || !noticeButton) return;
+    const anchor = noticeButton.getBoundingClientRect();
+    if (!noticeButton.isConnected || anchor.bottom <= 0 || anchor.top >= innerHeight) {
+      notice.remove();
+      return;
+    }
+    const { width, height } = notice.getBoundingClientRect();
+    notice.style.left = Math.max(8, Math.min(innerWidth - width - 8, anchor.right - width)) + 'px';
+    notice.style.top = Math.max(8, Math.min(innerHeight - height - 8, anchor.top - height - 8)) + 'px';
+  }
   /** Shows copy feedback outside the clipped columns and above the book's frame. */
   function showCopyNotice(button: HTMLElement, message: string) {
     if (signal.aborted) return;
     clearTimeout(reset);
     notice.textContent = message;
+    noticeButton = button;
     document.body.append(notice);
-    const anchor = button.getBoundingClientRect();
-    const width = notice.getBoundingClientRect().width;
-    notice.style.left = Math.max(8, Math.min(innerWidth - width - 8, anchor.right - width)) + 'px';
-    notice.style.top = Math.max(8, anchor.top - notice.getBoundingClientRect().height - 8) + 'px';
+    placeCopyNotice();
     reset = setTimeout(() => notice.remove(), 1800);
   }
-  const hideNotice = () => notice.remove();
-  // Scroll and relayout invalidate the button's viewport coordinates.
-  addEventListener('scroll', hideNotice, { capture: true, passive: true, signal });
-  addEventListener('resize', hideNotice, { signal });
+  // Browser scrolling after a click must not erase the acknowledgement before it can be read.
+  addEventListener('scroll', placeCopyNotice, { capture: true, passive: true, signal });
+  addEventListener('resize', placeCopyNotice, { signal });
   signal.addEventListener('abort', () => { clearTimeout(reset); notice.remove(); }, { once: true });
   const codes = [...main.querySelectorAll('code')].filter((code) => !code.parentElement!.classList.contains('header'));
   if (typeof hljs !== 'undefined') {

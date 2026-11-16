@@ -213,23 +213,32 @@ for (const profile of selected) {
       await visit();
       await read(page, 'en/' + longChapter);
       await page.click('#page-next');
+      await page.waitForFunction(() => / · (\d+)/.exec(document.getElementById('folio')!.textContent!)![1] !== '1');
       assert.ok((await folio(page)).first > 1, 'starts with progress to reset');
       await sidebar(page);
       const chapterLink = page.locator(`#sidebar .chapter a[href="/magic/en/${longChapter}"]`);
       await chapterLink.click();
+      await chapterReady(page);
       assert.equal((await folio(page)).first, 1, 'selecting the current chapter resets it');
 
       await page.click('#page-next');
+      await page.waitForFunction(() => / · (\d+)/.exec(document.getElementById('folio')!.textContent!)![1] !== '1');
       assert.ok((await folio(page)).first > 1);
       await sidebar(page);
-      await page.locator('#sidebar .chapter a').first().click();
+      // The introductory affix is hidden because the logo already names the book.
+      const otherChapter = page.locator('#sidebar .chapter a:not(.active):visible').first();
+      const otherUrl = await otherChapter.getAttribute('href');
+      await otherChapter.click();
+      await page.waitForURL(base + otherUrl);
       await chapterReady(page);
       await sidebar(page);
       await chapterLink.click();
+      await page.waitForURL(`${base}/magic/en/${longChapter}`);
       await chapterReady(page);
       assert.equal((await folio(page)).first, 1, 'returning through the sidebar ignores saved progress');
 
       await page.click('#reading-mode');
+      await settled(page);
       await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
       await page.waitForFunction(() => scrollY > 0);
       await sidebar(page);
@@ -310,19 +319,23 @@ for (const profile of selected) {
       await listing.hover();
       await listing.locator('.clip-button').click();
       assert.equal(await page.evaluate(() => (window as any).copiedCode), source, 'copy excludes execution results');
+      await page.evaluate(() => dispatchEvent(new Event('scroll')));
       const notice = page.locator('body > .code-copy-notice');
       await notice.waitFor();
       assert.equal(await notice.textContent(), 'Copied');
-      assert.ok(await notice.evaluate(node => {
+      const feedback = await notice.evaluate(node => {
         const box = node.getBoundingClientRect();
-        return getComputedStyle(node).position === 'fixed' &&
-          Number(getComputedStyle(node).zIndex) > (parseInt(getComputedStyle(document.querySelector('.volume')!).zIndex) || 0) &&
-          box.top >= 0 && box.bottom <= innerHeight;
-      }), 'feedback escapes the clipped chapter and stays within the viewport');
+        return { position: getComputedStyle(node).position, layer: Number(getComputedStyle(node).zIndex),
+          frame: parseInt(getComputedStyle(document.querySelector('.volume')!).zIndex) || 0,
+          top: box.top, bottom: box.bottom, viewport: innerHeight };
+      });
+      assert.ok(feedback.position === 'fixed' && feedback.layer > feedback.frame && feedback.top >= 0 && feedback.bottom <= feedback.viewport,
+        'feedback escapes the clipped chapter and stays within the viewport: ' + JSON.stringify(feedback));
       response = '';
       await listing.locator('.play-button').click();
       await page.waitForFunction(() => document.querySelector('pre.playground > .result')?.textContent === 'No output');
-      await page.route('https://play.rust-lang.org/evaluate.json', route => route.abort());
+      // An invalid response exercises failure feedback without an intentional network console error.
+      await page.route('https://play.rust-lang.org/evaluate.json', route => route.fulfill({ contentType: 'application/json', body: 'invalid JSON' }));
       await listing.locator('.play-button').click();
       await page.waitForFunction(() => document.querySelector('pre.playground > .result')?.textContent?.startsWith('Playground Communication:'));
     });
