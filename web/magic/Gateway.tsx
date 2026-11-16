@@ -52,8 +52,7 @@ function Gateway({ lang }: { lang: Language }) {
   const choose = (world: 'magic' | 'real') => {
     const prefs = loadPrefs();
     prefs.world = world;
-    // Magic entry enables the reading music; real entry leaves it off.
-    prefs.music = world === 'magic';
+    // The music controller owns its default; choosing a world preserves the reader's preference.
     savePrefs(prefs);
     if (world === 'magic') navigate(`/${lang}/index.html`);
     else location.assign(realUrl(lang));

@@ -101,7 +101,7 @@ The book has two worlds, chosen at the entrance (`/magic/<lang>/`):
 - **Real world:** mdBook's own site, unchanged except that the header title links to the entrance.
 - **Magic world:** a React app at `/magic/<lang>/<chapter>.html` that reads the edition's book JSON and shows it as a bound two-page volume, in mdBook's page structure styled by mdBook's stylesheets and `web/magic/reader.css`. CSS columns lay the chapter out as pages; arrow keys, Page Up/Down, Space and the buttons below the book turn a spread with a soft paper fold (StPageFlip), and turning past the last page folds into the next chapter. Callouts, math and code are rendered by mdbook-admonish, mdbook-katex and mdBook's highlight.js, as in the real world.
 
-Text size, bookmarks, reading music and the language picker are in the magic world's toolbar and sidebar. Preferences and bookmarks are stored in the browser (`localStorage`).
+Text size, bookmarks, reading music and the language picker are in the magic world's toolbar and sidebar. Preferences and bookmarks are stored in the browser (`localStorage`). Music defaults to on in magic; its on/off choice is remembered across visits and world choices.
 
 ## Repository layout
 

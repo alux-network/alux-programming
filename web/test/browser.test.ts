@@ -402,6 +402,26 @@ for (const profile of selected) {
       await page.waitForURL(`${base}/de/${longChapter}`);
     });
 
+    test('world choices preserve both music preferences across visits', async () => {
+      await visit();
+      await read(page, 'en/index.html');
+      assert.equal(await page.locator('#music-toggle').getAttribute('aria-pressed'), 'true', 'music defaults to on');
+      for (const enabled of [false, true]) {
+        await page.click('#music-toggle');
+        assert.equal(await page.locator('#music-toggle').getAttribute('aria-pressed'), String(enabled));
+        await page.goto(base + '/magic/en/');
+        await page.locator('[data-world="real"]').click();
+        await page.waitForURL(base + '/index.html');
+        assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('alux-reader')!).music), enabled, 'real entry preserves the music preference');
+        await page.goto(base + '/magic/en/');
+        await page.locator('[data-world="magic"]').click();
+        await chapterReady(page);
+        await page.waitForFunction(expected => document.getElementById('music-toggle')?.getAttribute('aria-pressed') === String(expected), enabled);
+        await read(page, 'en/index.html');
+        assert.equal(await page.locator('#music-toggle').getAttribute('aria-pressed'), String(enabled), 'a reload retains the preference');
+      }
+    });
+
     test('music toggles and continues across chapters', async () => {
       await visit();
       await read(page, 'en/index.html');
