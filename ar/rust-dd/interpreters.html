@@ -1,0 +1,421 @@
+<!DOCTYPE HTML>
+<html lang="ar" class="light sidebar-visible" dir="rtl">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>المفسرات والآثار - ALUX Programming</title>
+
+
+        <!-- Custom HTML head -->
+        <meta property="og:title" content="المفسرات والآثار - ALUX Programming">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-ar.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <script src="/real.js" defer></script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-57e8465c.svg">
+        <link rel="shortcut icon" href="../favicon-b7d566ae.png">
+        <link rel="stylesheet" href="../css/variables-3865ffda.css">
+        <link rel="stylesheet" href="../css/general-4c35105a.css">
+        <link rel="stylesheet" href="../css/chrome-c0e702bf.css">
+        <link rel="stylesheet" href="../css/print-ad67d350.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome-799aeb25.css">
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight-56612340.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index-7d56cdd4.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish-ef18b366.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-a2954f14.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-c742d10b.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ALUX Programming</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming/edit/master/src/rust-dd/interpreters.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"المفسرات والآثار","sourceHash":"sha256:4ca52b24121e8361c8cc8983e3807794110bade03c63105c1609e60eb9554b93"} -->
+<h1 id="interpreters-and-effects"><a class="header" href="#interpreters-and-effects">المفسرات والآثار</a></h1>
+<div id="admonition-ذات-صلة" class="admonition admonish-tip" role="note" aria-labelledby="admonition-ذات-صلة-title">
+<div class="admonition-title">
+<div id="admonition-ذات-صلة-title">
+<p>ذات صلة</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-ذات-صلة"></a>
+</div>
+<div>
+<p>المنظور الدلالي: <a href="../denotational-design/laws-and-interpretations.html">القوانين والتفسيرات</a><br />
+التصميم انطلاقًا من المعنى في Rust: <a href="capability-algebras.html">جبر القدرات</a>، <a href="laws.html">القوانين والسيناريوهات والأدلة</a><br />
+المفاهيم: <a href="../concepts/free_monad.html">الموناد الحر</a><br />
+الرؤى: <a href="../insights/evm-alg.html">جبر EVM</a></p>
+</div>
+</div>
+<div id="admonition-تمهيد" class="admonition admonish-note" role="note" aria-labelledby="admonition-تمهيد-title">
+<div class="admonition-title">
+<div id="admonition-تمهيد-title">
+<p>تمهيد</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-تمهيد"></a>
+</div>
+<div>
+<p>يختار المفسر تمثيلًا أو أثرًا للقدرة. ويحقق العمليات الأولية من دون إعادة تعريف سلوك المجال المشتق فوقه، بحيث تصح القوانين نفسها عبر كل المفسرات.</p>
+</div>
+</div>
+<p>يحقق المفسر قدرة دلالية بتمثيل ملموس أو أثر. وينبغي أن يختار الآليات من دون إعادة تعريف سلوك المجال.</p>
+<h2 id="a-thin-interpreter"><a class="header" href="#a-thin-interpreter">مفسر خفيف</a></h2>
+<p>قد يكون تمثيل الفروع بمسار من البتات كما يلي:</p>
+<pre><code class="language-rust noplayground">#[derive(Clone, Debug, PartialEq, Eq)]
+struct BitBranch(Vec&lt;Direction&gt;);
+
+struct BitBranchImpl;
+
+impl BranchAlg for BitBranchImpl {
+    type Branch = BitBranch;
+
+    fn branch_root(&amp;self) -&gt; Self::Branch {
+        BitBranch(Vec::new())
+    }
+
+    fn branch_grow(&amp;self, branch: &amp;Self::Branch, direction: Direction) -&gt; Self::Branch {
+        let mut grown = branch.0.clone();
+        grown.push(direction);
+        BitBranch(grown)
+    }
+
+    fn branch_path(&amp;self, ancestor: &amp;Self::Branch, descendant: &amp;Self::Branch) -&gt; Option&lt;Vec&lt;Direction&gt;&gt; {
+        descendant.0.strip_prefix(&amp;ancestor.0[..]).map(&lt;[Direction]&gt;::to_vec)
+    }
+}</code></pre>
+<p>يخزن التنفيذ الوقائع الأولية ويلاحظها. وتبقى <code>branch_left</code> و<code>branch_right</code> و<code>branch_is_ancestor</code> ضمن الامتداد المشترك.</p>
+<h2 id="interpreters-are-boundary-relative"><a class="header" href="#interpreters-are-boundary-relative">المفسرات نسبية إلى الحدود</a></h2>
+<p>قد يكون النوع نفسه مفسرًا عند حد ومدخلًا دلاليًا عند حد آخر.</p>
+<div class="table-wrapper"><table><thead><tr><th>الحد</th><th>يستهلك</th><th>يفسر</th></tr></thead><tbody>
+<tr><td>مهايئ نظام الملفات</td><td>الوصول إلى نظام الملفات</td><td>البحث عن المصدر</td></tr>
+<tr><td>بيئة المُطبِّع</td><td>البحث عن المصدر بوصفه قدرة أولية</td><td>إنشاء اللغة المطبّعة</td></tr>
+<tr><td>مسار المترجم</td><td>مصطلحات مطبّعة</td><td>إنشاء ملف تنفيذي</td></tr>
+</tbody></table>
+</div>
+<p>لا توجد «طبقة تنفيذ» عامة واحدة، بل حدود دلالية متداخلة.</p>
+<h2 id="effects-at-the-edge"><a class="header" href="#effects-at-the-edge">الآثار عند الأطراف</a></h2>
+<p>يملك المفسر الملموس خيارات من قبيل:</p>
+<ul>
+<li>تخطيط قاعدة البيانات</li>
+<li>بيئة التشغيل غير المتزامنة</li>
+<li>ملكية المهام</li>
+<li>استراتيجية إعادة المحاولة</li>
+<li>أنواع إطار عمل HTTP أو RPC</li>
+<li>التسلسل</li>
+<li>الأقفال والقنوات</li>
+<li>التخزين المؤقت</li>
+</ul>
+<p>أبقِ هذه الخيارات خارج السمات الدلالية ما لم يحتج المستدعون إلى ملاحظتها.</p>
+<p>مثلًا، يمكن لقدرة مصدر دلالية أن تعيد قيمة مصدر وخطأً. وقد يخزّن مفسر الإنتاج الملفات مؤقتًا ويجري قراءات غير متزامنة. وقد يستخدم مفسر الاختبار خريطة غير قابلة للتعديل. ينبغي لمنطق التطبيع المشتق العمل مع كليهما.</p>
+<h2 id="runtime-ownership"><a class="header" href="#runtime-ownership">ملكية بيئة التشغيل</a></h2>
+<p>تتطلب معاودات الاتصال في الأطر غالبًا حالة مملوكة وقابلة للاستنساخ وآمنة للخيوط. وهذا قيد على المفسر وليس بالضرورة قيدًا على المجال.</p>
+<div id="admonition-أبقِ-حوامل-الأطر-خارج-العمليات-الأولية" class="admonition admonish-warning" role="note" aria-labelledby="admonition-أبقِ-حوامل-الأطر-خارج-العمليات-الأولية-title">
+<div class="admonition-title">
+<div id="admonition-أبقِ-حوامل-الأطر-خارج-العمليات-الأولية-title">
+<p>أبقِ حوامل الأطر خارج العمليات الأولية</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-أبقِ-حوامل-الأطر-خارج-العمليات-الأولية"></a>
+</div>
+<div>
+<p>تجنب تلويث العملية الأولية بحوامل إطار العمل:</p>
+<pre><code class="language-rust noplayground">async fn status(data: FrameworkData&lt;Arc&lt;AppState&gt;&gt;) -&gt; FrameworkJson&lt;Status&gt;;</code></pre>
+</div>
+</div>
+<p>فضّل التطبيق الدلالي:</p>
+<pre><code class="language-rust noplayground">trait StatusAlg {
+    type Status;
+
+    async fn status(&amp;self) -&gt; Self::Status;
+}</code></pre>
+<p>يمكن لمفسر الويب اختيار <code>Arc&lt;Context&gt;</code> واستخراج مدخلات الطلب واستدعاء <code>status</code> وتحويل النتيجة. ولا يحتاج مستدعو المجال إلى معرفة وجود خادم ويب.</p>
+<h2 id="neutral-interpreters"><a class="header" href="#neutral-interpreters">مفسرات محايدة</a></h2>
+<p>لا يحتاج كل مفسر إلى تنفيذ الآثار.</p>
+<p>يمكن لمفسر نصي لبرنامج API تسجيل:</p>
+<div class="table-wrapper"><table><thead><tr><th>الأسلوب</th><th>المسار</th><th>المدخل</th><th>المخرج</th></tr></thead><tbody>
+<tr><td><code>GET</code></td><td><code>/status</code></td><td>—</td><td>JSON <code>Status</code></td></tr>
+<tr><td><code>POST</code></td><td><code>/temperature</code></td><td>JSON <code>f32</code></td><td>JSON <code>Status</code></td></tr>
+</tbody></table>
+</div>
+<p>يمكن لمفسر البيانات الوصفية إنشاء التوثيق. ويمكن لمفسر الاختبار جمع أسماء العمليات. ويمكن لمفسر الإنتاج بناء مسارات الخادم.</p>
+<p>تُظهر المفسرات المحايدة أن البرنامج يحمل معنى مستقلًا عن بيئة تشغيل واحدة.</p>
+<h2 id="composing-interpreters-by-delegation"><a class="header" href="#composing-interpreters-by-delegation">تركيب المفسرات بالتفويض</a></h2>
+<p>لأن المعنى يعيش في سمات قدرات صغيرة، يُ<em>ركَّب</em> المفسر عادةً بدلًا من كتابته كاملًا. ويكتسب الحامل قدرة بالتفويض إلى مكوّن يوفّرها مسبقًا، لذلك يُولَّد التمرير ولا يُكتب يدويًا. وتغطي صيغتان معظم الحالات.</p>
+<p><strong>مرّر القدرة إلى حقل.</strong> يمرر <code>#[derive(Delegate)]</code> الخاص بمكتبة ambassador سمة كاملة إلى قيمة داخلية. ويفوض الحامل الذي يحتفظ بعدة مكونات كل قدرة إلى الحقل الذي يملكها، بلا أجسام تمرير:</p>
+<pre><code class="language-rust noplayground">#[derive(Delegate)]
+#[delegate(Clock, target = "clock")]
+#[delegate(Logger, target = "logger")]
+struct Service {
+    clock: SystemClock,
+    logger: StdoutLogger,
+}</code></pre>
+<p><strong>امنح قدرة عبر دالة getter.</strong> أعطِ النوع دالة getter واحدة، ثم يوفر تنفيذ شامل القدرة كاملة لكل نوع يملك تلك الدالة:</p>
+<pre><code class="language-rust noplayground">trait Logger {
+    fn log(&amp;self, message: &amp;str);
+}
+
+trait HasLogger {
+    type Logger;
+
+    fn logger(&amp;self) -&gt; &amp;Self::Logger;
+}
+
+// Any carrier that can hand back a logger is itself a `Logger`.
+impl&lt;T&gt; Logger for T
+where
+    T: HasLogger,
+    T::Logger: Logger,
+{
+    fn log(&amp;self, message: &amp;str) {
+        self.logger().log(message)
+    }
+}</code></pre>
+<p>ونتيجة لذلك، لا تعود الحاجة قائمة إلى إنشاء كثير من البنى. يتحول كائن السياق أحادي البنية — سمة كبيرة تحمل عدة أنواع مرتبطة وعشرات الأساليب، إضافة إلى تنفيذها الملموس الوحيد — إلى حفنة من سمات القدرات الصغيرة وحامل خفيف يفوض كل قدرة إلى الحقل أو دالة getter التي توفرها. وتُكتب العمليات المشتقة، مثل التحقق مما إذا انقضى الموعد النهائي، مرة واحدة كامتدادات فوق العناصر الأولية بدلًا من إعادة تنفيذها في كل حامل.</p>
+<div id="admonition-التفويض-يمرر-العمليات-لا-المعنى" class="admonition admonish-warning" role="note" aria-labelledby="admonition-التفويض-يمرر-العمليات-لا-المعنى-title">
+<div class="admonition-title">
+<div id="admonition-التفويض-يمرر-العمليات-لا-المعنى-title">
+<p>التفويض يمرر العمليات لا المعنى</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-التفويض-يمرر-العمليات-لا-المعنى"></a>
+</div>
+<div>
+<p>يزيل التفويض المولّد الشيفرة النمطية، لكنه لا يثبت قابلية الاستبدال الدلالي. فالماكرو <code>derive</code> مثل <code>#[derive(Delegate)]</code> في مكتبة ambassador يثبت أن التنفيذات تُترجم، لا أن الحامل يدل على المفسر نفسه. وإذا كان من المفترض أن يحل <code>Shared&lt;T&gt;(Arc&lt;T&gt;)</code> محل <code>T</code>، فتحقّق من القوانين على الحامل — فقد يمرر غلاف يغيّر المشاركة أو الهوية (<code>Arc</code> أو التجميع أو التخزين المؤقت) كل أسلوب على نحو صحيح، ومع ذلك يخرق قانون الجِدّة أو التفرد. وعندما لا يفعل الحامل سوى تخزين <code>T</code> بين خدمات لا صلة لها، يكون الإسقاط أصدق من التفويض.</p>
+</div>
+</div>
+<h2 id="errors-belong-to-a-boundary"><a class="header" href="#errors-belong-to-a-boundary">الأخطاء تنتمي إلى حد</a></h2>
+<p>ينبغي للأخطاء أن تعبّر عن معنى الإخفاق عند الحد الذي يعالجه.</p>
+<div class="table-wrapper"><table><thead><tr><th>الخطأ</th><th>الترجمة عند الحد</th></tr></thead><tbody>
+<tr><td>خطأ المجال</td><td>يحوّله مفسر النقل إلى استجابة بروتوكول</td></tr>
+<tr><td>خطأ التحليل</td><td>تحوّله واجهة المترجم الأمامية إلى تشخيص</td></tr>
+<tr><td>خطأ التخزين</td><td>يحوّله مفسر المصدر إلى إخفاق دلالي للمصدر</td></tr>
+</tbody></table>
+</div>
+<p>لا تفرض رموز حالة HTTP أو كائنات أخطاء RPC أو أخطاء قاعدة البيانات على سمات المجال الأولية. ترجمها عند حدود المفسر.</p>
+<h2 id="performance-is-an-interpretation-concern-until-observed"><a class="header" href="#performance-is-an-interpretation-concern-until-observed">الأداء شأن تفسيري ما لم يُلاحَظ</a></h2>
+<p>تنتمي الدفعات والتوازي والتخزين المؤقت وتخطيط البيانات عادةً إلى المفسرات. ولا تصبح دلالية إلا عندما تضمن المواصفة ترتيبًا أو توقيتًا أو استخدامًا للموارد أو إنصافًا أو سلوك إخفاق قابلًا للملاحظة.</p>
+<p>يتيح هذا الفصل التحسين من دون انحراف دلالي:</p>
+<ul>
+<li>القوانين نفسها</li>
+<li>الملاحظات المعلنة نفسها</li>
+<li>استراتيجية تشغيل مختلفة</li>
+</ul>
+<h2 id="review-checks"><a class="header" href="#review-checks">فحوص المراجعة</a></h2>
+<ul>
+<li>هل ينفذ المفسر العناصر الأولية بدلًا من تكرار الاشتقاقات؟</li>
+<li>هل تُحصر قيود بيئة التشغيل وإطار العمل عند الحد المستهلك؟</li>
+<li>هل يمكن لمفسر محايد أو مفسر اختبار تنفيذ القدرة نفسها؟</li>
+<li>هل تُترجم أخطاء النقل والتخزين عند الطرف؟</li>
+<li>هل التفويض صادق دلاليًا؟</li>
+<li>هل فروق الأداء غير قابلة للملاحظة وفق الدلالة المعلنة؟</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../rust-dd/derived-meaning.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../rust-dd/laws.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../rust-dd/derived-meaning.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../rust-dd/laws.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-9aeb6ddf.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-9576a2db.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

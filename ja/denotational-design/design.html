@@ -1,0 +1,400 @@
+<!DOCTYPE HTML>
+<html lang="ja" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Denotational Design - ALUX Programming</title>
+
+
+        <!-- Custom HTML head -->
+        <meta property="og:title" content="Denotational Design - ALUX Programming">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-ja.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <script src="/real.js" defer></script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-57e8465c.svg">
+        <link rel="shortcut icon" href="../favicon-b7d566ae.png">
+        <link rel="stylesheet" href="../css/variables-3865ffda.css">
+        <link rel="stylesheet" href="../css/general-4c35105a.css">
+        <link rel="stylesheet" href="../css/chrome-c0e702bf.css">
+        <link rel="stylesheet" href="../css/print-ad67d350.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome-799aeb25.css">
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight-56612340.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index-7d56cdd4.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish-ef18b366.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-749a9f9c.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-2c3f5053.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ALUX Programming</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming/edit/master/src/denotational-design/design.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"Denotational Design","sourceHash":"sha256:bac0e12637b9f63a8fa1002e44ca58f04237a81e1bc18da343cf22e360a85e8e"} -->
+<h1 id="denotational-design"><a class="header" href="#denotational-design">Denotational Design</a></h1>
+<div id="admonition-関連項目" class="admonition admonish-tip" role="note" aria-labelledby="admonition-関連項目-title">
+<div class="admonition-title">
+<div id="admonition-関連項目-title">
+<p>関連項目</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-関連項目"></a>
+</div>
+<div>
+<p>意味論的な見方：<a href="denotations.html">表示と合成性</a>、<a href="laws-and-interpretations.html">法則と解釈</a><br />
+Rustで意味から設計する：<a href="../rust-dd/capability-algebras.html">ケイパビリティ代数</a>、<a href="../rust-dd/derived-meaning.html">導出される意味と合成</a></p>
+</div>
+</div>
+<div id="admonition-中心となる考え方" class="admonition admonish-note" role="note" aria-labelledby="admonition-中心となる考え方-title">
+<div class="admonition-title">
+<div id="admonition-中心となる考え方-title">
+<p>中心となる考え方</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-中心となる考え方"></a>
+</div>
+<div>
+<p>Denotational Designでは、単純で合成可能かつ実装に依存しない意味からプログラミングインターフェースを導きます。後付けでインターフェースを説明するのではなく、意味論を設計の指針とします。</p>
+</div>
+</div>
+<p>Denotational Designとは、単純で合成可能かつ実装に依存しない意味から、プログラミングインターフェースを導く実践です。</p>
+<p>この方法論は<a href="http://conal.net/">Conal Elliott</a>が開発し、命名しました。中心となるのは、既存の言語やAPIに意味論を割り当てることだけではありません。意味論をAPIそのものの設計指針にすることです。</p>
+<h2 id="the-design-loop"><a class="header" href="#the-design-loop">設計の反復手順</a></h2>
+<p>次の順序で進めます。</p>
+<ol>
+<li>意味論的領域を選ぶ。</li>
+<li>その領域で重要な構造を特定する。</li>
+<li>基本操作の小さな語彙を選ぶ。</li>
+<li>有用な操作を合成的に導出する。</li>
+<li>それらの操作が従う法則を述べる。</li>
+<li>一つまたは複数の表現を選ぶ。</li>
+<li>構造を保持する解釈を実装する。</li>
+<li>法則、モデル、シナリオを使って妥当性を確認する。</li>
+</ol>
+<p>表現先行の設計では、一般に手順6から始め、後から手順1〜5を再構成しようとします。</p>
+<h2 id="designing-a-branch-algebra"><a class="header" href="#designing-a-branch-algebra">分岐代数を設計する</a></h2>
+<p>分岐位置に戻りましょう。求める意味は、二分岐構造における有限経路です。</p>
+<p>基本代数の一例は次のとおりです。</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:4.5em;vertical-align:-2em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.5em;"><span style="top:-4.66em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mord mathrm">root</span></span></span></span><span style="top:-3.16em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">grow</span></span></span></span><span style="top:-1.66em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mord mathrm">path</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.5em;"><span style="top:-4.66em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace nobreak"></span><span class="mspace" style="margin-right:0.1111em;"></span><span class="mpunct"></span><span class="mspace" style="margin-right:-0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mrel">:</span></span><span class="mspace" style="margin-right:0.3333em;"></span><span class="mord"><span class="mopen">(</span><span class="mclose">)</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord"><span class="mord mathsf">Branch</span></span></span></span><span style="top:-3.16em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace nobreak"></span><span class="mspace" style="margin-right:0.1111em;"></span><span class="mpunct"></span><span class="mspace" style="margin-right:-0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mrel">:</span></span><span class="mspace" style="margin-right:0.3333em;"></span><span class="mord"><span class="mord mathsf">Branch</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathsf">Direction</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord"><span class="mord mathsf">Branch</span></span></span></span><span style="top:-1.66em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace nobreak"></span><span class="mspace" style="margin-right:0.1111em;"></span><span class="mpunct"></span><span class="mspace" style="margin-right:-0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mrel">:</span></span><span class="mspace" style="margin-right:0.3333em;"></span><span class="mord"><span class="mord mathsf">Branch</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathsf">Branch</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⇀</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mop"><span class="mord mathrm">List</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathsf">Direction</span></span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>部分関数<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">⇀</span></span></span></span>は、最初の分岐が二つ目の祖先である場合にのみ、経路の観測が存在することを表します。</p>
+<p>ここから有用な操作を導けます。</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:6em;vertical-align:-2.75em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:3.25em;"><span style="top:-5.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mord mathrm">left</span></span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mclose">)</span></span></span><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mord mathrm">right</span></span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mclose">)</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mord mathrm">is_ancestor</span></span><span class="mopen">(</span><span class="mord mathnormal">a</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">b</span><span class="mclose">)</span></span></span><span style="top:-0.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mord mathrm">from_path</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.75em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:3.25em;"><span style="top:-5.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">grow</span></span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathsf">Left</span></span><span class="mclose">)</span></span></span><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">grow</span></span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathsf">Right</span></span><span class="mclose">)</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟺</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mop"><span class="mord mathrm">path</span></span><span class="mopen">(</span><span class="mord mathnormal">a</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">b</span><span class="mclose">)</span><span class="mspace"> </span><span class="mord text"><span class="mord">is defined</span></span></span></span><span style="top:-0.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mop"><span class="mord mathrm">fold</span></span><span class="mopen">(</span><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">grow</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mord mathrm">root</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.75em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>この代数は、ベクトル、整数、分数、データベースキー、バイト列に言及しません。そうした選択は後で行います。</p>
+<h2 id="structure-before-convenience"><a class="header" href="#structure-before-convenience">利便性より先に構造を定める</a></h2>
+<p>基本語彙によって、下流のコードが依存する構造を明らかにします。一つの実装で利用できる便利なメソッドをすべて集めるのではありません。</p>
+<div id="admonition-表現先行の基本操作を避ける" class="admonition admonish-warning" role="note" aria-labelledby="admonition-表現先行の基本操作を避ける-title">
+<div class="admonition-title">
+<div id="admonition-表現先行の基本操作を避ける-title">
+<p>表現先行の基本操作を避ける</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-表現先行の基本操作を避ける"></a>
+</div>
+<div>
+<p>このトレイトは、格納方法、設定の場所、ビット表現、複合ワークフローをひとまとめにしています。分岐の意味を切り分けていません。</p>
+<pre><code class="language-rust noplayground">trait BranchManager {
+    // not recommended: exposes machinery, not semantic observations
+    fn storage(&amp;self) -&gt; &amp;BranchTable;
+    fn config(&amp;self) -&gt; &amp;BranchConfig;
+    fn raw_bits(&amp;self) -&gt; &amp;[u64];
+    fn grow_and_save(&amp;mut self, right: bool);
+}</code></pre>
+</div>
+</div>
+<p>選択した領域に副作用が含まれるなら、意味論的APIにも副作用を含められます。「すべて純粋でなければならない」という規則ではありません。「基本操作はそれぞれ一貫した意味を述べなければならない」という規則です。</p>
+<h2 id="encoding-is-not-methodology"><a class="header" href="#encoding-is-not-methodology">符号化は方法論ではない</a></h2>
+<p>Denotational Designが次のものを必須とするわけではありません。</p>
+<ul>
+<li>Haskell</li>
+<li>tagless-final符号化</li>
+<li>オブジェクト代数</li>
+<li>自由モナド</li>
+<li>一つのAST</li>
+<li>純粋関数のみ</li>
+<li>すべてのAPIに圏論の用語を使うこと</li>
+</ul>
+<p>これらは有用な符号化や説明手段になり得ますが、どれも方法論を定義するものではありません。</p>
+<div id="admonition-rustでの符号化" class="admonition admonish-note" role="note" aria-labelledby="admonition-rustでの符号化-title">
+<div class="admonition-title">
+<div id="admonition-rustでの符号化-title">
+<p>Rustでの符号化</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-rustでの符号化"></a>
+</div>
+<div>
+<p>Rustでは、小さなトレイト、関連型、拡張メソッド、ジェネリック関数、一階のプログラム値が実用的な符号化手段になります。その価値は、明確な意味論的設計を保てるかどうかで決まります。</p>
+</div>
+</div>
+<h2 id="type-class-morphisms"><a class="header" href="#type-class-morphisms">型クラスの準同型</a></h2>
+<p>この方法を、構造を保つ写像として理解する方法があります。</p>
+<p>インターフェースが意味論的代数を記述するとします。実装は、その抽象値と操作を具体的な表現へ写像します。有効な実装は、関係する操作と法則を保持しなければなりません。</p>
+<p><code>encode</code>が抽象的な分岐を具体的な担体へ写像するとき、拡張を保持する性質は次のように表せます。</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop"><span class="mord mathrm">encode</span></span><span class="mopen">(</span><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">grow</span></span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">d</span><span class="mclose">))</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop"><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">grow</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1559em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathsf mtight">concrete</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mop"><span class="mord mathrm">encode</span></span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">d</span><span class="mclose">)</span></span></span></span></span></p>
+<p>実装は、名前の一致するメソッドを集めただけのものではありません。代数構造を尊重する準同型として意図されています。</p>
+<h2 id="what-counts-as-a-good-abstraction"><a class="header" href="#what-counts-as-a-good-abstraction">優れた抽象化とは何か</a></h2>
+<p>優れたDenotational Designの抽象化には、次のような性質があります。</p>
+<ul>
+<li>値が単純で意図の明確な意味を持つ。</li>
+<li>基本操作が意味論的な観測または構築を表す。</li>
+<li>より大きな振る舞いが基本操作から導出される。</li>
+<li>法則が特定の表現に依存しない。</li>
+<li>独立した実装がそれを解釈できる。</li>
+<li>操作上の詳細は関係する場面でのみ現れる。</li>
+</ul>
+<p>小さいだけでは不十分です。<code>get_manager()</code>を公開する小さなトレイトでも、表現先行のままです。より大きな代数でも、各操作が一貫した意味論的構造を成すなら正当化できます。</p>
+<h2 id="semantic-values-and-abstract-carriers"><a class="header" href="#semantic-values-and-abstract-carriers">意味論的な値と抽象的な担体</a></h2>
+<p>仕様に具体型を一切含めてはならないわけではありません。</p>
+<p>インタープリターに担体を選ばせる場合は、関連型を使います。</p>
+<pre><code class="language-rust noplayground">trait BranchAlg {
+    type Branch;
+}</code></pre>
+<p>安定した意味論上の語彙なら、具体型を使います。</p>
+<pre><code class="language-rust noplayground">enum Direction {
+    Left,
+    Right,
+}</code></pre>
+<p>違いは「抽象が善で、具体が悪」ということではありません。意味論上の語彙か、偶然の機械表現かという違いです。</p>
+<h2 id="the-specification-is-the-denotation-and-it-need-not-execute"><a class="header" href="#the-specification-is-the-denotation-and-it-need-not-execute">仕様とは表示であり、実行可能である必要はない</a></h2>
+<p>仕様とは表示、つまり各構成要素に割り当てられた数学的な意味です。その強みは、効率性や実行可能性にさえ縛られないことにあります。</p>
+<div id="admonition-conal-elliott" class="admonition admonish-quote" role="note" aria-labelledby="admonition-conal-elliott-title">
+<div class="admonition-title">
+<div id="admonition-conal-elliott-title">
+<p>Conal Elliott</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-conal-elliott"></a>
+</div>
+<div>
+<p>表示を定義するほうが実装よりはるかに簡単で、理解も深まることがよくあります。効率性や実行可能性に伴う制約や雑音がないからです。</p>
+<p>— <a href="https://github.com/conal/talk-2014-lambdajam-denotational-design">Denotational Design：意味からプログラムへ（LambdaJam 2015）</a></p>
+</div>
+</div>
+<p>典型例はFRP（関数型リアクティブプログラミング）です。<code>Behavior a</code>は連続時間の関数として定義されます。</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen"><span class="mopen">[</span><span class="mspace" style="margin-right:-0.1778em;"></span><span class="mopen">[</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">⋅</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mclose"><span class="mclose">]</span><span class="mspace" style="margin-right:-0.1778em;"></span><span class="mclose">]</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord"><span class="mord mathsf" style="margin-right:0.01389em;">Behavior</span></span><span class="mspace"> </span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathbb">R</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">a</span><span class="mclose">)</span></span></span></span></span></p>
+<p>そのモデルは正確ですが、実行できません。実数を列挙できないからです。同様に、プログラムが結果の集合を表す場合もあります。どちらのモデルも実行しませんが、それこそが要点です。計算方法ではなく、単純さと正確さを基準に意味を選びます。</p>
+<p>実行可能性と効率性は、意味に立ち返って正しさを保つ準同型の法則（型クラスの準同型）で制約された別個の成果物、<em>実装</em>に全面的に委ねられます。意味関数は、構文上の各合成を対応する意味論上の合成へ写さなければなりません。Conalの言葉を借りれば、表示によって「実装すべき<em>もの</em>を曖昧さなく定義しつつ、実装<em>方法</em>には大きな創意工夫の余地を残せます」。</p>
+<p>Rustでは、この仕様の一部を複数の成果物で表現でき、その中には実行可能なものもあります。実行可能であることは付随的な性質であり、仕様である理由ではありません。</p>
+<ul>
+<li>文章は意図された意味を述べる</li>
+<li>トレイトは利用可能な基本操作を述べる</li>
+<li>拡張は導出方法を述べる</li>
+<li>法則は要求される等式を述べる</li>
+<li>インタープリターは実現可能性を示す</li>
+<li>テストは有限の証拠を提供する</li>
+</ul>
+<p>具体的な仕組みよりも、意味と法則に権限を持たせて、これらを併せて読みます。</p>
+<h2 id="further-reading"><a class="header" href="#further-reading">さらに読む</a></h2>
+<ul>
+<li><a href="https://github.com/conal/talk-2014-bayhac-denotational-design">Denotational Design：プログラムから意味へ（BayHac 2014）</a></li>
+<li><a href="http://conal.net/papers/type-class-morphisms/">型クラスの準同型によるDenotational Design</a></li>
+<li><a href="http://conal.net/">Conal Elliottの著作と講演</a></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../denotational-design/denotations.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../denotational-design/laws-and-interpretations.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../denotational-design/denotations.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../denotational-design/laws-and-interpretations.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-9aeb6ddf.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-9576a2db.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

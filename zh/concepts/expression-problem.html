@@ -1,0 +1,522 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>表达式问题 - ALUX 编程</title>
+
+
+        <!-- Custom HTML head -->
+        <meta property="og:title" content="表达式问题 - ALUX 编程">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-zh.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <script src="/real.js" defer></script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-57e8465c.svg">
+        <link rel="shortcut icon" href="../favicon-b7d566ae.png">
+        <link rel="stylesheet" href="../css/variables-3865ffda.css">
+        <link rel="stylesheet" href="../css/general-4c35105a.css">
+        <link rel="stylesheet" href="../css/chrome-c0e702bf.css">
+        <link rel="stylesheet" href="../css/print-ad67d350.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome-799aeb25.css">
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight-56612340.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index-7d56cdd4.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish-ef18b366.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-7d0d596a.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-d35b4fc8.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ALUX 编程</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming/edit/master/src/concepts/expression-problem.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"表达式问题","sourceHash":"sha256:095010cccfe7dcb155f2ad304d334ffd7d3d56212b3b67168e4f5b04da397ee6"} -->
+<h1 id="expression-problem"><a class="header" href="#expression-problem">表达式问题</a></h1>
+<div id="admonition-相关内容" class="admonition admonish-tip" role="note" aria-labelledby="admonition-相关内容-title">
+<div class="admonition-title">
+<div id="admonition-相关内容-title">
+<p>相关内容</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-相关内容"></a>
+</div>
+<div>
+<p>语义视角：<a href="../denotational-design/design.html">指称设计</a>、<a href="../denotational-design/denotations.html">指称与组合性</a><br />
+Rust 中的语义驱动设计：<a href="../rust-dd/capability-algebras.html">能力代数</a>、<a href="../rust-dd/derived-meaning.html">派生含义与组合</a><br />
+洞见：<a href="../insights/expression-problem.html">重新审视表达式问题</a></p>
+</div>
+</div>
+<div id="admonition-语义定位" class="admonition admonish-note" role="note" aria-labelledby="admonition-语义定位-title">
+<div class="admonition-title">
+<div id="admonition-语义定位-title">
+<p>语义定位</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-语义定位"></a>
+</div>
+<div>
+<p>表达式问题关注表示与操作的模块化扩展。指称设计则更早地提出一个问题：哪些语义词汇与解释值得表示？</p>
+</div>
+</div>
+<p>Phil Wadler 提出的表达式问题关注如何在两个维度上<strong>同时</strong>扩展语言，而无须修改现有代码：</p>
+<ul>
+<li><strong>添加新的数据变体</strong>（新的表达式形式，也称“语法”）。</li>
+<li><strong>添加新的操作</strong>（新的解释，也称“语义”）。</li>
+</ul>
+<p>核心矛盾：</p>
+<ul>
+<li>采用<strong>函数式/代数数据类型</strong>风格时，添加新操作很容易，但添加新变体会造成侵入式修改。</li>
+<li>采用<strong>面向对象</strong>风格时，添加新变体很容易，但添加新操作会造成侵入式修改。</li>
+</ul>
+<p>本节用简短的 Haskell 与 Java 示例展示两面。</p>
+<h2 id="haskell-functional--adt"><a class="header" href="#haskell-functional--adt">Haskell（函数式/代数数据类型）</a></h2>
+<p>先从一个经典的表达式代数数据类型及两种操作开始。</p>
+<pre><code class="language-haskell">data Expr
+  = Lit Int
+  | Add Expr Expr
+
+eval :: Expr -&gt; Int
+eval (Lit n)     = n
+eval (Add a b)   = eval a + eval b
+
+pretty :: Expr -&gt; String
+pretty (Lit n)   = show n
+pretty (Add a b) = "(" ++ pretty a ++ " + " ++ pretty b ++ ")"
+</code></pre>
+<p>现在，<strong>添加新操作</strong>很容易：</p>
+<pre><code class="language-haskell">size :: Expr -&gt; Int
+size (Lit _)   = 1
+size (Add a b) = 1 + size a + size b
+</code></pre>
+<p>但<strong>添加新变体</strong>（例如<code>Mul</code>）就要求修改每个函数：</p>
+<pre><code class="language-haskell">data Expr
+  = Lit Int
+  | Add Expr Expr
+  | Mul Expr Expr
+
+eval :: Expr -&gt; Int
+eval (Lit n)     = n
+eval (Add a b)   = eval a + eval b
+eval (Mul a b)   = eval a * eval b  -- ✏️ UPDATE: new case
+
+pretty :: Expr -&gt; String
+pretty (Lit n)   = show n
+pretty (Add a b) = "(" ++ pretty a ++ " + " ++ pretty b ++ ")"
+pretty (Mul a b) = "(" ++ pretty a ++ " * " ++ pretty b ++ ")"  -- ✏️ UPDATE: new case
+
+size :: Expr -&gt; Int
+size (Lit _)   = 1
+size (Add a b) = 1 + size a + size b
+size (Mul a b) = 1 + size a + size b  -- ✏️ UPDATE: new case
+</code></pre>
+<p>用 Wadler 的说法，在代数数据类型方法中，<strong>数据扩展不具备模块化特性</strong>。</p>
+<h2 id="java-object-oriented"><a class="header" href="#java-object-oriented">Java（面向对象）</a></h2>
+<p>先从一个接口以及每种变体对应的具体类开始。</p>
+<pre><code class="language-java">// Expression variants
+interface Expr {
+    int eval();
+    String pretty();
+}
+
+final class Lit implements Expr {
+    private final int n;
+
+    Lit(int n) {
+        this.n = n;
+    }
+
+    public int eval() {
+        return n;
+    }
+
+    public String pretty() {
+        return Integer.toString(n);
+    }
+}
+
+final class Add implements Expr {
+    private final Expr a;
+    private final Expr b;
+
+    Add(Expr a, Expr b) {
+        this.a = a;
+        this.b = b;
+    }
+
+    public int eval() {
+        return a.eval() + b.eval();
+    }
+
+    public String pretty() {
+        return "(" + a.pretty() + " + " + b.pretty() + ")";
+    }
+}
+</code></pre>
+<p>现在，<strong>添加新变体</strong>很容易：</p>
+<pre><code class="language-java">final class Mul implements Expr {
+    private final Expr a;
+    private final Expr b;
+
+    Mul(Expr a, Expr b) {
+        this.a = a;
+        this.b = b;
+    }
+
+    public int eval() {
+        return a.eval() * b.eval();
+    }
+
+    public String pretty() {
+        return "(" + a.pretty() + " * " + b.pretty() + ")";
+    }
+}
+</code></pre>
+<p>但<strong>添加新操作</strong>（例如<code>size</code>）则具有侵入性。你必须修改接口与每个类：</p>
+<pre><code class="language-java">interface Expr {
+    int eval();
+    String pretty();
+    int size(); // ✏️ UPDATE: new operation added here
+}
+
+final class Lit implements Expr {
+    private final int n;
+
+    Lit(int n) { this.n = n; }
+
+    public int eval() { return n; }
+    public String pretty() { return Integer.toString(n); }
+    public int size() { return 1; } // ✏️ UPDATE: new method in every class
+}
+
+final class Add implements Expr {
+    private final Expr a;
+    private final Expr b;
+
+    Add(Expr a, Expr b) { this.a = a; this.b = b; }
+
+    public int eval() { return a.eval() + b.eval(); }
+    public String pretty() { return "(" + a.pretty() + " + " + b.pretty() + ")"; }
+    public int size() { return 1 + a.size() + b.size(); } // ✏️ UPDATE: new method in every class
+}
+
+final class Mul implements Expr {
+    private final Expr a;
+    private final Expr b;
+
+    Mul(Expr a, Expr b) { this.a = a; this.b = b; }
+
+    public int eval() { return a.eval() * b.eval(); }
+    public String pretty() { return "(" + a.pretty() + " * " + b.pretty() + ")"; }
+    public int size() { return 1 + a.size() + b.size(); } // ✏️ UPDATE: new method in every class
+}
+</code></pre>
+<p>用 Wadler 的说法，在面向对象方法中，<strong>操作扩展不具备模块化特性</strong>。</p>
+<h2 id="summary-wadlers-point"><a class="header" href="#summary-wadlers-point">总结（Wadler 的观点）</a></h2>
+<ul>
+<li>函数式/代数数据类型风格倾向于<strong>添加新操作</strong>，但不利于<strong>添加新变体</strong>。</li>
+<li>面向对象风格倾向于<strong>添加新变体</strong>，但不利于<strong>添加新操作</strong>。</li>
+<li>表达式问题要求找到一种设计，使<strong>两个</strong>维度都能扩展，而不必修改现有代码。</li>
+</ul>
+<h2 id="wadlers-explanation-and-solution-landscape-1998"><a class="header" href="#wadlers-explanation-and-solution-landscape-1998">Wadler 的解释与解决方案概览（1998）</a></h2>
+<p>Wadler 将问题表述为：扩展数据类型<strong>的分支</strong>（新变体），并扩展<strong>该数据类型上的函数</strong>（新操作），同时<em>不重新编译现有代码</em>，且保留<strong>静态类型安全</strong>（无需类型转换）。</p>
+<p>他用“表格”作比喻：</p>
+<ul>
+<li><strong>行</strong> = 分支（变体/构造器）</li>
+<li><strong>列</strong> = 函数（操作/解释）</li>
+</ul>
+<p>在<strong>函数式/代数数据类型</strong>环境中，行固定而列易于添加。<br />
+在<strong>面向对象</strong>环境中，列固定而行易于添加。<br />
+挑战在于让<strong>两个方向</strong>都可扩展。</p>
+<h2 id="wadlers-proposed-solution-gj--virtual-types"><a class="header" href="#wadlers-proposed-solution-gj--virtual-types">Wadler 提出的解决方案（GJ + 虚拟类型）</a></h2>
+<p>Wadler 使用 GJ（泛型 Java）提出一种方案，其中包括：</p>
+<ul>
+<li>使用<code>This</code>有界参数（<code>This extends LangF&lt;This&gt;</code>）模拟<strong>ThisType</strong>。</li>
+<li><strong>内部类与接口</strong>按<code>This</code>索引（虚拟类型）。</li>
+<li>A visitor-based structure that allows:
+<ul>
+<li>通过继承“语言族”来添加新分支（例如<code>Plus</code>）</li>
+<li>通过添加新访问者来增加操作（例如<code>Show</code>）</li>
+</ul>
+</li>
+</ul>
+<p>诀窍在于引用<code>This.Exp</code>与<code>This.Visitor</code>，使每个扩展阶段都保持类型安全且可以独立编译。</p>
+<h3 id="caveat-java-inner-interfaces"><a class="header" href="#caveat-java-inner-interfaces">注意事项（Java 内部接口）</a></h3>
+<p>Wadler 指出，Java 会将内部接口视为<strong>静态的</strong>，因此破坏了索引技巧。<br />
+他认为放宽这一限制就能使方案可行；但现代 Java 仍未改变这一点（嵌套接口依旧隐式为静态）。</p>
+<h2 id="other-solution-directions-mentioned"><a class="header" href="#other-solution-directions-mentioned">提及的其他解决方向</a></h2>
+<ol>
+<li>
+<p>Corky Cartwright 的方法 要求<strong>逆变扩展</strong>：允许基础表达式类型替代扩展类型。 这解释了为何要使用不动点：扩展语言族<em>不是</em>原类型的子类型。</p>
+</li>
+<li>
+<p>Kim Bruce 的方法 要求使用<strong>高阶类型构造器</strong>（将类型构造器作为参数的类型参数化方式）。 GJ 不直接支持这一特性，但 Wadler 认为可以用虚拟类型模拟。</p>
+</li>
+<li>
+<p>Krishnamurthi 等人（扩展访问者模式） 通过扩展访问者设计实现。 在他们的 Pizza 环境中<strong>缺少静态类型</strong>，因此需要动态类型转换。</p>
+</li>
+<li>
+<p>专用语言扩展 Wadler 提到了两种依赖于专为该问题设计的语言特性的方案。 它们不如虚拟类型方案通用。</p>
+</li>
+</ol>
+<h2 id="wadlers-two-points"><a class="header" href="#wadlers-two-points">Wadler 的两点总结</a></h2>
+<p>Wadler 的邮件清楚地说明了两点：</p>
+<ol>
+<li>表达式问题是数据扩展与操作扩展之间的<strong>结构性矛盾</strong>。</li>
+<li>Solutions are possible, but they tend to require either:
+<ul>
+<li>可模拟<strong>虚拟类型</strong>的类型系统特性，或</li>
+<li>专用语言扩展，或</li>
+<li>对静态类型安全或独立编译作出妥协。</li>
+</ul>
+</li>
+</ol>
+<h2 id="featherweight-go-solution-2020"><a class="header" href="#featherweight-go-solution-2020">轻量级 Go 方案（2020）</a></h2>
+<p>Wadler 于 1998 年提出并命名了这一问题。之后，轻量级 Go（FG）及其泛型扩展 FGG（轻量级泛型 Go）在一种类似 Go、采用结构化接口与泛型的语言中，给出了具体且完全静态的解决方案。</p>
+<p>论文中的方案（图 8，简化版）包含两个结构<code>Num</code>与<code>Plus</code>，以及两个操作<code>Eval</code>与<code>String</code>：</p>
+<pre><code class="language-go">type Evaler interface { Eval() int }
+type Stringer interface { String() string }
+
+type Num struct { value int }
+type Plus(type a Any) struct { left a; right a }
+
+func (e Num) Eval() int { return e.value }
+func (e Plus(type a Evaler)) Eval() int { return e.left.Eval() + e.right.Eval() }
+
+func (e Num) String() string { return fmt.Sprintf("%d", e.value) }
+func (e Plus(type a Stringer)) String() string {
+    return fmt.Sprintf("(%s+%s)", e.left.String(), e.right.String())
+}
+
+type Expr interface { Evaler; Stringer }
+
+var e Expr = Plus(Expr){Num{1}, Num{2}}
+</code></pre>
+<p>其机制如下：</p>
+<ul>
+<li><strong>泛型递归表示。</strong><code>Plus</code>的子项具有一个类型参数<code>a</code>，其唯一约束为<code>Any</code>。该结构不绑定到列出所有操作的封闭接口，因此后续仍可添加操作。</li>
+<li><strong>针对操作的约束。</strong>每个方法声明都会独立约束<code>a</code>：<code>Plus(type a Evaler)</code>用于<code>Eval</code>，<code>Plus(type a Stringer)</code>用于<code>String</code>。这依赖于 FGG 的<em>协变接收者</em>：方法接收者的约束可以比类型声明中的约束更强。</li>
+<li><strong>结构化接口。</strong>结构只要具有接口的方法就算实现了该接口，因此可以在不修改<code>Expr</code>和<code>Num</code>的情况下，于之后引入<code>Plus</code>。只有在构造值时，才需要确定完整的操作集合（<code>Plus(Expr){...}</code>）。</li>
+</ul>
+<p>新分支只需增加新结构；新操作只需增加新接口与方法。二者都不需要修改或重新编译现有声明，也无需类型断言。</p>
+<h2 id="references"><a class="header" href="#references">参考文献</a></h2>
+<ul>
+<li>
+<p>Wadler, P.（1998）。<em>《表达式问题》</em>。Java-Genericity 邮件列表说明。提出并命名了该问题。<br />
+<a href="https://homepages.inf.ed.ac.uk/wadler/papers/expression/expression.txt">https://homepages.inf.ed.ac.uk/wadler/papers/expression/expression.txt</a></p>
+</li>
+<li>
+<p>Griesemer, R., Hu, R., Kokke, W., Lange, J., Taylor, I. L., Toninho, B., Wadler, P. 与 Yoshida, N.（2020）。<em>《轻量级 Go》</em>。ACM Program. Lang. 4（OOPSLA）。后续的具体语言方案，见第 2.3 节。<br />
+<a href="https://homepages.inf.ed.ac.uk/wadler/papers/fg/fg.pdf">https://homepages.inf.ed.ac.uk/wadler/papers/fg/fg.pdf</a></p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../concepts/operational_semantics.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../concepts/referential_transparency.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../concepts/operational_semantics.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../concepts/referential_transparency.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-9aeb6ddf.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-9576a2db.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

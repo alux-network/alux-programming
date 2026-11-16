@@ -1,0 +1,522 @@
+<!DOCTYPE HTML>
+<html lang="ar" class="light sidebar-visible" dir="rtl">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>مسألة التعبير - ALUX Programming</title>
+
+
+        <!-- Custom HTML head -->
+        <meta property="og:title" content="مسألة التعبير - ALUX Programming">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-ar.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <script src="/real.js" defer></script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-57e8465c.svg">
+        <link rel="shortcut icon" href="../favicon-b7d566ae.png">
+        <link rel="stylesheet" href="../css/variables-3865ffda.css">
+        <link rel="stylesheet" href="../css/general-4c35105a.css">
+        <link rel="stylesheet" href="../css/chrome-c0e702bf.css">
+        <link rel="stylesheet" href="../css/print-ad67d350.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome-799aeb25.css">
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight-56612340.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index-7d56cdd4.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish-ef18b366.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-a2954f14.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-c742d10b.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ALUX Programming</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming/edit/master/src/concepts/expression-problem.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"مسألة التعبير","sourceHash":"sha256:095010cccfe7dcb155f2ad304d334ffd7d3d56212b3b67168e4f5b04da397ee6"} -->
+<h1 id="expression-problem"><a class="header" href="#expression-problem">مسألة التعبير</a></h1>
+<div id="admonition-ذات-صلة" class="admonition admonish-tip" role="note" aria-labelledby="admonition-ذات-صلة-title">
+<div class="admonition-title">
+<div id="admonition-ذات-صلة-title">
+<p>ذات صلة</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-ذات-صلة"></a>
+</div>
+<div>
+<p>الرؤية الدلالية: <a href="../denotational-design/design.html">التصميم الدلالي</a>، <a href="../denotational-design/denotations.html">الدلالات والتركيبية</a><br />
+التصميم انطلاقًا من المعنى في Rust: <a href="../rust-dd/capability-algebras.html">جبريات القدرات</a>، <a href="../rust-dd/derived-meaning.html">المعنى المشتق والتركيب</a><br />
+الرؤى: <a href="../insights/expression-problem.html">إعادة طرح مسألة التعبير</a></p>
+</div>
+</div>
+<div id="admonition-الموضع-الدلالي" class="admonition admonish-note" role="note" aria-labelledby="admonition-الموضع-الدلالي-title">
+<div class="admonition-title">
+<div id="admonition-الموضع-الدلالي-title">
+<p>الموضع الدلالي</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-الموضع-الدلالي"></a>
+</div>
+<div>
+<p>تتناول مسألة التعبير التوسيع المعياري للتمثيلات والعمليات. ويقدم التصميم الدلالي سؤالًا أسبق: أي مفردات وتفسيرات دلالية تستحق التمثيل أصلًا؟</p>
+</div>
+</div>
+<p>تتناول مسألة التعبير لدى فيل وادلر توسيع اللغة <strong>بُعدين في آنٍ واحد</strong> من دون تعديل الشيفرة القائمة:</p>
+<ul>
+<li><strong>إضافة صيغ بيانات جديدة</strong> (أشكال تعبير جديدة، أي «صياغة»).</li>
+<li><strong>إضافة عمليات جديدة</strong> (تفسيرات جديدة، أي «دلالات»).</li>
+</ul>
+<p>موطن التوتر الأساسي:</p>
+<ul>
+<li>في أسلوب <strong>البرمجة الوظيفية/أنواع البيانات الجبرية</strong>، يسهل إضافة عمليات جديدة، لكن إضافة صيغ جديدة تتطلب تعديلًا واسعًا.</li>
+<li>في الأسلوب <strong>كائني التوجه</strong>، يسهل إضافة صيغ جديدة، لكن إضافة عمليات جديدة تتطلب تعديلًا واسعًا.</li>
+</ul>
+<p>يعرض هذا القسم الجانبين بأمثلة صغيرة في Haskell وJava.</p>
+<h2 id="haskell-functional--adt"><a class="header" href="#haskell-functional--adt">Haskell (البرمجة الوظيفية / أنواع البيانات الجبرية)</a></h2>
+<p>نبدأ بنوع بيانات جبري كلاسيكي للتعبيرات وعملتين.</p>
+<pre><code class="language-haskell">data Expr
+  = Lit Int
+  | Add Expr Expr
+
+eval :: Expr -&gt; Int
+eval (Lit n)     = n
+eval (Add a b)   = eval a + eval b
+
+pretty :: Expr -&gt; String
+pretty (Lit n)   = show n
+pretty (Add a b) = "(" ++ pretty a ++ " + " ++ pretty b ++ ")"
+</code></pre>
+<p>من السهل الآن <strong>إضافة عملية جديدة</strong>:</p>
+<pre><code class="language-haskell">size :: Expr -&gt; Int
+size (Lit _)   = 1
+size (Add a b) = 1 + size a + size b
+</code></pre>
+<p>لكن <strong>إضافة صيغة جديدة</strong> (مثل <code>Mul</code>) تفرض تعديلات في كل دالة:</p>
+<pre><code class="language-haskell">data Expr
+  = Lit Int
+  | Add Expr Expr
+  | Mul Expr Expr
+
+eval :: Expr -&gt; Int
+eval (Lit n)     = n
+eval (Add a b)   = eval a + eval b
+eval (Mul a b)   = eval a * eval b  -- ✏️ UPDATE: new case
+
+pretty :: Expr -&gt; String
+pretty (Lit n)   = show n
+pretty (Add a b) = "(" ++ pretty a ++ " + " ++ pretty b ++ ")"
+pretty (Mul a b) = "(" ++ pretty a ++ " * " ++ pretty b ++ ")"  -- ✏️ UPDATE: new case
+
+size :: Expr -&gt; Int
+size (Lit _)   = 1
+size (Add a b) = 1 + size a + size b
+size (Mul a b) = 1 + size a + size b  -- ✏️ UPDATE: new case
+</code></pre>
+<p>بمصطلحات وادلر، <strong>توسيع البيانات ليس معياريًا</strong> في نهج أنواع البيانات الجبرية.</p>
+<h2 id="java-object-oriented"><a class="header" href="#java-object-oriented">Java (كائنية التوجه)</a></h2>
+<p>نبدأ بواجهة وفئات ملموسة لكل صيغة.</p>
+<pre><code class="language-java">// Expression variants
+interface Expr {
+    int eval();
+    String pretty();
+}
+
+final class Lit implements Expr {
+    private final int n;
+
+    Lit(int n) {
+        this.n = n;
+    }
+
+    public int eval() {
+        return n;
+    }
+
+    public String pretty() {
+        return Integer.toString(n);
+    }
+}
+
+final class Add implements Expr {
+    private final Expr a;
+    private final Expr b;
+
+    Add(Expr a, Expr b) {
+        this.a = a;
+        this.b = b;
+    }
+
+    public int eval() {
+        return a.eval() + b.eval();
+    }
+
+    public String pretty() {
+        return "(" + a.pretty() + " + " + b.pretty() + ")";
+    }
+}
+</code></pre>
+<p>من السهل الآن <strong>إضافة صيغة جديدة</strong>:</p>
+<pre><code class="language-java">final class Mul implements Expr {
+    private final Expr a;
+    private final Expr b;
+
+    Mul(Expr a, Expr b) {
+        this.a = a;
+        this.b = b;
+    }
+
+    public int eval() {
+        return a.eval() * b.eval();
+    }
+
+    public String pretty() {
+        return "(" + a.pretty() + " * " + b.pretty() + ")";
+    }
+}
+</code></pre>
+<p>لكن <strong>إضافة عملية جديدة</strong> (مثل <code>size</code>) تتطلب تعديلًا واسعًا. يجب تعديل الواجهة وكل فئة:</p>
+<pre><code class="language-java">interface Expr {
+    int eval();
+    String pretty();
+    int size(); // ✏️ UPDATE: new operation added here
+}
+
+final class Lit implements Expr {
+    private final int n;
+
+    Lit(int n) { this.n = n; }
+
+    public int eval() { return n; }
+    public String pretty() { return Integer.toString(n); }
+    public int size() { return 1; } // ✏️ UPDATE: new method in every class
+}
+
+final class Add implements Expr {
+    private final Expr a;
+    private final Expr b;
+
+    Add(Expr a, Expr b) { this.a = a; this.b = b; }
+
+    public int eval() { return a.eval() + b.eval(); }
+    public String pretty() { return "(" + a.pretty() + " + " + b.pretty() + ")"; }
+    public int size() { return 1 + a.size() + b.size(); } // ✏️ UPDATE: new method in every class
+}
+
+final class Mul implements Expr {
+    private final Expr a;
+    private final Expr b;
+
+    Mul(Expr a, Expr b) { this.a = a; this.b = b; }
+
+    public int eval() { return a.eval() * b.eval(); }
+    public String pretty() { return "(" + a.pretty() + " * " + b.pretty() + ")"; }
+    public int size() { return 1 + a.size() + b.size(); } // ✏️ UPDATE: new method in every class
+}
+</code></pre>
+<p>بمصطلحات وادلر، <strong>توسيع العمليات ليس معياريًا</strong> في نهج البرمجة كائنية التوجه.</p>
+<h2 id="summary-wadlers-point"><a class="header" href="#summary-wadlers-point">ملخص (فكرة وادلر)</a></h2>
+<ul>
+<li>يفضل أسلوب البرمجة الوظيفية/أنواع البيانات الجبرية <strong>العمليات الجديدة</strong> لكنه يقاوم <strong>الصيغ الجديدة</strong>.</li>
+<li>يفضل الأسلوب كائني التوجه <strong>الصيغ الجديدة</strong> لكنه يقاوم <strong>العمليات الجديدة</strong>.</li>
+<li>تسأل مسألة التعبير عن تصميم يمكن فيه توسيع <strong>البعدين كليهما</strong> من دون تعديل الشيفرة القائمة.</li>
+</ul>
+<h2 id="wadlers-explanation-and-solution-landscape-1998"><a class="header" href="#wadlers-explanation-and-solution-landscape-1998">شرح وادلر ومشهد الحلول (1998)</a></h2>
+<p>يصوغ وادلر المشكلة هكذا: توسيع نوع بيانات <strong>بإضافة حالات</strong> (صيغ جديدة)، وتوسيع <strong>دوال على ذلك النوع</strong> (عمليات جديدة)، <em>من دون إعادة تجميع الشيفرة القائمة</em> مع الحفاظ على <strong>سلامة الأنواع الساكنة</strong> (من دون تحويلات نوعية).</p>
+<p>يستخدم استعارة «الجدول»:</p>
+<ul>
+<li><strong>الصفوف</strong> = الحالات (الصيغ / المُنشئات)</li>
+<li><strong>الأعمدة</strong> = الدوال (العمليات / التفسيرات)</li>
+</ul>
+<p>في أساليب <strong>البرمجة الوظيفية/أنواع البيانات الجبرية</strong>، تكون الصفوف ثابتة ويسهل إضافة الأعمدة.<br />
+وفي أساليب <strong>البرمجة كائنية التوجه</strong>، تكون الأعمدة ثابتة ويسهل إضافة الصفوف.<br />
+والتحدي هو جعل <strong>الاتجاهين كليهما</strong> قابلين للتوسيع.</p>
+<h2 id="wadlers-proposed-solution-gj--virtual-types"><a class="header" href="#wadlers-proposed-solution-gj--virtual-types">حل وادلر المقترح (GJ والأنواع الافتراضية)</a></h2>
+<p>يعرض وادلر حلًا في GJ (Java العامة) باستخدام:</p>
+<ul>
+<li>معامل مقيّد بـ <code>This</code> (<code>This extends LangF&lt;This&gt;</code>) لمحاكاة <strong>ThisType</strong>.</li>
+<li><strong>الفئات والواجهات الداخلية</strong> المفهرسة بـ <code>This</code> (الأنواع الافتراضية).</li>
+<li>A visitor-based structure that allows:
+<ul>
+<li>الحالات الجديدة (مثل <code>Plus</code>) عبر اشتقاق فئة «عائلة اللغة»</li>
+<li>العمليات الجديدة (مثل <code>Show</code>) عبر إضافة زوار جدد</li>
+</ul>
+</li>
+</ul>
+<p>تتمثل الحيلة في الإشارة إلى <code>This.Exp</code> و<code>This.Visitor</code> بحيث تظل كل مرحلة توسعة آمنة الأنواع وقابلة للتجميع المستقل.</p>
+<h3 id="caveat-java-inner-interfaces"><a class="header" href="#caveat-java-inner-interfaces">تنبيه (الواجهات الداخلية في Java)</a></h3>
+<p>يلاحظ وادلر أن Java تتعامل مع الواجهات الداخلية بوصفها <strong>ساكنة</strong>، ما يفسد حيلة الفهرسة.<br />
+ويقترح أن تخفيف هذا القيد سيجعل الحل ممكنًا؛ لكن ذلك لم يتغير حتى في Java الحديثة (فالواجهات المتداخلة تظل ساكنة ضمنيًا).</p>
+<h2 id="other-solution-directions-mentioned"><a class="header" href="#other-solution-directions-mentioned">اتجاهات حلول أخرى مذكورة</a></h2>
+<ol>
+<li>
+<p>نهج كوركي كارترايت يتطلب <strong>توسيعًا معاكسًا للتغاير</strong>: السماح لنوع التعبير الأساسي بأن يحل محل نوع ممتد. وهذا يفسر استخدام النقاط الثابتة: فعائلة اللغة الممتدة <em>ليست</em> نوعًا فرعيًا من الأصلية.</p>
+</li>
+<li>
+<p>نهج كيم بروس يتطلب <strong>مُنشئات أنواع من الرتبة الأعلى</strong> (أي جعل نوع ما معاملًا لمنشئ نوع). لا يدعم GJ ذلك مباشرة، لكن وادلر يرى أن الأنواع الافتراضية يمكنها محاكاته.</p>
+</li>
+<li>
+<p>نهج كريشنامورثي وآخرين (نمط الزائر الممتد) يعمل عبر تصميم زائر ممتد. <strong>ليس ذا أنواع ساكنة</strong> في بيئتهم (Pizza)، لذا تلزم تحويلات نوعية ديناميكية.</p>
+</li>
+<li>
+<p>توسيعات لغوية مخصصة يذكر وادلر حلين يعتمدان على ميزات صُممت خصيصًا للمشكلة. وهما أقل عمومية من نهج الأنواع الافتراضية.</p>
+</li>
+</ol>
+<h2 id="wadlers-two-points"><a class="header" href="#wadlers-two-points">نقطتا وادلر</a></h2>
+<p>توضح رسالة وادلر نقطتين:</p>
+<ol>
+<li>مسألة التعبير <strong>توتر بنيوي</strong> بين توسيع البيانات وتوسيع العمليات.</li>
+<li>Solutions are possible, but they tend to require either:
+<ul>
+<li>ميزات نظام الأنواع التي تحاكي <strong>الأنواع الافتراضية</strong>، أو</li>
+<li>توسيعات لغوية مخصصة، أو</li>
+<li>مساومة على سلامة الأنواع الساكنة أو التجميع المستقل.</li>
+</ul>
+</li>
+</ol>
+<h2 id="featherweight-go-solution-2020"><a class="header" href="#featherweight-go-solution-2020">حل Featherweight Go (2020)</a></h2>
+<p>صاغ وادلر المشكلة وسمّاها عام 1998. وقدمت Featherweight Go (FG) وامتدادها العام FGG (Featherweight Generic Go) لاحقًا حلًا ملموسًا ساكنًا بالكامل في لغة شبيهة بـ Go تستخدم الواجهات البنيوية والأنواع العامة.</p>
+<p>يتضمن حل الورقة (الشكل 8، بصورة مبسطة) بنيتين، <code>Num</code> و<code>Plus</code>، وعملتين، <code>Eval</code> و<code>String</code>:</p>
+<pre><code class="language-go">type Evaler interface { Eval() int }
+type Stringer interface { String() string }
+
+type Num struct { value int }
+type Plus(type a Any) struct { left a; right a }
+
+func (e Num) Eval() int { return e.value }
+func (e Plus(type a Evaler)) Eval() int { return e.left.Eval() + e.right.Eval() }
+
+func (e Num) String() string { return fmt.Sprintf("%d", e.value) }
+func (e Plus(type a Stringer)) String() string {
+    return fmt.Sprintf("(%s+%s)", e.left.String(), e.right.String())
+}
+
+type Expr interface { Evaler; Stringer }
+
+var e Expr = Plus(Expr){Num{1}, Num{2}}
+</code></pre>
+<p>الآلية:</p>
+<ul>
+<li><strong>تمثيل تكراري عام.</strong> لأبناء <code>Plus</code> معامل نوع <code>a</code> لا يقيّده سوى <code>Any</code>. ولا ترتبط البنية بواجهة مغلقة تسرد كل العمليات، ما يتيح إضافة عمليات لاحقًا.</li>
+<li><strong>قيود خاصة بكل عملية.</strong> يحدد إعلان كل أسلوب قيد <code>a</code> بصورة مستقلة: <code>Plus(type a Evaler)</code> لـ <code>Eval</code> و<code>Plus(type a Stringer)</code> لـ <code>String</code>. ويعتمد ذلك على <em>المستقبِلات المتغايرة</em> في FGG: فقد يكون قيد مستقبل الأسلوب أقوى من القيد في إعلان النوع.</li>
+<li><strong>واجهات بنيوية.</strong> تنفذ البنية واجهة بامتلاك أساليبها؛ لذلك يمكن تقديم <code>Expr</code> بعد <code>Num</code> و<code>Plus</code> دون المساس بها. ولا تُحدد مجموعة العمليات كاملة إلا عند إنشاء قيمة (<code>Plus(Expr){...}</code>).</li>
+</ul>
+<p>الحالات الجديدة هي بنى جديدة؛ والعمليات الجديدة واجهات وأساليب جديدة. ولا يتطلب أي منهما تغيير الإعلانات القائمة أو إعادة تجميعها، ولا حاجة إلى تأكيدات الأنواع.</p>
+<h2 id="references"><a class="header" href="#references">المراجع</a></h2>
+<ul>
+<li>
+<p>وادلر، P. (1998). <em>The Expression Problem</em>. مذكرة في قائمة مراسلات Java-Genericity. صياغة المشكلة وتسميتها.<br />
+<a href="https://homepages.inf.ed.ac.uk/wadler/papers/expression/expression.txt">https://homepages.inf.ed.ac.uk/wadler/papers/expression/expression.txt</a></p>
+</li>
+<li>
+<p>غريسمير، R.، هو، R.، كوكي، W.، لانغه، J.، تايلور، I. L.، تونينيو، B.، وادلر، P.، يوشيدا، N. (2020). <em>Featherweight Go</em>. Proc. ACM Program. Lang. 4 (OOPSLA). حل لغوي ملموس لاحق، القسم 2.3.<br />
+<a href="https://homepages.inf.ed.ac.uk/wadler/papers/fg/fg.pdf">https://homepages.inf.ed.ac.uk/wadler/papers/fg/fg.pdf</a></p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../concepts/operational_semantics.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../concepts/referential_transparency.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../concepts/operational_semantics.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../concepts/referential_transparency.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-9aeb6ddf.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-9576a2db.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

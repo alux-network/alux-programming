@@ -1,0 +1,498 @@
+<!DOCTYPE HTML>
+<html lang="vi" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Đại số EVM - ALUX Programming</title>
+
+
+        <!-- Custom HTML head -->
+        <meta property="og:title" content="Đại số EVM - ALUX Programming">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-vi.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <script src="/real.js" defer></script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-57e8465c.svg">
+        <link rel="shortcut icon" href="../favicon-b7d566ae.png">
+        <link rel="stylesheet" href="../css/variables-3865ffda.css">
+        <link rel="stylesheet" href="../css/general-4c35105a.css">
+        <link rel="stylesheet" href="../css/chrome-c0e702bf.css">
+        <link rel="stylesheet" href="../css/print-ad67d350.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome-799aeb25.css">
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight-56612340.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index-7d56cdd4.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish-ef18b366.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-618bffad.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-f0a3efa2.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ALUX Programming</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming/edit/master/src/insights/evm-alg.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"Đại số EVM","sourceHash":"sha256:da120bbcd539c9554e41570500a952022780145a38a60d99226ed7f248d561ca"} -->
+<h1 id="evm-algebra"><a class="header" href="#evm-algebra">Đại số EVM</a></h1>
+<div id="admonition-liên-quan" class="admonition admonish-tip" role="note" aria-labelledby="admonition-liên-quan-title">
+<div class="admonition-title">
+<div id="admonition-liên-quan-title">
+<p>Liên quan</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-liên-quan"></a>
+</div>
+<div>
+<p>Thiết kế theo ngữ nghĩa trong Rust: <a href="../rust-dd/interpreters.html">Bộ diễn giải và hiệu ứng</a>, <a href="../rust-dd/first-order-programs.html">Chương trình bậc nhất</a>, <a href="../rust-dd/compiler-pipelines.html">Quy trình ngôn ngữ và trình biên dịch</a><br />
+Khái niệm: <a href="../concepts/operational_semantics.html">Ngữ nghĩa vận hành</a>, <a href="../concepts/free_monad.html">Monad tự do</a>, <a href="../concepts/cps.html">Phong cách truyền tiếp nối</a>, <a href="../concepts/defunctionalization.html">Phi chức năng hóa</a></p>
+</div>
+</div>
+<p><strong>Máy ảo Ethereum (EVM)</strong> là CPU ảo dựa trên ngăn xếp, thực thi <strong>bytecode Ethereum</strong>, tức dạng đã biên dịch của hợp đồng thông minh viết bằng Solidity, Vyper hoặc ngôn ngữ tương thích EVM khác.</p>
+<p>Ở cấp thấp nhất:</p>
+<ul>
+<li>EVM xử lý <strong>opcode</strong> (ADD, PUSH, JUMP, SSTORE, v.v.).</li>
+<li>Execution state includes:
+<ul>
+<li><strong>Ngăn xếp</strong>: ngăn xếp dữ liệu LIFO cho toán hạng.</li>
+<li><strong>Bộ nhớ</strong>: mảng byte tạm thời cho giá trị trung gian.</li>
+<li><strong>Lưu trữ</strong>: kho khóa-giá trị bền vững cho từng hợp đồng.</li>
+<li><strong>Bộ đếm chương trình</strong>: trỏ đến opcode tiếp theo.</li>
+<li><strong>Gas</strong>: cơ chế đo lường tính phí cho các bước thực thi.</li>
+</ul>
+</li>
+</ul>
+<h2 id="evm-as-an-interpreter-pattern"><a class="header" href="#evm-as-an-interpreter-pattern">EVM như mẫu bộ diễn giải</a></h2>
+<p>Máy khách EVM là bộ diễn giải trên ngôn ngữ lệnh:</p>
+<ul>
+<li><strong>Tập lệnh</strong> = các opcode EVM (enum các biến thể).</li>
+<li><strong>Chương trình</strong> = chuỗi lệnh.</li>
+<li><strong>Bộ diễn giải</strong> = quy tắc cho cách mỗi opcode thay đổi trạng thái máy.</li>
+<li><strong>Nhiều bộ diễn giải</strong> = đặc tả EVM cố định, nhưng Geth, Nethermind, Besu và Erigon là các cách triển khai thay thế của cùng bộ diễn giải.</li>
+</ul>
+<p>Đây là mạch xuyên suốt của ba kỹ thuật trong sách — <strong>monad tự do</strong>, <strong>phong cách truyền tiếp nối</strong> và <strong>phi chức năng hóa</strong> — chúng chỉ khác ở cách biểu diễn <em>phần còn lại của chương trình</em>.</p>
+<h2 id="three-encodings-of-one-machine"><a class="header" href="#three-encodings-of-one-machine">Ba cách mã hóa của một máy</a></h2>
+<p>Mỗi cách mã hóa bên dưới chạy cùng một chương trình cố định:</p>
+<pre><code class="language-text">push 2; push 3; add; sstore 1 5; load 1 -&gt; v; push v
+</code></pre>
+<p>và mỗi cách đều tạo ra cùng một quan sát:</p>
+<pre><code class="language-text">stack:   [5, 5]
+storage: {1: 5}
+</code></pre>
+<p>Chúng chỉ khác cách biểu diễn điều khiển — “tiếp theo cần làm gì”.</p>
+<details>
+<summary><strong>Monad tự do</strong> — chương trình là dữ liệu; bộ diễn giải gán ý nghĩa cho nó</summary>
+<p>Functor lệnh sinh ra cây chương trình. <code>and_then</code> là bind của monad, còn <code>run</code> là một bộ diễn giải — bộ thứ hai (trình biên dịch sang bytecode) có thể gấp cùng cây đó. <code>Free&lt;A&gt;</code> tổng quát được chuyên biệt hóa cho tập lệnh này để biên dịch được với Rust ổn định.</p>
+<pre><pre class="playground"><code class="language-rust">use std::collections::HashMap;
+
+struct State { stack: Vec&lt;u64&gt;, storage: HashMap&lt;u64, u64&gt; }
+
+// The free monad over the EVM instruction set: a program is data — a tree of
+// instructions ending in `Pure`, each carrying its continuation.
+enum Free&lt;A&gt; {
+    Pure(A),
+    Push(u64, Box&lt;Free&lt;A&gt;&gt;),
+    Add(Box&lt;Free&lt;A&gt;&gt;),
+    SStore(u64, u64, Box&lt;Free&lt;A&gt;&gt;),
+    SLoad(u64, Box&lt;dyn FnOnce(u64) -&gt; Free&lt;A&gt;&gt;),
+}
+
+impl&lt;A: 'static&gt; Free&lt;A&gt; {
+    // Monadic bind: graft `k` onto every leaf of the program.
+    fn and_then&lt;B: 'static&gt;(self, k: impl FnOnce(A) -&gt; Free&lt;B&gt; + 'static) -&gt; Free&lt;B&gt; {
+        match self {
+            Free::Pure(a) =&gt; k(a),
+            Free::Push(v, next) =&gt; Free::Push(v, Box::new(next.and_then(k))),
+            Free::Add(next) =&gt; Free::Add(Box::new(next.and_then(k))),
+            Free::SStore(x, y, next) =&gt; Free::SStore(x, y, Box::new(next.and_then(k))),
+            Free::SLoad(key, cont) =&gt; Free::SLoad(key, Box::new(move |v| cont(v).and_then(k))),
+        }
+    }
+}
+
+fn push(v: u64) -&gt; Free&lt;()&gt; { Free::Push(v, Box::new(Free::Pure(()))) }
+fn add() -&gt; Free&lt;()&gt; { Free::Add(Box::new(Free::Pure(()))) }
+fn sstore(k: u64, v: u64) -&gt; Free&lt;()&gt; { Free::SStore(k, v, Box::new(Free::Pure(()))) }
+fn sload(k: u64) -&gt; Free&lt;u64&gt; { Free::SLoad(k, Box::new(|v| Free::Pure(v))) }
+
+// Interpreter: give the program data meaning against the machine state.
+fn run(mut prog: Free&lt;()&gt;, st: &amp;mut State) {
+    loop {
+        prog = match prog {
+            Free::Pure(()) =&gt; return,
+            Free::Push(v, next) =&gt; { st.stack.push(v); *next }
+            Free::Add(next) =&gt; {
+                let b = st.stack.pop().unwrap();
+                let a = st.stack.pop().unwrap();
+                st.stack.push(a + b);
+                *next
+            }
+            Free::SStore(k, v, next) =&gt; { st.storage.insert(k, v); *next }
+            Free::SLoad(k, cont) =&gt; { let v = *st.storage.get(&amp;k).unwrap_or(&amp;0); cont(v) }
+        };
+    }
+}
+
+fn main() {
+    let program = push(2)
+        .and_then(|_| push(3))
+        .and_then(|_| add())
+        .and_then(|_| sstore(1, 5))
+        .and_then(|_| sload(1))
+        .and_then(|v| push(v));
+
+    let mut st = State { stack: vec![], storage: HashMap::new() };
+    run(program, &amp;mut st);
+    println!("stack:   {:?}", st.stack);
+    println!("storage: {:?}", st.storage);
+}</code></pre></pre>
+</details>
+<details>
+<summary><strong>Phong cách truyền tiếp nối (CPS)</strong> — mỗi opcode gọi “phần còn lại của chương trình”</summary>
+<p>Mỗi handler thực hiện công việc rồi gọi tiếp nối <code>k</code>. <code>sload</code> truyền giá trị được nạp cho tiếp nối đang đợi giá trị đó. Điều khiển tường minh dưới dạng tiếp nối lồng nhau, hoàn toàn không có cấu trúc dữ liệu chương trình.</p>
+<pre><pre class="playground"><code class="language-rust">use std::collections::HashMap;
+
+struct State { stack: Vec&lt;u64&gt;, storage: HashMap&lt;u64, u64&gt; }
+
+// Each opcode does its work, then calls the continuation `k` = "the rest of
+// the program". `sload` passes the loaded value on to its continuation.
+fn push(st: &amp;mut State, v: u64, k: impl FnOnce(&amp;mut State)) {
+    st.stack.push(v);
+    k(st);
+}
+fn add(st: &amp;mut State, k: impl FnOnce(&amp;mut State)) {
+    let b = st.stack.pop().unwrap();
+    let a = st.stack.pop().unwrap();
+    st.stack.push(a + b);
+    k(st);
+}
+fn sstore(st: &amp;mut State, key: u64, val: u64, k: impl FnOnce(&amp;mut State)) {
+    st.storage.insert(key, val);
+    k(st);
+}
+fn sload(st: &amp;mut State, key: u64, k: impl FnOnce(&amp;mut State, u64)) {
+    let v = *st.storage.get(&amp;key).unwrap_or(&amp;0);
+    k(st, v);
+}
+
+fn main() {
+    let mut st = State { stack: vec![], storage: HashMap::new() };
+
+    push(&amp;mut st, 2, |st| {
+        push(st, 3, |st| {
+            add(st, |st| {
+                sstore(st, 1, 5, |st| {
+                    sload(st, 1, |st, v| {
+                        push(st, v, |_st| {});
+                    });
+                });
+            });
+        });
+    });
+
+    println!("stack:   {:?}", st.stack);
+    println!("storage: {:?}", st.storage);
+}</code></pre></pre>
+</details>
+<details>
+<summary><strong>Đã phi chức năng hóa</strong> — lời gọi phép toán trở thành dữ liệu do một <code>apply</code> duy nhất chạy</summary>
+<p>Trong các phiên bản monad tự do và CPS, các phép toán (<code>push(2)</code>, <code>add()</code>, <code>sstore(1, 5)</code>, <code>sload(1)</code>) được <em>gọi</em> — một đại số nhỏ gần như đọc được như đặc tả. Phi chức năng hóa tái hóa mỗi lời gọi thành dữ liệu bậc nhất. Sau đó, một hàm <code>apply</code> diễn giải dữ liệu đó, đồng thời các tiếp nối cũng sụp lại: “phần còn lại của chương trình” trở thành chỉ mục kế tiếp (<code>pc</code>). Hãy đọc đây là đại số phép toán được viết dưới dạng dữ liệu, trong đó <code>apply</code> là bộ diễn giải duy nhất.</p>
+<pre><pre class="playground"><code class="language-rust">use std::collections::HashMap;
+
+struct State { stack: Vec&lt;u64&gt;, storage: HashMap&lt;u64, u64&gt; }
+
+// The EVM algebra reified: where the other encodings CALL `push(2)`, `add()`,
+// `sstore(1, 5)`, `sload(1)`, each such call becomes a first-order value — a
+// tag with its arguments.
+enum Op {
+    Push(u64),
+    Add,
+    SStore(u64, u64),
+    SLoad(u64),
+}
+
+// `apply` is the single interpreter for the reified operations: it gives each
+// tag its meaning against the machine state.
+fn apply(op: &amp;Op, st: &amp;mut State) {
+    match op {
+        Op::Push(v) =&gt; st.stack.push(*v),
+        Op::Add =&gt; {
+            let b = st.stack.pop().unwrap();
+            let a = st.stack.pop().unwrap();
+            st.stack.push(a + b);
+        }
+        Op::SStore(k, v) =&gt; { st.storage.insert(*k, *v); }
+        Op::SLoad(k) =&gt; {
+            let v = *st.storage.get(k).unwrap_or(&amp;0);
+            st.stack.push(v);
+        }
+    }
+}
+
+fn main() {
+    // The program is now data: a flat list of reified operation calls.
+    let code = vec![
+        Op::Push(2),
+        Op::Push(3),
+        Op::Add,
+        Op::SStore(1, 5),
+        Op::SLoad(1),
+    ];
+
+    // `pc` is the defunctionalized continuation: "the rest of the program" is
+    // just the next index.
+    let mut st = State { stack: vec![], storage: HashMap::new() };
+    let mut pc = 0;
+    while pc &lt; code.len() {
+        apply(&amp;code[pc], &amp;mut st);
+        pc += 1;
+    }
+
+    println!("stack:   {:?}", st.stack);
+    println!("storage: {:?}", st.storage);
+}</code></pre></pre>
+</details>
+<h2 id="from-continuations-to-bytecode"><a class="header" href="#from-continuations-to-bytecode">Từ tiếp nối đến bytecode</a></h2>
+<p>Ba cách mã hóa là cùng một phép tính được quan sát ở những khoảng cách khác nhau với máy:</p>
+<ul>
+<li><strong>Monad tự do</strong> dựng chương trình <em>bằng đại số</em> dưới dạng dữ liệu rồi diễn giải nó. Có thể gấp cùng cây đó bằng nhiều bộ diễn giải — một bộ chạy nó, một bộ in định dạng đẹp, một bộ biên dịch nó.</li>
+<li><strong>CPS</strong> loại bỏ cấu trúc dữ liệu và làm điều khiển tường minh: “thực hiện opcode này, rồi gọi tiếp nối”. Giá trị được nạp chảy đến tiếp nối cần nó.</li>
+<li><strong>Phi chức năng hóa</strong> chuyển các <em>lời gọi</em> phép toán thành dữ liệu bậc nhất, rồi đọc lại chúng bằng một <code>apply</code>; các tiếp nối cũng rút gọn thành <code>pc</code> trên một <code>Vec&lt;Op&gt;</code>. Vòng lặp điều khiển là một trampoline CPS không dùng closure.</li>
+</ul>
+<div id="admonition-phép-loại-suy-không-phải-phép-suy-dẫn" class="admonition admonish-note" role="note" aria-labelledby="admonition-phép-loại-suy-không-phải-phép-suy-dẫn-title">
+<div class="admonition-title">
+<div id="admonition-phép-loại-suy-không-phải-phép-suy-dẫn-title">
+<p>Phép loại suy, không phải phép suy dẫn</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-phép-loại-suy-không-phải-phép-suy-dẫn"></a>
+</div>
+<div>
+<p>Có thể phân tích EVM như máy trừu tượng bậc nhất với bộ đếm chương trình tường minh giống cách biểu diễn điều khiển đã phi chức năng hóa. Phép loại suy cấu trúc này tự nó không chứng minh bytecode EVM thu được từ phép biến đổi CPS rồi phi chức năng hóa.</p>
+</div>
+</div>
+<h2 id="key-insight"><a class="header" href="#key-insight">Nhận định chính</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Khái niệm</th><th>Mô hình monad tự do</th><th>Thực tế EVM</th></tr></thead><tbody>
+<tr><td>Kiểu lệnh</td><td>Enum opcode</td><td>Các opcode EVM cố định</td></tr>
+<tr><td>Cách biểu diễn chương trình</td><td>Cây dựng từ <code>Free&lt;A&gt;</code></td><td>Mảng bytecode tuyến tính</td></tr>
+<tr><td>Tiếp nối</td><td>Closure trong nút lệnh</td><td>Bộ đếm chương trình (<code>pc</code>)</td></tr>
+<tr><td>Bộ diễn giải</td><td>Đối sánh mẫu trên chương trình</td><td>Chuyển nhánh theo opcode, biến đổi trạng thái máy ảo</td></tr>
+<tr><td>Nhiều bộ diễn giải</td><td>Các phép gấp khác nhau trên cùng chương trình</td><td>Nhiều cách triển khai máy khách Ethereum</td></tr>
+</tbody></table>
+</div>
+<h2 id="how-this-maps-to-the-real-evm"><a class="header" href="#how-this-maps-to-the-real-evm">Ánh xạ này vào EVM thực tế</a></h2>
+<ul>
+<li><strong>Tập lệnh</strong> (các biến thể của <code>Free</code> hoặc enum <code>Op</code>) phản chiếu tập opcode EVM.</li>
+<li><strong>Chương trình</strong> (cây <code>Free</code>, tiếp nối lồng nhau hoặc <code>Vec&lt;Op&gt;</code>) là hợp đồng trước và sau khi biên dịch.</li>
+<li><strong>Bộ diễn giải</strong> (<code>run</code>, các handler CPS hoặc <code>apply</code>) là thứ mà máy khách như Geth, Besu hoặc Nethermind triển khai.</li>
+<li><strong>Trạng thái máy</strong> (<code>stack</code>, <code>storage</code>) là ngăn xếp, bộ nhớ và vùng lưu trữ của EVM.</li>
+<li>Bytecode EVM thực tế là dạng đã phi chức năng hóa: mảng lệnh phẳng được đánh chỉ mục bằng bộ đếm chương trình, đúng bằng cách mã hóa đã phi chức năng hóa ở trên.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../insights/referential-transparency.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../about.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../insights/referential-transparency.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../about.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-9aeb6ddf.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-9576a2db.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

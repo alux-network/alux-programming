@@ -1,0 +1,1 @@
+(()=>{let e=document.querySelector(`.menu-title`);if(!e)return;let t=document.createElement(`a`);t.href=`/magic/${document.documentElement.lang}/`,t.textContent=e.textContent,e.replaceChildren(t)})();

@@ -1,0 +1,477 @@
+<!DOCTYPE HTML>
+<html lang="de" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Freie Monade - ALUX Programming</title>
+
+
+        <!-- Custom HTML head -->
+        <meta property="og:title" content="Freie Monade - ALUX Programming">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-de.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <script src="/real.js" defer></script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-57e8465c.svg">
+        <link rel="shortcut icon" href="../favicon-b7d566ae.png">
+        <link rel="stylesheet" href="../css/variables-3865ffda.css">
+        <link rel="stylesheet" href="../css/general-4c35105a.css">
+        <link rel="stylesheet" href="../css/chrome-c0e702bf.css">
+        <link rel="stylesheet" href="../css/print-ad67d350.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome-799aeb25.css">
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight-56612340.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index-7d56cdd4.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish-ef18b366.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-04eb214f.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-62eda962.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ALUX Programming</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming/edit/master/src/concepts/free_monad.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"Freie Monade","sourceHash":"sha256:1d74262c1053f3cc50c6a3c49b8b9b7eddfb3c6ab6f247530387d19b335f4626"} -->
+<h1 id="free-monad"><a class="header" href="#free-monad">Freie Monade</a></h1>
+<div id="admonition-verwandte-themen" class="admonition admonish-tip" role="note" aria-labelledby="admonition-verwandte-themen-title">
+<div class="admonition-title">
+<div id="admonition-verwandte-themen-title">
+<p>Verwandte Themen</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-verwandte-themen"></a>
+</div>
+<div>
+<p>Design by Meaning in Rust: <a href="../rust-dd/first-order-programs.html">Programme erster Ordnung</a>, <a href="../rust-dd/interpreters.html">Interpreter und Effekte</a><br />
+Concepts: <a href="cps.html">Continuation-Passing Style</a>, <a href="defunctionalization.html">Defunktionalisierung</a><br />
+Insights: <a href="../insights/evm-alg.html">EVM-Algebra</a></p>
+</div>
+</div>
+<div id="admonition-semantische-einordnung" class="admonition admonish-note" role="note" aria-labelledby="admonition-semantische-einordnung-title">
+<div class="admonition-title">
+<div id="admonition-semantische-einordnung-title">
+<p>Semantische Einordnung</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-semantische-einordnung"></a>
+</div>
+<div>
+<p>Eine freie Monade ist eine Repräsentation von Instruktionssyntax mit frei erzeugter Sequenzierung. Der Instruktionsfunktor wählt bereits ein Vokabular; ein Interpreter bildet die Syntax anschließend auf einen semantischen Bereich ab. Sie ist eine leistungsstarke Kodierung, aber nicht die Definition von Denotational Design.</p>
+</div>
+</div>
+<h2 id="what-is-a-free-monad-rust-version"><a class="header" href="#what-is-a-free-monad-rust-version">Was ist eine freie Monade? (Rust-Version)</a></h2>
+<p>Eine <strong>freie Monade</strong> ermöglicht:</p>
+<ul>
+<li>Ein Programm als <em>Daten</em> zu <strong>beschreiben</strong>, statt es sofort auszuführen.</li>
+<li>Das Programm später auf eine oder mehrere Arten zu <strong>interpretieren</strong>.</li>
+</ul>
+<p>Man kann sie sich vorstellen als:</p>
+<blockquote>
+<p>Einen AST nebenwirkungsreicher Operationen + <code>bind</code>/<code>flat_map</code> zum Verknüpfen.</p>
+</blockquote>
+<p>Man trennt:</p>
+<ul>
+<li><strong>Syntax</strong> → Enum der Instruktionen.</li>
+<li><strong>Interpretation</strong> → eine strukturtreue Abbildung in einen gewählten semantischen Bereich.</li>
+</ul>
+<p>„Frei“ bedeutet, dass die Monadenstruktur aus einem Funktor <code>F</code> erzeugt wird, ohne über die Monadengesetze hinaus zusätzliche Gleichungen einzuführen. Mit der Wahl von <code>F</code> ist die Instruktionssyntax bereits festgelegt; die Interpretation des resultierenden Programms liefert eine bestimmte Denotation.</p>
+<h2 id="rust-implementation"><a class="header" href="#rust-implementation">Rust-Implementierung</a></h2>
+<div id="admonition-schematische-kodierung" class="admonition admonish-warning" role="note" aria-labelledby="admonition-schematische-kodierung-title">
+<div class="admonition-title">
+<div id="admonition-schematische-kodierung-title">
+<p>Schematische Kodierung</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-schematische-kodierung"></a>
+</div>
+<div>
+<p>Rust bietet keine direkten Typparameter höherer Ordnung. Eine produktive Kodierung freier Monaden benötigt daher zusätzliche Mechanismen auf Typebene oder einen spezialisierten Instruktionsfunktor. Der folgende Code zeigt die beabsichtigte Form; er ist keine sofort einsetzbare generische Implementierung.</p>
+</div>
+</div>
+<h3 id="free-monad-type"><a class="header" href="#free-monad-type">Typ einer freien Monade</a></h3>
+<pre><code class="language-rust noplayground">#[derive(Clone)]
+enum Free&lt;F, A&gt; {
+    Pure(A),
+    Suspend(F),
+    FlatMap(Box&lt;Free&lt;F, A&gt;&gt;, Box&lt;dyn Fn(A) -&gt; Free&lt;F, A&gt;&gt;),
+}
+
+impl&lt;F: Clone + 'static, A: 'static&gt; Free&lt;F, A&gt; {
+    fn pure(a: A) -&gt; Self {
+        Free::Pure(a)
+    }
+
+    fn flat_map&lt;B: 'static, G&gt;(self, f: G) -&gt; Free&lt;F, B&gt;
+    where
+        G: Fn(A) -&gt; Free&lt;F, B&gt; + 'static,
+        F: 'static,
+    {
+        match self {
+            Free::Pure(a) =&gt; f(a),
+            Free::Suspend(op) =&gt; {
+                Free::FlatMap(Box::new(Free::Suspend(op)), Box::new(f))
+            }
+            Free::FlatMap(inner, g) =&gt; {
+                Free::FlatMap(inner, Box::new(move |x| g(x).flat_map(f.clone())))
+            }
+        }
+    }
+}</code></pre>
+<h3 id="dsl-console-operations"><a class="header" href="#dsl-console-operations">DSL: Konsolenoperationen</a></h3>
+<pre><code class="language-rust noplayground">#[derive(Clone)]
+enum Console&lt;A&gt; {
+    Print(String, A),
+    ReadLine(fn(String) -&gt; A),
+}
+
+// Smart constructors
+fn print_line(s: &amp;str) -&gt; Free&lt;Console&lt;()&gt;, ()&gt; {
+    Free::Suspend(Console::Print(s.to_string(), ()))
+}
+
+fn read_line() -&gt; Free&lt;Console&lt;String&gt;, String&gt; {
+    Free::Suspend(Console::ReadLine(|input| Free::Pure(input)))
+}</code></pre>
+<h3 id="interpreter"><a class="header" href="#interpreter">Interpreter</a></h3>
+<pre><code class="language-rust noplayground">fn run_console&lt;A&gt;(mut prog: Free&lt;Console&lt;A&gt;, A&gt;) -&gt; A {
+    loop {
+        match prog {
+            Free::Pure(a) =&gt; return a,
+            Free::Suspend(Console::Print(s, next)) =&gt; {
+                println!("{}", s);
+                prog = Free::Pure(next);
+            }
+            Free::Suspend(Console::ReadLine(f)) =&gt; {
+                let mut buf = String::new();
+                std::io::stdin().read_line(&amp;mut buf).unwrap();
+                prog = f(buf.trim().to_string());
+            }
+            Free::FlatMap(inner, cont) =&gt; match *inner {
+                Free::Pure(a) =&gt; prog = cont(a),
+                Free::Suspend(op) =&gt; prog = Free::Suspend(op), // minimal handling
+                _ =&gt; unimplemented!(),
+            },
+        }
+    }
+}</code></pre>
+<h3 id="usage"><a class="header" href="#usage">Verwendung</a></h3>
+<pre><code class="language-rust noplayground">fn main() {
+    let program =
+        print_line("What is your name?")
+        .flat_map(|_| read_line())
+        .flat_map(|name| print_line(&amp;format!("Hello, {name}!")));
+
+    run_console(program);
+}</code></pre>
+<h2 id="takeaway"><a class="header" href="#takeaway">Fazit</a></h2>
+<ul>
+<li><strong>Syntax</strong> = <code>enum Console</code> (mögliche Instruktionen)</li>
+<li><strong>Programm</strong> = <code>Free&lt;Console, A&gt;</code> (Daten, die Schritte beschreiben)</li>
+<li><strong>Konkrete Interpretation</strong> = <code>run_console</code></li>
+<li>Vorteil: Dasselbe Programm kann mehrere Interpreter haben — etwa echte IO ausführen, in eine Datei protokollieren oder in eine andere Sprache kompilieren.</li>
+</ul>
+<h2 id="correlation-to-continuations-and-cps"><a class="header" href="#correlation-to-continuations-and-cps">Zusammenhang mit Fortsetzungen und CPS</a></h2>
+<p><strong>Continuation-Passing Style (CPS)</strong> ist eine Programmierweise, bei der Funktionen Werte nie direkt zurückgeben, sondern die Ergebnisse an eine andere Funktion (die <em>Fortsetzung</em>) übergeben, die den „Rest des Programms“ darstellt.</p>
+<p>Eine <strong>freie Monade</strong> ist im Grunde ein <strong>Programm als Folge von Schritten</strong>, wobei jeder Schritt besagt:</p>
+<blockquote>
+<p>„Führe dies aus und fahre dann mit dem Rest fort.“</p>
+</blockquote>
+<p>Dieser „Rest des Programms“ ist genau eine <strong>Fortsetzung</strong> — eine Funktion vom aktuellen Ergebnis zum nächsten Schritt.</p>
+<ul>
+<li>
+<p>In unserer freien Monade in Rust:</p>
+<pre><code class="language-rust noplayground">Free::FlatMap(Box&lt;Free&lt;F, A&gt;&gt;, Box&lt;dyn Fn(A) -&gt; Free&lt;F, A&gt;&gt;)</code></pre>
+<p><code>Box&lt;dyn Fn(A) -&gt; Free&lt;F, A&gt;&gt;</code> <strong>ist die Fortsetzung</strong>.</p>
+</li>
+<li>
+<p>Wenn du eine freie Monade interpretierst, <strong>führst du sie in CPS aus</strong>:</p>
+<ul>
+<li>Statt Werte direkt zurückzugeben, übergibst du sie an die nächste Fortsetzung.</li>
+<li>So entsteht eine Schleife aus: <code>current_instruction -&gt; feed result into continuation -&gt; next instruction</code></li>
+</ul>
+</li>
+<li>
+<p><strong>CPS-Zusammenhang</strong>:</p>
+<ul>
+<li>Freie Monaden <em>kodieren CPS in einer Datenstruktur</em>.</li>
+<li>CPS <em>ist die Laufzeitdarstellung des Kontrollflusses</em> derselben Idee.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Kurzer Überblick</strong>:</p>
+<div class="table-wrapper"><table><thead><tr><th>Konzept</th><th>In CPS</th><th>Im AST der freien Monade</th></tr></thead><tbody>
+<tr><td>Ergebnis des Schritts</td><td>Argument der Fortsetzung</td><td><code>A</code> in <code>Fn(A) -&gt; Free</code></td></tr>
+<tr><td>Fortsetzung</td><td>Funktion <code>(A) -&gt; R</code></td><td><code>Box&lt;dyn Fn(A) -&gt; Free&gt;</code></td></tr>
+<tr><td>Programm</td><td>Verschachtelte Fortsetzungen</td><td>Verschachtelte <code>FlatMap</code>-Varianten</td></tr>
+<tr><td>Ausführung</td><td>Funktionsaufrufe</td><td>Pattern Matching und Aufrufe</td></tr>
+</tbody></table>
+</div>
+<h2 id="gof-gang-of-four-design-patterns-mapping"><a class="header" href="#gof-gang-of-four-design-patterns-mapping">Zuordnung der GoF-Entwurfsmuster</a></h2>
+<p>Freie Monaden gehören <strong>nicht</strong> zu den GoF-Mustern, da sie aus der funktionalen Programmierungstheorie stammen. Sie <strong>umfassen</strong> jedoch mehrere Muster oder <strong>bilden</strong> sie nach:</p>
+<div class="table-wrapper"><table><thead><tr><th>GoF-Muster</th><th>Beziehung zur freien Monade</th></tr></thead><tbody>
+<tr><td><strong>Interpreter</strong></td><td>Das Gesamtmuster „AST + Ausführung“ ist wörtlich das Interpreter-Muster. Freie Monaden liefern den AST und die Kombinatoren gleich mit.</td></tr>
+<tr><td><strong>Befehl</strong></td><td>Jede <code>enum</code>-Variante in der DSL ist ein Befehlsobjekt. Die freie Monade verkettet sie zu einem Makrobefehl.</td></tr>
+<tr><td><strong>Kompositum</strong></td><td>Die AST-Struktur (verschachtelte Instruktionen) ist ein Kompositum aus Befehlen.</td></tr>
+<tr><td><strong>Builder</strong></td><td>Die <code>.flat_map</code>-Kette bildet einen flüssigen Builder für Programme.</td></tr>
+<tr><td><strong>Visitor</strong></td><td>Der Interpreter ist im Wesentlichen ein Visitor über die Instruktionsmenge.</td></tr>
+</tbody></table>
+</div>
+<h2 id="why-free-monad--these-patterns"><a class="header" href="#why-free-monad--these-patterns">Warum freie Monaden diesen Mustern überlegen sind</a></h2>
+<ul>
+<li>
+<p>GoF-Muster erfordern <strong>manuelle objektorientierte Arbeit</strong>: Schnittstellen und Klassen definieren und sie zusammensetzen.</p>
+</li>
+<li>
+<p>Freie Monaden sind <strong>algebraisch</strong>: Man definiert <em>Daten</em> für Instruktionen und <em>Funktionen</em>, die sie interpretieren.</p>
+</li>
+<li>
+<p>Automatisch erhält man:</p>
+<ul>
+<li>Sequenzierung (<code>flat_map</code>)</li>
+<li>Komposition</li>
+<li>mehrere Interpreter, ohne die Kernlogik anzutasten</li>
+</ul>
+</li>
+</ul>
+<p><strong>Zusammenfassungstabelle</strong>:</p>
+<div class="table-wrapper"><table><thead><tr><th>Konzept freier Monaden (funktionale Programmierung)</th><th>Äquivalentes GoF-/OO-Muster</th></tr></thead><tbody>
+<tr><td>Instruktions-Enum</td><td>Befehl</td></tr>
+<tr><td>Programm-AST</td><td>Kompositum</td></tr>
+<tr><td><code>flat_map</code>-Builder</td><td>Builder</td></tr>
+<tr><td>Interpreterfunktion</td><td>Interpreter / Visitor</td></tr>
+<tr><td>Mehrere Interpreter</td><td>Strategie</td></tr>
+</tbody></table>
+</div>
+<h2 id="relation-to-defunctionalization"><a class="header" href="#relation-to-defunctionalization">Beziehung zur Defunktionalisierung</a></h2>
+<p><strong>Defunktionalisierung</strong> ist eine Programmtransformation, die höherwertige Funktionen durch eine Datenstruktur erster Ordnung ersetzt, welche die möglichen Funktionen darstellt, sowie durch einen Interpreter, der sie anwendet.</p>
+<p>In CPS sind Fortsetzungen höherwertige Funktionen. Defunktionalisierung eines CPS-Programms ersetzt diese Fortsetzungen durch ein Enum ihrer Fälle und eine <code>apply</code>-Funktion, die sie ausführt.</p>
+<p>Bei geeigneten Kodierungen lässt sich eine freie Monade mit defunktionalisierten Fortsetzungen in einem CPS-transformierten Programm in Beziehung setzen:</p>
+<ol>
+<li>Beginne mit einer CPS-Version deines Programms. Der „Rest des Programms“ wird in Fortsetzungsfunktionen mitgeführt.</li>
+<li>Defunktionalisiere diese Fortsetzungsfunktionen zu einer endlichen Menge von Fällen in einem Datentyp.</li>
+<li>Der resultierende Datentyp erster Ordnung kann dieselbe Struktur aus Instruktionen und Fortsetzungen haben wie eine Repräsentation als freie Monade.</li>
+</ol>
+<p><strong>Wichtige Ähnlichkeiten</strong></p>
+<ul>
+<li>Sowohl freie Monaden als auch Defunktionalisierung erzeugen eine Datenrepräsentation der Berechnung und benötigen einen Interpreter, der diesen Daten Bedeutung verleiht.</li>
+<li>Der <code>FlatMap</code>-Fall einer freien Monade enthält die Fortsetzung; die Defunktionalisierung ersetzt diesen Abschluss durch einen Fall in einem Datentyp.</li>
+</ul>
+<p><strong>Wichtige Unterschiede</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>Aspekt</th><th>Defunktionalisierung</th><th>Freie Monade</th></tr></thead><tbody>
+<tr><td>Zweck</td><td>Mechanische Compilertechnik zum Entfernen höherwertiger Funktionen</td><td>Algebraische Konstruktion zur Trennung von Syntax und Semantik</td></tr>
+<tr><td>Eingabe</td><td>Beliebiges höherwertiges Programm, häufig in CPS-Form</td><td>Ein Funktor F, der mögliche Instruktionen beschreibt</td></tr>
+<tr><td>Ausgabe</td><td>Enum der Funktionsfälle plus Anwendungsfunktion</td><td><code>Free&lt;F, A&gt;</code> AST plus Interpreter</td></tr>
+<tr><td>Monadisch?</td><td>Nicht unbedingt</td><td>Von der Konstruktion her immer eine Monade</td></tr>
+<tr><td>Umfang</td><td>Allgemeine Transformation</td><td>Spezifisches Muster der funktionalen Programmierung</td></tr>
+</tbody></table>
+</div>
+<p><strong>Zusammenfassung</strong> Defunktionalisierung ist eine Transformationstechnik. Freie Monaden sind eine algebraische Konstruktion. In manchen Repräsentationen sind sie eng miteinander verwandt, doch ohne zusätzliche Annahmen lässt sich die eine im Allgemeinen nicht aus der anderen ableiten.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../concepts/referential_transparency.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../concepts/cps.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../concepts/referential_transparency.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../concepts/cps.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-9aeb6ddf.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-9576a2db.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

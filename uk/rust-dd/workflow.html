@@ -1,0 +1,430 @@
+<!DOCTYPE HTML>
+<html lang="uk" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Робочий процес, орієнтований на значення - ALUX Programming</title>
+
+
+        <!-- Custom HTML head -->
+        <meta property="og:title" content="Робочий процес, орієнтований на значення - ALUX Programming">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-uk.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <script src="/real.js" defer></script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-57e8465c.svg">
+        <link rel="shortcut icon" href="../favicon-b7d566ae.png">
+        <link rel="stylesheet" href="../css/variables-3865ffda.css">
+        <link rel="stylesheet" href="../css/general-4c35105a.css">
+        <link rel="stylesheet" href="../css/chrome-c0e702bf.css">
+        <link rel="stylesheet" href="../css/print-ad67d350.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome-799aeb25.css">
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight-56612340.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index-7d56cdd4.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish-ef18b366.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-5a751a35.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-86dbbbf7.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ALUX Programming</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming/edit/master/src/rust-dd/workflow.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"Робочий процес, орієнтований на значення","sourceHash":"sha256:4e52a8067c665db3ce38a802a1615b5d660d1aeee86656c13b53a33c6ebd2dff"} -->
+<h1 id="a-meaning-first-workflow"><a class="header" href="#a-meaning-first-workflow">Робочий процес, орієнтований на значення</a></h1>
+<div id="admonition-Повязані-матеріали" class="admonition admonish-tip" role="note" aria-labelledby="admonition-Повязані-матеріали-title">
+<div class="admonition-title">
+<div id="admonition-Повязані-матеріали-title">
+<p>Пов’язані матеріали</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Повязані-матеріали"></a>
+</div>
+<div>
+<p>Семантичний погляд: <a href="../denotational-design/semantic-view.html">Чому значення має бути першим</a><br />
+Проєктування від значення в Rust: <a href="capability-algebras.html">Алгебри можливостей</a>, <a href="derived-meaning.html">Похідне значення та композиція</a>, <a href="laws.html">Закони, сценарії та свідчення</a></p>
+</div>
+</div>
+<div id="admonition-Повторювана-дисципліна" class="admonition admonish-note" role="note" aria-labelledby="admonition-Повторювана-дисципліна-title">
+<div class="admonition-title">
+<div id="admonition-Повторювана-дисципліна-title">
+<p>Повторювана дисципліна</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Повторювана-дисципліна"></a>
+</div>
+<div>
+<p>Денотаційне проєктування — це робочий процес, а не лише пояснення готового коду: сформулюйте семантичну зміну, знайдіть найменший набір примітивних можливостей, чесно поєднайте їх, реалізуйте тонкі інтерпретатори й перевірте закони.</p>
+</div>
+</div>
+<p>Денотаційне проєктування найкорисніше як повторювана практика розробки, а не лише як пояснення готового коду.</p>
+<h2 id="the-core-workflow"><a class="header" href="#the-core-workflow">Основний робочий процес</a></h2>
+<p>Для нової функції чи рефакторингу:</p>
+<ol>
+<li>Одним реченням сформулюйте семантичну зміну.</li>
+<li>Визначте носій і спостережувану рівність.</li>
+<li>Знайдіть найменший набір потрібних примітивних можливостей.</li>
+<li>Визначте похідну поведінку через явні можливості.</li>
+<li>Виберіть форму композиції, що правдиво описує зв’язок.</li>
+<li>Реїфікуйте програму першого порядку лише тоді, коли структурі потрібні кілька інтерпретацій.</li>
+<li>Реалізуйте тонкі конкретні інтерпретатори.</li>
+<li>Додайте закони або спільні сценарії.</li>
+<li>Перевірте альтернативні інтерпретації.</li>
+<li>Спершу задокументуйте значення, потім механізми.</li>
+</ol>
+<h2 id="state-the-semantic-change"><a class="header" href="#state-the-semantic-change">Сформулюйте семантичну зміну</a></h2>
+<p>Нечітке формулювання:</p>
+<blockquote>
+<p>Додати кеш і метод менеджера.</p>
+</blockquote>
+<p>Формулювання, орієнтоване на значення:</p>
+<blockquote>
+<p>Під час однієї компіляції пошук одного й того самого незмінного джерела за назвою позначає те саме значення джерела.</p>
+</blockquote>
+<p>Друге формулювання виявляє можливий закон. Кешування згодом можна вибрати як один зі способів реалізації.</p>
+<h2 id="find-the-primitive-boundary"><a class="header" href="#find-the-primitive-boundary">Знайдіть межу примітивів</a></h2>
+<p>Запитайте себе:</p>
+<ul>
+<li>Яке нове спостереження чи перетворення потрібне?</li>
+<li>Чи є воно примітивним на цій межі, чи його можна вивести з наявного значення?</li>
+<li>Чи потрібен новий асоційований носій?</li>
+<li>Чи є передбачена залежність лише місцем зберігання?</li>
+<li>Які відмінності мають залишатися невидимими?</li>
+</ul>
+<p>Додавайте можливість лише заради справді нового примітивного значення.</p>
+<h2 id="choose-composition-truthfully"><a class="header" href="#choose-composition-truthfully">Правдиво вибирайте форму композиції</a></h2>
+<p>Користуйтеся цією таблицею рішень:</p>
+<div class="table-wrapper"><table><thead><tr><th>Запитання</th><th>Вибір</th></tr></thead><tbody>
+<tr><td>Один приймач інтерпретує всі потрібні значення?</td><td>Прямі обмеження</td></tr>
+<tr><td>Поведінку вибирають окремо?</td><td>Явне значення політики</td></tr>
+<tr><td>Чи можна незалежно композиційно поєднувати політики?</td><td>Добуток</td></tr>
+<tr><td>Середовище містить інший інтерпретатор?</td><td>Проєкція</td></tr>
+<tr><td>Обгортка має замінювати внутрішній інтерпретатор?</td><td>Делегування</td></tr>
+</tbody></table>
+</div>
+<p>Не використовуйте великий трейт контексту як рішення за замовчуванням.</p>
+<h2 id="refactor-one-meaning-at-a-time"><a class="header" href="#refactor-one-meaning-at-a-time">Рефакторте по одному значенню</a></h2>
+<p>Якщо наявний код виходить із представлення:</p>
+<ol>
+<li>Визначте одне семантичне спостереження.</li>
+<li>Задайте одну невелику можливість.</li>
+<li>Перенесіть одне виведення до розширення.</li>
+<li>Залиште поточну структуру його інтерпретатором.</li>
+<li>Додайте один тест закону.</li>
+</ol>
+<div id="admonition-Денотаційне-проєктування--не-максималізм-абстракцій" class="admonition admonish-warning" role="note" aria-labelledby="admonition-Денотаційне-проєктування--не-максималізм-абстракцій-title">
+<div class="admonition-title">
+<div id="admonition-Денотаційне-проєктування--не-максималізм-абстракцій-title">
+<p>Денотаційне проєктування — не максималізм абстракцій</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Денотаційне-проєктування--не-максималізм-абстракцій"></a>
+</div>
+<div>
+<p>Не переписуйте цілу підсистему спекулятивними абстракціями. Денотаційне проєктування — не максималізм абстракцій.</p>
+</div>
+</div>
+<h2 id="review-from-meaning-to-machinery"><a class="header" href="#review-from-meaning-to-machinery">Перевіряйте код від значення до механізмів</a></h2>
+<p>Читайте код у такому порядку:</p>
+<ol>
+<li>трейти можливостей</li>
+<li>типи семантичних значень</li>
+<li>похідні розширення</li>
+<li>синтаксис програми першого порядку, якщо є</li>
+<li>спільні закони й сценарії</li>
+<li>конкретні інтерпретатори</li>
+<li>оркестрація середовища виконання</li>
+</ol>
+<p>Якщо почати з найбільшої структури стану, це схилятиме перевірку до її представлення.</p>
+<h2 id="common-failure-modes"><a class="header" href="#common-failure-modes">Типові помилки</a></h2>
+<div id="admonition-Трейтова-форма-конкретного-стану--це-ще-не-денотаційне-проєктування" class="admonition admonish-warning" role="note" aria-labelledby="admonition-Трейтова-форма-конкретного-стану--це-ще-не-денотаційне-проєктування-title">
+<div class="admonition-title">
+<div id="admonition-Трейтова-форма-конкретного-стану--це-ще-не-денотаційне-проєктування-title">
+<p>Трейтова форма конкретного стану — це ще не денотаційне проєктування</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Трейтова-форма-конкретного-стану--це-ще-не-денотаційне-проєктування"></a>
+</div>
+<div>
+<pre><code class="language-rust noplayground">trait ContextAlg {
+    fn state(&amp;self) -&gt; &amp;ConcreteState;
+}</code></pre>
+<p>Трейт змінює синтаксис, але не те, хто визначає значення. Семантичне ядро й далі залежить від конкретного представлення.</p>
+</div>
+</div>
+<h3 id="derived-logic-in-every-interpreter"><a class="header" href="#derived-logic-in-every-interpreter">Похідна логіка в кожному інтерпретаторі</a></h3>
+<p>Якщо кожна реалізація окремо визначає той самий алгоритм предметної області, специфікацію продубльовано.</p>
+<h3 id="god-capability"><a class="header" href="#god-capability">Універсальна можливість</a></h3>
+<p>Супертрейт із не пов’язаними між собою операціями приховує таблицю залежностей і заважає незалежній інтерпретації.</p>
+<h3 id="framework-owned-specification"><a class="header" href="#framework-owned-specification">Специфікація у власності фреймворку</a></h3>
+<p>Якщо анотації маршрутів чи реєстрація RPC є єдиним визначенням інтерфейсу, документація й виконання можуть розійтися.</p>
+<h3 id="macro-owned-meaning"><a class="header" href="#macro-owned-meaning">Значення у власності макросу</a></h3>
+<p>Якщо згенерований код не має публічного представлення першого порядку, розгортання макросу випадково стає специфікацією.</p>
+<h3 id="policy-hidden-in-defaults"><a class="header" href="#policy-hidden-in-defaults">Політика прихована у значеннях за замовчуванням</a></h3>
+<p>Якщо <code>Default</code> непомітно вибирає кворум, повторні спроби, порядок чи політику компіляції, композиція вже не є явною.</p>
+<h3 id="tests-of-private-steps"><a class="header" href="#tests-of-private-steps">Тести внутрішніх кроків</a></h3>
+<p>Тести, залежні від розташування полів чи порядку обходу, стримують створення коректних альтернативних інтерпретаторів.</p>
+<h2 id="pull-request-checklist"><a class="header" href="#pull-request-checklist">Контрольний список для запиту на злиття</a></h2>
+<h3 id="meaning"><a class="header" href="#meaning">Значення</a></h3>
+<ul>
+<li>Чи сформульовано семантичну зміну?</li>
+<li>Чи визначено носій і рівність?</li>
+<li>Чи названо те, що навмисно опущено?</li>
+</ul>
+<h3 id="capabilities"><a class="header" href="#capabilities">Можливості</a></h3>
+<ul>
+<li>Чи виражає кожен трейт цілісне примітивне значення?</li>
+<li>Чи стоять обмеження в тих місцях, де їх використовують операції?</li>
+<li>Чи уникає похідний код конкретних полів?</li>
+</ul>
+<h3 id="composition"><a class="header" href="#composition">Композиція</a></h3>
+<ul>
+<li>Чи правдиво використовуються прямі обмеження, політики, добутки, проєкції й делегування?</li>
+<li>Чи явні семантичні значення за замовчуванням?</li>
+</ul>
+<h3 id="programs-and-interpreters"><a class="header" href="#programs-and-interpreters">Програми й інтерпретатори</a></h3>
+<ul>
+<li>Чи вводиться структура першого порядку лише тоді, коли потрібна інша інтерпретація?</li>
+<li>Чи зводяться допоміжні макроси до публічних значень програми?</li>
+<li>Чи є конкретні інтерпретатори тонкими й прив’язаними до межі?</li>
+</ul>
+<h3 id="evidence"><a class="header" href="#evidence">Свідчення</a></h3>
+<ul>
+<li>Чи наявний закон або цільове семантичне твердження?</li>
+<li>Чи може той самий сценарій виконатися для іншого інтерпретатора?</li>
+<li>Чи названо скінченні тести свідченнями, а не доведеннями?</li>
+</ul>
+<h2 id="reading-alux-style-code"><a class="header" href="#reading-alux-style-code">Читання коду в стилі ALUX</a></h2>
+<p>Загальна структура, на яку слід звернути увагу:</p>
+<ol>
+<li>невеликі трейти примітивних можливостей</li>
+<li>похідні розширення з явними обмеженнями</li>
+<li>програми першого порядку, коли потрібні огляд чи композиція</li>
+<li>спільні закони й сценарії</li>
+<li>конкретні інтерпретатори середовища виконання, компілятора, HTTP, RPC чи сховища</li>
+</ol>
+<p>У великих паралельних системах усе одно є ділянки з інтенсивною оркестрацією. Не припускайте, що кожен наявний інтерфейс уже є ідеальною денотаційною специфікацією. Шукайте семантичні стики й починайте читання з них, рухаючись назовні.</p>
+<p>Tolang застосовує той самий погляд до мови в цілому: синтаксис нормалізується до форм, що містять значення, компіляція зберігає це значення, а паралельне середовище виконання інтерпретує виконуване представлення. Операційний опис не менш важливий, але він іде після семантичного контракту.</p>
+<h2 id="final-principle"><a class="header" href="#final-principle">Головний принцип</a></h2>
+<p>Якщо є сумніви, поверніться до одного запитання:</p>
+<div id="admonition-Запитання-до-якого-слід-повертатися" class="admonition admonish-quote" role="note" aria-labelledby="admonition-Запитання-до-якого-слід-повертатися-title">
+<div class="admonition-title">
+<div id="admonition-Запитання-до-якого-слід-повертатися-title">
+<p>Запитання, до якого слід повертатися</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Запитання-до-якого-слід-повертатися"></a>
+</div>
+<div>
+<p>Яке значення мають зберігати ці механізми?</p>
+</div>
+</div>
+<p>Це запитання не розв’яже кожну інженерну проблему, але допоможе побачити її на правильному рівні.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../rust-dd/compiler-pipelines.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../concepts/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../rust-dd/compiler-pipelines.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../concepts/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-9aeb6ddf.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-9576a2db.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

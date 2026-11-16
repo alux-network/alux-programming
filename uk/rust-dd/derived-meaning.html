@@ -1,0 +1,431 @@
+<!DOCTYPE HTML>
+<html lang="uk" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Похідне значення та композиція - ALUX Programming</title>
+
+
+        <!-- Custom HTML head -->
+        <meta property="og:title" content="Похідне значення та композиція - ALUX Programming">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-uk.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <script src="/real.js" defer></script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-57e8465c.svg">
+        <link rel="shortcut icon" href="../favicon-b7d566ae.png">
+        <link rel="stylesheet" href="../css/variables-3865ffda.css">
+        <link rel="stylesheet" href="../css/general-4c35105a.css">
+        <link rel="stylesheet" href="../css/chrome-c0e702bf.css">
+        <link rel="stylesheet" href="../css/print-ad67d350.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome-799aeb25.css">
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight-56612340.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index-7d56cdd4.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish-ef18b366.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-5a751a35.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-86dbbbf7.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ALUX Programming</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming/edit/master/src/rust-dd/derived-meaning.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"Похідне значення та композиція","sourceHash":"sha256:c7473063df63eb2d15fda98f9a500fae54294e9185911fd432265986a9f87f56"} -->
+<h1 id="derived-meaning-and-composition"><a class="header" href="#derived-meaning-and-composition">Похідне значення та композиція</a></h1>
+<div id="admonition-Повязані-матеріали" class="admonition admonish-tip" role="note" aria-labelledby="admonition-Повязані-матеріали-title">
+<div class="admonition-title">
+<div id="admonition-Повязані-матеріали-title">
+<p>Пов’язані матеріали</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Повязані-матеріали"></a>
+</div>
+<div>
+<p>Семантичний погляд: <a href="../denotational-design/design.html">Денотаційне проєктування</a><br />
+Проєктування від значення в Rust: <a href="capability-algebras.html">Алгебри можливостей</a>, <a href="interpreters.html">Інтерпретатори й ефекти</a><br />
+Поняття: <a href="../concepts/expression-problem.html">Проблема виразів</a></p>
+</div>
+</div>
+<div id="admonition-Вступний-огляд" class="admonition admonish-note" role="note" aria-labelledby="admonition-Вступний-огляд-title">
+<div class="admonition-title">
+<div id="admonition-Вступний-огляд-title">
+<p>Вступний огляд</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Вступний-огляд"></a>
+</div>
+<div>
+<p>Похідна поведінка належить можливостям, які вона використовує: її один раз визначають як розширення з відповідними обмеженнями, а не додають до конкретного типу, який випадково їх реалізує. Умова <code>where</code> чітко визначає всі залежності виведення.</p>
+</div>
+</div>
+<p>Примітивні можливості надають термінологію. Більшість поведінки застосунку слід один раз вивести з цієї термінології, а тоді використовувати в кожному інтерпретаторі.</p>
+<h2 id="extensions-own-derivations"><a class="header" href="#extensions-own-derivations">Розширення містять похідні визначення</a></h2>
+<p>Завдяки крейту <a href="https://docs.rs/extend/latest/extend/"><code>extend</code></a> операції розгалуження можна виводити незалежно від представлення:</p>
+<pre><code class="language-rust noplayground">use extend::ext;
+
+#[ext(name = BranchExt)]
+pub impl&lt;This&gt; This
+where
+    This: BranchAlg,
+{
+    fn branch_child(&amp;self, branch: &amp;This::Branch, direction: Direction) -&gt; This::Branch {
+        self.branch_grow(branch, direction)
+    }
+
+    fn branch_left(&amp;self, branch: &amp;This::Branch) -&gt; This::Branch {
+        self.branch_child(branch, Direction::Left)
+    }
+
+    fn branch_right(&amp;self, branch: &amp;This::Branch) -&gt; This::Branch {
+        self.branch_child(branch, Direction::Right)
+    }
+
+    fn branch_is_ancestor(&amp;self, ancestor: &amp;This::Branch, descendant: &amp;This::Branch) -&gt; bool {
+        self.branch_path(ancestor, descendant).is_some()
+    }
+}</code></pre>
+<p>Умова <code>where</code> — це повне оголошення семантичних залежностей: лише <code>BranchAlg</code> й нічого більше. Жоден конкретний тип гілки не містить цих визначень.</p>
+<p>Макрос лише прибирає шаблонний код трейтів та реалізацій. Той самий задум можна виразити звичайним трейтом-розширенням. Денотаційне проєктування полягає в семантичній межі та виведенні операцій, а не в атрибуті.</p>
+<h2 id="why-not-put-it-on-the-struct"><a class="header" href="#why-not-put-it-on-the-struct">Чому не додати це до структури?</a></h2>
+<div id="admonition-Не-привязуйте-похідне-значення-до-структури" class="admonition admonish-warning" role="note" aria-labelledby="admonition-Не-привязуйте-похідне-значення-до-структури-title">
+<div class="admonition-title">
+<div id="admonition-Не-привязуйте-похідне-значення-до-структури-title">
+<p>Не прив’язуйте похідне значення до структури</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Не-привязуйте-похідне-значення-до-структури"></a>
+</div>
+<div>
+<p>Це проєктування, що виходить із представлення. Якщо додати числовий носій гілок, визначення доведеться копіювати або реалізовувати заново, а перший конкретний тип непомітно стане специфікацією.</p>
+<pre><code class="language-rust noplayground">impl BitBranchStore {
+    // not recommended: derived branch meaning welded to one bit representation
+    fn is_ancestor(&amp;self, a: &amp;BitBranch, b: &amp;BitBranch) -&gt; bool {
+        // derived branch meaning mixed with bit storage
+    }
+}</code></pre>
+</div>
+</div>
+<p>Розширення змінюють розподіл відповідальності:</p>
+<div class="table-wrapper"><table><thead><tr><th>Рівень</th><th>Відповідальність</th></tr></thead><tbody>
+<tr><td>Семантична можливість</td><td>Містить похідне значення</td></tr>
+<tr><td>Конкретний тип</td><td>Інтерпретує примітивне значення</td></tr>
+</tbody></table>
+</div>
+<h2 id="compose-with-bounds"><a class="header" href="#compose-with-bounds">Комбінуйте за допомогою обмежень</a></h2>
+<p>Коли один приймач інтерпретує кілька можливостей, використовуйте прямі обмеження:</p>
+<pre><code class="language-rust noplayground">#[ext(name = PublishCurrentExt)]
+pub impl&lt;This, Document, Error&gt; This
+where
+    This: DocumentAlg&lt;Document = Document&gt; + PublishAlg&lt;Document = Document, Error = Error&gt;,
+{
+    async fn publish_current(&amp;self) -&gt; Result&lt;(), Error&gt; {
+        self.publish(self.document_current()).await
+    }
+}</code></pre>
+<div id="admonition-Не-обєднуйте-можливості-в-пакет" class="admonition admonish-warning" role="note" aria-labelledby="admonition-Не-обєднуйте-можливості-в-пакет-title">
+<div class="admonition-title">
+<div id="admonition-Не-обєднуйте-можливості-в-пакет-title">
+<p>Не об’єднуйте можливості в пакет</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Не-обєднуйте-можливості-в-пакет"></a>
+</div>
+<div>
+<p>Не створюйте супертрейт лише для скорочення обмеження:</p>
+<pre><code class="language-rust noplayground">trait AppContext: DocumentAlg + PublishAlg {}</code></pre>
+<p>Такий пакет приховує, яка операція використовує які можливості, і створює ще один інтерфейс, якому мають відповідати всі інтерпретатори.</p>
+</div>
+</div>
+<h2 id="five-different-composition-meanings"><a class="header" href="#five-different-composition-meanings">П’ять різних значень композиції</a></h2>
+<p>Вибирайте форму, яка правдиво описує зв’язок.</p>
+<div class="table-wrapper"><table><thead><tr><th>Ситуація</th><th>Форма Rust</th></tr></thead><tbody>
+<tr><td>Один приймач інтерпретує кілька можливостей</td><td>Прямі обмеження</td></tr>
+<tr><td>Окреме значення вибирає поведінку</td><td>Явний параметр політики</td></tr>
+<tr><td>Незалежні політики композиційно поєднуються під час компіляції</td><td>Добуток або звичайна структура</td></tr>
+<tr><td>Середовище містить інший інтерпретатор</td><td>Невелика проєкція <code>HasX</code></td></tr>
+<tr><td>Обгортка замінює внутрішній інтерпретатор</td><td>Делегування</td></tr>
+</tbody></table>
+</div>
+<h3 id="explicit-policy"><a class="header" href="#explicit-policy">Явна політика</a></h3>
+<p>Якщо стратегію вибирають окремо, явно передавайте її розширенню:</p>
+<pre><code class="language-rust noplayground">#[ext(name = CandidateSelectExt)]
+pub impl&lt;This&gt; This
+where
+    This: CandidateAlg,
+{
+    fn select_with&lt;Policy&gt;(&amp;self, policy: &amp;Policy) -&gt; This::Candidate
+    where
+        Policy: SelectionPolicyAlg&lt;Candidate = This::Candidate&gt;,
+    {
+        policy.select(self.candidates())
+    }
+}</code></pre>
+<p>Розширення містить спільне похідне визначення, а політика залишається незалежно вибраним вхідним значенням. Її не приховано в середовищі й не вибрано через <code>Default</code>.</p>
+<h3 id="product-of-policies"><a class="header" href="#product-of-policies">Добуток політик</a></h3>
+<p>Незалежні політики можна поєднувати без вигадування успадкування:</p>
+<pre><code class="language-rust noplayground">struct CompilePolicy&lt;Optimize, Diagnostics&gt; {
+    optimize: Optimize,
+    diagnostics: Diagnostics,
+}</code></pre>
+<h3 id="projection"><a class="header" href="#projection">Проєкція</a></h3>
+<p>Трейт <code>HasClock</code> лише стверджує, що середовище може отримати окреме значення годинника:</p>
+<pre><code class="language-rust noplayground">trait HasClock {
+    type Clock;
+
+    fn clock(&amp;self) -&gt; &amp;Self::Clock;
+}</code></pre>
+<p>Операція, яка читає час, додає <code>This::Clock: ClockAlg</code> до власної умови <code>where</code>. Проєкція стосується наявності значення, а операція-споживач заявляє потрібну їй можливість. Використовуйте цей підхід лише за реального розділення. Не вводьте <code>HasX</code> лише для впорядкування полів.</p>
+<h3 id="delegation"><a class="header" href="#delegation">Делегування</a></h3>
+<p>Делегування означає, що сама обгортка може замінити внутрішній інтерпретатор. Воно доречне для прозорих нових типів, спільних вказівників і адаптерів, які зберігають увесь контракт можливостей.</p>
+<p>Проєкція означає «має». Делегування означає «є». Це різні поняття.</p>
+<h2 id="defaults-are-semantic-decisions-too"><a class="header" href="#defaults-are-semantic-decisions-too">Значення визначають і значення за замовчуванням</a></h2>
+<p>Механічні порожні стани можна реалізувати через <code>Default</code>. Політику предметної області зазвичай слід задавати явно.</p>
+<p>Часто корисні випадки мають алгебраїчне пояснення: значення за замовчуванням є нейтральним елементом природної композиції типу. Додавання порожнього буфера, об’єднання з порожньою мапою чи накопичення нуля діагностичних повідомлень нічого не додає. Коли така композиція асоціативна, тип і операція утворюють моноїд, а <code>Default</code> може назвати нейтральний елемент замість вибору політики.</p>
+<p>Вдалі значення за замовчуванням:</p>
+<ul>
+<li>Порожній буфер</li>
+<li>Порожня мапа</li>
+<li>Нуль накопичених діагностичних повідомлень</li>
+</ul>
+<p>Сумнівні значення за замовчуванням:</p>
+<ul>
+<li>Поріг кворуму</li>
+<li>Політика лідера</li>
+<li>Семантика повторних спроб</li>
+<li>Глибина підтвердження</li>
+<li>Формат виведення</li>
+</ul>
+<p>Важливо розрізняти нейтральний елемент, який не вимагає рішення, і кворум, стратегію лідера чи правило повторних спроб, які задають поведінку предметної області. Якщо зміна значення за замовчуванням змінює значення предметної області, явно композиційно поєднуйте політику.</p>
+<h2 id="derived-meaning-should-stay-closed"><a class="header" href="#derived-meaning-should-stay-closed">Похідне значення має спиратися лише на оголошене</a></h2>
+<p>Розширення має використовувати лише заявлені можливості та явні вхідні значення. Прямий доступ до полів, глобальний стан і приведення до конкретних типів роблять умову <code>where</code> неправдивою.</p>
+<p>Перевіряйте тіло так, ніби це доведення оголошених залежностей:</p>
+<div id="admonition-Перевірте-кожне-виведення" class="admonition admonish-question" role="note" aria-labelledby="admonition-Перевірте-кожне-виведення-title">
+<div class="admonition-title">
+<div id="admonition-Перевірте-кожне-виведення-title">
+<p>Перевірте кожне виведення</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Перевірте-кожне-виведення"></a>
+</div>
+<div>
+<p>Чи можна обґрунтувати кожну операцію в цьому тілі наведеними обмеженнями?</p>
+</div>
+</div>
+<p>Якщо ні, або обмежень бракує, або код належить до іншого рівня.</p>
+<h2 id="review-checks"><a class="header" href="#review-checks">Перевірка</a></h2>
+<ul>
+<li>Чи визначено похідну поведінку один раз на рівні можливостей?</li>
+<li>Чи уникає розширення конкретних полів і типів контексту?</li>
+<li>Чи використовуються прямі обмеження для одного інтерпретатора?</li>
+<li>Чи задано політики явними значеннями, якщо їх вибирають окремо?</li>
+<li>Чи правдиво описують проєкція й делегування свої зв’язки?</li>
+<li>Чи помітні політики предметної області під час композиції?</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../rust-dd/semantic-types.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../rust-dd/interpreters.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../rust-dd/semantic-types.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../rust-dd/interpreters.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-9aeb6ddf.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-9576a2db.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE HTML>
+<html lang="uk" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Алгебри можливостей - ALUX Programming</title>
+
+
+        <!-- Custom HTML head -->
+        <meta property="og:title" content="Алгебри можливостей - ALUX Programming">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-uk.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <script src="/real.js" defer></script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-57e8465c.svg">
+        <link rel="shortcut icon" href="../favicon-b7d566ae.png">
+        <link rel="stylesheet" href="../css/variables-3865ffda.css">
+        <link rel="stylesheet" href="../css/general-4c35105a.css">
+        <link rel="stylesheet" href="../css/chrome-c0e702bf.css">
+        <link rel="stylesheet" href="../css/print-ad67d350.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome-799aeb25.css">
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight-56612340.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index-7d56cdd4.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish-ef18b366.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-5a751a35.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-86dbbbf7.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ALUX Programming</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming/edit/master/src/rust-dd/capability-algebras.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"Алгебри можливостей","sourceHash":"sha256:0c3fefabad08ae4d7f39d28d5855e2983e2c46d3acba947e186a304d1e91139e"} -->
+<h1 id="capability-algebras"><a class="header" href="#capability-algebras">Алгебри можливостей</a></h1>
+<p><img src="../../design-by-meaning-rust.png" alt="Design by meaning in Rust — building software from small capability traits" /></p>
+<div id="admonition-Повязані-матеріали" class="admonition admonish-tip" role="note" aria-labelledby="admonition-Повязані-матеріали-title">
+<div class="admonition-title">
+<div id="admonition-Повязані-матеріали-title">
+<p>Пов’язані матеріали</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Повязані-матеріали"></a>
+</div>
+<div>
+<p>Семантичний погляд: <a href="../denotational-design/design.html">Денотаційне проєктування</a>, <a href="../denotational-design/denotations.html">Денотації та композиційність</a><br />
+Проєктування від значення в Rust: <a href="semantic-types.html">Семантичні типи в Rust</a>, <a href="derived-meaning.html">Похідне значення та композиція</a><br />
+Поняття: <a href="../concepts/expression-problem.html">Проблема виразів</a>, <a href="../concepts/branching.html">Розгалуження та конфлюентність</a></p>
+</div>
+</div>
+<div id="admonition-Вступний-огляд" class="admonition admonish-note" role="note" aria-labelledby="admonition-Вступний-огляд-title">
+<div class="admonition-title">
+<div id="admonition-Вступний-огляд-title">
+<p>Вступний огляд</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Вступний-огляд"></a>
+</div>
+<div>
+<p>Трейт можливостей — це невелика алгебра: він називає примітивні спостереження й перетворення, потрібні для певного значення, а вибір представлення залишає інтерпретатору. Термінологію слід виводити зі значення, а не з полів, які випадково є в першій реалізації.</p>
+</div>
+</div>
+<p>У Rust немає вбудованої конструкції під назвою «денотаційне проєктування». Ми кодуємо семантичну термінологію звичайними засобами мови. Невеликі трейти можливостей — один із корисних способів це зробити.</p>
+<p>Суфікс <code>Alg</code> у цій книжці означає <strong>алгебру</strong>: цілісний набір примітивних операцій над носіями, які вибирає інтерпретатор.</p>
+<h2 id="start-from-meaning"><a class="header" href="#start-from-meaning">Почніть зі значення</a></h2>
+<p>Значення позиції в розгалуженні, розглянуте в попередній частині, можна виразити так:</p>
+<pre><code class="language-rust noplayground">#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Direction {
+    Left,
+    Right,
+}
+
+pub trait BranchAlg {
+    type Branch;
+
+    fn branch_root(&amp;self) -&gt; Self::Branch;
+    fn branch_grow(&amp;self, branch: &amp;Self::Branch, direction: Direction) -&gt; Self::Branch;
+    fn branch_path(&amp;self, ancestor: &amp;Self::Branch, descendant: &amp;Self::Branch) -&gt; Option&lt;Vec&lt;Direction&gt;&gt;;
+}</code></pre>
+<p>Трейт задає три примітивні значення:</p>
+<ul>
+<li>побудувати корінь</li>
+<li>розширити гілку в одному напрямку</li>
+<li>спостерігати відносний шлях, якщо він існує</li>
+</ul>
+<p>Він не визначає, де зберігаються гілки й у який спосіб закодовано шляхи.</p>
+<h2 id="capabilities-are-not-field-projections"><a class="header" href="#capabilities-are-not-field-projections">Можливості — це не проєкції полів</a></h2>
+<div id="admonition-Проєкції-полів-не-є-семантичними-можливостями" class="admonition admonish-warning" role="note" aria-labelledby="admonition-Проєкції-полів-не-є-семантичними-можливостями-title">
+<div class="admonition-title">
+<div id="admonition-Проєкції-полів-не-є-семантичними-можливостями-title">
+<p>Проєкції полів не є семантичними можливостями</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Проєкції-полів-не-є-семантичними-можливостями"></a>
+</div>
+<div>
+<p>Порівняймо:</p>
+<pre><code class="language-rust noplayground">trait BranchContext {
+    fn branches(&amp;self) -&gt; &amp;Vec&lt;Vec&lt;bool&gt;&gt;;
+    fn branches_mut(&amp;mut self) -&gt; &amp;mut Vec&lt;Vec&lt;bool&gt;&gt;;
+}</code></pre>
+<p>Цей трейт приховує структуру за методами, але все одно відкриває її представлення. Будь-яка похідна логіка стає залежною від векторів, булевих значень, володіння та стратегії мутацій.</p>
+</div>
+</div>
+<p>Семантична можливість відкриває спостереження чи перетворення, потрібне для подальшого значення. Запитайте себе:</p>
+<div id="admonition-Запитання-до-кожної-можливості" class="admonition admonish-question" role="note" aria-labelledby="admonition-Запитання-до-кожної-можливості-title">
+<div class="admonition-title">
+<div id="admonition-Запитання-до-кожної-можливості-title">
+<p>Запитання до кожної можливості</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Запитання-до-кожної-можливості"></a>
+</div>
+<div>
+<p>Чи мала б ця операція сенс, якби реалізація використовувала базу даних, символьний терм, компактне ціле число або віддалену службу?</p>
+</div>
+</div>
+<p>Якщо так, операція може належати до можливості. Якщо ж клієнтам потрібне поточне розташування полів, їй, імовірно, там не місце.</p>
+<h2 id="one-primitive-meaning-per-trait"><a class="header" href="#one-primitive-meaning-per-trait">Одне примітивне значення на трейт</a></h2>
+<p>Невеликі трейти роблять залежності помітними:</p>
+<pre><code class="language-rust noplayground">pub trait ClockAlg {
+    type Instant;
+
+    fn clock_now(&amp;self) -&gt; Self::Instant;
+}
+
+pub trait DeadlineAlg&lt;Instant&gt; {
+    fn deadline_expired(&amp;self, now: &amp;Instant) -&gt; bool;
+}</code></pre>
+<p>Похідна операція, якій потрібні час і граничний термін, може вимагати обох трейтів. Їй не потрібен <code>ApplicationContext</code>, що містить журналювання, сховище, мережу, конфігурацію та планування.</p>
+<p>«Невеликий» не означає механічно «з одним методом». Групуйте операції, якщо вони утворюють єдину нероздільну семантичну структуру. Розділяйте їх, якщо вони виражають незалежні значення або допускають незалежні інтерпретатори.</p>
+<h2 id="associated-types-select-carriers"><a class="header" href="#associated-types-select-carriers">Асоційовані типи вибирають носії</a></h2>
+<p>Використовуйте асоційовані типи, коли представлення вибирає інтерпретатор:</p>
+<pre><code class="language-rust noplayground">pub trait SourceAlg {
+    type Source;
+    type Error;
+
+    fn source_read(&amp;self, name: &amp;str) -&gt; Result&lt;Self::Source, Self::Error&gt;;
+}</code></pre>
+<p>Не вимагайте <code>String</code>, <code>std::io::Error</code> чи конкретного синтаксичного дерева, якщо на цій межі вони не є сталою частиною семантичної термінології.</p>
+<p>Водночас конкретні семантичні значення цілком доречні:</p>
+<pre><code class="language-rust noplayground">pub enum Severity {
+    Warning,
+    Error,
+}</code></pre>
+<p>Правило не в тому, щоб «зробити абстрактним кожен тип». Правило в тому, щоб «не плутати механізми інтерпретатора із семантичною термінологією».</p>
+<h2 id="put-bounds-where-they-are-used"><a class="header" href="#put-bounds-where-they-are-used">Розміщуйте обмеження там, де їх використовують</a></h2>
+<p>Не обтяжуйте примітив обмеженнями, яких він не потребує:</p>
+<pre><code class="language-rust noplayground">pub trait CandidateAlg {
+    type Candidate;
+
+    fn candidates(&amp;self) -&gt; impl Iterator&lt;Item = Self::Candidate&gt;;
+}</code></pre>
+<div id="admonition-Не-додавайте-обмеження-завчасно" class="admonition admonish-warning" role="note" aria-labelledby="admonition-Не-додавайте-обмеження-завчасно-title">
+<div class="admonition-title">
+<div id="admonition-Не-додавайте-обмеження-завчасно-title">
+<p>Не додавайте обмеження завчасно</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Не-додавайте-обмеження-завчасно"></a>
+</div>
+<div>
+<p>Не обмежуйте асоційований тип лише через те, що воно може знадобитися одному майбутньому алгоритму:</p>
+<pre><code class="language-rust noplayground">pub trait CandidateAlg {
+    // not recommended: every interpreter now pays for bounds
+    // most operations never use
+    type Candidate: Clone + Ord + Hash + Send + Sync;
+
+    fn candidates(&amp;self) -&gt; impl Iterator&lt;Item = Self::Candidate&gt;;
+}</code></pre>
+<p>Операція сортування кандидатів може вимагати <code>Ord</code>, а операція додавання їх до хеш-множини — <code>Hash</code>.</p>
+</div>
+</div>
+<p>Обмеження в місцях використання дають змогу повторно застосовувати примітивні значення й виявляють справжній контракт похідної поведінки.</p>
+<h2 id="effects-can-be-primitive-meaning"><a class="header" href="#effects-can-be-primitive-meaning">Ефекти можуть бути примітивним значенням</a></h2>
+<p>Трейти можливостей не передбачають чистого виконання:</p>
+<pre><code class="language-rust noplayground">pub trait PublishAlg {
+    type Document;
+    type Error;
+
+    async fn publish(&amp;self, document: Self::Document) -&gt; Result&lt;(), Self::Error&gt;;
+}</code></pre>
+<p>Публікація є ефектом. Вона все одно може бути примітивною семантичною операцією на поточній межі. Конкретний інтерпретатор може використовувати HTTP, чергу, файл чи тестовий буфер.</p>
+<p>Семантичний рівень не має визначати повторні спроби, володіння сокетами, запуск завдань чи пули з’єднань, якщо ці відмінності не є частиною задуму.</p>
+<h2 id="naming-the-boundary"><a class="header" href="#naming-the-boundary">Назвіть межу</a></h2>
+<p>Формулюйте можливості з погляду семантики споживача:</p>
+<div class="table-wrapper"><table><thead><tr><th>Орієнтоване на значення</th><th>Орієнтоване на представлення</th></tr></thead><tbody>
+<tr><td><code>closed_outcome(slot)</code></td><td><code>get_runtime_map(slot)</code></td></tr>
+<tr><td><code>source_read(name)</code></td><td><code>compiler_context().sources().lookup(name)</code></td></tr>
+<tr><td><code>branch_path(ancestor, descendant)</code></td><td><code>raw_branch_bits(id)</code></td></tr>
+</tbody></table>
+</div>
+<p>Називання — частина проєктування. Механічна назва провокує механічну залежність.</p>
+<h2 id="review-checks"><a class="header" href="#review-checks">Перевірка</a></h2>
+<ul>
+<li>Чи відкриває трейт одне цілісне примітивне значення?</li>
+<li>Чи може незалежний інтерпретатор реалізувати його, не копіюючи перше представлення?</li>
+<li>Чи є асоційовані типи абстрактними лише там, де їх справді вибирає інтерпретатор?</li>
+<li>Чи є конкретні типи сталою семантичною термінологією?</li>
+<li>Чи не накладаються обмеження, доки їх не використовує певна операція?</li>
+<li>Чи уникає трейт повернення менеджерів, контекстів і необроблених даних сховища?</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../denotational-design/dependent-types.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../rust-dd/semantic-types.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../denotational-design/dependent-types.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../rust-dd/semantic-types.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-9aeb6ddf.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-9576a2db.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

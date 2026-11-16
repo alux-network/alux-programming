@@ -1,0 +1,319 @@
+<!DOCTYPE HTML>
+<html lang="ru" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Референциальная прозрачность - ALUX Programming</title>
+
+
+        <!-- Custom HTML head -->
+        <meta property="og:title" content="Референциальная прозрачность - ALUX Programming">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="https://programming.alux.network/social/alux-programming-ru.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <script src="/real.js" defer></script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-57e8465c.svg">
+        <link rel="shortcut icon" href="../favicon-b7d566ae.png">
+        <link rel="stylesheet" href="../css/variables-3865ffda.css">
+        <link rel="stylesheet" href="../css/general-4c35105a.css">
+        <link rel="stylesheet" href="../css/chrome-c0e702bf.css">
+        <link rel="stylesheet" href="../css/print-ad67d350.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome-799aeb25.css">
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight-56612340.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/index-7d56cdd4.css">
+        <link rel="stylesheet" href="../theme/mdbook-admonish-ef18b366.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-337d8a81.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-84d418b5.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ALUX Programming</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/alux-network/alux-programming/edit/master/src/concepts/referential_transparency.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<!-- reader: {"title":"Референциальная прозрачность","sourceHash":"sha256:cf7ad00c5e2f7e6e1da3d3f18d03b6ec9ec16d836e412d29a99f0fa801064234"} -->
+<h1 id="referential-transparency"><a class="header" href="#referential-transparency">Референциальная прозрачность</a></h1>
+<div id="admonition-Связанные-материалы" class="admonition admonish-tip" role="note" aria-labelledby="admonition-Связанные-материалы-title">
+<div class="admonition-title">
+<div id="admonition-Связанные-материалы-title">
+<p>Связанные материалы</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Связанные-материалы"></a>
+</div>
+<div>
+<p>«Семантический взгляд»: <a href="../denotational-design/denotations.html">Денотации и композиционность</a>, <a href="../denotational-design/laws-and-interpretations.html">Законы и интерпретации</a><br />
+«Идеи»: <a href="../insights/referential-transparency.html">Референциальная прозрачность: новый взгляд</a></p>
+</div>
+</div>
+<div id="admonition-Семантическое-место" class="admonition admonish-note" role="note" aria-labelledby="admonition-Семантическое-место-title">
+<div class="admonition-title">
+<div id="admonition-Семантическое-место-title">
+<p>Семантическое место</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-Семантическое-место"></a>
+</div>
+<div>
+<p>Референциальная прозрачность зависит от выбранной денотации и отношения равенства. Она допускает подстановку, когда замена выражения сохраняет заданный смысл, даже если реализации операционно различаются за семантической границей.</p>
+</div>
+</div>
+<p>Референциальная прозрачность (RT) — свойство подстановки для выражений: выражение можно заменить его денотацией, не меняя смысл программы.</p>
+<p>Сегодня RT на практике служит основой для рассуждений через равенства, безопасного рефакторинга и проектирования API, опирающегося на законы.</p>
+<h2 id="core-meaning"><a class="header" href="#core-meaning">Основной смысл</a></h2>
+<p>RT утверждает:</p>
+<ul>
+<li>если <code>e</code> обозначает <code>v</code></li>
+<li>то использование <code>v</code> вместо <code>e</code> сохраняет смысл</li>
+</ul>
+<p>Это семантическое утверждение, а не лозунг о стиле написания кода.</p>
+<h3 id="purity"><a class="header" href="#purity">Чистота</a></h3>
+<p>Чистая функция возвращает одинаковый результат при одинаковых входных данных и не имеет наблюдаемых побочных эффектов. RT — закон подстановки для выражений: замена выражения его денотацией должна сохранять смысл. Поэтому чистота — распространённый практический способ добиться RT, тогда как RT является более широким семантическим критерием. Различие между чистотой и RT в контексте денотационного проектирования см. в разделе <a href="../insights/referential-transparency.html">«Референциальная прозрачность: новый взгляд»</a>.</p>
+<h2 id="historical-context"><a class="header" href="#historical-context">Исторический контекст</a></h2>
+<p>В семантике языков программирования RT тесно связана с трактовкой Кристофера Стрейчи. Его подход отделяет рассуждения о значениях от поведения, насыщенного обновлениями:</p>
+<ul>
+<li><strong>R-значения</strong>: значения выражений.</li>
+<li><strong>L-значения</strong>: изменяемые присваиванием области памяти.</li>
+</ul>
+<p>Главная мысль в том, что подстановка на уровне выражений стабильна, пока мы рассуждаем о значениях. Присваивание обновляет области памяти и усложняет подстановочные рассуждения либо делает их неверными в наивной форме.</p>
+<h2 id="what-assignment-and-side-effects-mean-here"><a class="header" href="#what-assignment-and-side-effects-mean-here">Что здесь означают присваивание и побочные эффекты</a></h2>
+<p>В этом контексте:</p>
+<ul>
+<li><strong>присваивание</strong> — обновление области памяти (например, <code>x := x + 1</code>)</li>
+<li><strong>побочный эффект</strong> — любое наблюдаемое изменение помимо возврата значения</li>
+</ul>
+<p>Присваивание — частный вид побочного эффекта.</p>
+<p>Поэтому во многих императивных системах RT не выполняется: вычисление может зависеть от наблюдаемого контекста вне явного интерфейса значений выражения или изменять его.</p>
+<h2 id="how-modern-languages-present-rt"><a class="header" href="#how-modern-languages-present-rt">Как современные языки трактуют RT</a></h2>
+<h3 id="haskell"><a class="header" href="#haskell">Haskell</a></h3>
+<p>RT преподаётся как способ рассуждения по умолчанию для чистых выражений. Эффекты явно представлены типизированными конструкциями (<code>IO</code>, передачей состояния и другими абстракциями), поэтому законы подстановки постоянно используются на практике.</p>
+<h3 id="scala-cats--cats-effect"><a class="header" href="#scala-cats--cats-effect">Scala (Cats / Cats Effect)</a></h3>
+<p>В функциональном программировании на Scala наиболее распространённое изложение RT даёт Cats Effect:</p>
+<ul>
+<li><code>IO[A]</code> — чистое описание работы с эффектами</li>
+<li>композиция значений <code>IO</code> удовлетворяет RT</li>
+<li>выполнение явно происходит на границах среды выполнения (<code>unsafeRun*</code>)</li>
+</ul>
+<p>Cats Effect также противопоставляет это немедленному вычислению <code>Future</code>. Поэтому обсуждения RT в Scala часто подчёркивают ленивость и отложенное выполнение.</p>
+<h2 id="rt-today"><a class="header" href="#rt-today">RT сегодня</a></h2>
+<p>В современных экосистемах RT часто используют как сокращённое обозначение поведения, допускающего безопасную подстановку. В системах со смешанными парадигмами обычно относят утверждения о RT к конкретным модулям, API или областям с типизированными эффектами, а не ко всему коду.</p>
+<p>Трактовка RT в денотационном проектировании рассматривается в разделе <a href="../insights/referential-transparency.html">«Референциальная прозрачность: новый взгляд»</a>.</p>
+<h2 id="references"><a class="header" href="#references">Источники</a></h2>
+<ul>
+<li>Стрейчи, К. <em>Fundamental Concepts in Programming Languages</em> (конспект лекций Oxford PRG, 1967).<br />
+<a href="https://reed.cs.depaul.edu/jriely/447/assets/articles/strachey-fundamental-concepts-in-programming-languages.pdf">https://reed.cs.depaul.edu/jriely/447/assets/articles/strachey-fundamental-concepts-in-programming-languages.pdf</a></li>
+<li>Документация Cats Effect: тип данных <code>IO</code> и заметки об RT и ленивом вычислении.<br />
+<a href="https://typelevel.org/cats-effect/docs/datatypes/io">https://typelevel.org/cats-effect/docs/datatypes/io</a></li>
+<li>Блог Typelevel: <em>An IO monad for cats</em> (о мотивации, связанной с императивностью Scala и RT).<br />
+<a href="https://typelevel.org/blog/2017/05/02/io-monad-for-cats.html">https://typelevel.org/blog/2017/05/02/io-monad-for-cats.html</a></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../concepts/expression-problem.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../concepts/free_monad.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../concepts/expression-problem.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../concepts/free_monad.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-9aeb6ddf.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-9576a2db.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>
