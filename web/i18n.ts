@@ -6,6 +6,10 @@ import type { Language } from './languages.ts';
 
 export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
   "ar": {
+    "Run this code": "تشغيل هذه الشيفرة",
+    "Running...": "جارٍ التشغيل...",
+    "No output": "لا يوجد خرج",
+    "Playground Communication": "الاتصال ببيئة التشغيل",
     "Scroll reading": "القراءة بالتمرير",
     "Page reading": "القراءة بالصفحات",
     "Keyboard shortcuts": "اختصارات لوحة المفاتيح",
@@ -44,6 +48,10 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "مرحبًا"
   },
   "de": {
+    "Run this code": "Diesen Code ausführen",
+    "Running...": "Wird ausgeführt...",
+    "No output": "Keine Ausgabe",
+    "Playground Communication": "Playground-Kommunikation",
     "Scroll reading": "Scrollen",
     "Page reading": "Blättern",
     "Keyboard shortcuts": "Tastenkürzel",
@@ -82,6 +90,10 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Willkommen"
   },
   "es": {
+    "Run this code": "Ejecutar este código",
+    "Running...": "Ejecutando...",
+    "No output": "Sin salida",
+    "Playground Communication": "Comunicación con Playground",
     "Scroll reading": "Lectura continua",
     "Page reading": "Lectura por páginas",
     "Keyboard shortcuts": "Atajos de teclado",
@@ -120,6 +132,10 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Bienvenida"
   },
   "ja": {
+    "Run this code": "このコードを実行",
+    "Running...": "実行中...",
+    "No output": "出力なし",
+    "Playground Communication": "Playground との通信",
     "Scroll reading": "スクロール表示",
     "Page reading": "ページ表示",
     "Keyboard shortcuts": "キーボードショートカット",
@@ -158,6 +174,10 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "ようこそ"
   },
   "ko": {
+    "Run this code": "이 코드 실행",
+    "Running...": "실행 중...",
+    "No output": "출력 없음",
+    "Playground Communication": "Playground 통신",
     "Scroll reading": "스크롤 읽기",
     "Page reading": "페이지 읽기",
     "Keyboard shortcuts": "키보드 단축키",
@@ -196,6 +216,10 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "환영합니다"
   },
   "ru": {
+    "Run this code": "Запустить этот код",
+    "Running...": "Выполняется...",
+    "No output": "Нет вывода",
+    "Playground Communication": "Связь с Playground",
     "Scroll reading": "Читать прокруткой",
     "Page reading": "Читать по страницам",
     "Keyboard shortcuts": "Сочетания клавиш",
@@ -234,6 +258,10 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Добро пожаловать"
   },
   "uk": {
+    "Run this code": "Запустити цей код",
+    "Running...": "Виконується...",
+    "No output": "Немає виводу",
+    "Playground Communication": "Зв’язок із Playground",
     "Scroll reading": "Читати прокручуванням",
     "Page reading": "Читати сторінками",
     "Keyboard shortcuts": "Сполучення клавіш",
@@ -272,6 +300,10 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Вітаємо"
   },
   "vi": {
+    "Run this code": "Chạy mã này",
+    "Running...": "Đang chạy...",
+    "No output": "Không có đầu ra",
+    "Playground Communication": "Kết nối Playground",
     "Scroll reading": "Đọc cuộn",
     "Page reading": "Đọc theo trang",
     "Keyboard shortcuts": "Phím tắt",
@@ -310,6 +342,10 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "Chào mừng"
   },
   "zh-hant": {
+    "Run this code": "執行此程式碼",
+    "Running...": "執行中...",
+    "No output": "無輸出",
+    "Playground Communication": "Playground 通訊",
     "Scroll reading": "捲動閱讀",
     "Page reading": "翻頁閱讀",
     "Keyboard shortcuts": "鍵盤快捷鍵",
@@ -348,6 +384,10 @@ export const uiStrings: Partial<Record<Language, Record<string, string>>> = {
     "Welcome": "歡迎"
   },
   "zh": {
+    "Run this code": "运行此代码",
+    "Running...": "运行中...",
+    "No output": "无输出",
+    "Playground Communication": "Playground 通信",
     "Scroll reading": "滚动阅读",
     "Page reading": "翻页阅读",
     "Keyboard shortcuts": "键盘快捷键",

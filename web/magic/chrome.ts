@@ -1,10 +1,11 @@
 // The parts of mdBook's book.js the magic world's page relies on, for the markup Reader.tsx renders
 // (the approved template's): theme classes and highlight stylesheets, the sidebar toggle, the
-// keyboard help, and code blocks (highlight.js from the edition's own build, copy buttons).
+// keyboard help, and code blocks (highlight.js from the edition's own build, copy and run buttons).
 // mdBook's own scripts are not loaded: they bind once per page load, and the app replaces chapters
 // in place.
 import { copyLabels } from '../i18n.ts';
 import type { Language } from '../languages.ts';
+import { t } from './t.ts';
 
 // Set by mdBook's highlight.js, which the page loads from the book's build (vite.config.ts).
 declare const hljs: { configure(options: object): void; highlightBlock(block: Element): void } | undefined;
@@ -97,7 +98,7 @@ export function bindChrome(signal: AbortSignal) {
   }, { signal });
 }
 
-/** Highlights a chapter's code and adds mdBook's copy buttons, with the edition's labels. */
+/** Highlights a chapter's code and binds mdBook-style copy and Rust playground controls. */
 export function prepareCode(main: HTMLElement, lang: Language, signal: AbortSignal) {
   const codes = [...main.querySelectorAll('code')].filter((code) => !code.parentElement!.classList.contains('header'));
   if (typeof hljs !== 'undefined') {
@@ -106,7 +107,7 @@ export function prepareCode(main: HTMLElement, lang: Language, signal: AbortSign
   }
   for (const code of codes) code.classList.add('hljs');
   const [action, success, failure] = copyLabels[lang];
-  for (const code of main.querySelectorAll('pre code')) {
+  for (const code of main.querySelectorAll('pre > code:not(.result)')) {
     const pre = code.parentElement!;
     let buttons = pre.querySelector(':scope > .buttons');
     if (!buttons) {
@@ -114,25 +115,74 @@ export function prepareCode(main: HTMLElement, lang: Language, signal: AbortSign
       buttons.className = 'buttons';
       pre.insertBefore(buttons, pre.firstChild);
     }
+    // React can bind the same chapter again after tearing down its previous listeners.
+    buttons.querySelectorAll('.clip-button,.play-button').forEach(button => button.remove());
     const button = document.createElement('button');
     button.className = 'clip-button';
+    button.type = 'button';
     button.title = action;
     button.setAttribute('aria-label', action);
-    button.dataset.copyLabel = action;
     button.innerHTML = '<i class="tooltiptext"></i>';
     buttons.insertBefore(button, buttons.firstChild);
     let reset: ReturnType<typeof setTimeout>;
     const show = (message: string) => {
       button.firstElementChild!.textContent = message;
       button.className = 'clip-button tooltipped';
-      button.dataset.copyLabel = message;
       clearTimeout(reset);
-      reset = setTimeout(() => { button.className = 'clip-button'; button.dataset.copyLabel = action; button.firstElementChild!.textContent = ''; }, 1800);
+      reset = setTimeout(() => { button.className = 'clip-button'; button.firstElementChild!.textContent = ''; }, 1800);
     };
     button.addEventListener('click', () => {
       // mdBook copies the code's text without hidden lines.
       const text = [...code.childNodes].filter((n) => !(n instanceof Element && n.classList.contains('boring'))).map((n) => n.textContent).join('');
       navigator.clipboard.writeText(text).then(() => show(success), () => show(failure));
     }, { signal });
+    signal.addEventListener('abort', () => clearTimeout(reset), { once: true });
+    if (pre.classList.contains('playground') && !code.classList.contains('no_run')) {
+      const run = document.createElement('button');
+      run.type = 'button';
+      run.className = 'fa fa-play play-button';
+      run.title = t(lang, 'Run this code');
+      run.setAttribute('aria-label', run.title);
+      buttons.append(run);
+      run.addEventListener('click', () => { void runRust(pre, code, run, lang, signal); }, { signal });
+    }
+  }
+}
+
+/** Runs a Rust listing with mdBook's playground protocol and displays its output in the listing. */
+async function runRust(pre: HTMLElement, code: Element, button: HTMLButtonElement, lang: Language, signal: AbortSignal) {
+  let result = pre.querySelector<HTMLElement>(':scope > .result');
+  if (!result) {
+    // Keep the listing's footprint while output arrives, so surrounding columns do not repaginate.
+    const height = pre.getBoundingClientRect().height;
+    const leaf = pre.closest<HTMLElement>('main.leaves')!;
+    pre.style.setProperty('--code-run-height', height >= leaf.clientHeight - 2
+      ? 'var(--leaf-height)' : `min(${height}px,var(--leaf-height))`);
+    result = document.createElement('code');
+    result.className = 'result hljs language-bash';
+    result.setAttribute('role', 'status');
+    pre.append(result);
+  }
+  const source = code.textContent ?? '';
+  const edition = [...code.classList].find(name => /^edition\d+$/.test(name))?.slice(7) ?? '2015';
+  result.textContent = t(lang, 'Running...');
+  result.classList.remove('result-no-output');
+  button.disabled = true;
+  try {
+    const response = await fetch('https://play.rust-lang.org/evaluate.json', {
+      method: 'POST', mode: 'cors', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ version: source.includes('#![feature') ? 'nightly' : 'stable', optimize: '0', code: source, edition }),
+      signal: AbortSignal.any([signal, AbortSignal.timeout(6000)]),
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const output = await response.json() as { result: string };
+    result.textContent = output.result.trim() ? output.result : t(lang, 'No output');
+    result.classList.toggle('result-no-output', !output.result.trim());
+  } catch (error) {
+    if (!signal.aborted) result.textContent = t(lang, 'Playground Communication') + ': ' + (error as Error).message;
+  } finally {
+    button.disabled = false;
+    // Output changes the local scroll ports and can change the chapter's pagination.
+    if (!signal.aborted) dispatchEvent(new Event('resize'));
   }
 }

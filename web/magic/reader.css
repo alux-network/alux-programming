@@ -810,18 +810,20 @@ linear-gradient(var(--reader-trim),var(--reader-trim)) left bottom/1px 24px no-r
 linear-gradient(var(--reader-trim),var(--reader-trim)) right bottom/24px 1px no-repeat,
 linear-gradient(var(--reader-trim),var(--reader-trim)) right bottom/1px 24px no-repeat; }
 .music-volume > span { white-space:nowrap; flex-shrink:0; }
-html[data-world="magic"] pre > .buttons .clip-button { width:auto; min-height:44px; margin:0; display:inline-flex; align-items:center; gap:6px; padding:6px 9px; font:15px/1.4 var(--reader-sans); }
-html[data-world="magic"] .clip-button::after { content:attr(data-copy-label); white-space:nowrap; }
-html[data-world="magic"] pre:hover > .buttons, html[data-world="magic"] pre:focus-within > .buttons { opacity:1; visibility:visible; }
+html[data-world="magic"] pre:focus-within > .buttons { opacity:1; visibility:visible; }
 
-/* Copy remains discoverable on paper and touch screens; its control row never covers code. */
-html[data-world="magic"] main.leaves pre > .buttons { opacity:1; visibility:visible; }
-html[data-world="magic"] main.leaves pre:has(> .buttons) { display:inline-block; vertical-align:top; width:100%; --code-panel-height:calc(var(--leaf-height) - 2 * var(--book-font)); max-height:var(--code-panel-height); box-sizing:border-box; margin-block:var(--book-font); padding-top:56px; overflow:hidden; border:1px solid var(--reader-rule); background:var(--reader-code-paper); }
-html[data-world="magic"] main.leaves pre:has(> .buttons) > code { max-height:calc(var(--code-panel-height) - 58px); box-sizing:border-box; overflow:auto; padding:10px; border:0; background:transparent; font-size:.82em; line-height:1.65; }
-/* Leave room for the section heading and prose before a long, locally scrollable listing. */
-@media (min-width:900px) {
-  html[data-world="magic"][data-reading="pages"] main.leaves pre:has(> .buttons) { --code-panel-height:min(calc(var(--leaf-height) - 2 * var(--book-font)),calc(var(--leaf-height) * .7)); }
-}
+/* mdBook floats code controls over the listing; only the code contributes to pagination. */
+html[data-world="magic"] main.leaves pre > .buttons { display:flex; white-space:normal; right:24px; }
+html[data-world="magic"] main.leaves pre:has(> .buttons) { display:inline-block; vertical-align:top; width:100%; --code-panel-height:calc(var(--leaf-height) - 2 * var(--book-font)); max-height:var(--code-panel-height); box-sizing:border-box; margin-block:var(--book-font); padding:0; overflow:visible; border:1px solid var(--reader-rule); background:var(--reader-code-paper); }
+html[data-world="magic"] main.leaves pre:has(> .buttons) > code { max-height:calc(var(--code-panel-height) - 2px); box-sizing:border-box; overflow:auto; padding:10px; border:0; background:transparent; font-size:.82em; line-height:1.65; }
+html[data-world="magic"] main.leaves pre:has(> .result) > code:not(.result) { max-height:calc(var(--code-panel-height) * .65); }
+html[data-world="magic"] main.leaves pre > code.result { max-height:calc(var(--code-panel-height) * .3); border-top:1px solid var(--reader-rule); }
+/* Long listings own one full leaf; execution divides that same box between source and output. */
+html[data-world="magic"][data-reading="pages"] main.leaves pre:has(> .buttons) { --code-panel-height:var(--leaf-height); margin-block:0; }
+html[data-world="magic"][data-reading="pages"] main.leaves pre:has(> .result) { display:inline-grid; height:var(--code-run-height,var(--leaf-height)); grid-template-rows:minmax(0,1fr) auto; }
+html[data-world="magic"][data-reading="pages"] main.leaves pre:has(> .result) > code { min-height:0; max-height:none; margin:0; }
+/* Short results use their natural height; longer output scrolls after four lines. */
+html[data-world="magic"][data-reading="pages"] main.leaves pre > code.result { max-height:min(calc(var(--code-run-height,var(--leaf-height)) * .2),calc(4lh + 12px)); padding-block:6px; }
 @media (hover:none) { pre > .buttons { opacity:1; visibility:visible; } html[data-world="real"] main.leaves pre:has(> .buttons) > code { padding-block-start:48px; } }
 
 /* The desk can scroll vertically without shrinking the book into a short landscape card. */
@@ -858,11 +860,6 @@ html[data-world="magic"][data-reading="scroll"] main.leaves :is(pre:has(> .butto
   html[data-world="magic"] #sidebar-toggle-anchor:checked ~ .page-wrapper #sidebar-toggle { justify-self:start; margin-inline-start:-8px; }
 }
 
-/* One copy acknowledgement: the button label. Native floating feedback is redundant. */
-pre > .buttons .clip-button { display:inline-flex; align-items:center; gap:6px; font:14px/1.4 var(--reader-sans); }
-pre > .buttons .clip-button::after { content:attr(data-copy-label); white-space:nowrap; }
-pre > .buttons .clip-button::before { content:""; display:inline-block; width:18px; height:18px; flex:none; background:currentColor; filter:none !important; mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-width='1.7' stroke-linejoin='round' d='M9 9h11v12H9zM15 9V3H4v12h5'/%3E%3C/svg%3E") center/contain no-repeat; }
-pre > .buttons .clip-button .tooltiptext { display:none !important; }
 html[data-world="magic"] #menu-bar { position:sticky; top:0 !important; z-index:101; }
 html[data-world="magic"] main.leaves .katex-display { display:inline-block; box-sizing:border-box; width:100%; max-width:100%; overflow-x:auto; overflow-y:hidden; vertical-align:top; padding-block:6px; }
 html[data-world="magic"] main.leaves .katex-display > .katex { display:block; width:max-content; min-width:100%; }

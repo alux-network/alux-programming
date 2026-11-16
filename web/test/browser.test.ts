@@ -276,6 +276,73 @@ for (const profile of selected) {
       assert.ok(await page.locator('main.leaves .katex').count() > 0);
     });
 
+    test('code controls float above listings and Rust examples run without copying their output', async () => {
+      await visit();
+      const example = chapters.find(c => readFileSync('src/' + c.file.replace(/\.html$/, '.md'), 'utf8').includes('enum Free<A>'))!;
+      const requests: { code: string; edition: string; version: string }[] = [];
+      let response = 'stack: [5, 5]\nstorage: {1: 5}\n';
+      await page.route('https://play.rust-lang.org/evaluate.json', async route => {
+        requests.push(route.request().postDataJSON());
+        await route.fulfill({ json: { result: response } });
+      });
+      await read(page, 'en/' + example.file);
+      await page.click('#reading-mode');
+      // Open the authored disclosures without making their long listings part of another page turn.
+      await page.locator('main.leaves details').evaluateAll(nodes => nodes.forEach(node => { (node as HTMLDetailsElement).open = true; }));
+      await settled(page);
+      const listing = page.locator('pre.playground').first();
+      const source = await listing.locator(':scope > code:not(.result)').textContent();
+      const geometry = await listing.evaluate(pre => {
+        const controls = pre.querySelector<HTMLElement>(':scope > .buttons')!;
+        const code = pre.querySelector('code')!;
+        return { position: getComputedStyle(controls).position, inset: code.getBoundingClientRect().top - pre.getBoundingClientRect().top };
+      });
+      assert.equal(geometry.position, 'absolute', 'controls stay outside text flow');
+      assert.ok(geometry.inset < 10, 'no reserved toolbar row above the code');
+      assert.equal(await page.locator('pre:not(.playground) > .buttons .play-button').count(), 0, 'ordinary blocks cannot run');
+      await page.evaluate(() => {
+        Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async (text: string) => { (window as any).copiedCode = text; } } });
+      });
+      await listing.hover();
+      await listing.locator('.play-button').click();
+      await page.waitForFunction(() => document.querySelector('pre.playground > .result')?.textContent?.startsWith('stack:'));
+      assert.deepEqual(requests, [{ version: 'stable', optimize: '0', code: source, edition: '2015' }]);
+      await listing.hover();
+      await listing.locator('.clip-button').click();
+      assert.equal(await page.evaluate(() => (window as any).copiedCode), source, 'copy excludes execution results');
+      response = '';
+      await listing.locator('.play-button').click();
+      await page.waitForFunction(() => document.querySelector('pre.playground > .result')?.textContent === 'No output');
+      await page.route('https://play.rust-lang.org/evaluate.json', route => route.abort());
+      await listing.locator('.play-button').click();
+      await page.waitForFunction(() => document.querySelector('pre.playground > .result')?.textContent?.startsWith('Playground Communication:'));
+    });
+
+    test('long paged listings fill a leaf and keep their height when code runs', async () => {
+      await visit();
+      const example = chapters.find(c => readFileSync('src/' + c.file.replace(/\.html$/, '.md'), 'utf8').includes('enum Free<A>'))!;
+      let complete!: () => void;
+      const pending = new Promise<void>(resolve => { complete = resolve; });
+      await page.route('https://play.rust-lang.org/evaluate.json', async route => {
+        await pending;
+        await route.fulfill({ json: { result: 'stack: [5, 5]\n'.repeat(100) } });
+      });
+      await read(page, 'en/' + example.file);
+      await page.locator('main.leaves details summary').first().click();
+      await settled(page);
+      const listing = page.locator('pre.playground').first();
+      const before = await listing.evaluate(pre => ({ height: pre.getBoundingClientRect().height, leaf: pre.closest('main')!.clientHeight }));
+      assert.ok(Math.abs(before.height - before.leaf) <= 2, 'a long listing fills the whole leaf, rather than the previous 70% cap');
+      await listing.locator('.play-button').evaluate((button: HTMLButtonElement) => button.click());
+      assert.ok(Math.abs(await listing.evaluate(pre => pre.getBoundingClientRect().height) - before.height) <= 2, 'pending execution keeps the listing height');
+      assert.ok(await listing.locator(':scope > .result').evaluate(result => result.clientHeight < result.parentElement!.clientHeight * .2), 'a one-line status does not reserve a fixed share of the listing');
+      complete();
+      await page.waitForFunction(() => document.querySelector('pre.playground > .result')?.textContent?.startsWith('stack:'));
+      assert.ok(Math.abs(await listing.evaluate(pre => pre.getBoundingClientRect().height) - before.height) <= 2, 'long output scrolls within the original footprint');
+      assert.ok(await listing.locator(':scope > .result').evaluate(result => result.scrollHeight > result.clientHeight), 'output has its own scroll area');
+      assert.ok(await listing.locator(':scope > .result').evaluate(result => result.getBoundingClientRect().height <= parseFloat(getComputedStyle(result).lineHeight) * 4 + 13), 'long output stays within four lines plus padding');
+    });
+
     test('search finds chapters by substring, also in CJK', async () => {
       await visit();
       for (const [lang, query] of [['en', 'compositional'], ['zh', '语义'], ['ja', '意味']] as const) {
