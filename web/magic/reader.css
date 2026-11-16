@@ -780,8 +780,8 @@ html[data-world="magic"] .sidebar-repository::after { background: var(--reader-p
 pre > .buttons { top: 8px; right: 8px; }
 pre > .buttons button { min-width: 36px; min-height: 36px; border-radius: 4px; color: var(--fg); }
 html[data-world="magic"] pre > .buttons button { color: var(--reader-ink); background: var(--reader-paper); border: 1px solid var(--reader-rule); }
-pre .tooltiptext { width: max-content; max-width: min(260px,60vw); white-space: nowrap; overflow-wrap: normal; word-break: normal; left: auto; right: 0; top: -38px; transform: none; font: 14px/1.4 var(--reader-sans); }
-html[data-world="magic"] pre .tooltiptext { background: var(--reader-ink); color: var(--reader-paper); }
+/* Copy feedback belongs above the frame, outside the chapter's clipped page columns. */
+.code-copy-notice { position:fixed; z-index:1200; width:max-content; max-width:calc(100vw - 16px); box-sizing:border-box; padding:5px 8px; border-radius:6px; background:var(--reader-ink); color:var(--reader-paper); font:14px/1.4 var(--reader-sans); pointer-events:none; }
 
 :root:is(:lang(zh),:lang(zh-hant),:lang(ja)) .world-choice { font-family: "Noto Serif CJK SC", "Songti SC", SimSun, serif; }
 :root:lang(ko) .world-choice { font-family: "Malgun Gothic", sans-serif; }

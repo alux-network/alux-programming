@@ -310,6 +310,15 @@ for (const profile of selected) {
       await listing.hover();
       await listing.locator('.clip-button').click();
       assert.equal(await page.evaluate(() => (window as any).copiedCode), source, 'copy excludes execution results');
+      const notice = page.locator('body > .code-copy-notice');
+      await notice.waitFor();
+      assert.equal(await notice.textContent(), 'Copied');
+      assert.ok(await notice.evaluate(node => {
+        const box = node.getBoundingClientRect();
+        return getComputedStyle(node).position === 'fixed' &&
+          Number(getComputedStyle(node).zIndex) > (parseInt(getComputedStyle(document.querySelector('.volume')!).zIndex) || 0) &&
+          box.top >= 0 && box.bottom <= innerHeight;
+      }), 'feedback escapes the clipped chapter and stays within the viewport');
       response = '';
       await listing.locator('.play-button').click();
       await page.waitForFunction(() => document.querySelector('pre.playground > .result')?.textContent === 'No output');

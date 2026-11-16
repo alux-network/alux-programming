@@ -100,6 +100,27 @@ export function bindChrome(signal: AbortSignal) {
 
 /** Highlights a chapter's code and binds mdBook-style copy and Rust playground controls. */
 export function prepareCode(main: HTMLElement, lang: Language, signal: AbortSignal) {
+  const notice = document.createElement('div');
+  notice.className = 'code-copy-notice';
+  notice.setAttribute('role', 'status');
+  let reset: ReturnType<typeof setTimeout>;
+  /** Shows copy feedback outside the clipped columns and above the book's frame. */
+  function showCopyNotice(button: HTMLElement, message: string) {
+    if (signal.aborted) return;
+    clearTimeout(reset);
+    notice.textContent = message;
+    document.body.append(notice);
+    const anchor = button.getBoundingClientRect();
+    const width = notice.getBoundingClientRect().width;
+    notice.style.left = Math.max(8, Math.min(innerWidth - width - 8, anchor.right - width)) + 'px';
+    notice.style.top = Math.max(8, anchor.top - notice.getBoundingClientRect().height - 8) + 'px';
+    reset = setTimeout(() => notice.remove(), 1800);
+  }
+  const hideNotice = () => notice.remove();
+  // Scroll and relayout invalidate the button's viewport coordinates.
+  addEventListener('scroll', hideNotice, { capture: true, passive: true, signal });
+  addEventListener('resize', hideNotice, { signal });
+  signal.addEventListener('abort', () => { clearTimeout(reset); notice.remove(); }, { once: true });
   const codes = [...main.querySelectorAll('code')].filter((code) => !code.parentElement!.classList.contains('header'));
   if (typeof hljs !== 'undefined') {
     hljs.configure({ tabReplace: '    ', languages: [] });
@@ -122,21 +143,12 @@ export function prepareCode(main: HTMLElement, lang: Language, signal: AbortSign
     button.type = 'button';
     button.title = action;
     button.setAttribute('aria-label', action);
-    button.innerHTML = '<i class="tooltiptext"></i>';
     buttons.insertBefore(button, buttons.firstChild);
-    let reset: ReturnType<typeof setTimeout>;
-    const show = (message: string) => {
-      button.firstElementChild!.textContent = message;
-      button.className = 'clip-button tooltipped';
-      clearTimeout(reset);
-      reset = setTimeout(() => { button.className = 'clip-button'; button.firstElementChild!.textContent = ''; }, 1800);
-    };
     button.addEventListener('click', () => {
       // mdBook copies the code's text without hidden lines.
       const text = [...code.childNodes].filter((n) => !(n instanceof Element && n.classList.contains('boring'))).map((n) => n.textContent).join('');
-      navigator.clipboard.writeText(text).then(() => show(success), () => show(failure));
+      navigator.clipboard.writeText(text).then(() => showCopyNotice(button, success), () => showCopyNotice(button, failure));
     }, { signal });
-    signal.addEventListener('abort', () => clearTimeout(reset), { once: true });
     if (pre.classList.contains('playground') && !code.classList.contains('no_run')) {
       const run = document.createElement('button');
       run.type = 'button';
